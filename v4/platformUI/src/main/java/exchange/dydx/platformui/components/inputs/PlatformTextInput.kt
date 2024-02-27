@@ -18,6 +18,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
@@ -33,6 +35,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 @Composable
 fun PlatformTextInput(
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester = remember { FocusRequester() },
     label: @Composable (() -> Unit)? = null,
     value: String? = null,
     textStyle: TextStyle =
@@ -61,7 +64,7 @@ fun PlatformTextInput(
             val displayValue = if (isFocused) currentValue.value ?: "" else value ?: ""
 
             BasicTextField(
-                modifier = Modifier,
+                modifier = Modifier.focusRequester(focusRequester = focusRequester),
                 value = displayValue,
                 onValueChange = {
                     currentValue.value = it
