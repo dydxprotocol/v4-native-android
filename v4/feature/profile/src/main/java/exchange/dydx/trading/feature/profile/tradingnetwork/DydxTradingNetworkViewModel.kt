@@ -57,7 +57,7 @@ class DydxTradingNetworkViewModel @Inject constructor(
             localizer: LocalizerProtocol,
             abacusStateManager: AbacusStateManagerProtocol
         ): String? {
-            val value = abacusStateManager.currentEnvironmentId.value
+            val value = abacusStateManager.currentEnvironmentId.value ?: return null
             return abacusStateManager.availableEnvironments.first { it.type == value }.localizedString(localizer = localizer)
         }
     }
