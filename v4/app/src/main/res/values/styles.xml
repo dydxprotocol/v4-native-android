@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. Note that UX Theme-->
+    <style name="AppTheme" parent="Base.AppTheme" />
+
+    <style name="AppTheme.OverlapSystemBar" parent="Base.AppTheme" />
+
+    <style name="Base.AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="background">@color/dkBg</item>
+        <!-- Customize your theme here. -->
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/secondary</item>
+        <!-- For Android sdk versions 26+. -->
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">@font/opensans_font</item>
+        <!-- Target Android sdk versions < 26 and > 14. -->
+        <item name="fontFamily">@font/opensans_font</item>
+        <!-- sets the style for the overflow button -->
+        <item name="actionOverflowButtonStyle">@style/actionOverflowButtonStyle</item>
+
+        <item name="android:windowBackground">#1E1E29</item>
+        <item name="android:colorBackground">#1E1E29</item>
+    </style>
+
+    <!-- This style defines the tint color of the overflow menu button -->
+    <style name="actionOverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/secondary</item>
+    </style>
+
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light" />
+</resources>

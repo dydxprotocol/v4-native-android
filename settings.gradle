@@ -1,0 +1,68 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url "https://jcenter.bintray.com" }
+
+        maven { url 'https://repo1.maven.org/maven2' }
+
+        maven {
+            def github_username = System.getenv('github_username')
+            def github_token = System.getenv('github_token')
+            name = "GitHubPackages_Cartera"
+            url = uri("https://maven.pkg.github.com/dydxprotocol/cartera-android")
+            credentials {
+                username github_username
+                password github_token
+            }
+        }
+
+        maven {
+            def github_username = System.getenv('github_username')
+            def github_token = System.getenv('github_token')
+            name = "GitHubPackages_Abacus"
+            url = uri("https://maven.pkg.github.com/dydxprotocol/v4-abacus")
+            credentials {
+                username github_username
+                password github_token
+            }
+        }
+        //  mavenLocal()
+    }
+}
+
+rootProject.name = 'native-android'
+
+//Dependencies may look "down" (unenforced)
+include ':v4:app'
+include ':v4:core'
+include ':v4:feature:trade'
+include ':v4:feature:profile'
+include ':v4:feature:portfolio'
+include ':v4:feature:market'
+include ':v4:feature:onboarding'
+include ':v4:integration:chart'
+include ':v4:integration:cosmos'
+include ':v4:integration:starkex'
+include ':v4:integration:javascript'
+include ':v4:common'
+include ':v4:integration:dydxCartera'
+include ':v4:integration:dydxStateManager'
+include ':v4:utilities'
+include ':v4:platformUI'
+include ':v4:feature:shared'
+include ':v4:feature:newsalerts'
+include ':v4:feature:receipt'
+include ':v4:feature:workers'
+include ':v4:feature:transfer'
+include ':v4:integration:web3'
+include ':v4:integration:analytics'

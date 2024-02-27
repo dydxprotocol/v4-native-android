@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'exchange.dydx.web3'
+    compileSdk 33
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation project(path: ':v4:utilities')
+
+    testImplementation "junit:junit:$junitVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
+
+
+    // Hilt
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    kapt "com.google.dagger:dagger-compiler:$hiltVersion"
+    api "com.google.dagger:dagger:$hiltVersion"
+    implementation "com.google.dagger:hilt-core:$hiltVersion"
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    implementation "androidx.hilt:hilt-navigation-compose:$hiltAndroidXVersion"
+
+    implementation "org.web3j:core:$web3jVersion"
+
+    implementation "net.jodah:concurrentunit:0.4.6"
+}

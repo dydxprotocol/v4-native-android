@@ -1,0 +1,111 @@
+package exchange.dydx.trading.feature.profile
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.profile.components.DydxProfileBalancesView
+import exchange.dydx.trading.feature.profile.components.DydxProfileButtonsView
+import exchange.dydx.trading.feature.profile.components.DydxProfileFeesView
+import exchange.dydx.trading.feature.profile.components.DydxProfileHeaderView
+import exchange.dydx.trading.feature.profile.components.DydxProfileHistoryView
+import exchange.dydx.trading.feature.profile.components.DydxProfileRewardsView
+import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
+
+@Preview
+@Composable
+fun Preview_DydxProfileView() {
+    DydxThemedPreviewSurface {
+        DydxProfileView.Content(Modifier, DydxProfileView.ViewState.preview)
+    }
+}
+
+object DydxProfileView : DydxComponent {
+    data class ViewState(
+        val localizer: LocalizerProtocol,
+    ) {
+        companion object {
+            val preview = ViewState(
+                localizer = MockLocalizer(),
+            )
+        }
+    }
+
+    @Composable
+    override fun Content(modifier: Modifier) {
+        val viewModel: DydxProfileViewModel = hiltViewModel()
+
+        val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        DydxBottomBarScaffold(Modifier) {
+            Content(it, state)
+        }
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, state: ViewState?) {
+        val listState = rememberLazyListState()
+        val scope = rememberCoroutineScope()
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .themeColor(ThemeColor.SemanticColor.layer_2),
+        ) {
+            LazyColumn(
+                modifier = Modifier,
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item(key = "header") {
+                    DydxProfileHeaderView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                }
+                item(key = "buttons") {
+                    DydxProfileButtonsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                }
+                item(key = "rewards") {
+                    DydxProfileBalancesView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                }
+                item(key = "history") {
+                    DydxProfileHistoryView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                }
+                item(key = "fees") {
+                    Row(
+                        modifier
+                            .fillMaxSize()
+                            .padding(
+                                horizontal = ThemeShapes.HorizontalPadding,
+                            ),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        DydxProfileRewardsView.Content(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        DydxProfileFeesView.Content(modifier = Modifier.weight(1f))
+                    }
+                }
+                item(key = "bottom") {
+                    Box(modifier = Modifier.height(1.dp)) {}
+                }
+            }
+        }
+    }
+}

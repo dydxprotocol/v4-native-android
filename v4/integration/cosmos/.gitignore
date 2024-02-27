@@ -1,0 +1,5 @@
+!/build/reports/androidTests
+/build/reports/androidTests/*
+!/build/reports/androidTests/connected
+/build/reports/androidTests/connected/*
+!/build/reports/androidTests/connected/index.html

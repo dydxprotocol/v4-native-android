@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#ff6966FF</color>
+    <color name="primaryDark">#ff6966FF</color>
+
+    <color name="dkBg">@color/surface_m1</color>
+    <color name="secondaryVariant">#ff232334</color>
+    <color name="secondary">#ff393953</color>
+    <color name="gray">#ff3D3D57</color>
+    <color name="yellow">#ffFFCC48</color>
+
+    <!-- Official Design System -->
+    <color name="transparent">#00000000</color>
+
+    <color name="purple">#ff6966FF</color>
+    <color name="green">#ff21A679</color>
+    <color name="red">#ffE45353</color>
+    <color name="white">#ffFFFFFF</color>
+
+    <color name="surface_m3">#ff08080C</color>
+    <color name="surface_m2">#ff101018</color>
+    <color name="surface_m1">#ff181825</color>
+    <color name="surface">#ff212131</color>
+    <color name="surface_p1">#ff29293D</color>
+    <color name="surface_p2">#ff303045</color>
+    <color name="surface_p3">#ff38384D</color>
+
+    <color name="text_0">#ff807E98</color>
+    <color name="text_1">#ffC8C7D8</color>
+    <color name="text_2">#ffFAFAFD</color>
+</resources>

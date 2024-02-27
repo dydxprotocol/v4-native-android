@@ -1,0 +1,105 @@
+package exchange.dydx.feature.onboarding.desktopscan
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.integration.javascript.JavascriptRunnerWebview
+import exchange.dydx.platformui.components.PlatformDialogScaffold
+import exchange.dydx.platformui.components.PlatformInfoScaffold
+import exchange.dydx.platformui.components.camera.PlatformQrScanner
+import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.shared.views.HeaderView
+
+@Preview
+@Composable
+fun Preview_dydxDesktopScanView() {
+    DydxThemedPreviewSurface {
+        DydxDesktopScanView.Content(Modifier, DydxDesktopScanView.ViewState.preview)
+    }
+}
+
+object DydxDesktopScanView : DydxComponent {
+    data class ViewState(
+        val localizer: LocalizerProtocol,
+        val text: String?,
+        val closeButtonHandler: () -> Unit = {},
+        val qrCodeScannedHandler: (String) -> Unit = {},
+    ) {
+        companion object {
+            val preview = ViewState(
+                localizer = MockLocalizer(),
+                text = "1.0M",
+            )
+        }
+    }
+
+    @Composable
+    override fun Content(modifier: Modifier) {
+        val viewModel: DydxDesktopScanViewModel = hiltViewModel()
+
+        val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        PlatformInfoScaffold(
+            modifier = modifier,
+            platformInfo = viewModel.platformInfo,
+        ) {
+            Content(modifier, state)
+        }
+
+        PlatformDialogScaffold(dialog = viewModel.platformDialog)
+
+        JavascriptRunnerWebview(
+            modifier = Modifier,
+            isVisible = false,
+            javascriptRunner = viewModel.starkexLib.runner,
+        )
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, state: ViewState?) {
+        if (state == null) {
+            return
+        }
+
+        Column(
+            modifier = modifier
+                .themeColor(background = ThemeColor.SemanticColor.layer_2)
+                .fillMaxSize()
+                .padding(
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.VerticalPadding,
+                ),
+        ) {
+            HeaderView(
+                title = state.localizer.localize("APP.ONBOARDING.SCAN_QR_CODE"),
+                backAction = {
+                    state.closeButtonHandler.invoke()
+                },
+            )
+
+            PlatformDivider()
+
+            PlatformQrScanner(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                promptText = state.localizer.localize("APP.CAMERA.ENABLE_CAMERA_TO_SCAN"),
+                buttonText = state.localizer.localize("APP.CAMERA.ALLOW_ACCESS"),
+                callback = {
+                    state.qrCodeScannedHandler.invoke(it)
+                },
+            )
+        }
+    }
+}

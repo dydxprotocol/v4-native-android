@@ -1,0 +1,8 @@
+<application>
+  <component name="ExportableFileTemplateSettings">
+    <default_templates>
+      <template name="DydxView.kt" file-name="${NAME}.kt" reformat="true" live-template-enabled="false" />
+      <template name="DydxViewModel.kt" file-name="${NAME}Model.kt" reformat="true" live-template-enabled="false" />
+    </default_templates>
+  </component>
+</application>

@@ -1,0 +1,56 @@
+{
+    "themeColor": {
+        "color": {
+            "text_primary": "#181818",
+            "text_secondary": "#4B4B4B",
+            "text_tertiary": "#737373",
+
+            "layer_0": "#FFFFFF",
+            "layer_1": "#EDF0F2",
+            "layer_2": "#F9FAFB",
+            "layer_3": "#EDF0F2",
+            "layer_4": "#E0E6EB",
+            "layer_5": "#E0E6EB",
+            "layer_6": "#D1D9E0",
+            "layer_7": "#C2CCD6",
+
+            "color_purple": "#6966FF",
+            "color_green": "#2CCC98",
+            "color_yellow": "#FFCC48",
+            "color_red": "#E76565",
+            "color_black": "#000000",
+            "color_white": "#FFFFFF",
+            "color_faded_green": "#2CCC9829",
+            "color_faded_red": "#E7656529",
+            "color_faded_yellow": "#FFCC4829",
+
+            "border_default": "#D1D9E0",
+            "border_destructive": "#E7656529",
+            "border_button": "#7774FF",
+
+            "gradient_gray_start": "#F0F2F5",
+            "gradient_gray_end": "#D1D9E0",
+            "gradient_green_start": "#D8F3EB",
+            "gradient_green_end": "#E7EBEE",
+            "gradient_red_start": "#FAE2E2",
+            "gradient_red_end": "#E7EBEE"
+        }
+    },
+    "themeFont": {
+        "size": {
+            "extra": "25",
+            "large": "22",
+            "medium": "18",
+            "base": "16",
+            "small": "14.5",
+            "mini": "13",
+            "tiny": "11"
+        },
+        "type": {
+            "plus": "CircularXX-Medium",
+            "book": "CircularXX-Book",
+            "minus": "CircularXX-Regular",
+            "number": "CircularXXMono-Regular"
+        }
+    }
+}

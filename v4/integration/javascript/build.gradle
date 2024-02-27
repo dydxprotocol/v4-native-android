@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+//    id 'kotlin-kapt'
+//    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdk parent.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion parent.minSdkVersion
+        targetSdkVersion parent.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "$composeCompilerVersion"
+    }
+    namespace 'exchange.dydx.trading.integration.javascript'
+}
+
+dependencies {
+
+    /* Module Dependencies */
+    implementation project(':v4:common')
+
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+
+
+    // Compose
+    api "androidx.compose.runtime:runtime:$composeVersion"
+
+    api "androidx.compose.ui:ui:$composeVersion"
+
+    //Logging
+    api "com.jakewharton.timber:timber:$timberVersion"
+
+    // Compose Tooling
+    implementation "androidx.compose.ui:ui-tooling-preview:$composeVersion"
+    debugImplementation "androidx.compose.ui:ui-tooling:$composeVersion"
+    debugRuntimeOnly "androidx.compose.ui:ui-test-manifest:$composeVersion"
+    debugImplementation "androidx.customview:customview:$customviewVersion"
+    debugImplementation "androidx.customview:customview-poolingcontainer:$customviewPoolingVersion"
+
+    // Testing
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
+
+}

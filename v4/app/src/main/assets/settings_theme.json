@@ -1,0 +1,36 @@
+[
+    {
+        "input":"1",
+        "fields":[
+            {
+                "title":{
+                    "text":"APP.V4.THEME"
+                },
+                "field":{
+                    "field":"v4_theme",
+                    "type":"text",
+                    "options":[
+                        {
+                            "text":"APP.V4.DARK",
+                            "value":"dark"
+                        },
+                        {
+                            "text":"APP.V4.CLASSIC_DARK",
+                            "value":"classic_dark"
+                        },
+                        {
+                            "text":"APP.V4.SYSTEM",
+                            "value":"system"
+                        },
+                        {
+                            "text":"APP.V4.LIGHT",
+                            "value":"light"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]
+ 
+ 

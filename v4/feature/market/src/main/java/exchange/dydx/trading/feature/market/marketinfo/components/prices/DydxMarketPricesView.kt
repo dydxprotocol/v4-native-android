@@ -1,0 +1,388 @@
+package exchange.dydx.trading.feature.market.marketinfo.components.prices
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.mikephil.charting.charts.CombinedChart
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.CandleEntry
+import com.github.mikephil.charting.data.Entry
+import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.buttons.PlatformPillItem
+import exchange.dydx.platformui.components.charts.config.CombinedChartConfig
+import exchange.dydx.platformui.components.charts.presenter.CandleChartDataSet
+import exchange.dydx.platformui.components.charts.view.LineChartDataSet
+import exchange.dydx.platformui.components.charts.view.config
+import exchange.dydx.platformui.components.charts.view.update
+import exchange.dydx.platformui.components.menus.PlatformDropdownMenu
+import exchange.dydx.platformui.components.menus.PlatformMenuItem
+import exchange.dydx.platformui.components.tabgroups.PlatformPillTextGroup
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeFont
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.platformui.designSystem.theme.themeFont
+import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.trading.common.theme.MockLocalizer
+
+@Preview
+@Composable
+fun Preview_DydxMarketPricesView() {
+    DydxThemedPreviewSurface {
+        DydxMarketPricesView.Content(Modifier.height(280.dp), DydxMarketPricesView.ViewState.preview)
+    }
+}
+
+data class SelectionOptions(
+    val titles: List<String>,
+    val index: Int,
+    val onChanged: (Int) -> Unit = {},
+)
+
+data class PriceHighlight(
+    val datetimeText: String,
+    val openText: String,
+    val highText: String,
+    val lowText: String,
+    val closeText: String,
+    val volumeText: String,
+)
+
+object DydxMarketPricesView : DydxComponent {
+    data class ViewState(
+        val localizer: LocalizerProtocol,
+        val config: CombinedChartConfig,
+        val market: String?,
+        val candles: CandleChartDataSet?,
+        val volumes: BarDataSet?,
+        val prices: LineChartDataSet?,
+        val typeOptions: SelectionOptions,
+        val resolutionOptions: SelectionOptions,
+        val highlight: PriceHighlight? = null,
+    ) {
+        companion object {
+            val preview = ViewState(
+                localizer = MockLocalizer(),
+                config = CombinedChartConfig.default(),
+                market = "BTC-USD",
+                CandleChartDataSet(
+                    listOf(
+                        CandleEntry(0f, 0f, 0f, 0f, 0f),
+                        CandleEntry(2f, 2f, 2f, 2f, 2f),
+                        CandleEntry(3f, 3f, 3f, 3f, 3f),
+                    ),
+                    "funding",
+                ),
+                BarDataSet(
+                    listOf(
+                        BarEntry(0f, 0f),
+                        BarEntry(2f, 2f),
+                        BarEntry(3f, 3f),
+                    ),
+                    "funding",
+                ),
+                LineChartDataSet(
+                    listOf(
+                        Entry(0f, 0f),
+                        Entry(2f, 2f),
+                        Entry(3f, 3f),
+                    ),
+                    "funding",
+                ),
+                typeOptions = SelectionOptions(
+                    titles = listOf("Candles", "Lines"),
+                    index = 0,
+                ),
+                resolutionOptions = SelectionOptions(
+                    titles = listOf("1m", "5m", "15m"),
+                    index = 0,
+                ),
+            )
+        }
+    }
+
+    private var market: String? = null
+
+    @Composable
+    override fun Content(modifier: Modifier) {
+        val viewModel: DydxMarketPricesViewModel = hiltViewModel()
+
+        val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        Content(modifier, state)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, state: ViewState?) {
+        if (state == null) return
+
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(vertical = ThemeShapes.VerticalPadding)
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
+            verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
+        ) {
+            TopContent(modifier = Modifier, state = state)
+            ChartContent(modifier = Modifier, state = state)
+        }
+    }
+
+    @Composable
+    private fun TopContent(modifier: Modifier, state: ViewState) {
+        Column(
+            modifier = modifier
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            if (state.highlight != null) {
+                ValueContent(Modifier, state.highlight, state.localizer)
+            } else {
+                SelectorContent(
+                    Modifier,
+                    state.typeOptions,
+                    state.resolutionOptions,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ValueContent(modifier: Modifier, highlight: PriceHighlight, localizer: LocalizerProtocol) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth(),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = localizer.localize("APP.GENERAL.VIEW_DATA_FOR"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+                Text(
+                    text = highlight.datetimeText ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = "O",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+                Text(
+                    text = highlight.openText ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "H",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+                Text(
+                    text = highlight.highText ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "L",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+                Text(
+                    text = highlight.lowText ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "C",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+                Text(
+                    text = highlight.closeText ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "V",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+                Text(
+                    text = highlight.volumeText ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun SelectorContent(
+        modifier: Modifier,
+        typeOptions: SelectionOptions,
+        resolutionOptions: SelectionOptions,
+    ) {
+        val items = typeOptions.titles
+
+        val expanded: MutableState<Boolean> = remember {
+            mutableStateOf(false)
+        }
+
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlatformPillTextGroup(
+                modifier = Modifier,
+                items = items,
+                selectedItems = items,
+                currentSelection = typeOptions.index,
+                onSelectionChanged = { index ->
+                    typeOptions.onChanged(index)
+                },
+                itemStyle = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.mini)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                selectedItemStyle = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.mini)
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Box {
+                PlatformPillItem(
+                    modifier = Modifier
+                        .clickable { expanded.value = !expanded.value },
+                    backgroundColor = ThemeColor.SemanticColor.layer_5,
+                ) {
+                    Text(
+                        text = resolutionOptions.titles[resolutionOptions.index],
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.mini)
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    )
+                }
+
+                PlatformDropdownMenu(
+                    modifier = Modifier,
+                    expanded = expanded,
+                    items = resolutionOptions.titles.mapIndexed { index, content ->
+                        PlatformMenuItem(
+                            text = content,
+                            onClick = {
+                                resolutionOptions.onChanged(index)
+                                expanded.value = false
+                            },
+                        )
+                    },
+                    selectedIndex = resolutionOptions.index,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ChartContent(modifier: Modifier, state: ViewState) {
+        val context = LocalContext.current
+        // Create a reference to the regular Android View
+
+        val chart = remember {
+            CombinedChart(context).apply {
+                config(state.config)
+            }
+        }
+
+        chart.update(
+            if (state.typeOptions.index == 0) state.candles else null,
+            state.volumes,
+            if (state.typeOptions.index == 0) null else state.prices,
+            state.config,
+            null,
+        ) {
+            if (market != state.market) {
+                // Show 40 items
+                chart.data.barData.dataSets.firstOrNull()?.xMax?.let {
+                    chart.setVisibleXRange(40f, 40f)
+                    chart.moveViewToX(it)
+                    // The minXRange has a higher number than maxXRange
+                    // because the minXRange is the range for minXScale
+                    // and the maxXRange is the range for maxXScale
+                    // and range and scale are inverse
+                    chart.setVisibleXRange(160f, 40f)
+                }
+                market = state.market
+            }
+        }
+
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+        ) {
+            AndroidView(
+                factory = { chart },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+            )
+        }
+    }
+}

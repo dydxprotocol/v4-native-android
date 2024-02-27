@@ -1,0 +1,17 @@
+
+# launch the app with activity name
+adb -s emulator-5554  shell am start -W -n exchange.dydx.trading/.TradingActivity -a android.intent.action.VIEW
+
+adb -s emulator-5554 shell am start -d "dydxv4://open/markets"
+adb -s emulator-5554 shell am start -d "dydxv4://open/action/debug/enable"
+
+adb -s emulator-5554 shell am start  -d "https://v4.testnet.dydx.exchange/markets"
+adb -s emulator-5554 shell am start  -d "https://v4.testnet.dydx.exchange/action/debug/enable"
+
+adb -s RZCR200S3MM shell am start -d "dydxv4://open/action/debug/enable"
+
+RZCR200S3MM
+
+
+Reset
+adb shell pm set-app-links --package  exchange.dydx.trading.debug 0 all

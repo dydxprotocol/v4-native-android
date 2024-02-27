@@ -1,0 +1,4 @@
+com.github.copilot
+idea.plugin.protoeditor
+org.jetbrains.kotlin-js-inspection-pack-plugin
+com.jetbrains.kmm

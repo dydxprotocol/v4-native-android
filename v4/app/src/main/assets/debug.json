@@ -1,0 +1,50 @@
+[
+    {
+        "title":"Debug Settings",
+        "input":"1",
+        "fields":[
+            {
+                "title":{
+                    "text":"Touch Indicator"
+                },
+                "field":{
+                    "field":"show_touch",
+                    "type":"bool",
+                    "optional":true,
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "<null>"
+                        }
+                    ]
+                }
+            },
+            {
+                "title":{
+                    "text":"Touch Indicator"
+                },
+                "field":{
+                    "field":"show_touch",
+                    "type":"bool",
+                    "optional":true,
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "<null>"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]
+
+

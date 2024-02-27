@@ -1,0 +1,28 @@
+[
+    {
+        "input":"1",
+        "fields":[
+            {
+                "title":{
+                    "text":"APP.V4.DIRECTION_COLOR_PREFERENCE"
+                },
+                "field":{
+                    "field":"direction_color_preference",
+                    "type":"text",
+                    "options":[
+                        {
+                            "text":"APP.V4.GREEN_IS_UP",
+                            "value":"green_is_up"
+                        },
+                        {
+                            "text":"APP.V4.RED_IS_UP",
+                            "value":"red_is_up"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]
+ 
+ 

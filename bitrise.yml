@@ -1,0 +1,271 @@
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: android
+workflows:
+  _buildAbacus:
+    description: Build and push abacus to local cache
+    steps:
+    - script@1:
+        inputs:
+        - is_debug: 'yes'
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+            # write your script here
+            echo "Pulling Abacus!"
+
+            git clone git@github.com:dydxprotocol/abacus.git || exit 1
+            cd abacus || exit 1
+            git checkout ci || exit 1
+            cd ..
+    - cache-pull@2: {}
+    - script@1:
+        inputs:
+        - content: "#!/usr/bin/env bash\n# fail if any commands fails\nset -e\n# make
+            pipelines' return status equal the last command to exit with a non-zero
+            status, or zero if all commands exit successfully\nset -o pipefail\n#
+            debug log\nset -x\n\ncd abacus \ngit checkout ci\n./gradlew publishJvmPublicationToMavenLocal"
+    - cache-push@2: {}
+    envs:
+    - ABACUS_GIT_REPO_URL: git@github.com:dydxprotocol/abacus.git
+      opts:
+        is_expand: false
+  _buildAbacusIfRequired:
+    description: Build and push abacus to local cache
+    steps:
+    - git-clone@8:
+        inputs:
+        - clone_depth: '1'
+        - commit: ''
+        - repository_url: "$ABACUS_GIT_REPO_URL"
+        - clone_into_dir: "$BITRISE_SOURCE_DIR/abacus"
+        - update_submodules: 'no'
+        - branch: ci
+    - cache-pull@2: {}
+    - script@1:
+        inputs:
+        - is_debug: 'yes'
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            # set -o pipefail
+            # debug log
+            set -x
+
+            cd abacus
+
+            ABACUS_VERSION="1.0.2"
+
+            mvn dependency:go-offline
+
+            DEP=$(./gradlew --console plain -q v4:app:dependencyInsight --configuration debugAndroidTestCompileClasspath --dependency "exchange.dydx.abacus:abacus-jvm:1.0.2")
+
+            [[ ! -z "$DEP" ]] && echo "Found artifact" && exit 0 || echo "Did not find artifact"
+
+            #./gradlew publishJvmPublicationToMavenLocal
+
+            DEP=$(./gradlew --console plain -q v4:app:dependencyInsight --configuration debugAndroidTestCompileClasspath --dependency "exchange.dydx.abacus:abacus-jvm:1.0.2")
+
+            [[ ! -z "$DEP" ]] && echo "Found artifact after build" && exit 0 || echo "Did not find artifact after build" && exit 1
+    - cache-push@2: {}
+    envs:
+    - ABACUS_GIT_REPO_URL: git@github.com:dydxprotocol/abacus.git
+      opts:
+        is_expand: false
+  _buildApp:
+    description: Build Android app (v4)
+    steps:
+    - set-java-version@1:
+        inputs:
+        - set_java_version: '17'
+    - git-clone@8: {}
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+            # write your script here
+            echo "Pulling Veronica!"
+
+            cd ..
+            git clone git@github.com:dydxprotocol/veronica-v4.git
+
+            # or run a script from your repository, like:
+            # bash ./path/to/script.sh
+            # not just bash, e.g.:
+            # ruby ./path/to/script.rb
+        title: Script (Pulling Veronica)
+    - cache-pull@2: {}
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: "$PROJECT_LOCATION/gradlew"
+    - android-lint@0:
+        inputs:
+        - project_location: "$PROJECT_LOCATION"
+        - module: "$MODULE"
+        - variant: "$VARIANT"
+    - android-unit-test@1:
+        inputs:
+        - project_location: "$PROJECT_LOCATION"
+        - module: "$MODULE"
+        - variant: "$VARIANT"
+    - android-build@1:
+        inputs:
+        - project_location: "$PROJECT_LOCATION"
+        - module: "$MODULE"
+        - app_path_pattern: |-
+            */v4/app/build/outputs/apk/*.apk
+            */v4/app/build/outputs/bundle/*.aab
+        - variant: "$VARIANT"
+    - cache-push@2: {}
+  _withSsh:
+    description: Set up Auth and Env Vars
+    steps:
+    - activate-ssh-key@4: {}
+    - script@1:
+        inputs:
+        - content: |
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # debug log
+            set -x
+
+            envman add --key=DYDX_DATE_MM_DD --value="$(date +"%m-%d")"
+    envs:
+    - ABACUS_GIT_REPO_URL: git@github.com:dydxprotocol/abacus.git
+      opts:
+        is_expand: false
+  build:
+    description: 'Run CI / release build. Triggers based on build/* branches. Artifacts
+      are discarded.
+
+      '
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - _withSsh
+    - _buildApp
+  deploy:
+    description: 'Deploys release build using [Deploy to bitrise.io Step](https://devcenter.bitrise.io/en/getting-started/getting-started-with-android-apps.html#deploying-an-android-app-to-bitrise-io-53056).
+
+      '
+    steps:
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "${BITRISE_SOURCE_DIR}/${MODULE_PATH}/build.gradle"
+    - sign-apk@1:
+        inputs:
+        - use_apk_signer: 'true'
+        - output_name: dydx_${ANDROID_VERSION_NAME}_${BITRISE_TRIGGERED_WORKFLOW_TITLE}_${BITRISE_BUILD_NUMBER}
+    - deploy-to-bitrise-io@2: {}
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - build
+  primary:
+    description: |
+      Run on every PR.
+
+      Next steps:
+      - Check out [Getting started with Android apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-android-apps.html).
+    steps:
+    - deploy-to-bitrise-io@2: {}
+    envs:
+    - VARIANT: debug
+      opts:
+        is_expand: false
+    before_run:
+    - _withSsh
+    - _buildApp
+  release:
+    description: 'Official Release Workflow (protected by PR)
+
+      '
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - deploy
+    steps:
+    - git-tag@1:
+        inputs:
+        - tag_message: |-
+            $BITRISE_PUBLIC_INSTALL_PAGE_URL_MAP
+
+            $BITRISE_PERMANENT_DOWNLOAD_URL_MAP
+        - tag: v${ANDROID_VERSION_NAME} (b${BITRISE_BUILD_NUMBER})
+  testBuildAbacus:
+    description: 'This workflow can be triggered to test the _buildAbacus workflow.
+
+      '
+    envs:
+    - VARIANT: debug
+      opts:
+        is_expand: false
+    before_run:
+    - _withSsh
+    - _buildAbacus
+  weekly:
+    description: 'Weekly Build (Friday @ 000 UTC)
+
+      '
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - deploy
+    steps:
+    - git-tag@1:
+        inputs:
+        - tag_message: |-
+            $BITRISE_PUBLIC_INSTALL_PAGE_URL_MAP
+
+            $BITRISE_PERMANENT_DOWNLOAD_URL_MAP
+        - tag: w/${DYDX_DATE_MM_DD} (${BITRISE_BUILD_NUMBER})
+meta:
+  bitrise.io:
+    stack: linux-docker-android-20.04
+    machine_type_id: standard
+app:
+  envs:
+  - PROJECT_LOCATION: "."
+    opts:
+      is_expand: false
+  - opts:
+      is_expand: false
+    MODULE: v4:app
+  - opts:
+      is_expand: false
+    MODULE_PATH: v4/app
+trigger_map:
+- push_branch: releases/*
+  workflow: release
+- push_branch: build/*
+  workflow: build
+- push_branch: deploy/*
+  workflow: deploy
+- pull_request_source_branch: "*"
+  pull_request_target_branch: main
+  workflow: primary

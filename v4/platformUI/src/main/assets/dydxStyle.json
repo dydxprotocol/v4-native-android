@@ -1,0 +1,70 @@
+{
+  "styles": {
+    "default-style": {
+      "_fontSize": "base",
+      "_fontType": "book",
+      "_layerColor": "transparent",
+      "_textColor": "text_secondary"
+    },
+    "table-cell-title-style": {
+      "comment": "table view cell leading title",
+      "_fontSize": "large",
+      "_fontType": "book",
+      "_textColor": "text_secondary"
+    },
+    "table-cell-subtitle-style": {
+      "comment": "table view cell trailing title",
+      "_fontSize": "small",
+      "_fontType": "book",
+      "_textColor": "text_tertiary"
+    },
+    "signed-plus": {
+      "_textColor": "color_green"
+    },
+    "signed-minus": {
+      "_textColor": "color_red"
+    },
+    "signed-plus-layer": {
+      "_layerColor": "#3ED9A433"
+    },
+    "signed-minus-layer": {
+      "_layerColor": "#E4555533"
+    },
+    "side-plus": {
+      "_textColor": "color_green"
+    },
+    "side-minus": {
+      "_textColor": "color_red"
+    },
+    "button-primary": {
+      "_layerColor": "color_purple",
+      "_textColor": "color_white"
+    },
+    "button-secondary": {
+      "_layerColor": "layer_5",
+      "_textColor": "text_primary"
+    },
+    "button-disabled": {
+      "_layerColor": "layer_2",
+      "_textColor": "text_tertiary"
+    },
+    "asset_list_item_24h_volume": {
+      "_fontSize": "small",
+      "_fontType": "book"
+    },
+    "text_tab_group_unselected_item": {
+      "_textColor": "text_tertiary"
+    },
+    "text_tab_group_selected_item": {
+      "_textColor": "text_primary"
+    },
+    "pill_tab_group_unselected_item": {
+      "_textColor": "text_tertiary",
+      "_layerColor": "layer_4"
+    },
+    "pill_tab_group_selected_item": {
+      "_textColor": "text_primary",
+      "_layerColor": "layer_2"
+    }
+  }
+}

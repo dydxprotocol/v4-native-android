@@ -1,0 +1,17 @@
+package exchange.dydx.trading.integration.analytics
+
+import exchange.dydx.abacus.protocols.TrackingProtocol
+import exchange.dydx.abacus.utils.toJson
+
+interface Tracking : TrackingProtocol {
+    override fun log(event: String, data: String?)
+
+    fun log(event: String, data: Map<String, Any?>) {
+        log(event, data.toJson())
+    }
+}
+
+interface CompositeTracking : Tracking {
+    fun addTracker(tracker: Tracking)
+    fun removeTracker(tracker: Tracking)
+}
