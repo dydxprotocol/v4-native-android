@@ -1,0 +1,75 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'exchange.dydx.dydxstatemanager'
+    compileSdk 33
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation project(path: ':v4:common')
+    implementation project(path: ':v4:utilities')
+    implementation project(path: ':v4:integration:cosmos')
+    implementation project(path: ':v4:integration:dydxCartera')
+    implementation project(path: ':v4:integration:analytics')
+
+    testImplementation "junit:junit:$junitVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
+
+
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    kapt "com.google.dagger:dagger-compiler:$hiltVersion"
+
+    // Hilt
+    api "com.google.dagger:dagger:$hiltVersion"
+    implementation "com.google.dagger:hilt-core:$hiltVersion"
+    implementation "com.google.dagger:hilt-android:$hiltVersion"
+    implementation "androidx.hilt:hilt-navigation-compose:$hiltAndroidXVersion"
+
+    //For websocket support
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-java:$ktorVersion")
+    implementation("io.ktor:ktor-utils:$ktorVersion")
+//    implementation "io.ktor:ktor-network-tls-certificates:$ktorVersion"
+
+    implementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
+
+    implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
+
+    // Abacus
+    api "exchange.dydx.abacus:v4-abacus-jvm:$abacusVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "dydxprotocol:cartera-android:$carteraVersion"
+
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation("io.github.hoc081098:FlowExt:$flowExtVersion")
+}

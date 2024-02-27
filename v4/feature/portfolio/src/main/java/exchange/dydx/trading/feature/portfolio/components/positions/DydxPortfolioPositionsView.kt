@@ -1,0 +1,136 @@
+package exchange.dydx.trading.feature.portfolio.components.positions
+
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeFont
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.platformui.designSystem.theme.themeFont
+import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
+import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.ListContent
+import exchange.dydx.trading.feature.shared.viewstate.SharedMarketPositionViewState
+
+@Preview
+@Composable
+fun Preview_DydxPortfolioPositionsView() {
+    DydxThemedPreviewSurface {
+        LazyColumn {
+            ListContent(this, Modifier, DydxPortfolioPositionsView.ViewState.preview)
+        }
+    }
+}
+
+object DydxPortfolioPositionsView : DydxComponent {
+    data class ViewState(
+        val localizer: LocalizerProtocol,
+        val positions: List<SharedMarketPositionViewState> = listOf(),
+        val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
+    ) {
+        companion object {
+            val preview = ViewState(
+                localizer = MockLocalizer(),
+                positions = listOf(
+                    SharedMarketPositionViewState.preview,
+                    SharedMarketPositionViewState.preview,
+                ),
+            )
+        }
+    }
+
+    @Composable
+    override fun Content(modifier: Modifier) {
+        val viewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
+
+        val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        LazyColumn {
+            ListContent(this, modifier, state)
+        }
+    }
+
+    fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
+        if (state == null) return
+
+        scope.item(key = "header") {
+            CreateHeader(modifier, state)
+        }
+
+        if (state.positions.isEmpty()) {
+            scope.item(key = "placeholder") {
+                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 32.dp))
+            }
+        } else {
+            scope.items(items = state.positions, key = { it.id }) { position ->
+                if (position === state.positions.first()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                DydxPortfolioPositionItemView.Content(
+                    modifier = modifier,
+                    position = position,
+                    onTapAction = state.onPositionTapAction,
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateHeader(modifier: Modifier, state: ViewState) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = ThemeShapes.HorizontalPadding * 2),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = state.localizer.localize("APP.GENERAL.DETAILS"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = state.localizer.localize("APP.GENERAL.INDEX_ENTRY"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+
+            Row(
+                modifier = Modifier.width(80.dp),
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.PROFIT_AND_LOSS"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+            }
+        }
+    }
+}

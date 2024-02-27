@@ -1,0 +1,113 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdk parent.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion parent.minSdkVersion
+        targetSdkVersion parent.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "$composeCompilerVersion"
+    }
+    namespace 'exchange.dydx.trading.feature.trade'
+}
+
+dependencies {
+
+    /* Module Dependencies */
+
+    implementation project(':v4:common')
+    implementation project(path: ':v4:utilities')
+    implementation project(path: ':v4:integration:dydxStateManager')
+    implementation project(path: ':v4:platformUI')
+    implementation project(path: ':v4:feature:shared')
+    implementation project(path: ':v4:feature:receipt')
+
+    /* Local Dependencies */
+
+    api "exchange.dydx.abacus:v4-abacus-jvm:$abacusVersion"
+
+    implementation "androidx.compose.foundation:foundation:$composeVersion"
+    api "androidx.compose.runtime:runtime:$composeVersion"
+    implementation "androidx.compose.ui:ui-graphics:$composeVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+
+    // Add non-standard deps above. Deps added below this line may be periodically overwritten
+    /* Standard Dependencies */
+
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+
+
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    kapt "com.google.dagger:dagger-compiler:$hiltVersion"
+
+    // Hilt
+    api "com.google.dagger:dagger:$hiltVersion"
+    implementation "com.google.dagger:hilt-core:$hiltVersion"
+    api "com.google.dagger:hilt-android:$hiltVersion"
+    implementation "androidx.hilt:hilt-navigation-compose:$hiltAndroidXVersion"
+
+    // Compose
+    api "androidx.compose.runtime:runtime:$composeVersion"
+
+    implementation "androidx.compose.foundation:foundation-layout:$composeVersion"
+    api "androidx.compose.ui:ui:$composeVersion"
+    api "androidx.compose.ui:ui-text:$composeVersion"
+    implementation "androidx.compose.ui:ui-unit:$composeVersion"
+    implementation "androidx.compose.material:material:$composeVersion"
+    implementation "androidx.compose.material3:material3:$material3Version"
+
+    //Lifecycle
+    api "androidx.lifecycle:lifecycle-viewmodel:$archLifecycleVersion"
+//    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
+
+    //Logging
+    implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    // Compose Tooling
+    implementation "androidx.compose.ui:ui-tooling-preview:$composeVersion"
+    debugImplementation "androidx.compose.ui:ui-tooling:$composeVersion"
+    debugRuntimeOnly "androidx.compose.ui:ui-test-manifest:$composeVersion"
+    debugImplementation "androidx.customview:customview:$customviewVersion"
+    debugImplementation "androidx.customview:customview-poolingcontainer:$customviewPoolingVersion"
+
+    // Testing
+    testImplementation "junit:junit:$junitVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
+
+    implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
+}

@@ -1,0 +1,38 @@
+[
+    {
+        "title":"Dev Testing",
+        "input":"1",
+        "fields":[
+            {
+                "title":{
+                    "text":"Deployment Config"
+                },
+                "field":{
+                    "field":"deployment_url",
+                    "optional":true,
+                    "type" : "text"
+                }
+            },
+            {
+                "title":{
+                    "text":"Force Mainnet"
+                },
+                "field":{
+                    "field":"force_mainnet",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]

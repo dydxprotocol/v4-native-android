@@ -1,0 +1,46 @@
+[
+    {
+        "input":"1",
+        "fields":[
+            {
+                "title":{
+                    "text":"General"
+                },
+                "subtitle":{
+                    "text":"New markets, newsletters, product updates, and more."
+                },
+                "field":{
+                    "field":"notifications_general",
+                    "optional":true,
+                    "type" : "bool"
+                }
+            },
+            {
+                "title":{
+                    "text":"Account"
+                },
+                "subtitle":{
+                    "text":"Deposits, withdrawals, and other important account changes."
+                },
+                "field":{
+                    "field":"notifications_account",
+                    "optional":true,
+                    "type" : "bool"
+                }
+            },
+            {
+                "title":{
+                    "text":"Trading"
+                },
+                "subtitle":{
+                    "text":"Order updates, liquidation warnings, funding payments."
+                },
+                "field":{
+                    "field":"notifications_account",
+                    "optional":true,
+                    "type" : "bool"
+                }
+            }
+        ]
+    }
+]

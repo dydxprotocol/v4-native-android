@@ -1,0 +1,91 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'kotlin-kapt'
+}
+
+def apikeyPropertiesFile= rootProject.file("cosmos.properties.local")
+if (!apikeyPropertiesFile.exists()) {
+    apikeyPropertiesFile = rootProject.file("cosmos.properties")
+}
+
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
+android {
+    namespace 'exchange.dydx.trading.integration.cosmos'
+    compileSdk parent.compileSdkVersion
+    defaultConfig {
+        minSdkVersion parent.minSdkVersion
+        targetSdkVersion parent.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField("String", "COSMOS_QR_PAYLOAD", apikeyProperties['COSMOS_QR_PAYLOAD'])
+        buildConfigField("String", "COSMOS_QR_PAYLOAD_KEY", apikeyProperties['COSMOS_QR_PAYLOAD_KEY'])
+        buildConfigField("String", "COSMOS_CHAIN_ID", apikeyProperties['COSMOS_CHAIN_ID'])
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        compose true
+        buildConfig true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "$composeCompilerVersion"
+    }
+}
+
+dependencies {
+
+    /* Module Dependencies */
+    implementation project(':v4:common')
+    api project(':v4:integration:javascript')
+    api project(':v4:integration:starkex')
+
+    /* Local Dependencies */
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+
+    // Add non-standard deps above. Deps added below this line may be periodically overwritten
+    /* Standard Deps */
+
+    //Lifecycle
+    api "androidx.lifecycle:lifecycle-viewmodel:$archLifecycleVersion"
+    debugImplementation "androidx.lifecycle:lifecycle-common:$archLifecycleVersion"
+
+    //Logging
+    implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    // Testing
+    testImplementation "junit:junit:$junitVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
+
+
+    androidTestImplementation "com.kaspersky.android-components:kaspresso:$kaspressoVersion"
+    // Allure support
+//    androidTestImplementation "com.kaspersky.android-components:kaspresso-allure-support:$kaspressoVersion"
+    // Jetpack Compose support
+    androidTestImplementation "com.kaspersky.android-components:kaspresso-compose-support:$kaspressoVersion"
+    // https://stackoverflow.com/questions/73348523/java-lang-nosuchmethoderror-no-static-method-for-jetpack-composable
+    implementation "androidx.tracing:tracing:$androidXTracingVersion"
+
+
+}

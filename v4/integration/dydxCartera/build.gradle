@@ -1,0 +1,47 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'exchange.dydx.dydxcartera'
+    compileSdk 33
+
+    defaultConfig {
+        minSdkVersion parent.minSdkVersion
+        targetSdkVersion parent.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':v4:integration:cosmos')
+    implementation project(path: ':v4:utilities')
+
+    testImplementation "junit:junit:$junitVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+
+    implementation "dydxprotocol:cartera-android:$carteraVersion"
+    api "exchange.dydx.abacus:v4-abacus-jvm:$abacusVersion"
+}
