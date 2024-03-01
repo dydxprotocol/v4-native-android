@@ -50,15 +50,14 @@ class DydxProfileBalancesViewModel @Inject constructor(
             nativeTokenLogoUrl = abacusStateManager.nativeTokenLogoUrl,
             walletAmount = walletAmount,
             stakedAmount = stakedAmount,
-            totalAmount = walletAmount?.let { walletAmount.toDoubleOrNull() }
-                ?.plus(stakedAmount?.toDoubleOrNull() ?: 0.0)
-                ?.let {
-                    if (it == 0.0) {
-                        null
-                    } else {
-                        formatter.localFormatted(it, decimal)
-                    }
-                },
+            totalAmount = if (walletAmount != null || stakedAmount != null) {
+                formatter.localFormatted(
+                    (walletAmount?.toDoubleOrNull() ?: 0.0) + (stakedAmount?.toDoubleOrNull() ?: 0.0),
+                    decimal
+                )
+            } else {
+                null
+            },
         )
     }
 }
