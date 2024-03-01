@@ -3,8 +3,8 @@ package exchange.dydx.trading.feature.profile.components
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.dydxstatemanager.AbacusState
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.dydxTokenInfo
 import exchange.dydx.dydxstatemanager.nativeTokenLogoUrl
 import exchange.dydx.dydxstatemanager.nativeTokenName
 import exchange.dydx.trading.common.DydxViewModel
@@ -25,21 +25,22 @@ class DydxProfileBalancesViewModel @Inject constructor(
 
     val state: Flow<DydxProfileBalancesView.ViewState?> =
         combine(
-            abacusStateManager.state.accountBalance(AbacusState.NativeTokenDenom.DYDX),
-            abacusStateManager.state.stakingBalance(AbacusState.NativeTokenDenom.DYDX),
+            abacusStateManager.state.accountBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
+            abacusStateManager.state.stakingBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
         ) { accountBalance, stakingBalance ->
             createViewState(accountBalance, stakingBalance)
         }
             .distinctUntilChanged()
 
     private fun createViewState(accountBalance: Double?, stakingBalance: Double?): DydxProfileBalancesView.ViewState {
+        val decimal = 4
         val walletAmount = if (accountBalance != null) {
-            formatter.localFormatted(accountBalance, 4)
+            formatter.localFormatted(accountBalance, decimal)
         } else {
             null
         }
         val stakedAmount = if (stakingBalance != null) {
-            formatter.localFormatted(stakingBalance, 4)
+            formatter.localFormatted(stakingBalance, decimal)
         } else {
             null
         }
@@ -49,6 +50,15 @@ class DydxProfileBalancesViewModel @Inject constructor(
             nativeTokenLogoUrl = abacusStateManager.nativeTokenLogoUrl,
             walletAmount = walletAmount,
             stakedAmount = stakedAmount,
+            totalAmount = walletAmount?.let { walletAmount.toDoubleOrNull() }
+                ?.plus(stakedAmount?.toDoubleOrNull() ?: 0.0)
+                ?.let {
+                    if (it == 0.0) {
+                        null
+                    } else {
+                        formatter.localFormatted(it, decimal)
+                    }
+                },
         )
     }
 }

@@ -3,10 +3,10 @@ package exchange.dydx.trading.feature.workers.globalworkers
 import android.util.Log
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson
-import exchange.dydx.dydxstatemanager.AbacusState
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.usdcTokenDecimal
+import exchange.dydx.dydxstatemanager.usdcTokenInfo
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
@@ -38,7 +38,7 @@ class DydxTransferSubaccountWorker(
             isStarted = true
 
             combine(
-                abacusStateManager.state.accountBalance(AbacusState.NativeTokenDenom.USDC)
+                abacusStateManager.state.accountBalance(abacusStateManager.environment?.usdcTokenInfo?.denom)
                     .filter { balance ->
                         balance != null && balance > balanceRetainAmount
                     },

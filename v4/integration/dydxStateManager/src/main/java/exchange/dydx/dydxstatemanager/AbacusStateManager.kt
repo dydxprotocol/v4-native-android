@@ -25,6 +25,7 @@ import exchange.dydx.abacus.state.manager.AsyncAbacusStateManager
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.abacus.state.manager.OrderbookGrouping
+import exchange.dydx.abacus.state.manager.TokenInfo
 import exchange.dydx.abacus.state.manager.V4Environment
 import exchange.dydx.abacus.state.model.ClosePositionInputField
 import exchange.dydx.abacus.state.model.TradeInputField
@@ -451,3 +452,9 @@ class AbacusStateManager @Inject constructor(
         )
     }
 }
+
+val V4Environment.usdcTokenInfo: TokenInfo?
+    get() = tokens["usdc"]
+
+val V4Environment.dydxTokenInfo: TokenInfo?
+    get() = tokens["chain"]
