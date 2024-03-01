@@ -90,17 +90,15 @@ object DydxTradeStatusHeaderView : DydxComponent {
                         )
                     }
                     StatusIcon.Pending -> {
-                        PlatformImage(
-                            modifier = Modifier
-                                .size(36.dp),
-                            icon = R.drawable.icon_search,
+                        PlatformIndeterminateProgress(
+                            size = 36.dp,
                         )
                     }
                     StatusIcon.Open -> {
                         PlatformImage(
                             modifier = Modifier
                                 .size(36.dp),
-                            icon = R.drawable.icon_search,
+                            icon = R.drawable.status_complete,
                         )
                     }
                     StatusIcon.Filled -> {

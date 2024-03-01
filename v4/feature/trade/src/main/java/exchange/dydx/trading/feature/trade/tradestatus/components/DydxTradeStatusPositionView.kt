@@ -132,7 +132,7 @@ object DydxTradeStatusPositionView : DydxComponent {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(81.dp)
-                    .background(ThemeColor.SemanticColor.layer_4.color, shape)
+                    .background(ThemeColor.SemanticColor.layer_3.color, shape)
                     .clip(shape),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
