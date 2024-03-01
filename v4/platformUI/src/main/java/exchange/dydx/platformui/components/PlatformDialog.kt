@@ -2,13 +2,18 @@ package exchange.dydx.platformui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import exchange.dydx.platformui.components.buttons.PlatformButton
@@ -27,6 +32,8 @@ fun PlatformDialogScaffold(
     val openAlertDialog = dialog.showing.collectAsState().value
 
     val textEntry = remember { mutableStateOf("") }
+
+    val focusRequester = remember { FocusRequester() }
 
     val icon = dialog.icon
     if (openAlertDialog) {
@@ -61,11 +68,15 @@ fun PlatformDialogScaffold(
 
                     if (dialog.type == PlatformDialogType.TextEntry) {
                         TextField(
+                            modifier = Modifier.focusRequester(focusRequester),
                             value = textEntry.value,
                             maxLines = 1,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(fontSize = ThemeFont.FontSize.small)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = ThemeColor.SemanticColor.layer_4.color,
+                            ),
                             onValueChange = {
                                 textEntry.value = it
                             },
@@ -107,6 +118,12 @@ fun PlatformDialogScaffold(
                 }
             },
         )
+
+        if (dialog.type == PlatformDialogType.TextEntry) {
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+        }
     }
 }
 
