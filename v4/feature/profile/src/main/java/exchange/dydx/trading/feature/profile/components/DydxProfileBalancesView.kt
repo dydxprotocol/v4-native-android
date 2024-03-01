@@ -191,11 +191,13 @@ object DydxProfileBalancesView : DydxComponent {
             )
 
             Text(
-                text = state.totalAmount ?: "",
+                text = state.totalAmount ?: "-",
                 style = TextStyle.dydxDefault
                     .themeColor(ThemeColor.SemanticColor.text_primary)
                     .themeFont(fontSize = ThemeFont.FontSize.small),
             )
+
+            Spacer(modifier = Modifier.width(8.dp))
 
             Text(
                 text = state.nativeTokenName ?: "",

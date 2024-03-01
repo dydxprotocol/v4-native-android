@@ -186,25 +186,20 @@ class AbacusState @Inject constructor(
      Account balances (wallet balances)
      **/
 
-    enum class NativeTokenDenom(val rawValue: String) {
-        USDC("ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5"),
-        DYDX("dv4tnt"),
-    }
-
-    fun accountBalance(tokenDenom: NativeTokenDenom): Flow<Double?> {
+    fun accountBalance(tokenDenom: String?): Flow<Double?> {
         return statePublisher
             .map { state: PerpetualState? ->
-                state?.account?.balances?.get(tokenDenom.rawValue)?.amount?.toDoubleOrNull()
+                state?.account?.balances?.get(tokenDenom)?.amount?.toDoubleOrNull()
             }
             .distinctUntilChanged()
             .flowOn(Dispatchers.Default)
             .shareIn(stateManagerScope, SharingStarted.Lazily, 1)
     }
 
-    fun stakingBalance(tokenDenom: NativeTokenDenom): Flow<Double?> {
+    fun stakingBalance(tokenDenom: String?): Flow<Double?> {
         return statePublisher
             .map { state: PerpetualState? ->
-                state?.account?.stakingBalances?.get(tokenDenom.rawValue)?.amount?.toDoubleOrNull()
+                state?.account?.stakingBalances?.get(tokenDenom)?.amount?.toDoubleOrNull()
             }
             .distinctUntilChanged()
             .flowOn(Dispatchers.Default)

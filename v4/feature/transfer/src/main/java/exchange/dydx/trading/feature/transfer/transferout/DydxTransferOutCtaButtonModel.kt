@@ -9,11 +9,12 @@ import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.dydxstatemanager.AbacusState
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
+import exchange.dydx.dydxstatemanager.dydxTokenInfo
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.dydxstatemanager.nativeTokenKey
+import exchange.dydx.dydxstatemanager.usdcTokenInfo
 import exchange.dydx.dydxstatemanager.usdcTokenKey
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -129,8 +130,8 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
         transferInput: TransferInput,
     ) {
         combine(
-            abacusStateManager.state.accountBalance(AbacusState.NativeTokenDenom.DYDX),
-            abacusStateManager.state.accountBalance(AbacusState.NativeTokenDenom.USDC),
+            abacusStateManager.state.accountBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
+            abacusStateManager.state.accountBalance(abacusStateManager.environment?.usdcTokenInfo?.denom),
             abacusStateManager.state.currentWallet.mapNotNull { it },
             abacusStateManager.state.selectedSubaccount.mapNotNull { it },
         ) { dydxTokenAmount, usdcTokenAmount, wallet, selectedSubaccount ->

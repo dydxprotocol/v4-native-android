@@ -115,9 +115,9 @@ class DydxPortfolioChartViewModel @Inject constructor(
             localizer = localizer,
             config = config,
             chartData = dataset,
-            positive,
+            positive = positive,
             resolutionTitles = resolutionTitles,
-            resolutionIndex,
+            resolutionIndex = resolutionIndex,
             onResolutionChanged = { index ->
                 resolutionTitles.getOrNull(index)?.let {
                     this.resolutionIndex.value = index
