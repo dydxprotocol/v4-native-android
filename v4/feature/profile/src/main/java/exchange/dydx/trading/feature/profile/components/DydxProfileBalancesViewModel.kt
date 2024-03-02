@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.dydxTokenInfo
+import exchange.dydx.dydxstatemanager.nativeTokenDenom
 import exchange.dydx.dydxstatemanager.nativeTokenLogoUrl
 import exchange.dydx.dydxstatemanager.nativeTokenName
 import exchange.dydx.trading.common.DydxViewModel
@@ -25,8 +26,8 @@ class DydxProfileBalancesViewModel @Inject constructor(
 
     val state: Flow<DydxProfileBalancesView.ViewState?> =
         combine(
-            abacusStateManager.state.accountBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
-            abacusStateManager.state.stakingBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
+            abacusStateManager.state.accountBalance(abacusStateManager.nativeTokenDenom),
+            abacusStateManager.state.stakingBalance(abacusStateManager.nativeTokenDenom),
         ) { accountBalance, stakingBalance ->
             createViewState(accountBalance, stakingBalance)
         }

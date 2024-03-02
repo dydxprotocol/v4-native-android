@@ -23,3 +23,9 @@ val AbacusStateManagerProtocol.usdcTokenDecimal: Int
 
 val AbacusStateManagerProtocol.nativeTokenDecimal: Int
     get() = environment?.tokens?.toMap()?.get(nativeTokenKey)?.decimals ?: 18
+
+val AbacusStateManagerProtocol.usdcTokenDenom: String?
+    get() = environment?.tokens?.toMap()?.get(usdcTokenKey)?.denom
+
+val AbacusStateManagerProtocol.nativeTokenDenom: String?
+    get() = environment?.tokens?.toMap()?.get(nativeTokenKey)?.denom

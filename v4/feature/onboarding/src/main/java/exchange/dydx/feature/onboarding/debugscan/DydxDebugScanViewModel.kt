@@ -21,7 +21,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DydxDebugScanViewModel @Inject constructor(
-    val appConfig: AppConfig,
     val router: DydxRouter,
     val cosmosV4Client: CosmosV4WebviewClientProtocol,
     val parser: ParserProtocol,

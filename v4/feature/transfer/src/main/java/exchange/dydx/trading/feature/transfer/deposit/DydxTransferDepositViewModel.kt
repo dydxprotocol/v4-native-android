@@ -83,6 +83,9 @@ class DydxTransferDepositViewModel @Inject constructor(
             val chainRpc = resources.chainResources?.get(chain)?.rpc ?: return@combine null
             val tokenResource = resources.tokenResources?.get(token) ?: return@combine null
             val tokenDecimals = tokenResource.decimals ?: return@combine null
+            if (ethereumAddress.isNullOrEmpty()) {
+                return@combine null
+            }
             fetchTokenAmount(chainRpc, token, tokenDecimals, ethereumAddress)
         }
             .launchIn(viewModelScope)

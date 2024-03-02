@@ -74,7 +74,7 @@ class DydxDesktopScanViewModel @Inject constructor(
                 val cosmosAddress = parser.asString(map["cosmosAddress"])
                 if (mnemonic != null && cosmosAddress != null) {
                     abacusStateManager.setV4(
-                        ethereumAddress = cosmosAddress,
+                        ethereumAddress = "",
                         mnemonic = mnemonic,
                         cosmosAddress = cosmosAddress,
                         walletId = null,

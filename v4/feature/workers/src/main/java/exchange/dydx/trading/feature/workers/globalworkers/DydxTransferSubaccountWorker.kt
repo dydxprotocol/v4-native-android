@@ -6,6 +6,7 @@ import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.usdcTokenDecimal
+import exchange.dydx.dydxstatemanager.usdcTokenDenom
 import exchange.dydx.dydxstatemanager.usdcTokenInfo
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.integration.analytics.Tracking
@@ -38,7 +39,7 @@ class DydxTransferSubaccountWorker(
             isStarted = true
 
             combine(
-                abacusStateManager.state.accountBalance(abacusStateManager.environment?.usdcTokenInfo?.denom)
+                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
                     .filter { balance ->
                         balance != null && balance > balanceRetainAmount
                     },
