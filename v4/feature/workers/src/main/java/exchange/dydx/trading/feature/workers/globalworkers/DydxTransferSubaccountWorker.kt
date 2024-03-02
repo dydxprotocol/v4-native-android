@@ -7,7 +7,6 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.usdcTokenDecimal
 import exchange.dydx.dydxstatemanager.usdcTokenDenom
-import exchange.dydx.dydxstatemanager.usdcTokenInfo
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol

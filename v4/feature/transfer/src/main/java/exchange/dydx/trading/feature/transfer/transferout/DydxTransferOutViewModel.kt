@@ -9,7 +9,6 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.dydxTokenInfo
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.dydxstatemanager.nativeTokenDenom
 import exchange.dydx.dydxstatemanager.nativeTokenKey

@@ -13,6 +13,7 @@ import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
@@ -52,8 +53,9 @@ class DydxTransferDepositViewModel @Inject constructor(
             selectedChainFlow,
             selectedTokenFlow,
             tokenAmountFLow,
-        ) { transferInput, selectedChain, selectedToken, tokenMaxAmount ->
-            createViewState(transferInput, selectedChain, selectedToken, tokenMaxAmount)
+            abacusStateManager.state.currentWallet.mapNotNull { it?.ethereumAddress }.distinctUntilChanged(),
+        ) { transferInput, selectedChain, selectedToken, tokenMaxAmount, ethereumAddress ->
+            createViewState(transferInput, selectedChain, selectedToken, tokenMaxAmount, ethereumAddress.isNullOrEmpty())
         }
             .distinctUntilChanged()
 
@@ -123,6 +125,7 @@ class DydxTransferDepositViewModel @Inject constructor(
         chain: SelectionOption?,
         token: SelectionOption?,
         tokenMaxAmount: Double?,
+        showConnectWallet: Boolean,
     ): DydxTransferDepositView.ViewState {
         val tokenAddress = token?.type
         val tokenSymbol = if (tokenAddress != null) {
@@ -222,6 +225,13 @@ class DydxTransferDepositViewModel @Inject constructor(
                     )
                 },
             ),
+            showConnectWallet = showConnectWallet,
+            connectWalletAction = {
+                router.navigateTo(
+                    route = OnboardingRoutes.wallet_list,
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            },
         )
     }
 }

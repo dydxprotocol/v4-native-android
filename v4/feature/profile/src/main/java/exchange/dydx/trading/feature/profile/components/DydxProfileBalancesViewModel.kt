@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.dydxTokenInfo
 import exchange.dydx.dydxstatemanager.nativeTokenDenom
 import exchange.dydx.dydxstatemanager.nativeTokenLogoUrl
 import exchange.dydx.dydxstatemanager.nativeTokenName
@@ -54,7 +53,7 @@ class DydxProfileBalancesViewModel @Inject constructor(
             totalAmount = if (walletAmount != null || stakedAmount != null) {
                 formatter.localFormatted(
                     (walletAmount?.toDoubleOrNull() ?: 0.0) + (stakedAmount?.toDoubleOrNull() ?: 0.0),
-                    decimal
+                    decimal,
                 )
             } else {
                 null

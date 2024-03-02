@@ -8,7 +8,6 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxCartera.v4.DydxV4WalletSetup
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
