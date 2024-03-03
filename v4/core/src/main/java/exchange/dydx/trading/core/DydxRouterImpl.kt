@@ -171,11 +171,11 @@ class DydxRouterImpl(
     ): List<NavDeepLink> {
         val baseLinks = dydxUris.map { uri -> "$uri/$destination" }
 
-        var links = baseLinks.map { uri -> navDeepLink { uriPattern = "$uri?$param={$param}" } }
-        if (isPath) {
-            links = links + baseLinks.map { uri -> navDeepLink { uriPattern = "$uri/{$param}" } }
+        return if (isPath) {
+            baseLinks.map { uri -> navDeepLink { uriPattern = "$uri/{$param}" } }
+        } else {
+            baseLinks.map { uri -> navDeepLink { uriPattern = "$uri?$param={$param}" } }
         }
-        return links
     }
 
     private fun routePath(route: String): String {

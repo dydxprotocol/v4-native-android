@@ -29,7 +29,13 @@ fun NavGraphBuilder.loginGraph(
 
     dydxComposable(
         router = appRouter,
-        route = OnboardingRoutes.wallet_list,
+        route = OnboardingRoutes.wallet_list + "?mobileOnly={mobileOnly}",
+        arguments = listOf(
+            navArgument("mobileOnly") {
+                type = NavType.BoolType
+                defaultValue = false
+            },
+        ),
         deepLinks = appRouter.deeplinks(OnboardingRoutes.wallet_list),
     ) { nbse ->
         DydxWalletListView.Content(Modifier)

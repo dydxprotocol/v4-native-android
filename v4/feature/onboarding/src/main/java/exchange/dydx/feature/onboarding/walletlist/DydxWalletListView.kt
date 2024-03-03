@@ -101,19 +101,21 @@ object DydxWalletListView : DydxComponent {
                     .fillMaxWidth(),
                 contentPadding = PaddingValues(16.dp),
             ) {
-                item(key = "desktop") {
-                    state?.desktopSync?.let { item ->
+                state?.desktopSync?.let { item ->
+                    item(key = "desktop") {
                         DydxWalletListItemView(item).Content(Modifier)
                     }
                 }
 
-                item(key = "debug") {
-                    state?.debugScan?.let { item ->
+                state?.debugScan?.let { item ->
+                    item(key = "debug") {
                         DydxWalletListItemView(item).Content(Modifier)
                     }
                 }
 
-                item(key = "spacer") { Spacer(modifier = Modifier.height(24.dp)) }
+                if (state?.desktopSync != null || state?.debugScan != null) {
+                    item(key = "spacer") { Spacer(modifier = Modifier.height(24.dp)) }
+                }
 
                 state?.wallets?.let { wallets ->
                     items(items = wallets, key = { it.main }) { wallet ->

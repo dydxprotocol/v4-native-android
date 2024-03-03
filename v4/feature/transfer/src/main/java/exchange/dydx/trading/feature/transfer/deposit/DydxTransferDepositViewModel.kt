@@ -228,7 +228,7 @@ class DydxTransferDepositViewModel @Inject constructor(
             showConnectWallet = showConnectWallet,
             connectWalletAction = {
                 router.navigateTo(
-                    route = OnboardingRoutes.wallet_list,
+                    route = OnboardingRoutes.wallet_list + "?mobileOnly=true",
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },
