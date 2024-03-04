@@ -84,7 +84,7 @@ interface AbacusStateManagerProtocol {
     fun trade(input: String?, type: TradeInputField?)
     fun closePosition(input: String?, type: ClosePositionInputField)
     fun transfer(input: String?, type: TransferInputField?)
-    fun faucet(amount: Int)
+    fun faucet(amount: Int, statusCallback: (SubmissionStatus) -> Unit)
     fun setOrderbookMultiplier(multiplier: OrderbookGrouping)
 
     fun placeOrder(statusCallback: (SubmissionStatus) -> Unit)
@@ -287,10 +287,12 @@ class AbacusStateManager @Inject constructor(
         asyncStateManager.transfer(input, type)
     }
 
-    override fun faucet(amount: Int) {
-        asyncStateManager.faucet(amount.toDouble()) { successful, _, _ ->
-            if (!successful) {
-                // Handle failure
+    override fun faucet(amount: Int, statusCallback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+        asyncStateManager.faucet(amount.toDouble()) { successful, error, _ ->
+            if (successful) {
+                statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Success)
+            } else {
+                statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
             }
         }
     }
