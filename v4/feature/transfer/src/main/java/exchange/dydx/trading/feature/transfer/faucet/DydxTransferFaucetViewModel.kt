@@ -23,12 +23,22 @@ class DydxTransferFaucetViewModel @Inject constructor(
         return DydxTransferFaucetView.ViewState(
             localizer = localizer,
             ctaButtonAction = {
-                abacusStateManager.faucet(100)
-
-                platformInfo.show(
-                    title = "Faucet Request Submitted",
-                    message = "Your portofolio balance will be updated after a short while.",
-                )
+                abacusStateManager.faucet(100) {
+                    when (it) {
+                        is AbacusStateManagerProtocol.SubmissionStatus.Success -> {
+                            platformInfo.show(
+                                title = "Faucet Request Submitted",
+                                message = "Your portofolio balance will be updated after a short while.",
+                            )
+                        }
+                        is AbacusStateManagerProtocol.SubmissionStatus.Failed -> {
+                            platformInfo.show(
+                                title = "Faucet Request Failed",
+                                message = it.error?.message ?: "Unknown error",
+                            )
+                        }
+                    }
+                }
             },
         )
     }

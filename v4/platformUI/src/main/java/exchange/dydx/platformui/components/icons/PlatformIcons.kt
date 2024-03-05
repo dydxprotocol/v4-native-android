@@ -75,7 +75,7 @@ private fun iconModel(icon: Any?): Any? {
 @Composable
 fun PlatformRoundIcon(
     icon: Any?,
-    backgroundColor: ThemeColor.SemanticColor = ThemeColor.SemanticColor.layer_4,
+    backgroundColor: ThemeColor.SemanticColor = ThemeColor.SemanticColor.layer_5,
     borderColor: ThemeColor.SemanticColor = ThemeColor.SemanticColor.transparent,
     iconTint: ThemeColor.SemanticColor? = ThemeColor.SemanticColor.text_primary,
     size: Dp = 60.dp,
