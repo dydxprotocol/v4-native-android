@@ -157,7 +157,11 @@ object DydxBottomBar : DydxComponent {
                     overflow = TextOverflow.Ellipsis,
                 )
             },
-            onClick = { barItem.onTapAction?.invoke() },
+            onClick = {
+                if (!barItem.selected) {
+                    barItem.onTapAction?.invoke()
+                }
+            },
         )
     }
 
