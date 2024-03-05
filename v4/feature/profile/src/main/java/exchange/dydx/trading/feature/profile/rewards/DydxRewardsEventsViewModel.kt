@@ -48,20 +48,34 @@ class DydxRewardsEventsViewModel @Inject constructor(
         selectedPeriod: HistoricalTradingRewardsPeriod
     ): DydxRewardsEventsView.ViewState {
         val selectedIndex = periodsValues.indexOf(selectedPeriod)
-        val selectedPeriod = if (selectedIndex != -1) this.periodsValues[selectedIndex].rawValue else ""
+        val selectedPeriodText = if (selectedIndex != -1) this.periodsValues[selectedIndex].rawValue else ""
+
         return DydxRewardsEventsView.ViewState(
             localizer = localizer,
             title = localizer.localize("APP.GENERAL.TRADING_REWARDS"),
             periods = this.periodsText,
             selectedIndex = selectedIndex,
-            rewards = account?.tradingRewards?.historical?.get(selectedPeriod)?.map { reward ->
+            rewards = account?.tradingRewards?.historical?.get(selectedPeriodText)?.map { reward ->
                 val started = Instant.ofEpochMilli(reward.startedAtInMilliseconds.toLong())
                 val ended = reward.endedAtInMilliseconds.toLong().let {
                     Instant.ofEpochMilli(it)
                 }
+                val startedTimeText = formatter.utcDate(started)
+                val timeText = startedTimeText?.let { start ->
+                    when (selectedPeriod) {
+                        HistoricalTradingRewardsPeriod.DAILY -> start
+                        HistoricalTradingRewardsPeriod.WEEKLY, HistoricalTradingRewardsPeriod.MONTHLY -> {
+                            val endedTimeText = formatter.utcDate(ended.minusSeconds(1))
+                            endedTimeText?.let { end ->
+                                "$start - $end"
+                            } ?: start
+                        }
+                    }
+                }
+
 
                 DydxRewardsEventItemView.ViewState(
-                    timeText = formatter.utcDate(started) ?: "",
+                    timeText = timeText ?: "",
                     amountText = formatter.raw(reward.amount, 6) ?: "",
                     nativeTokenLogoUrl = abacusStateManager.nativeTokenLogoUrl,
                 )
