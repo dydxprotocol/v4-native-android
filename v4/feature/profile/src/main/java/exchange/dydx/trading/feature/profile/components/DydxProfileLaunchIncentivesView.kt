@@ -224,7 +224,6 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 modifier = Modifier
                     .padding(8.dp)
                     .size(100.dp)
-                    .alpha(0.7f)
                     .align(Alignment.CenterEnd),
             )
 
