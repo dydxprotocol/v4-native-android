@@ -51,6 +51,8 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         val localizer: LocalizerProtocol,
         val season: String?,
         val points: String?,
+        val aboutAction: () -> Unit = {},
+        val leaderboardAction: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -160,7 +162,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                     modifier = Modifier
                         .padding(vertical = ThemeShapes.VerticalPadding)
                         .width(120.dp),
-                    action = {},
+                    action = state.aboutAction,
                 )
 
                 Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
@@ -171,7 +173,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                     modifier = Modifier
                         .padding(vertical = ThemeShapes.VerticalPadding)
                         .weight(1f),
-                    action = {},
+                    action = state.leaderboardAction,
                 )
             }
         }

@@ -8,6 +8,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -18,6 +19,7 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
     val state: Flow<DydxProfileLaunchIncentivesView.ViewState?> =
         combine(
@@ -35,6 +37,12 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
             localizer = localizer,
             season = season,
             points = points,
+            aboutAction = {
+                router.navigateTo("https://dydx.exchange/blog/v4-full-trading")
+            },
+            leaderboardAction = {
+                router.navigateTo("https://community.chaoslabs.xyz/dydx-v4/risk/leaderboard")
+            },
         )
     }
 }
