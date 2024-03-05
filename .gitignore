@@ -22,6 +22,7 @@
 **/build/spotless
 **/build/test-results
 **/build/tmp
+**/build/gmpAppId.txt
 **/build/reports/*
 !**/build/reports/lint-results-debug.txt
 captures

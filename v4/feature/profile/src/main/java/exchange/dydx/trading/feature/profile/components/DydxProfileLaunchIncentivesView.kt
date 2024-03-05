@@ -1,19 +1,27 @@
 package exchange.dydx.trading.feature.profile.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,9 +32,11 @@ import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
+import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.designSystem.theme.isLightTheme
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
@@ -78,7 +88,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         Column(
             modifier = modifier
                 .background(
-                    color = exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.layer_3.color,
+                    color = ThemeColor.SemanticColor.layer_3.color,
                     shape = RoundedCornerShape(14.dp),
                 )
                 .padding(vertical = ThemeShapes.VerticalPadding),
@@ -187,46 +197,76 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         points: String?,
     ) {
         val seasonText = localizer.localize("APP.LEAGUES.SEASON")
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(
-                    color = ThemeColor.SemanticColor.layer_4.color,
-                    shape = RoundedCornerShape(10.dp),
-                )
-                .padding(16.dp),
+        val clipShape = RoundedCornerShape(10.dp)
+        Box(
+            modifier = modifier.fillMaxWidth()
+                .height(150.dp)
+                .clip(clipShape)
+                .border(
+                    width = 1.dp,
+                    color = ThemeColor.SemanticColor.layer_5.color,
+                    shape = clipShape,
+                ),
         ) {
-            Text(
-                text = localizer.localize("APP.PORTFOLIO.ESTIMATED_REWARDS"),
-                style = TextStyle.dydxDefault
-                    .themeColor(ThemeColor.SemanticColor.text_primary)
-                    .themeFont(fontSize = ThemeFont.FontSize.medium),
-            )
-            Text(
-                text = "$seasonText $season",
-                style = TextStyle.dydxDefault
-                    .themeColor(ThemeColor.SemanticColor.text_primary)
-                    .themeFont(fontSize = ThemeFont.FontSize.medium),
+            Image(
+                painterResource(id = R.drawable.texture),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .matchParentSize()
+                    .alpha(if (ThemeSettings.shared.isLightTheme()) 0.2f else 1.0f),
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Image(
+                painterResource(id = R.drawable.stars),
+                contentDescription = "",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(100.dp)
+                    .align(Alignment.CenterEnd),
+            )
 
-            Row {
+            Column(
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(16.dp),
+            ) {
                 Text(
-                    text = points ?: "-",
+                    text = localizer.localize("APP.PORTFOLIO.ESTIMATED_REWARDS"),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
-                        .themeFont(
-                            fontSize = ThemeFont.FontSize.extra,
-                        ),
+                        .themeFont(fontSize = ThemeFont.FontSize.medium),
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = localizer.localize("APP.PORTFOLIO.POINTS"),
+                    text = "$seasonText $season",
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
-                        .themeFont(fontSize = ThemeFont.FontSize.large),
+                        .themeFont(fontSize = ThemeFont.FontSize.medium),
                 )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = points ?: "-",
+                        style = TextStyle.dydxDefault
+                            .themeColor(ThemeColor.SemanticColor.text_primary)
+                            .themeFont(
+                                fontSize = ThemeFont.FontSize.extra,
+                            ),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = localizer.localize("APP.PORTFOLIO.POINTS"),
+                        style = TextStyle.dydxDefault
+                            .themeColor(ThemeColor.SemanticColor.text_primary)
+                            .themeFont(fontSize = ThemeFont.FontSize.large),
+                    )
+                }
             }
         }
     }
