@@ -3,6 +3,7 @@
 .gradle
 /local.properties
 /.idea/caches
+/.idea/copilot
 /.idea/libraries
 /.idea/dictionaries
 /.idea/misc.xml
