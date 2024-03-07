@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -16,6 +17,7 @@ import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.unit.dp
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -31,6 +33,8 @@ fun PlatformTabGroup(
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
+
+    val selectionChangeInProgress = remember { MutableStateFlow(false) }
 
     Row(
         modifier = modifier
@@ -52,7 +56,8 @@ fun PlatformTabGroup(
                             },
                         )
                         .onGloballyPositioned { coordinates ->
-                            if (scrollingEnabled) {
+                            if (scrollingEnabled && selectionChangeInProgress.value) {
+                                selectionChangeInProgress.value = false
                                 val size = coordinates.size
                                 val position = coordinates.positionInParent()
                                 val scrollPosition = scrollState.value
@@ -91,7 +96,12 @@ fun PlatformTabGroup(
                     item(
                         modifier = Modifier
                             .clickable {
-                                onSelectionChanged(index)
+                                if (index != currentSelection) {
+                                    onSelectionChanged(index)
+                                    if (scrollingEnabled) {
+                                        selectionChangeInProgress.value = true
+                                    }
+                                }
                             },
                     )
                 }
