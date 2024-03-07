@@ -1,5 +1,5 @@
 <div align="center">
-  <img src='https://github.com/dydxprotocol/v4-native-android/blob/develop/meta/icon_512.png' alt='icon' />
+  <img src='https://github.com/dydxprotocol/v4-native-android/blob/develop/meta/icon_512.png' alt='icon' style="width:180px;height:180px;"> />
 </div>
 <h1 align="center">v4-native-android</h1>
 
