@@ -14,6 +14,7 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
+import exchange.dydx.trading.integration.analytics.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 
@@ -29,6 +30,7 @@ private const val TAG = "DydxRouterImpl"
 class DydxRouterImpl(
     override var androidContext: Context?,
     private val appConfig: AppConfig,
+    private val tracker: Tracking,
 ) : DydxRouter {
 
     private lateinit var navHostController: NavHostController
@@ -66,6 +68,16 @@ class DydxRouterImpl(
 
             val destinationRoute = destination.route
             if (destinationRoute != null) {
+
+                val trackingData: MutableMap<String, String> = mutableMapOf()
+                destination.arguments.keys.forEach { key ->
+                    trackingData[key] = arguments?.getString(key) ?: ""
+                }
+                tracker.log(
+                    event = destinationRoute,
+                    data = trackingData,
+                )
+
                 if (tabRoutes.contains(destinationRoute)) {
                     routeQueue.clear()
                 }
@@ -85,6 +97,8 @@ class DydxRouterImpl(
                     }
                     pendingPresentation = null
                 }
+            } else {
+                Timber.tag(TAG).w("Destination route is null")
             }
         }
 
