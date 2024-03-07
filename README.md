@@ -13,15 +13,18 @@ This is the native Android app for dYdX v4.
 
 # Quick Setup
 
-> cd scripts
-
-> ./bootstrap.sh
+```zsh
+cd scripts
+./bootstrap.sh
+```
 
 This will set up Android Studio project along with all dependencies.
 
 # Main Repo
 
+```zsh
 git clone git@github.com:dydxprotocol/v4-native-android.git
+```
 
 # Repo Dependencies
 
@@ -61,13 +64,16 @@ Add the `secrets/` folder to the `v4-native-android/scripts` folder.
 
 Copy the content of `secrets.zip` to `v4-native-android/scripts/secrets` and run
 
+```zsh
 cd v4-native-android/scripts
 ./set_secrets.sh
+```
 
 This will apply the secrets to the source code.
 
 # Build Android App
 
+```zsh
 cd v4-native-android
 ./gradlew build
 ./gradlew :v4:app:installDebug
