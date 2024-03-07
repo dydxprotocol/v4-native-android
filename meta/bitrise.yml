@@ -99,6 +99,10 @@ workflows:
     - change-android-versioncode-and-versionname@1:
         inputs:
         - build_gradle_path: "$BITRISE_SOURCE_DIR/v4/app/build.gradle"
+    - change-android-applicationid@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/v4/app/build.gradle"
+        - new_application_id: "$APPLICATION_ID"
     - android-build@1:
         inputs:
         - project_location: "$PROJECT_LOCATION"
@@ -198,6 +202,9 @@ app:
   - opts:
       is_expand: false
     MODULE_PATH: v4/app
+  - opts:
+      is_expand: false
+    APPLICATION_ID: exchange.dydx.trading
 trigger_map:
 - push_branch: releases/*
   workflow: release
