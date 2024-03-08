@@ -175,7 +175,7 @@ workflows:
     - deploy-to-bitrise-io@2: {}
     - google-play-deploy@3:
         inputs:
-        - package_name: exchange.dydx.trading
+        - package_name: "$APPLICATION_ID"
         - track: internal
         - status: draft
         - service_account_json_key_path: "$BITRISEIO_Google_Play_service_account_json_URL"
