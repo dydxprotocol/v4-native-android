@@ -52,6 +52,6 @@ interface DydxRouter {
     fun deeplinksWithParam(
         destination: String,
         param: String,
-        isPath: Boolean = false,
+        isPath: Boolean = true,
     ): List<NavDeepLink>
 }

@@ -9,8 +9,8 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.dydxTokenInfo
 import exchange.dydx.dydxstatemanager.localizedString
+import exchange.dydx.dydxstatemanager.nativeTokenDenom
 import exchange.dydx.dydxstatemanager.nativeTokenKey
 import exchange.dydx.dydxstatemanager.usdcTokenKey
 import exchange.dydx.trading.common.DydxViewModel
@@ -50,7 +50,7 @@ class DydxTransferOutViewModel @Inject constructor(
             abacusStateManager.state.transferInput,
             abacusStateManager.state.selectedSubaccount
                 .map { it?.freeCollateral?.current },
-            abacusStateManager.state.accountBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
+            abacusStateManager.state.accountBalance(abacusStateManager.nativeTokenDenom),
             selectedChainFlow,
             selectedTokenFlow,
         ) { transferInput, freeCollateral, dydxTokenAmount, selectedChain, selectedToken ->

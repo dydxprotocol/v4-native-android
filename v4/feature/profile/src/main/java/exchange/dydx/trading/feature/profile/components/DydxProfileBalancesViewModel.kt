@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.dydxTokenInfo
+import exchange.dydx.dydxstatemanager.nativeTokenDenom
 import exchange.dydx.dydxstatemanager.nativeTokenLogoUrl
 import exchange.dydx.dydxstatemanager.nativeTokenName
 import exchange.dydx.trading.common.DydxViewModel
@@ -25,8 +25,8 @@ class DydxProfileBalancesViewModel @Inject constructor(
 
     val state: Flow<DydxProfileBalancesView.ViewState?> =
         combine(
-            abacusStateManager.state.accountBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
-            abacusStateManager.state.stakingBalance(abacusStateManager.environment?.dydxTokenInfo?.denom),
+            abacusStateManager.state.accountBalance(abacusStateManager.nativeTokenDenom),
+            abacusStateManager.state.stakingBalance(abacusStateManager.nativeTokenDenom),
         ) { accountBalance, stakingBalance ->
             createViewState(accountBalance, stakingBalance)
         }
@@ -50,15 +50,14 @@ class DydxProfileBalancesViewModel @Inject constructor(
             nativeTokenLogoUrl = abacusStateManager.nativeTokenLogoUrl,
             walletAmount = walletAmount,
             stakedAmount = stakedAmount,
-            totalAmount = walletAmount?.let { walletAmount.toDoubleOrNull() }
-                ?.plus(stakedAmount?.toDoubleOrNull() ?: 0.0)
-                ?.let {
-                    if (it == 0.0) {
-                        null
-                    } else {
-                        formatter.localFormatted(it, decimal)
-                    }
-                },
+            totalAmount = if (walletAmount != null || stakedAmount != null) {
+                formatter.localFormatted(
+                    (walletAmount?.toDoubleOrNull() ?: 0.0) + (stakedAmount?.toDoubleOrNull() ?: 0.0),
+                    decimal,
+                )
+            } else {
+                null
+            },
         )
     }
 }

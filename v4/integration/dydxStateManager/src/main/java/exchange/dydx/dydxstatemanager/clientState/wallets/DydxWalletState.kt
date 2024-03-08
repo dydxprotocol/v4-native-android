@@ -42,7 +42,7 @@ class DydxWalletStateManager @Inject constructor(
                 mutableWallets[index] = existingWallet
             }
         } else {
-            mutableWallets = (mutableWallets + listOf(wallet)).toMutableList()
+            mutableWallets = (listOf(wallet) + mutableWallets).toMutableList()
             index = 0
         }
         val newState = DydxWalletState(mutableWallets, null, index)
