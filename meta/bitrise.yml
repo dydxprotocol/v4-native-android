@@ -91,6 +91,10 @@ workflows:
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
+    - change-android-applicationid@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/v4/app/build.gradle"
+        - new_application_id: "$APPLICATION_ID"
     - android-unit-test@1:
         inputs:
         - project_location: "$PROJECT_LOCATION"
@@ -171,7 +175,7 @@ workflows:
     - deploy-to-bitrise-io@2: {}
     - google-play-deploy@3:
         inputs:
-        - package_name: exchange.dydx.trading
+        - package_name: "$APPLICATION_ID"
         - track: internal
         - status: draft
         - service_account_json_key_path: "$BITRISEIO_Google_Play_service_account_json_URL"
@@ -198,6 +202,9 @@ app:
   - opts:
       is_expand: false
     MODULE_PATH: v4/app
+  - opts:
+      is_expand: false
+    APPLICATION_ID: exchange.dydx.trading
 trigger_map:
 - push_branch: releases/*
   workflow: release
