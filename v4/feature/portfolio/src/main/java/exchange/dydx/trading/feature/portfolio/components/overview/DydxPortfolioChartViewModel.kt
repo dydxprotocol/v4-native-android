@@ -104,8 +104,9 @@ class DydxPortfolioChartViewModel @Inject constructor(
                 "PNL",
             )
         } ?: LineChartDataSet(listOf(), "PNL")
-        val positive = (pnls?.lastOrNull()?.equity ?: 0.0) > (pnls?.firstOrNull()?.equity ?: 0.0)
-        val first = pnls?.firstOrNull()?.equity
+        val positive = (pnls?.lastOrNull()?.totalPnl ?: 0.0) > (pnls?.firstOrNull()?.totalPnl ?: 0.0)
+        val firstPnl = pnls?.firstOrNull()?.totalPnl
+        val lastPnl = selectedPnl?.totalPnl ?: pnls?.lastOrNull()?.totalPnl
         val equity = selectedPnl?.equity ?: subaccount?.equity?.current
         val datetimeText = selectedPnl?.createdAtMilliseconds?.let {
             val datetime = Instant.ofEpochMilli(it.toLong())
@@ -136,20 +137,22 @@ class DydxPortfolioChartViewModel @Inject constructor(
                     "PERIOD" to resolutionTitles[resolutionIndex],
                 ),
             ),
-            diffText = first?.let {
-                equity?.let {
-                    val diff = equity - first
+            diffText = if (firstPnl != null && lastPnl != null) {
+                val firstEqulity = pnls?.firstOrNull()?.equity ?: 0.0
+                val diff = lastPnl - firstPnl
 
-                    val diffText = formatter.dollar(diff.absoluteValue, 2)
+                val diffText = formatter.dollar(diff.absoluteValue, 2)
 
-                    val percent = if (first != 0.0) (diff / first) else null
-                    val percentText = if (percent != null) formatter.percent(percent.absoluteValue, 2) else null
-                    SignedAmountView.ViewState(
-                        if (percentText != null) "$diffText ($percentText)" else diffText,
-                        PlatformUISign.from(diff),
-                        coloringOption = SignedAmountView.ColoringOption.AllText,
-                    )
-                }
+                val percent = if (firstEqulity != 0.0) (diff / firstEqulity) else null
+                val percentText =
+                    if (percent != null) formatter.percent(percent.absoluteValue, 2) else null
+                SignedAmountView.ViewState(
+                    if (percentText != null) "$diffText ($percentText)" else diffText,
+                    PlatformUISign.from(diff),
+                    coloringOption = SignedAmountView.ColoringOption.TextOnly,
+                )
+            } else {
+                null
             },
         )
     }
