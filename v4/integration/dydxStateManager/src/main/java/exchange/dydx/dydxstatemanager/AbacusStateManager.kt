@@ -171,7 +171,7 @@ class AbacusStateManager @Inject constructor(
             if (!urlOverride.isNullOrEmpty()) {
                 return urlOverride
             } else {
-                return "https://v4.testnet.dydx.exchange/"
+                return "https://" + context.getString(exchange.dydx.trading.common.R.string.app_web_host)
             }
         }
 
