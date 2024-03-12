@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import exchange.dydx.trading.common.R
 
 interface AbacusStateManagerProtocol {
 
@@ -134,8 +135,8 @@ class AbacusStateManager @Inject constructor(
             deployment = "MAINNET"
             appConfigs = AppConfigs.forApp
         } else {
-            deployment = "DEV"
-            appConfigs = if (BuildConfig.DEBUG) AppConfigs.forAppDebug else AppConfigs.forApp
+            deployment = context.getString(R.string.app_deployment)
+            appConfigs = if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
         }
 
         appConfigs.squidVersion = AppConfigs.SquidVersion.V2
@@ -171,7 +172,7 @@ class AbacusStateManager @Inject constructor(
             if (!urlOverride.isNullOrEmpty()) {
                 return urlOverride
             } else {
-                return "https://" + context.getString(exchange.dydx.trading.common.R.string.app_web_host)
+                return "https://" + context.getString(R.string.app_web_host)
             }
         }
 
