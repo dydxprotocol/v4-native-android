@@ -5,14 +5,20 @@ import android.os.StrictMode
 import com.facebook.stetho.Stetho
 import dagger.hilt.android.HiltAndroidApp
 import exchange.dydx.abacus.jvm.AbacusAndroid
+import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.logger.DydxLogger
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class DydxApplication : Application() {
 
-    private val logger = DydxLogger()
+    // Do not remove - this is used to trigger initialization via Dagger
+    // This is an anti-pattern, do not copy.
+    @Inject lateinit var themeSettings: ThemeSettings
+
+    @Inject lateinit var logger: DydxLogger
 
     override fun onCreate() {
         super.onCreate()
