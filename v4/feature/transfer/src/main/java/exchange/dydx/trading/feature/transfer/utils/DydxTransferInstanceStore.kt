@@ -37,6 +37,7 @@ class DydxTransferInstanceStore(
             usdcSize = parser.asDouble(transferInput.size?.usdcSize),
             size = parser.asDouble(transferInput.size?.size),
             isCctp = transferInput.isCctp,
+            requestId = transferInput.requestPayload?.requestId,
         )
         abacusStateManager.addTransferInstance(transfer)
     }

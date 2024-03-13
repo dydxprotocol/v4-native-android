@@ -79,6 +79,7 @@ data class DydxTransferInstance(
     val usdcSize: Double? = null,
     val size: Double? = null,
     val isCctp: Boolean? = null,
+    val requestId: String? = null,
 ) {
     enum class TransferType {
         DEPOSIT, WITHDRAWAL, TRANSFER_OUT
