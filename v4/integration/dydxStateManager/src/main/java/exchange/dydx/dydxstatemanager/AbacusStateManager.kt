@@ -37,6 +37,7 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateMan
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
 import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsExtensions
+import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
@@ -134,8 +135,8 @@ class AbacusStateManager @Inject constructor(
             deployment = "MAINNET"
             appConfigs = AppConfigs.forApp
         } else {
-            deployment = "DEV"
-            appConfigs = if (BuildConfig.DEBUG) AppConfigs.forAppDebug else AppConfigs.forApp
+            deployment = context.getString(R.string.app_deployment)
+            appConfigs = if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
         }
 
         appConfigs.squidVersion = AppConfigs.SquidVersion.V2
@@ -171,7 +172,7 @@ class AbacusStateManager @Inject constructor(
             if (!urlOverride.isNullOrEmpty()) {
                 return urlOverride
             } else {
-                return "https://" + context.getString(exchange.dydx.trading.common.R.string.app_web_host)
+                return "https://" + context.getString(R.string.app_web_host)
             }
         }
 
