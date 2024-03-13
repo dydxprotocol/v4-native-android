@@ -13,8 +13,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AbacusRestImp : RestProtocol {
+@Singleton
+class AbacusRestImp @Inject constructor() : RestProtocol {
 
     private val TAG = "AbacusRestImp"
 

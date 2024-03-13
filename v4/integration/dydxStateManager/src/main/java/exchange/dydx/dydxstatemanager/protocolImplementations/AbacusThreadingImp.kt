@@ -7,9 +7,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 @OptIn(ExperimentalCoroutinesApi::class)
-class AbacusThreadingImp : ThreadingProtocol {
+class AbacusThreadingImp @Inject constructor() : ThreadingProtocol {
     private val mainScope = MainScope()
 
     // Abacus runs lots of computations, but needs to be run without parallelism

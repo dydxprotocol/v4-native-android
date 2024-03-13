@@ -4,8 +4,9 @@ import exchange.dydx.abacus.protocols.LocalTimerProtocol
 import exchange.dydx.abacus.protocols.TimerProtocol
 import java.util.Timer
 import java.util.TimerTask
+import javax.inject.Inject
 
-class AbacusTimerImp : TimerProtocol {
+class AbacusTimerImp @Inject constructor() : TimerProtocol {
     override fun schedule(
         delay: Double,
         repeat: Double?,

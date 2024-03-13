@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface DydxWalletStateManagerProtocol {
     val state: StateFlow<DydxWalletState?>
@@ -15,6 +16,7 @@ interface DydxWalletStateManagerProtocol {
     fun replaceWallet()
 }
 
+@Singleton
 class DydxWalletStateManager @Inject constructor(
     private val clientState: DydxClientState,
 ) : DydxWalletStateManagerProtocol {

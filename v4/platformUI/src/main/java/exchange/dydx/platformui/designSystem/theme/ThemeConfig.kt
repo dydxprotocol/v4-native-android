@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 class ThemeSettings(
     private val context: Context,
-    val sharedPreferences: SharedPreferencesStore,
+    val sharedPreferences: SharedPreferencesStore?,
     val themeConfig: MutableStateFlow<ThemeConfig?> = MutableStateFlow(ThemeConfig.sampleThemeConfig(context)),
     val styleConfig: MutableStateFlow<StyleConfig?> = MutableStateFlow(StyleConfig.sampleStyleConfig(context)),
 ) {
