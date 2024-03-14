@@ -1,13 +1,15 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import exchange.dydx.abacus.protocols.TrackingProtocol
+import exchange.dydx.trading.integration.analytics.CompositeTracking
 import exchange.dydx.trading.integration.analytics.Tracking
+import javax.inject.Inject
 
-class AbacusTrackingImp(
-    private val nativeTracker: Tracking,
+class AbacusTrackingImp @Inject constructor(
+    private val compositeTracking: CompositeTracking,
 ) : TrackingProtocol, Tracking {
 
     override fun log(event: String, data: String?) {
-        nativeTracker.log(event, data)
+        compositeTracking.log(event, data)
     }
 }

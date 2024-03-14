@@ -8,8 +8,11 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AbacusWebSocketImp : exchange.dydx.abacus.protocols.WebSocketProtocol {
+@Singleton
+class AbacusWebSocketImp @Inject constructor() : exchange.dydx.abacus.protocols.WebSocketProtocol {
 
     private val TAG = "AbacusRestImp"
 

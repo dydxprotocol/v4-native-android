@@ -1,13 +1,14 @@
 package exchange.dydx.trading.common.featureflags
 
 import exchange.dydx.utilities.utils.SharedPreferencesStore
+import javax.inject.Inject
 
 enum class DydxFeatureFlag {
     deployment_url,
     force_mainnet,
 }
 
-class DydxFeatureFlags(
+class DydxFeatureFlags @Inject constructor(
     private val sharedPreferences: SharedPreferencesStore
 ) {
     fun isFeatureEnabled(featureFlag: DydxFeatureFlag): Boolean {

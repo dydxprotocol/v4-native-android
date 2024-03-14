@@ -1,21 +1,25 @@
 package exchange.dydx.trading.integration.cosmos
 
-import android.content.Context
+import android.app.Application
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CosmosV4ClientWebview(
-    context: Context,
-    filename: String = "v4-native-client.js",
+private const val WEBVIEW_FILENAME = "v4-native-client.js"
+
+@Singleton
+class CosmosV4ClientWebview @Inject constructor(
+    application: Application,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
-        context = context,
-        description = filename,
-        runner = JavascriptRunnerV4.runnerFromFile(context, filename)
-            ?: throw IOException("Fatal, unable to load runner from: $filename"),
+        context = application,
+        description = WEBVIEW_FILENAME,
+        runner = JavascriptRunnerV4.runnerFromFile(application, WEBVIEW_FILENAME)
+            ?: throw IOException("Fatal, unable to load runner from: $WEBVIEW_FILENAME"),
     ) {
 
     override val initialized = runner.initialized

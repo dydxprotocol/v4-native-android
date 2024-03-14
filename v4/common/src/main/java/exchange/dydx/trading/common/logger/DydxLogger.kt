@@ -10,6 +10,8 @@ import kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
 import kotlinx.coroutines.flow.MutableSharedFlow
 import timber.log.Timber
 import timber.log.Timber.Tree
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "DydxLogger"
 class DydxTimberTree : Timber.DebugTree() {
@@ -28,7 +30,8 @@ class DydxTimberTree : Timber.DebugTree() {
     }
 }
 
-class DydxLogger {
+@Singleton
+class DydxLogger @Inject constructor() {
     val debugTree: DydxTimberTree = DydxTimberTree()
     private var woodTree: WoodTree? = null
     fun woodTree(application: Application): Tree {

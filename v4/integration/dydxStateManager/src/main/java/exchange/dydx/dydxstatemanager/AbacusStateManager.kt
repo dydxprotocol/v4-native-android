@@ -1,5 +1,6 @@
 package exchange.dydx.dydxstatemanager
 
+import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -49,6 +50,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
 interface AbacusStateManagerProtocol {
 
@@ -107,15 +110,19 @@ interface AbacusStateManagerProtocol {
     }
 }
 
+// Temporary location, should probably make a separate dagger-qualifiers module.
+@Qualifier annotation class EnvKey
+
+@Singleton
 class AbacusStateManager @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val ioImplementations: IOImplementations,
     private val parser: ParserProtocol,
     private val walletStateManager: DydxWalletStateManagerProtocol,
     private val transferStateManager: DydxTransferStateManagerProtocol,
     private val cosmosClient: CosmosV4ClientProtocol,
     private val preferencesStore: SharedPreferencesStore,
-    private val envKey: String,
+    @EnvKey private val envKey: String,
     private val featureFlags: DydxFeatureFlags,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
@@ -135,7 +142,7 @@ class AbacusStateManager @Inject constructor(
             deployment = "MAINNET"
             appConfigs = AppConfigs.forApp
         } else {
-            deployment = context.getString(R.string.app_deployment)
+            deployment = application.getString(R.string.app_deployment)
             appConfigs = if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
         }
 
@@ -172,7 +179,7 @@ class AbacusStateManager @Inject constructor(
             if (!urlOverride.isNullOrEmpty()) {
                 return urlOverride
             } else {
-                return "https://" + context.getString(R.string.app_web_host)
+                return "https://" + application.getString(R.string.app_web_host)
             }
         }
 
@@ -191,7 +198,7 @@ class AbacusStateManager @Inject constructor(
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.monitorConnectivity(context)
+            this.monitorConnectivity(application)
         }
     }
 

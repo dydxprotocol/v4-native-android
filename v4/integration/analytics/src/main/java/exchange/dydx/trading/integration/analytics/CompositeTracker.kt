@@ -1,6 +1,10 @@
 package exchange.dydx.trading.integration.analytics
 
-class CompositeTracker : CompositeTracking {
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class CompositeTracker @Inject constructor() : CompositeTracking {
     private val trackers = mutableListOf<Tracking>()
 
     override fun addTracker(tracker: Tracking) {

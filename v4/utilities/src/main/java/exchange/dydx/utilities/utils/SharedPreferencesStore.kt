@@ -1,10 +1,14 @@
 package exchange.dydx.utilities.utils
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SharedPreferencesStore(
-    context: Context,
+@Singleton
+class SharedPreferencesStore @Inject constructor(
+    application: Application,
 ) : StoreProtocol {
     companion object {
         private const val PREFERENCES_NAME = "SharedPreferences"
@@ -12,7 +16,7 @@ class SharedPreferencesStore(
         private const val DEFAULT_BOOLEAN_VALUE = false
     }
 
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = application.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     override fun save(data: String, key: String) {
         sharedPreferences.edit().putString(key, data).apply()
