@@ -97,7 +97,7 @@ interface AbacusStateManagerProtocol {
 
     fun addTransferInstance(transfer: DydxTransferInstance)
     fun removeTransferInstance(transfer: DydxTransferInstance)
-    fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean)
+    fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean, requestId: String?)
 
     fun screen(address: String, callback: ((Restriction) -> Unit))
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
@@ -347,8 +347,8 @@ class AbacusStateManager @Inject constructor(
         transferStateManager.remove(transfer)
     }
 
-    override fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean) {
-        asyncStateManager.transferStatus(hash, fromChainId, toChainId, isCctp)
+    override fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean, requestId: String?) {
+        asyncStateManager.transferStatus(hash, fromChainId, toChainId, isCctp, requestId)
     }
 
     override fun screen(address: String, callback: ((Restriction) -> Unit)) {
