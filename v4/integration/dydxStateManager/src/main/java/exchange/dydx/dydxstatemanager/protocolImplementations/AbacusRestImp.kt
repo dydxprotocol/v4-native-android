@@ -67,7 +67,14 @@ class AbacusRestImp : RestProtocol {
         callback: (String?, Int) -> Unit,
     ) {
         var requestBuilder = Request.Builder()
-            .url(url)
+
+        try {
+            requestBuilder.url(url)
+        } catch (e: Exception) {
+            Log.e(TAG, "AbacusRestImp Invalid URL $url, ${e.message}")
+            callback(null, 0)
+            return
+        }
 
         val headers = headers?.toTypedArray()
         headers?.forEach { (key, value) ->
