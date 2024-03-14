@@ -55,20 +55,26 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
             .distinctUntilChanged()
 
     init {
-        abacusStateManager.state.transferInput
-            .map { it?.withdrawalOptions?.chains?.toList() }
-            .distinctUntilChanged()
-            .onEach { chains ->
-                selectedChainFlow.value = chains?.firstOrNull()
-            }
+        combine(
+            abacusStateManager.state.transferInput
+                .map { it?.withdrawalOptions?.chains?.toList() }
+                .distinctUntilChanged(),
+            abacusStateManager.state.transferInput.map { it?.chain }.distinctUntilChanged(),
+        ) { chains, selected ->
+            chains?.firstOrNull { it.type == selected } ?: chains?.firstOrNull()
+        }
+            .onEach { selectedChainFlow.value = it }
             .launchIn(viewModelScope)
 
-        abacusStateManager.state.transferInput
-            .map { it?.withdrawalOptions?.assets?.toList() }
-            .distinctUntilChanged()
-            .onEach { tokens ->
-                selectedTokenFlow.value = tokens?.firstOrNull()
-            }
+        combine(
+            abacusStateManager.state.transferInput
+                .map { it?.withdrawalOptions?.assets?.toList() }
+                .distinctUntilChanged(),
+            abacusStateManager.state.transferInput.map { it?.token }.distinctUntilChanged(),
+        ) { tokens, selected ->
+            tokens?.firstOrNull { it.type == selected } ?: tokens?.firstOrNull()
+        }
+            .onEach { selectedTokenFlow.value = it }
             .launchIn(viewModelScope)
     }
 
