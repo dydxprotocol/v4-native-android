@@ -77,7 +77,7 @@ class AbacusRestImp @Inject constructor() : RestProtocol {
             requestBuilder.url(url)
         } catch (e: Exception) {
             Log.e(TAG, "AbacusRestImp Invalid URL $url, ${e.message}")
-            callback(null, 0)
+            callback(null, 0, null)
             return
         }
 
