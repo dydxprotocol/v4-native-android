@@ -14,7 +14,6 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
-import exchange.dydx.trading.common.navigation.deeplinkRoutes
 import exchange.dydx.trading.integration.analytics.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -57,6 +56,19 @@ class DydxRouterImpl(
     private val dydxUris: List<String> = listOf(
         "https://${appConfig.appWebHost}",
         "${appConfig.appScheme}://${appConfig.appSchemeHost}",
+    )
+
+    // All routes paths that are used for deeplinking
+    // This should match what's declared as intent-filters in the AndroidManifest
+    private val deeplinkRoutes: List<String> = listOf(
+        "markets",
+        "market",
+        "portfolio",
+        "settings",
+        "onboard",
+        "rewards",
+        "action",
+        "transfer",
     )
 
     private val destinationChangedListener: (controller: NavController, destination: NavDestination, arguments: Bundle?) -> Unit =
