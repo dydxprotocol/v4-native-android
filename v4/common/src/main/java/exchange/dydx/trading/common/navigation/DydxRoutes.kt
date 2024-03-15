@@ -54,3 +54,16 @@ object TransferRoutes {
     const val transfer_search = "transfer/search"
     const val transfer_status = "transfer/status"
 }
+
+// All routes paths that are used for deeplinking
+// This should match what's declared as intent-filters in the AndroidManifest
+val deeplinkRoutes: List<String> = listOf(
+    "markets",
+    "market",
+    "portfolio",
+    "settings",
+    "onboard",
+    "rewards",
+    "action",
+    "transfer",
+)

@@ -14,6 +14,7 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
+import exchange.dydx.trading.common.navigation.deeplinkRoutes
 import exchange.dydx.trading.integration.analytics.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
@@ -193,14 +194,23 @@ class DydxRouterImpl(
     }
 
     private fun routePath(route: String): String {
-        var route = route
-        for (url in dydxUris) {
-            if (route.startsWith(url)) {
-                route = route.replace(url, "")
-            }
-        }
+        var route = trimUrlHead(route)
         if (route.startsWith("/")) {
             return route.substring(1)
+        }
+        return route
+    }
+
+    private fun trimUrlHead(route: String): String {
+        // Remove the url head from the route if the route is a deeplink the app supports
+        // For example, if the route is "https://{app_web_host]/markets", return "/markets"
+        for (url in dydxUris) {
+            for (path in deeplinkRoutes) {
+                val urlPath = "$url/$path"
+                if (route.startsWith(urlPath)) {
+                    return route.replace(url, "")
+                }
+            }
         }
         return route
     }
