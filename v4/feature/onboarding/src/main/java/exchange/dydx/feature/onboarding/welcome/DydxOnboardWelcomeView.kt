@@ -278,7 +278,15 @@ object DydxOnboardWelcomeView : DydxComponent {
                 value.getStringAnnotations(start = it, end = it)
                     .firstOrNull()
                     ?.let { annotation ->
-                        state.urlAction?.invoke(annotation.item)
+                        when (annotation.tag) {
+                            "{TERMS_LINK}" -> state.tosUrl?.let { url ->
+                                state.urlAction?.invoke(url)
+                            }
+                            "{PRIVACY_POLICY_LINK}" -> state.privacyPolicyUrl?.let { url ->
+                                state.urlAction?.invoke(url)
+                            }
+                        }
+                      // state.urlAction?.invoke(annotation.item)
                     }
             },
         )
