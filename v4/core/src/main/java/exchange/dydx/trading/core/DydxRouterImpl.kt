@@ -194,11 +194,8 @@ class DydxRouterImpl(
     }
 
     private fun routePath(route: String): String {
-        var route = trimUrlHead(route)
-        if (route.startsWith("/")) {
-            return route.substring(1)
-        }
-        return route
+        val route = trimUrlHead(route)
+        return if (route.startsWith("/")) route.substring(1) else route
     }
 
     private fun trimUrlHead(route: String): String {
