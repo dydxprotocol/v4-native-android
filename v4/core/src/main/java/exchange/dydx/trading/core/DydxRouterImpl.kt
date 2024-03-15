@@ -58,6 +58,19 @@ class DydxRouterImpl(
         "${appConfig.appScheme}://${appConfig.appSchemeHost}",
     )
 
+    // All routes paths that are used for deeplinking
+    // This should match what's declared as intent-filters in the AndroidManifest
+    private val deeplinkRoutes: List<String> = listOf(
+        "markets",
+        "market",
+        "portfolio",
+        "settings",
+        "onboard",
+        "rewards",
+        "action",
+        "transfer",
+    )
+
     private val destinationChangedListener: (controller: NavController, destination: NavDestination, arguments: Bundle?) -> Unit =
         { controller, destination, arguments ->
             val dest = Destination(controller, destination, arguments)
@@ -193,14 +206,20 @@ class DydxRouterImpl(
     }
 
     private fun routePath(route: String): String {
-        var route = route
+        val route = trimUrlHead(route)
+        return if (route.startsWith("/")) route.substring(1) else route
+    }
+
+    private fun trimUrlHead(route: String): String {
+        // Remove the url head from the route if the route is a deeplink the app supports
+        // For example, if the route is "https://{app_web_host]/markets", return "/markets"
         for (url in dydxUris) {
-            if (route.startsWith(url)) {
-                route = route.replace(url, "")
+            for (path in deeplinkRoutes) {
+                val urlPath = "$url/$path"
+                if (route.startsWith(urlPath)) {
+                    return route.replace(url, "")
+                }
             }
-        }
-        if (route.startsWith("/")) {
-            return route.substring(1)
         }
         return route
     }
