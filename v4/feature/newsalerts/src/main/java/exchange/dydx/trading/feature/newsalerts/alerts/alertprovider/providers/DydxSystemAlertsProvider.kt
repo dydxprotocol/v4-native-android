@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.newsalerts.alerts.alertprovider.providers
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.manager.ApiState
 import exchange.dydx.abacus.state.manager.ApiStatus
@@ -16,8 +17,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.util.Date
+import javax.inject.Inject
 
-class DydxSystemAlertsProvider(
+@ActivityRetainedScoped
+class DydxSystemAlertsProvider @Inject constructor(
     private val abacusStateManger: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val localizer: LocalizerProtocol,

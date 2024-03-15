@@ -1,5 +1,6 @@
 package exchange.dydx.feature.onboarding.di
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,19 +12,18 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object OnboardingModule {
+interface OnboardingModule {
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideWalletSignedStatusFlow(
+    @Binds
+    fun bindWalletSignedStatusFlow(
         flow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
-    ): StateFlow<DydxWalletSetup.Status.Signed?> {
-        return flow
-    }
+    ): StateFlow<DydxWalletSetup.Status.Signed?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableWalletSignedStatusFlow(): MutableStateFlow<DydxWalletSetup.Status.Signed?> {
-        return MutableStateFlow(null)
+    companion object {
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableWalletSignedStatusFlow(): MutableStateFlow<DydxWalletSetup.Status.Signed?> {
+            return MutableStateFlow(null)
+        }
     }
 }

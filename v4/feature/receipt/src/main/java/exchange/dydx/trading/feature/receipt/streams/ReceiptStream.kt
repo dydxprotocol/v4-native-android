@@ -7,14 +7,15 @@ import exchange.dydx.trading.feature.receipt.TradeReceiptType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
 interface ReceiptStreaming {
     val tradeSummaryFlow: Flow<Pair<TradeInputSummary?, String?>?>
 }
 
-class ReceiptStream(
-    val abacusStateManager: AbacusStateManagerProtocol,
-    val receiptTypeFlow: Flow<@JvmSuppressWildcards ReceiptType?>,
+class ReceiptStream @Inject constructor(
+    abacusStateManager: AbacusStateManagerProtocol,
+    receiptTypeFlow: Flow<@JvmSuppressWildcards ReceiptType?>,
 ) : ReceiptStreaming {
 
     override val tradeSummaryFlow: Flow<Pair<TradeInputSummary?, String?>?> =

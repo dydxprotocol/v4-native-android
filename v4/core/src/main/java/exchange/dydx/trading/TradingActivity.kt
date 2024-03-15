@@ -47,8 +47,6 @@ class TradingActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.router.androidContext = this
-
         Timber.tag(TAG).i("TradingActivity#onCreate")
 
         CarteraSetup.run(this)
