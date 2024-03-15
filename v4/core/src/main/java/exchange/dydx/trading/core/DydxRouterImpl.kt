@@ -1,6 +1,6 @@
 package exchange.dydx.trading.core
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.net.toUri
@@ -10,6 +10,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.navDeepLink
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
@@ -17,6 +18,7 @@ import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.integration.analytics.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
+import javax.inject.Inject
 
 private const val TAG = "DydxRouterImpl"
 
@@ -27,10 +29,11 @@ private const val TAG = "DydxRouterImpl"
  *
  * So this is a very powerful class in terms of, bridging the dependency tree.
  */
-class DydxRouterImpl(
-    override var androidContext: Context?,
-    private val appConfig: AppConfig,
+@ActivityRetainedScoped
+class DydxRouterImpl @Inject constructor(
+    private val application: Application,
     private val tracker: Tracking,
+    appConfig: AppConfig,
 ) : DydxRouter {
 
     private lateinit var navHostController: NavHostController
@@ -131,7 +134,7 @@ class DydxRouterImpl(
         val routePath = routePath(route)
         if (routePath.startsWith("http://") || routePath.startsWith("https://")) {
             val intent = Intent(Intent.ACTION_VIEW, routePath.toUri())
-            androidContext?.startActivity(intent)
+            application.startActivity(intent)
         } else {
             pendingPresentation =
                 presentation // Let destinationChangedListener handle the presentation state change

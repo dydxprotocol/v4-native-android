@@ -1,21 +1,25 @@
 package exchange.dydx.integration.starkex
 
-import android.content.Context
+import android.app.Application
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV3
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.IOException
+import javax.inject.Inject
 
-class StarkexLib(
-    context: Context,
-    filename: String = "starkex-lib.js",
+private const val STARKEX_FILENAME: String = "starkex-lib.js"
+
+@ActivityRetainedScoped
+class StarkexLib @Inject constructor(
+    application: Application,
 ) :
     JavascriptApiImpl(
-        context = context,
-        description = filename,
-        runner = JavascriptRunnerV3.runnerFromFile(context, filename)
-            ?: throw IOException("Fatal, unable to load runner from: $filename"),
+        context = application,
+        description = STARKEX_FILENAME,
+        runner = JavascriptRunnerV3.runnerFromFile(application, STARKEX_FILENAME)
+            ?: throw IOException("Fatal, unable to load runner from: $STARKEX_FILENAME"),
     ) {
 
     private val TAG = "StarkexLib"
@@ -50,13 +54,15 @@ class StarkexLib(
     }
 }
 
+private const val STARKEX_ETH_FILENAME: String = "starkex-eth.js"
+
 // TODO move this into its own fine when it has some content, or delete if not used.
-class StarkexEth(
-    context: Context,
-    filename: String = "starkex-eth.js",
+@ActivityRetainedScoped
+class StarkexEth @Inject constructor(
+    application: Application,
 ) : JavascriptApiImpl(
-    context = context,
-    description = filename,
-    runner = JavascriptRunnerV3.runnerFromFile(context, filename)
-        ?: throw IOException("Fatal, unable to load runner from: $filename"),
+    context = application,
+    description = STARKEX_ETH_FILENAME,
+    runner = JavascriptRunnerV3.runnerFromFile(application, STARKEX_ETH_FILENAME)
+        ?: throw IOException("Fatal, unable to load runner from: $STARKEX_ETH_FILENAME"),
 )

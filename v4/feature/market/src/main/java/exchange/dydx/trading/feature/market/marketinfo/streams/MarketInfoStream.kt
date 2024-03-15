@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.market.marketinfo.streams
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.PositionSide
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.newSingleThreadContext
+import javax.inject.Inject
 
 interface MarketInfoStreaming {
     val market: Flow<PerpetualMarket?>
@@ -32,7 +34,8 @@ interface MutableMarketInfoStreaming : MarketInfoStreaming {
     fun update(marketId: String?)
 }
 
-class MarketInfoStream(
+@ActivityRetainedScoped
+class MarketInfoStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
     val formatter: DydxFormatter,
     val localizer: LocalizerProtocol,

@@ -1,11 +1,11 @@
 package exchange.dydx.trading.feature.trade.di
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.trade.streams.MutableTradeStreaming
 import exchange.dydx.trading.feature.trade.streams.TradeStream
 import exchange.dydx.trading.feature.trade.streams.TradeStreaming
@@ -15,48 +15,38 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object TradeModule {
-    @Provides
-    @ActivityRetainedScoped
-    fun provideOrderbookToggleStateFlow(
+interface TradeModule {
+    @Binds
+    fun bindOrderbookToggleStateFlow(
         mutableFlow: MutableStateFlow<DydxTradeInputView.OrderbookToggleState>,
-    ): Flow<DydxTradeInputView.OrderbookToggleState> {
-        return mutableFlow
-    }
+    ): Flow<DydxTradeInputView.OrderbookToggleState>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableOrderbookToggleStateFlow(): MutableStateFlow<DydxTradeInputView.OrderbookToggleState> {
-        return MutableStateFlow(DydxTradeInputView.OrderbookToggleState.Open)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideBottomSheetFlow(
+    @Binds
+    fun bindBottomSheetFlow(
         mutableFlow: MutableStateFlow<DydxTradeInputView.BottomSheetState?>,
-    ): Flow<DydxTradeInputView.BottomSheetState?> {
-        return mutableFlow
-    }
+    ): Flow<DydxTradeInputView.BottomSheetState?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableBottomSheetStateFlow(): MutableStateFlow<DydxTradeInputView.BottomSheetState?> {
-        return MutableStateFlow(null)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideTradeStream(
+    @Binds
+    fun bindTradeStream(
         mutableStream: MutableTradeStreaming,
-    ): TradeStreaming {
-        return mutableStream
-    }
+    ): TradeStreaming
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableTradeStream(
-        abacusStateManager: AbacusStateManagerProtocol,
-    ): MutableTradeStreaming {
-        return TradeStream(abacusStateManager)
+    @Binds
+    fun bindMutableTradeStream(
+        tradeStream: TradeStream,
+    ): MutableTradeStreaming
+
+    companion object {
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableOrderbookToggleStateFlow(): MutableStateFlow<DydxTradeInputView.OrderbookToggleState> {
+            return MutableStateFlow(DydxTradeInputView.OrderbookToggleState.Open)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableBottomSheetStateFlow(): MutableStateFlow<DydxTradeInputView.BottomSheetState?> {
+            return MutableStateFlow(null)
+        }
     }
 }
