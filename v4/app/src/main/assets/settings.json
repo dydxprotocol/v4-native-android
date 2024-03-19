@@ -6,7 +6,7 @@
                     "text": "APP.LANGUAGE.LANGUAGE"
                 },
                 "link": {
-                    "text": "dydxv4://open/settings/language"
+                    "text": "settings/language"
                 },
                 "field": {
                     "field": "language"
@@ -17,7 +17,7 @@
                     "text" : "APP.V4.THEME"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/theme"
+                    "text" : "settings/theme"
                 },
                 "field":{
                     "field":"v4_theme"
@@ -28,7 +28,7 @@
                     "text" : "APP.V4.SYSTEM_STATUS"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/status"
+                    "text" : "settings/status"
                 }
             },
             {
@@ -36,7 +36,7 @@
                     "text" : "APP.V4.DIRECTION_COLOR_PREFERENCE"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/direction_color_preference"
+                    "text" : "settings/direction_color_preference"
                 },
                 "field":{
                     "field":"direction_color_preference"
