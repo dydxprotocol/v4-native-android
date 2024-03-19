@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +42,9 @@ class DydxTransferDepositViewModel @Inject constructor(
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
 ) : ViewModel(), DydxViewModel {
+
+    private val TAG = "DydxTransferDepositViewModel"
+
     private var ethereumInteractor: EthereumInteractor? = null
 
     private val selectedChainFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
@@ -115,6 +119,8 @@ class DydxTransferDepositViewModel @Inject constructor(
                 if (error == null && balance != null) {
                     val tokenAmount = balance.toDouble() / Math.pow(10.0, tokenDecimals.toDouble())
                     tokenAmountFLow.value = tokenAmount
+                } else {
+                    Log.e(TAG, "Failed to fetch token amount (ethGetBalance) $error")
                 }
             }
         } else {
@@ -125,6 +131,8 @@ class DydxTransferDepositViewModel @Inject constructor(
                 if (error == null && balance != null) {
                     val tokenAmount = balance.toDouble() / Math.pow(10.0, tokenDecimals.toDouble())
                     tokenAmountFLow.value = tokenAmount
+                } else {
+                    Log.e(TAG, "Failed to fetch token amount (erc20TokenGetBalance) $error")
                 }
             }
         }
