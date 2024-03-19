@@ -134,6 +134,7 @@ class DydxRouterImpl @Inject constructor(
         val routePath = routePath(route)
         if (routePath.startsWith("http://") || routePath.startsWith("https://")) {
             val intent = Intent(Intent.ACTION_VIEW, routePath.toUri())
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             application.startActivity(intent)
         } else {
             pendingPresentation =
