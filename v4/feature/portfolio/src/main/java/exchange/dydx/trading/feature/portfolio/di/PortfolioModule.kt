@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.portfolio.di
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,47 +14,40 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object PortfolioModule {
+interface PortfolioModule {
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideDisplayContent(
+    @Binds
+    fun bindDisplayContent(
         mutableFlow: MutableStateFlow<DydxPortfolioView.DisplayContent>,
-    ): Flow<DydxPortfolioView.DisplayContent> {
-        return mutableFlow
-    }
+    ): Flow<DydxPortfolioView.DisplayContent>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableDisplayContent(): MutableStateFlow<DydxPortfolioView.DisplayContent> {
-        return MutableStateFlow(DydxPortfolioView.DisplayContent.Overview)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideSections(
+    @Binds
+    fun bindSections(
         mutableFlow: MutableStateFlow<DydxPortfolioSectionsView.Selection>,
-    ): Flow<DydxPortfolioSectionsView.Selection> {
-        return mutableFlow
-    }
+    ): Flow<DydxPortfolioSectionsView.Selection>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun providateMutableSections(): MutableStateFlow<DydxPortfolioSectionsView.Selection> {
-        return MutableStateFlow(DydxPortfolioSectionsView.Selection.Positions)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun providePlacholderSections(
+    @Binds
+    fun bindPlacholderSections(
         mutableFlow: MutableStateFlow<DydxPortfolioPlaceholderView.Selection>,
-    ): Flow<DydxPortfolioPlaceholderView.Selection> {
-        return mutableFlow
-    }
+    ): Flow<DydxPortfolioPlaceholderView.Selection>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun providateMutablePlaceholderSections(): MutableStateFlow<DydxPortfolioPlaceholderView.Selection> {
-        return MutableStateFlow(DydxPortfolioPlaceholderView.Selection.Positions)
+    companion object {
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableDisplayContent(): MutableStateFlow<DydxPortfolioView.DisplayContent> {
+            return MutableStateFlow(DydxPortfolioView.DisplayContent.Overview)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun providateMutableSections(): MutableStateFlow<DydxPortfolioSectionsView.Selection> {
+            return MutableStateFlow(DydxPortfolioSectionsView.Selection.Positions)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun providateMutablePlaceholderSections(): MutableStateFlow<DydxPortfolioPlaceholderView.Selection> {
+            return MutableStateFlow(DydxPortfolioPlaceholderView.Selection.Positions)
+        }
     }
 }

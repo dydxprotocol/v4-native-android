@@ -19,10 +19,9 @@ class DydxSystemStatusViewModel @Inject constructor(
 
     init {
         router.navigateBack()
-        abacusStateManager.environment?.links?.community.let { communityLink ->
-            if (communityLink != null) {
-                router.navigateTo(communityLink)
-            }
+        val url = abacusStateManager.environment?.links?.statusPage ?: abacusStateManager.environment?.links?.community
+        if (url != null) {
+            router.navigateTo(url)
         }
     }
 
