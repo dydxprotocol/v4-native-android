@@ -19,6 +19,7 @@
     @com.google.gson.annotations.SerializedName <fields>;
 }
 
+-keep class org.web3j.** { *; }
 
 # cartera
 -keep interface com.walletconnect.foundation.network.data.service.RelayService
