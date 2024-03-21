@@ -150,7 +150,7 @@ class DydxFormatter @Inject constructor() {
         val formattedNumber = localFormatted(number.abs(), digits)
         return formattedNumber?.let {
             val rawDouble = raw(number.toDouble(), digits)?.toDouble() ?: 0.0
-             if (rawDouble >= 0.0) {
+            if (rawDouble >= 0.0) {
                 "$$it"
             } else {
                 "-$$it"
