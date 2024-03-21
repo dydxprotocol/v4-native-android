@@ -267,7 +267,7 @@ class DydxFormatter @Inject constructor() {
     /*
    xxxxx.yyyyy
    */
-    fun decimalRaw(number: Double?, digits: Int): String? {
+    fun decimalLocaleAgnostic(number: Double?, digits: Int): String? {
         return raw(number = number, digits = digits, locale = Locale.US)
     }
 

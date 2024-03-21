@@ -1,7 +1,6 @@
 package exchange.dydx.common.formatter
 
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import junit.framework.TestCase
 import org.junit.Assert
 import org.junit.Test
 import java.time.Instant
@@ -214,7 +213,7 @@ class DydxFormatterTests {
     }
 
     @Test
-    fun testDecimalRaw() {
+    fun testDecimalLocaleAgnostic() {
         val formatter = DydxFormatter()
         data class TestCase(
             val number: Double,
@@ -234,7 +233,7 @@ class DydxFormatterTests {
         )
 
         testCases.forEach { testCase ->
-            val formatted = formatter.decimalRaw(number = testCase.number, digits = testCase.digits)
+            val formatted = formatter.decimalLocaleAgnostic(number = testCase.number, digits = testCase.digits)
             assert(formatted == testCase.expected) { "Test case: $testCase, formatted: $formatted" }
         }
     }

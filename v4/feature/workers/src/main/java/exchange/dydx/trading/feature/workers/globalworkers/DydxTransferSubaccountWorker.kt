@@ -48,7 +48,7 @@ class DydxTransferSubaccountWorker(
                 val subaccountNumber: Int = selectedSubaccount?.subaccountNumber ?: 0
                 val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
                 if (depositAmount <= 0) return@combine
-                val amountString = formatter.decimalRaw(depositAmount, abacusStateManager.usdcTokenDecimal)
+                val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
                     ?: return@combine
 
                 depositToSubaccount(amountString, subaccountNumber, wallet)
