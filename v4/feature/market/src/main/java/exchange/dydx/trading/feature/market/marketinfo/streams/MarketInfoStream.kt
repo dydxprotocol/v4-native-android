@@ -46,6 +46,7 @@ class MarketInfoStream @Inject constructor(
 
     override fun update(marketId: String?) {
         abacusStateManager.setMarket(marketId)
+        abacusStateManager.startTrade()
     }
 
     override val market: Flow<PerpetualMarket?> =

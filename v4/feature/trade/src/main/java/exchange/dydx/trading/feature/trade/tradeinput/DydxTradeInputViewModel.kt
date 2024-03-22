@@ -24,7 +24,6 @@ class DydxTradeInputViewModel @Inject constructor(
 ) : ViewModel(), DydxViewModel {
 
     init {
-        abacusStateManager.startTrade()
         receiptTypeFlow.value = ReceiptType.Trade(TradeReceiptType.Open)
     }
 
