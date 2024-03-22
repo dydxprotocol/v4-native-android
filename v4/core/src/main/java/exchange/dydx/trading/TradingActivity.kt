@@ -81,6 +81,8 @@ class TradingActivity : FragmentActivity() {
         // If an intent is launched to an already running activity, it comes to
         // `onNewIntent` instead. Route both to same place for now.
         viewModel.router.handleIntent(intent)
+        
+        viewModel.startWorkers()
     }
 
     private fun setContentWithJS(

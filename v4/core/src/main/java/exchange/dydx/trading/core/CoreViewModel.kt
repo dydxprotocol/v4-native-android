@@ -61,15 +61,14 @@ class CoreViewModel @Inject constructor(
     fun start() {
         cosmosClient.initialized
             .onEach { initialized ->
-                // Wait for the cosmos client to be initialized before starting the workers
+                // Wait for the cosmos client to be initialized before setting the environment
                 if (initialized) {
                     resetEnv()
-                    startWorkers()
                 }
             }.launchIn(viewModelScope)
     }
 
-    private fun startWorkers() {
+    fun startWorkers() {
         globalWorkers?.start()
     }
 
