@@ -47,14 +47,12 @@ while IFS= read -r line; do
         functionNames+=("$name")
     fi
 
-
     if [[ $line =~ ^\ \ \ \ \static\ #.*\{$ ]]; then
         # extract the string beween # and (, and remove the rest
         name=`echo "${line#*#}" | sed 's/(.*//'`
         # add the name to the names array
         functionNames+=("$name")
     fi
-
 
     if [[ $line =~ ^\ \ \ \ \#.*\;$ ]]; then
         # extract the string beween # and ;, and remove the rest
@@ -63,6 +61,9 @@ while IFS= read -r line; do
     fi
 done < "$filename"
 
+# remove duplicates from the array
+functionNames=($(echo "${functionNames[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+propertyNames=($(echo "${propertyNames[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
 
 # replace the names in the file
 for name in "${functionNames[@]}"; do
@@ -75,10 +76,10 @@ done
 
 for name in "${propertyNames[@]}"; do
     echo "Replacing property name: #$name"
-    before=" #$name"
-    after=" ___$name"
+    before="\ #$name"
+    after="\ ___$name"
     sed -i '' "s/$before/$after/g" $filename
-    before=".#$name"
-    after=".___$name"
+    before="\.#$name"
+    after="\.___$name"
     sed -i '' "s/$before/$after/g" $filename
 done
