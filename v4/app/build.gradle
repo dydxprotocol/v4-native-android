@@ -97,7 +97,9 @@ android {
 
     configurations {
         all {
+            // Exclude libraries to resolve duplicate dependencies
             exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
+            exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
         }
     }
 
