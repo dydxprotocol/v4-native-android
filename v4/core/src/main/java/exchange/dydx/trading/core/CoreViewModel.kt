@@ -9,7 +9,6 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
-import exchange.dydx.trading.common.compose.dydxHandler
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.logger.DydxLogger
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -18,11 +17,8 @@ import exchange.dydx.trading.integration.analytics.CompositeTracking
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "CoreViewModel"
@@ -65,12 +61,12 @@ class CoreViewModel @Inject constructor(
     fun start() {
         cosmosClient.initialized
             .onEach { initialized ->
-            // Wait for the cosmos client to be initialized before starting the workers
-            if (initialized) {
-                resetEnv()
-                startWorkers()
-            }
-        }.launchIn(viewModelScope)
+                // Wait for the cosmos client to be initialized before starting the workers
+                if (initialized) {
+                    resetEnv()
+                    startWorkers()
+                }
+            }.launchIn(viewModelScope)
     }
 
     private fun startWorkers() {
