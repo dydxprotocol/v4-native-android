@@ -81,7 +81,9 @@ class TradingActivity : FragmentActivity() {
         // If an intent is launched to an already running activity, it comes to
         // `onNewIntent` instead. Route both to same place for now.
         viewModel.router.handleIntent(intent)
-        
+
+        // Start the workers: Note the CarteraSetupWorker must start here because
+        // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
     }
 
