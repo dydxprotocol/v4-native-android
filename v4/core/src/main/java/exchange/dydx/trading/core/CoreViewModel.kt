@@ -19,6 +19,9 @@ import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,20 +62,19 @@ class CoreViewModel @Inject constructor(
 
     var restartCount: Int = 0
 
-    suspend fun start() = viewModelScope.launch {
-        launch(dydxHandler) {
-            // Reset Abacus after the cosmosclient is initialized and set up.
-            delay(1000)
-            resetEnv()
-        }
+    fun start() {
+        cosmosClient.initialized
+            .onEach { initialized ->
+            // Wait for the cosmos client to be initialized before starting the workers
+            if (initialized) {
+                resetEnv()
+                startWorkers()
+            }
+        }.launchIn(viewModelScope)
     }
 
-    fun startWorkers() {
+    private fun startWorkers() {
         globalWorkers?.start()
-    }
-
-    fun stopWorkers() {
-        globalWorkers?.stop()
     }
 
     private fun resetEnv() {
