@@ -64,7 +64,7 @@ while IFS= read -r line; do
 done < "$filename"
 
 
-# for each name in the names array, print the name
+# replace the names in the file
 for name in "${functionNames[@]}"; do
     echo "Replacing function name: #$name"
     before="#$name("
@@ -75,8 +75,10 @@ done
 
 for name in "${propertyNames[@]}"; do
     echo "Replacing property name: #$name"
-    before="#$name"
-    after="___$name"
-    # replace the before string with the after string in the file
+    before=" #$name"
+    after=" ___$name"
+    sed -i '' "s/$before/$after/g" $filename
+    before=".#$name"
+    after=".___$name"
     sed -i '' "s/$before/$after/g" $filename
 done
