@@ -38,12 +38,10 @@ object LogCatReader {
     /**
      * Reads the logcat and stores the log in a file.
      */
-    fun saveLogCatToFile(context: Context, filePath: String) {
+    fun saveLogCatToFile(context: Context, logFile: File) {
         try {
             val process = Runtime.getRuntime().exec("logcat -d")
             val reader = process.inputStream.bufferedReader()
-
-            val logFile = File(context.getExternalFilesDir(null), filePath)
             val writer = BufferedWriter(FileWriter(logFile))
 
             var line: String? = reader.readLine()
@@ -55,6 +53,7 @@ object LogCatReader {
 
             writer.close()
             reader.close()
+            process.destroy()
         } catch (e: IOException) {
             Log.e(TAG, "saveLogCatToFile: $e")
         }
