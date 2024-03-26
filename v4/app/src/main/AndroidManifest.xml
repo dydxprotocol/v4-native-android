@@ -170,7 +170,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="exchange.dydx.trading.fileprovider"
+            android:authorities="${applicationId}"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

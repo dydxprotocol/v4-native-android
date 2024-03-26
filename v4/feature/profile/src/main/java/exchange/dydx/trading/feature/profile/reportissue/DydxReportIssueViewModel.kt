@@ -86,7 +86,7 @@ class DydxReportIssueViewModel @Inject constructor(
         val zipFile = createZipFile(context, file)
         file.delete()
         return if (zipFile != null) {
-            FileProvider.getUriForFile(context, "exchange.dydx.trading.fileprovider", zipFile)
+            FileProvider.getUriForFile(context, context.packageName, zipFile)
         } else {
             null
         }
