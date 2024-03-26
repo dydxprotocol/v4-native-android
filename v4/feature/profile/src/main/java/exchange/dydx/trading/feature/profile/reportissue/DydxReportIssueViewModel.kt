@@ -78,8 +78,11 @@ class DydxReportIssueViewModel @Inject constructor(
     }
 
     private fun createLog(): Uri? {
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "dydx_app.log")
-        LogCatReader.saveLogCatToFile(context, file)
+        val file =
+            File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "dydx_app.log")
+        if (!LogCatReader.saveLogCatToFile(file)) {
+            return null
+        }
         val zipFile = createZipFile(context, file)
         file.delete()
         return if (zipFile != null) {
@@ -94,7 +97,10 @@ class DydxReportIssueViewModel @Inject constructor(
         val zipFileName = "$fileName.zip"
         val zipFilePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), zipFileName)
-        FileUtils.compressFile(context, file.absolutePath, zipFilePath.absolutePath)
-        return zipFilePath
+        return if (FileUtils.compressFile(context, file.absolutePath, zipFilePath.absolutePath)) {
+            zipFilePath
+        } else {
+            null
+        }
     }
 }

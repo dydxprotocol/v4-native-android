@@ -30,7 +30,7 @@ object FileUtils {
         }
     }
 
-    fun compressFile(context: Context, sourceFilePath: String, compressedFilePath: String) {
+    fun compressFile(context: Context, sourceFilePath: String, compressedFilePath: String): Boolean {
         val bufferSize = 1024
         try {
             val sourceFile = File(sourceFilePath)
@@ -50,9 +50,11 @@ object FileUtils {
             zipOutputStream.closeEntry()
             zipOutputStream.close()
             fileInputStream.close()
+            return true
         } catch (e: IOException) {
             Log.e(TAG, "Error compressing file: $e")
             e.printStackTrace()
+            return false
         }
     }
 }
