@@ -7,6 +7,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
+import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -16,6 +17,7 @@ class DydxOnboardWelcomeViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
+    private val onboardingAnalytics: OnboardingAnalytics,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxOnboardWelcomeView.ViewState?> = flowOf(createViewState())
@@ -24,6 +26,7 @@ class DydxOnboardWelcomeViewModel @Inject constructor(
         return DydxOnboardWelcomeView.ViewState(
             localizer = localizer,
             ctaAction = {
+                onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.CHOOSE_WALLET)
                 router.navigateBack()
                 router.navigateTo(
                     route = OnboardingRoutes.wallet_list,

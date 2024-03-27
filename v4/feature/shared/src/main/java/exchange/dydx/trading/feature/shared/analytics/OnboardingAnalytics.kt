@@ -1,0 +1,72 @@
+package exchange.dydx.trading.feature.shared.analytics
+
+import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.integration.analytics.Tracking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.plus
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class OnboardingAnalytics @Inject constructor(
+    private val tracker: Tracking,
+    private val abacusStateManager: AbacusStateManagerProtocol,
+) {
+    // The three main OnboardingStates:
+    // - Disconnected
+    // - WalletConnected
+    // - AccountConnected
+    private enum class OnboardingState(val rawValue: String) {
+        // User is disconnected.
+        DISCONNECTED("Disconnected"),
+
+        // Wallet is connected.
+        WALLET_CONNECTED("WalletConnected"),
+
+        // Account is connected.
+        ACCOUNT_CONNECTED("AccountConnected")
+    }
+
+    // Enum representing the various steps in the onboarding process.
+    enum class OnboardingSteps(val rawValue: String) {
+        // Step: Choose Wallet
+        CHOOSE_WALLET("ChooseWallet"),
+
+        // Step: Key Derivation
+        KEY_DERIVATION("KeyDerivation"),
+
+        // Step: Acknowledge Terms
+        ACKNOWLEDGE_TERMS("AcknowledgeTerms"),
+
+        // Step: Deposit Funds
+        DEPOSIT_FUNDS("DepositFunds")
+    }
+
+    private val scope = MainScope() + Dispatchers.IO
+
+    fun log(step: OnboardingSteps) {
+        abacusStateManager.state.currentWallet
+            .take(1)
+            .onEach {
+                val state = when {
+                    it == null -> OnboardingState.DISCONNECTED
+                    it.cosmoAddress.isNullOrEmpty() -> OnboardingState.ACCOUNT_CONNECTED
+                    else -> OnboardingState.WALLET_CONNECTED
+                }
+
+                val data = mapOf(
+                    "state" to state.rawValue,
+                    "step" to step.rawValue,
+                )
+                tracker.log(
+                    event = AnalyticsEvent.ONBOARDING_STEP_CHANGED.rawValue,
+                    data = data,
+                )
+            }
+            .launchIn(scope)
+    }
+}
