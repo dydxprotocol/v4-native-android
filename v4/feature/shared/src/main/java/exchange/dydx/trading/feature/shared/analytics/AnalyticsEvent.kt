@@ -39,3 +39,15 @@ enum class AnalyticsEvent(val rawValue: String) {
     // Notification
     NOTIFICATION_ACTION("NotificationAction")
 }
+
+//
+// User properties to be sent to the analytics service
+//
+enum class UserProperty(val rawValue: String) {
+    walletAddress("walletAddress"),
+    walletType("walletType"),
+    network("network"),
+    selectedLocale("selectedLocale"),
+    dydxAddress("dydxAddress"),
+    subaccountNumber("subaccountNumber")
+}
