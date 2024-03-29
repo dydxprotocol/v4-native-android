@@ -1,7 +1,7 @@
 package exchange.dydx.trading.feature.workers
 
 import android.content.Context
-import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
@@ -13,6 +13,7 @@ import exchange.dydx.trading.feature.workers.globalworkers.DydxCarteraConfigWork
 import exchange.dydx.trading.feature.workers.globalworkers.DydxRestrictionsWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferSubaccountWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUpdateWorker
+import exchange.dydx.trading.feature.workers.globalworkers.DydxUserTrackingWorker
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
@@ -22,7 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 class DydxGlobalWorkers(
     override val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val localizer: LocalizerProtocol,
+    private val localizer: AbacusLocalizerProtocol,
     private val router: DydxRouter,
     private val platformInfo: PlatformInfo,
     private val context: Context,
@@ -40,6 +41,7 @@ class DydxGlobalWorkers(
         DydxRestrictionsWorker(scope, abacusStateManager, localizer, platformInfo),
         DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker),
+        DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
     )
 
     override var isStarted = false

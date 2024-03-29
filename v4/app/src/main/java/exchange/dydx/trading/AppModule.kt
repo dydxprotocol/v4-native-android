@@ -161,7 +161,7 @@ interface AppModule {
 
     @Binds fun bindTrackingProtocol(abacusTrackingImp: AbacusTrackingImp): TrackingProtocol
 
-    @Binds fun bindTracking(abacusTrackingImp: AbacusTrackingImp): Tracking
+    @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
 
     @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
 

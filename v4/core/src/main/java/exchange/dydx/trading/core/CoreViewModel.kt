@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
@@ -30,7 +30,7 @@ class CoreViewModel @Inject constructor(
     val cosmosClient: CosmosV4WebviewClientProtocol,
     val platformInfo: PlatformInfo,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val localizer: LocalizerProtocol,
+    private val localizer: AbacusLocalizerProtocol,
     @ApplicationContext context: Context,
     private val cachedFileLoader: CachedFileLoader,
     private val formatter: DydxFormatter,
