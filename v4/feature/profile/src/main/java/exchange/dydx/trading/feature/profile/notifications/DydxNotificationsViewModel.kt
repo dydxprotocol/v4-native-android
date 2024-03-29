@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
-
 private val settingsFile = "settings_notifications.json"
 
 @HiltViewModel
@@ -50,5 +49,15 @@ class DydxNotificationsViewModel @Inject constructor(
         viewState.sections.first().items.first().value = notificationsOn
 
         return viewState
+    }
+
+    companion object {
+        fun currentValueText(
+            localizer: LocalizerProtocol,
+            preferencesStore: SharedPreferencesStore,
+        ): String? {
+            val notificationsOn = preferencesStore.read(key = PreferenceKeys.Notifications, defaultValue = "1")
+            return if (notificationsOn == "1") localizer.localize("APP.HEADER.ON") else localizer.localize("APP.HEADER.OFF")
+        }
     }
 }

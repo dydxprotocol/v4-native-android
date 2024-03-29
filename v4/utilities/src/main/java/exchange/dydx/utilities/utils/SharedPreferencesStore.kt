@@ -3,6 +3,8 @@ package exchange.dydx.utilities.utils
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,7 +20,13 @@ class SharedPreferencesStore @Inject constructor(
 
     private val sharedPreferences: SharedPreferences = application.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
+    private var _stateUpdatedCount = MutableStateFlow(0)
+
+    override val stateUpdatedCount: StateFlow<Int>
+        get() = _stateUpdatedCount
+
     override fun save(data: String, key: String) {
+        _stateUpdatedCount.value++
         sharedPreferences.edit().putString(key, data).apply()
     }
 
@@ -31,6 +39,7 @@ class SharedPreferencesStore @Inject constructor(
     }
 
     override fun delete(key: String) {
+        _stateUpdatedCount.value++
         sharedPreferences.edit().remove(key).apply()
     }
 }

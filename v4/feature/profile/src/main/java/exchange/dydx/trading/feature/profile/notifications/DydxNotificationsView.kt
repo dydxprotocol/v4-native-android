@@ -1,15 +1,12 @@
 package exchange.dydx.trading.feature.profile.notifications
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
-import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.SettingsView
 
 @Preview
@@ -34,4 +31,3 @@ object DydxNotificationsView : DydxComponent {
         SettingsView.Content(modifier = modifier, state = state)
     }
 }
-

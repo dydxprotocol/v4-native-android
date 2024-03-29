@@ -17,6 +17,7 @@ import exchange.dydx.trading.integration.analytics.CompositeTracking
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
+import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -37,6 +38,7 @@ class CoreViewModel @Inject constructor(
     private val parser: ParserProtocol,
     private val tracker: Tracking,
     val compositeTracking: CompositeTracking,
+    private val preferencesStore: SharedPreferencesStore,
 ) : ViewModel() {
     private var globalWorkers: DydxGlobalWorkers? = null
 
@@ -53,6 +55,7 @@ class CoreViewModel @Inject constructor(
             formatter = formatter,
             parser = parser,
             tracker = tracker,
+            preferencesStore = preferencesStore,
         )
     }
 

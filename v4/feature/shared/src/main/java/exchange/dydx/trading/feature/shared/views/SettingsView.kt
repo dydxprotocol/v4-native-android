@@ -116,7 +116,7 @@ object SettingsView {
         enum class ItemFieldType {
             SELECT,
             SWITCH;
-            
+
             companion object {
                 fun fromString(value: String?): ItemFieldType? {
                     return when (value) {
@@ -186,7 +186,7 @@ object SettingsView {
                             } else {
                                 val sectionField = section.fields!!.first()
                                 if (sectionField.field?.type == "bool") {
-                                   val item = createSingleLineFieldItem(
+                                    val item = createSingleLineFieldItem(
                                         item = sectionField,
                                         itemFieldAction = itemFieldAction,
                                         valueOfField = valueOfField,
@@ -379,7 +379,7 @@ object SettingsView {
                                         option.selected = i == index
                                     }
                                     item.field.fieldAction?.invoke(
-                                        field.options[index].value ?: ""
+                                        field.options[index].value ?: "",
                                     )
                                 },
                             )
@@ -394,10 +394,11 @@ object SettingsView {
                         ) {
                             CreateFieldTitle()
                             Spacer(modifier = Modifier.weight(1f))
-                            Switch(checked = item?.value == "1",
+                            Switch(
+                                checked = item?.value == "1",
                                 onCheckedChange = {
                                     item.field.fieldAction?.invoke(if (it) "1" else "0")
-                                }
+                                },
                             )
                         }
                     }

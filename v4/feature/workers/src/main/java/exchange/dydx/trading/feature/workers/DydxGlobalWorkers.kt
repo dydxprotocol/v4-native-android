@@ -17,6 +17,7 @@ import exchange.dydx.trading.feature.workers.globalworkers.DydxUserTrackingWorke
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
+import exchange.dydx.utilities.utils.SharedPreferencesStore
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 
@@ -32,11 +33,12 @@ class DydxGlobalWorkers(
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
+    private val preferencesStore: SharedPreferencesStore,
 ) : WorkerProtocol {
 
     private val workers = listOf(
         DydxUpdateWorker(scope, abacusStateManager, router, context),
-        DydxAlertsWorker(scope, abacusStateManager, localizer, router, platformInfo),
+        DydxAlertsWorker(scope, abacusStateManager, localizer, router, platformInfo, preferencesStore),
         DydxApiStatusWorker(scope, abacusStateManager, localizer, platformInfo),
         DydxRestrictionsWorker(scope, abacusStateManager, localizer, platformInfo),
         DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context),
