@@ -32,6 +32,7 @@ object ProfileRoutes {
     const val help = "help"
     const val rewards = "rewards"
     const val debug_enable = "action/debug/enable"
+    const val notifications = "settings/notifications"
 }
 
 object NewsAlertsRoutes {

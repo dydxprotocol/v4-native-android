@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.shared.views
 
+import android.widget.Switch
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -81,7 +83,7 @@ object SettingsView {
         data class Item(
             val title: String? = null,
             val subtitle: String? = null,
-            val value: String? = null,
+            var value: String? = null,
             val route: String? = null,
             var selected: Boolean? = null,
             val field: ItemField? = null,
@@ -111,8 +113,24 @@ object SettingsView {
             }
         }
 
+        enum class ItemFieldType {
+            SELECT,
+            SWITCH;
+            
+            companion object {
+                fun fromString(value: String?): ItemFieldType? {
+                    return when (value) {
+                        "select" -> SELECT
+                        "bool" -> SWITCH
+                        else -> null
+                    }
+                }
+            }
+        }
+
         data class ItemField(
             val fieldId: String? = null,
+            val type: ItemFieldType? = null,
             val options: List<ItemFieldOption>? = null,
             val fieldAction: ((String) -> Unit)? = null,
         ) {
@@ -159,47 +177,69 @@ object SettingsView {
                                 emptyList()
                             } else if (section.fields!!.size > 1) {
                                 section.fields!!.map { item ->
-                                    Item(
-                                        title = item.title?.text,
-                                        value = if (item.field != null) {
-                                            valueOfField?.invoke(item.field!!)
-                                        } else {
-                                            item.text?.text
-                                        },
-                                        route = item.link?.text,
-                                        field = if (item.field != null) {
-                                            ItemField(
-                                                fieldId = item.field?.field,
-                                                options = item.field?.options?.map { option ->
-                                                    ItemFieldOption(
-                                                        text = option.text,
-                                                        value = option.value,
-                                                        selected = option.value == valueOfField?.invoke(item.field!!),
-                                                    )
-                                                },
-                                                fieldAction = { value ->
-                                                    itemFieldAction?.invoke(item.field?.field ?: "", value)
-                                                },
-                                            )
-                                        } else {
-                                            null
-                                        },
+                                    createSingleLineFieldItem(
+                                        item = item,
+                                        itemFieldAction = itemFieldAction,
+                                        valueOfField = valueOfField,
                                     )
                                 }
                             } else {
-                                section.fields!!.first().field?.options?.map { option ->
-                                    Item(
-                                        title = option.text,
-                                        value = option.value,
-                                        route = null,
+                                val sectionField = section.fields!!.first()
+                                if (sectionField.field?.type == "bool") {
+                                   val item = createSingleLineFieldItem(
+                                        item = sectionField,
+                                        itemFieldAction = itemFieldAction,
+                                        valueOfField = valueOfField,
                                     )
+                                    listOf(item)
+                                } else {
+                                    sectionField.field?.options?.map { option ->
+                                        Item(
+                                            title = option.text,
+                                            value = option.value,
+                                            route = null,
+                                        )
+                                    } ?: emptyList()
                                 }
-                                    ?: emptyList()
                             },
                         )
                     },
                     backAction = backAction,
                     itemAction = itemAction,
+                )
+            }
+
+            private fun createSingleLineFieldItem(
+                item: PlatformUISettings.SectionField,
+                itemFieldAction: ((String, String) -> Unit)? = null,
+                valueOfField: ((PlatformUISettings.Field) -> String?)? = null
+            ): Item {
+                return Item(
+                    title = item.title?.text,
+                    value = if (item.field != null) {
+                        valueOfField?.invoke(item.field!!)
+                    } else {
+                        item.text?.text
+                    },
+                    route = item.link?.text,
+                    field = if (item.field != null) {
+                        ItemField(
+                            fieldId = item.field?.field,
+                            type = ItemFieldType.fromString(item.field?.type),
+                            options = item.field?.options?.map { option ->
+                                ItemFieldOption(
+                                    text = option.text,
+                                    value = option.value,
+                                    selected = option.value == valueOfField?.invoke(item.field!!),
+                                )
+                            },
+                            fieldAction = { value ->
+                                itemFieldAction?.invoke(item.field?.field ?: "", value)
+                            },
+                        )
+                    } else {
+                        null
+                    },
                 )
             }
         }
@@ -292,6 +332,16 @@ object SettingsView {
         item: ViewState.Item,
         state: ViewState
     ) {
+        @Composable
+        fun CreateFieldTitle() {
+            Text(
+                text = if (item.title != null) state.localizer.localize(item.title!!) else "",
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.base)
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
+            )
+        }
+
         val field = item.field ?: return
 
         Column(
@@ -303,14 +353,8 @@ object SettingsView {
                 ),
             verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
         ) {
-            Text(
-                text = if (item.title != null) state.localizer.localize(item.title!!) else "",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.base)
-                    .themeColor(ThemeColor.SemanticColor.text_primary),
-            )
-
             if (field.options == null) {
+                CreateFieldTitle()
                 PlatformTextInput(
                     modifier = Modifier
                         .height(40.dp)
@@ -321,19 +365,42 @@ object SettingsView {
                     },
                 )
             } else {
-                Row {
-                    Spacer(modifier = Modifier.weight(1f))
-                    PlatformTextTabGroup(
-                        items = field.options.map { it.text ?: "" },
-                        selectedItems = field.options.map { it.text ?: "" },
-                        currentSelection = field.options.indexOfFirst { it.selected == true },
-                        onSelectionChanged = { index ->
-                            field.options.forEachIndexed { i, option ->
-                                option.selected = i == index
-                            }
-                            item.field.fieldAction?.invoke(field.options[index].value ?: "")
-                        },
-                    )
+                when (field.type) {
+                    ViewState.ItemFieldType.SELECT, null -> {
+                        CreateFieldTitle()
+                        Row {
+                            Spacer(modifier = Modifier.weight(1f))
+                            PlatformTextTabGroup(
+                                items = field.options.map { it.text ?: "" },
+                                selectedItems = field.options.map { it.text ?: "" },
+                                currentSelection = field.options.indexOfFirst { it.selected == true },
+                                onSelectionChanged = { index ->
+                                    field.options.forEachIndexed { i, option ->
+                                        option.selected = i == index
+                                    }
+                                    item.field.fieldAction?.invoke(
+                                        field.options[index].value ?: ""
+                                    )
+                                },
+                            )
+                        }
+                    }
+
+                    ViewState.ItemFieldType.SWITCH -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            CreateFieldTitle()
+                            Spacer(modifier = Modifier.weight(1f))
+                            Switch(checked = item?.value == "1",
+                                onCheckedChange = {
+                                    item.field.fieldAction?.invoke(if (it) "1" else "0")
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -389,7 +456,9 @@ object SettingsView {
                         Icon(
                             painter = painterResource(id = R.drawable.chevron_right),
                             contentDescription = "",
-                            modifier = Modifier.size(16.dp).padding(start = 8.dp),
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(start = 8.dp),
                             tint = ThemeColor.SemanticColor.text_primary.color,
                         )
                     }
