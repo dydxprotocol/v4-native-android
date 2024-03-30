@@ -1,7 +1,5 @@
 package exchange.dydx.trading.feature.shared
 
-import android.app.Notification
-
 object PreferenceKeys {
     const val Language = "language"
     const val Theme = "v4_theme"
