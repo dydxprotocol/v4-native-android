@@ -5,8 +5,7 @@ import android.util.Log
 import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.utils.IMap
-import exchange.dydx.abacus.utils.filterNotNull
-import exchange.dydx.abacus.utils.toJsonPrettyPrint
+import exchange.dydx.abacus.utils.toJson
 import okhttp3.CacheControl
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -114,11 +113,8 @@ class AbacusRestImp @Inject constructor() : RestProtocol {
                 endBackgroundTask()
                 val code = response.code
                 val body = response.body?.string()
-                val headerMap: Map<String, Any> = response.headers.names().associateWith {
-                    response.headers.values(it)?.firstOrNull()
-                }.filterNotNull()
-                val headerJsonString = headerMap.toJsonPrettyPrint()
-                callback(body, code, headerJsonString)
+                val headersJsonString = response.headers.toMap().toJson()
+                callback(body, code, headersJsonString)
             }
         })
     }
