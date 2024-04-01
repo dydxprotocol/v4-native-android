@@ -43,8 +43,6 @@ import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.receipt.DydxReceiptView
@@ -109,7 +107,7 @@ object DydxTradeInputView : DydxComponent {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val featureFlags: DydxFeatureFlags? = null,
+        val isIsolatedMarketEnabled: Boolean = false,
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
@@ -160,8 +158,6 @@ object DydxTradeInputView : DydxComponent {
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
         val focusManager = LocalFocusManager.current
 
-        val isolatedMarketEnabled =
-            state.featureFlags?.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market) == true
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -180,7 +176,7 @@ object DydxTradeInputView : DydxComponent {
                     DydxTradeSheetTipView.Content(Modifier)
                 }
 
-                if (isolatedMarketEnabled) {
+                if (state.isIsolatedMarketEnabled) {
                     DydxTradeInputSideView.Content(Modifier)
                 } else {
                     DydxTradeInputOrderTypeView.Content(
@@ -207,7 +203,7 @@ object DydxTradeInputView : DydxComponent {
                             DydxOrderbookGroupView.Content(Modifier.padding(start = 12.dp))
                         }
                     }
-                    if (isolatedMarketEnabled) {
+                    if (state.isIsolatedMarketEnabled) {
                         DydxTradeInputOrderTypeView.Content(
                             Modifier.weight(1f),
                         )
