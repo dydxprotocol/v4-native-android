@@ -8,7 +8,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.settings.PlatformUISettings
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.feature.shared.PreferenceKeys
+import exchange.dydx.trading.feature.shared.NotificationEnabled
 import exchange.dydx.trading.feature.shared.views.SettingsView
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.Flow
@@ -40,13 +40,12 @@ class DydxNotificationsViewModel @Inject constructor(
                 router.navigateBack()
             },
             itemFieldAction = { _, value ->
-                preferencesStore.save(value, PreferenceKeys.Notifications)
+                NotificationEnabled.update(preferencesStore, value)
                 mutableState.value = createViewState()
             },
         )
 
-        val notificationsOn = preferencesStore.read(key = PreferenceKeys.Notifications, defaultValue = "1")
-        viewState.sections.first().items.first().value = notificationsOn
+        viewState.sections.first().items.first().value = NotificationEnabled.currentValue(preferencesStore)
 
         return viewState
     }
@@ -56,8 +55,8 @@ class DydxNotificationsViewModel @Inject constructor(
             localizer: LocalizerProtocol,
             preferencesStore: SharedPreferencesStore,
         ): String? {
-            val notificationsOn = preferencesStore.read(key = PreferenceKeys.Notifications, defaultValue = "1")
-            return if (notificationsOn == "1") localizer.localize("APP.HEADER.ON") else localizer.localize("APP.HEADER.OFF")
+            val notificationsOn = NotificationEnabled.enabled(preferencesStore)
+            return if (notificationsOn) localizer.localize("APP.HEADER.ON") else localizer.localize("APP.HEADER.OFF")
         }
     }
 }

@@ -216,29 +216,27 @@ object SettingsView {
             ): Item {
                 return Item(
                     title = item.title?.text,
-                    value = if (item.field != null) {
-                        valueOfField?.invoke(item.field!!)
-                    } else {
+                    value = item.field?.let {
+                        valueOfField?.invoke(it)
+                    } ?: run {
                         item.text?.text
                     },
                     route = item.link?.text,
-                    field = if (item.field != null) {
+                    field = item.field?.let {
                         ItemField(
-                            fieldId = item.field?.field,
-                            type = ItemFieldType.fromString(item.field?.type),
-                            options = item.field?.options?.map { option ->
+                            fieldId = it.field,
+                            type = ItemFieldType.fromString(it.type),
+                            options = it.options?.map { option ->
                                 ItemFieldOption(
                                     text = option.text,
                                     value = option.value,
-                                    selected = option.value == valueOfField?.invoke(item.field!!),
+                                    selected = option.value == valueOfField?.invoke(it),
                                 )
                             },
                             fieldAction = { value ->
-                                itemFieldAction?.invoke(item.field?.field ?: "", value)
+                                itemFieldAction?.invoke(it.field ?: "", value)
                             },
                         )
-                    } else {
-                        null
                     },
                 )
             }

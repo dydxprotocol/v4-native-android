@@ -4,7 +4,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.feature.shared.PreferenceKeys
+import exchange.dydx.trading.feature.shared.NotificationEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
@@ -52,8 +52,7 @@ class DydxAlertsWorker(
             .forEach { alert ->
                 val alertText = alert.text ?: return@forEach
 
-                val notificationsOn = preferencesStore.read(key = PreferenceKeys.Notifications, defaultValue = "1")
-                if (notificationsOn == "0") {
+                if (!NotificationEnabled.enabled(preferencesStore)) {
                     return@forEach
                 }
 
