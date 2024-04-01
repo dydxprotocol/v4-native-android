@@ -6,6 +6,7 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.feature.receipt.ReceiptType
 import exchange.dydx.trading.feature.receipt.TradeReceiptType
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class DydxTradeInputViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
+    private val featureFlags: DydxFeatureFlags,
     val receiptTypeFlow: MutableStateFlow<@JvmSuppressWildcards ReceiptType?>,
     val orderbookToggleStateFlow: Flow<@JvmSuppressWildcards DydxTradeInputView.OrderbookToggleState>,
     val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
@@ -60,6 +62,7 @@ class DydxTradeInputViewModel @Inject constructor(
                 if (tradeInput?.options?.needsPostOnly == true) DydxTradeInputView.InputField.PostOnly else null,
                 if (tradeInput?.options?.needsReduceOnly == true) DydxTradeInputView.InputField.ReduceOnly else null,
             ),
+            featureFlags = featureFlags,
             orderbookToggleState = orderbookToggleState,
             requestedBottomSheetState = buttomSheetState,
             onRequestedBottomSheetStateCompleted = {
