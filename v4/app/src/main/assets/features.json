@@ -32,6 +32,26 @@
                         }
                     ]
                 }
+            },
+            {
+                "title":{
+                    "text":"Isolated Market"
+                },
+                "field":{
+                    "field":"enable_isolated_market",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }
