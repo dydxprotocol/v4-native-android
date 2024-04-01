@@ -77,15 +77,15 @@ object DydxPortfolioOrdersView : DydxComponent {
     fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
         if (state == null) return
 
-        scope.item(key = "header") {
-            CreateHeader(modifier, state)
-        }
-
         if (state.orders.isEmpty()) {
             scope.item(key = "placeholder") {
-                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 32.dp))
+                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 0.dp))
             }
         } else {
+            scope.item(key = "header") {
+                CreateHeader(modifier, state)
+            }
+
             scope.items(items = state.orders, key = { it.id }) { order ->
                 if (order === state.orders.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
