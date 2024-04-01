@@ -2,7 +2,6 @@ package exchange.dydx.feature.onboarding.desktopscan
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -13,8 +12,10 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
+import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
+import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -30,19 +31,15 @@ class DydxDesktopScanViewModel @Inject constructor(
     val platformDialog: PlatformDialog,
     val platformInfo: PlatformInfo,
     val starkexLib: StarkexLib,
+    private val onboardingAnalytics: OnboardingAnalytics,
+    private val walletAnalytics: WalletAnalytics,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxDesktopScanView.ViewState?> = abacusStateManager.state.marketSummary
-        .map {
-            createViewState(it)
-        }
-        .distinctUntilChanged()
+    val state: Flow<DydxDesktopScanView.ViewState?> = MutableStateFlow(createViewState())
 
-    private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxDesktopScanView.ViewState {
-        val volume = formatter.dollarVolume(marketSummary?.volume24HUSDC)
+    private fun createViewState(): DydxDesktopScanView.ViewState {
         return DydxDesktopScanView.ViewState(
             localizer = localizer,
-            text = volume,
             closeButtonHandler = {
                 router.navigateBack()
             },
@@ -73,6 +70,8 @@ class DydxDesktopScanViewModel @Inject constructor(
                 val mnemonic = parser.asString(map["mnemonic"])
                 val cosmosAddress = parser.asString(map["cosmosAddress"])
                 if (mnemonic != null && cosmosAddress != null) {
+                    onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
+                    walletAnalytics.logConnected(null)
                     abacusStateManager.setV4(
                         ethereumAddress = "",
                         mnemonic = mnemonic,

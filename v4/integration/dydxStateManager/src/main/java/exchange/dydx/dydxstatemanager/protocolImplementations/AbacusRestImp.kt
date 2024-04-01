@@ -6,7 +6,6 @@ import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.utils.IMap
 import exchange.dydx.abacus.utils.filterNotNull
-import exchange.dydx.abacus.utils.toJsonElement
 import exchange.dydx.abacus.utils.toJsonPrettyPrint
 import okhttp3.CacheControl
 import okhttp3.Callback
@@ -17,8 +16,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AbacusRestImp : RestProtocol {
+@Singleton
+class AbacusRestImp @Inject constructor() : RestProtocol {
 
     private val TAG = "AbacusRestImp"
 
@@ -71,7 +73,14 @@ class AbacusRestImp : RestProtocol {
         callback: RestCallback,
     ) {
         var requestBuilder = Request.Builder()
-            .url(url)
+
+        try {
+            requestBuilder.url(url)
+        } catch (e: Exception) {
+            Log.e(TAG, "AbacusRestImp Invalid URL $url, ${e.message}")
+            callback(null, 0, null)
+            return
+        }
 
         val headers = headers?.toTypedArray()
         headers?.forEach { (key, value) ->

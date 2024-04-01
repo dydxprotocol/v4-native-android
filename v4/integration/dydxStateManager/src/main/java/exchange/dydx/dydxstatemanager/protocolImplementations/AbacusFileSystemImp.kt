@@ -1,16 +1,16 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
-import android.content.Context
-import android.util.Log
+import android.app.Application
 import exchange.dydx.abacus.protocols.FileLocation
 import exchange.dydx.abacus.protocols.FileSystemProtocol
 import okio.use
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
-class AbacusFileSystemImp(
-    private val context: Context?,
+class AbacusFileSystemImp @Inject constructor(
+    private val application: Application,
 ) : FileSystemProtocol {
     private val TAG = "AbacusFileSystemImp"
 
@@ -18,35 +18,24 @@ class AbacusFileSystemImp(
         val path = if (path.first() == '/') path.drop(1) else path
         when (location) {
             FileLocation.AppBundle -> {
-                val context = context
-                return if (context != null) {
-                    try {
-                        val string = context.assets.open(path).bufferedReader().use {
-                            it.readText()
-                        }
-                        string
-                    } catch (e: Exception) {
-                        Timber.tag(TAG).e(e.stackTraceToString())
-                        null
+                return try {
+                    val string = application.assets.open(path).bufferedReader().use {
+                        it.readText()
                     }
-                } else {
-                    Timber.tag(TAG).e("Context is null")
+                    string
+                } catch (e: Exception) {
+                    Timber.tag(TAG).e(e.stackTraceToString())
                     null
                 }
             }
             FileLocation.AppDocs -> {
-                val context = context
-                return if (context != null) {
-                    val absoluteFilePath = File(context.filesDir, path).absolutePath
-                    val file = File(absoluteFilePath)
-                    if (file.exists()) {
-                        file.readText()
-                    } else {
-                        Timber.tag(TAG).e("File does not exist: %s", absoluteFilePath)
-                        null
-                    }
+                val absoluteFilePath = File(application.filesDir, path).absolutePath
+                val file = File(absoluteFilePath)
+
+                return if (file.exists()) {
+                    file.readText()
                 } else {
-                    Timber.tag(TAG).e("Context is null")
+                    Timber.tag(TAG).e("File does not exist: %s", absoluteFilePath)
                     null
                 }
             }
@@ -54,31 +43,25 @@ class AbacusFileSystemImp(
     }
 
     override fun writeTextFile(path: String, text: String): Boolean {
-        val context = context
-        if (context != null) {
-            val path = if (path.first() == '/') path.drop(1) else path
-            val absoluteFilePath = File(context.filesDir, path).absolutePath
+        val path = if (path.first() == '/') path.drop(1) else path
+        val absoluteFilePath = File(application.filesDir, path).absolutePath
 
-            // Create parent directories if they don't exist
-            val parentDir = File(absoluteFilePath).parentFile
-            if (parentDir != null) {
-                if (!parentDir.exists()) {
-                    parentDir.mkdirs()
-                }
+        // Create parent directories if they don't exist
+        val parentDir = File(absoluteFilePath).parentFile
+        if (parentDir != null) {
+            if (!parentDir.exists()) {
+                parentDir.mkdirs()
             }
+        }
 
-            try {
-                val fos = FileOutputStream(absoluteFilePath)
-                fos.write(text.toByteArray())
-                fos.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                return false
-            }
-            return true
-        } else {
-            Log.e(TAG, "Context is null")
+        try {
+            val fos = FileOutputStream(absoluteFilePath)
+            fos.write(text.toByteArray())
+            fos.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
             return false
         }
+        return true
     }
 }

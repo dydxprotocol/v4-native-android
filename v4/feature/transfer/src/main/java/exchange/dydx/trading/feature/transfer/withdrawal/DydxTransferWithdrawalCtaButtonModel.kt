@@ -17,6 +17,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.DydxScreenResult
+import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.steps.DydxTransferScreenStep
@@ -47,6 +48,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val transferInstanceStore: DydxTransferInstanceStoring,
+    private val transferAnalytics: TransferAnalytics,
 ) : ViewModel(), DydxViewModel {
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -187,6 +189,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
                 val error = eventResult.error
 
                 if (hash != null) {
+                    transferAnalytics.logWithdrawal(transferInput)
                     transferInstanceStore.addTransferHash(
                         hash = hash,
                         fromChainName = abacusStateManager.environment?.chainName,

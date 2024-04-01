@@ -45,12 +45,6 @@ class DydxFormatter @Inject constructor() {
         SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale)
     }
 
-    private val rawFormatter: NumberFormat by lazy {
-        NumberFormat.getNumberInstance().apply {
-            isGroupingUsed = false
-        }
-    }
-
     fun dollarVolume(number: Double?, digits: Int = 2): String? {
         return dollarVolume(number?.toBigDecimal(), digits)
     }
@@ -76,15 +70,15 @@ class DydxFormatter @Inject constructor() {
     fun condensed(number: BigDecimal?, digits: Int = 4): String? {
         if (number != null) {
             val postfix = arrayOf("", "K", "M", "B", "T")
-            var value = number.toDouble()
+            var value = number.toDouble().absoluteValue
             var index = 0
             while (value > 1000.0 && index < (postfix.size - 1)) {
                 value /= 1000.0
                 index++
             }
-            val number = BigDecimal(value).setScale(digits, RoundingMode.HALF_UP)
-            val numberString = formatBigDecimal(number)
-            return "$numberString${postfix[index]}"
+            val formatted = BigDecimal(value).setScale(digits, RoundingMode.HALF_UP)
+            val numberString = formatBigDecimal(formatted)
+            return if (number >= BigDecimal.ZERO) "$numberString${postfix[index]}" else "-$numberString${postfix[index]}"
         }
         return null
     }
@@ -112,7 +106,14 @@ class DydxFormatter @Inject constructor() {
             val decimalFormat = NumberFormat.getInstance(locale) as? DecimalFormat
             decimalFormat?.minimumFractionDigits = maxOf(digits, 0)
             decimalFormat?.maximumFractionDigits = maxOf(digits, 0)
-            return decimalFormat?.format(number)
+
+            val formatted = decimalFormat?.format(number)
+            val parsed = decimalFormat?.parse(formatted)
+            if (parsed?.toDouble() == 0.0) { // handle -0.0
+                return decimalFormat.format(0.0)
+            } else {
+                return formatted
+            }
         }
         return null
     }
@@ -133,36 +134,23 @@ class DydxFormatter @Inject constructor() {
     }
 
     fun dollar(number: Double?, size: String? = null): String? {
-        if (number != null) {
-            return dollar(number = number.toBigDecimal(), size = size)
-        }
-        return null
+        return dollar(number = number?.toBigDecimal(), size = size)
     }
 
     fun dollar(number: BigDecimal?, size: String? = null): String? {
-        if (number == null) return null
-        val formattedNumber = localFormatted(number.abs(), size ?: "0.01")
-        return formattedNumber?.let {
-            if (number >= BigDecimal.ZERO) {
-                "$$it"
-            } else {
-                "-$$it"
-            }
-        }
+        return dollar(number, digits = digits(size ?: "0.01"))
     }
 
     fun dollar(number: Double?, digits: Int): String? {
-        if (number != null) {
-            return dollar(number = number.toBigDecimal(), digits = digits)
-        }
-        return null
+        return dollar(number = number?.toBigDecimal(), digits = digits)
     }
 
     fun dollar(number: BigDecimal?, digits: Int): String? {
         if (number == null) return null
         val formattedNumber = localFormatted(number.abs(), digits)
         return formattedNumber?.let {
-            if (number >= BigDecimal.ZERO) {
+            val rawDouble = raw(number.toDouble(), digits)?.toDouble() ?: 0.0
+            if (rawDouble >= 0.0) {
                 "$$it"
             } else {
                 "-$$it"
@@ -171,10 +159,7 @@ class DydxFormatter @Inject constructor() {
     }
 
     fun percent(number: Double?, digits: Int, minDigits: Int? = null): String? {
-        if (number != null) {
-            return percent(number = number.toBigDecimal(), digits = digits, minDigits = minDigits)
-        }
-        return null
+        return percent(number = number?.toBigDecimal(), digits = digits, minDigits = minDigits)
     }
 
     fun percent(number: BigDecimal?, digits: Int, minDigits: Int? = null): String? {
@@ -279,14 +264,33 @@ class DydxFormatter @Inject constructor() {
         }
     }
 
-    fun raw(number: Double?, digits: Int? = null): String? {
+    /*
+   xxxxx.yyyyy
+   */
+    fun decimalLocaleAgnostic(number: Double?, digits: Int): String? {
+        return raw(number = number, digits = digits, locale = Locale.US)
+    }
+
+    /*
+     xxxxxx,yyyyy or xxxxx.yyyyy
+     */
+    fun raw(number: Double?, digits: Int? = null, locale: Locale = Locale.getDefault()): String? {
         return number?.let { value ->
             if (value.isFinite()) {
                 if (digits != null) {
-                    rawFormatter.minimumFractionDigits = maxOf(digits, 0)
-                    rawFormatter.maximumFractionDigits = maxOf(digits, 0)
-                    rawFormatter.roundingMode = RoundingMode.HALF_UP
-                    rawFormatter.format(number)
+                    val rawFormatter = DecimalFormat.getInstance(locale).apply {
+                        minimumFractionDigits = maxOf(digits, 0)
+                        maximumFractionDigits = maxOf(digits, 0)
+                        roundingMode = RoundingMode.HALF_UP
+                        isGroupingUsed = false
+                    }
+                    val formatted = rawFormatter.format(number)
+                    val number = rawFormatter.parse(formatted)
+                    if (number.toDouble() == 0.0) { // handle -0.0
+                        rawFormatter.format(0.0)
+                    } else {
+                        formatted
+                    }
                 } else {
                     BigDecimal(number).toPlainString()
                 }

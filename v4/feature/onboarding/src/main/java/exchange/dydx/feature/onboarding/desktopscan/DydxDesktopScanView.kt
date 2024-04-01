@@ -33,14 +33,12 @@ fun Preview_dydxDesktopScanView() {
 object DydxDesktopScanView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val text: String?,
         val closeButtonHandler: () -> Unit = {},
         val qrCodeScannedHandler: (String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                text = "1.0M",
             )
         }
     }

@@ -1,17 +1,20 @@
 package exchange.dydx.trading.feature.transfer.utils
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.TransferType
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
 import java.time.Instant
+import javax.inject.Inject
 
 interface DydxTransferInstanceStoring {
     fun addTransferHash(hash: String, fromChainName: String?, toChainName: String?, transferInput: TransferInput)
 }
 
-class DydxTransferInstanceStore(
+@ActivityRetainedScoped
+class DydxTransferInstanceStore @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val parser: ParserProtocol,
 ) : DydxTransferInstanceStoring {

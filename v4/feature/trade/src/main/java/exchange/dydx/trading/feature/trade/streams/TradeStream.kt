@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.trade.streams
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
+import javax.inject.Inject
 
 interface TradeStreaming {
     val submissionStatus: Flow<AbacusStateManagerProtocol.SubmissionStatus?>
@@ -23,7 +25,8 @@ interface MutableTradeStreaming : TradeStreaming {
     fun closePosition()
 }
 
-class TradeStream(
+@ActivityRetainedScoped
+class TradeStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
 ) : MutableTradeStreaming {
 

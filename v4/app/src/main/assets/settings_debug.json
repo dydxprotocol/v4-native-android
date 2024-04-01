@@ -6,7 +6,7 @@
                     "text" : "APP.LANGUAGE.LANGUAGE"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/language"
+                    "text" : "settings/language"
                 },
                 "field":{
                     "field":"language"
@@ -17,7 +17,7 @@
                     "text" : "APP.V4.THEME"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/theme"
+                    "text" : "settings/theme"
                 },
                 "field":{
                     "field":"v4_theme"
@@ -25,10 +25,21 @@
             },
             {
                 "title" : {
+                    "text" : "APP.V4.DIRECTION_COLOR_PREFERENCE"
+                },
+                "link" : {
+                    "text" : "settings/direction_color_preference"
+                },
+                "field":{
+                    "field":"direction_color_preference"
+                }
+            },
+            {
+                "title" : {
                     "text" : "APP.V4.TRADING_NETWORK"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/env"
+                    "text" : "settings/env"
                 },
                 "field":{
                     "field":"env"
@@ -39,7 +50,15 @@
                     "text" : "APP.V4.SYSTEM_STATUS"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/status"
+                    "text" : "settings/status"
+                }
+            },
+            {
+                "title" : {
+                    "text" : "APP.ISSUE_REPORT.SETTINGS_TITLE"
+                },
+                "link" : {
+                    "text" : "settings/report_issue"
                 }
             },
             {
@@ -47,7 +66,7 @@
                     "text" : "Feature Flag Overrides"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/features"
+                    "text" : "features"
                 }
             },
             {
@@ -55,18 +74,7 @@
                     "text" : "Debug Settings"
                 },
                 "link" : {
-                    "text" : "dydxv4://open/settings/debug"
-                }
-            },
-            {
-                "title" : {
-                    "text" : "APP.V4.DIRECTION_COLOR_PREFERENCE"
-                },
-                "link" : {
-                    "text" : "dydxv4://open/settings/direction_color_preference"
-                },
-                "field":{
-                    "field":"direction_color_preference"
+                    "text" : "settings/debug"
                 }
             }
         ]

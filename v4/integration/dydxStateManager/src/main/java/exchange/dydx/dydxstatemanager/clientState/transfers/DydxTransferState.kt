@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import java.time.Instant
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface DydxTransferStateManagerProtocol {
     val state: Flow<DydxTransferState?>
@@ -16,6 +17,7 @@ interface DydxTransferStateManagerProtocol {
     fun clear()
 }
 
+@Singleton
 class DydxTransferStateManager @Inject constructor(
     private val clientState: DydxClientState,
 ) : DydxTransferStateManagerProtocol {

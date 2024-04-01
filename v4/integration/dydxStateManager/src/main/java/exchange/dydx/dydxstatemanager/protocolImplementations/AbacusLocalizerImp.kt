@@ -7,10 +7,19 @@ import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.app.helper.DynamicLocalizer
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.utilities.utils.SharedPreferencesStore
+import javax.inject.Inject
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
-class AbacusLocalizerImp(
+// Temporary location, should probably make a separate dagger-qualifiers module.
+@Qualifier annotation class LanguageKey
+
+// While this class doesn't technically hold any state, it does have a side-effect on init.
+// So, scoping this as a singleton.
+@Singleton
+class AbacusLocalizerImp @Inject constructor(
     private val sharedPreferencesStore: SharedPreferencesStore,
-    private val preferenceKey: String,
+    @LanguageKey private val preferenceKey: String,
     private val ioImplementations: IOImplementations,
 ) : AbacusLocalizerProtocol {
 

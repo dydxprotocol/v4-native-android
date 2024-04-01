@@ -7,6 +7,15 @@ import exchange.dydx.utilities.utils.jsonStringToMap
 class FirebaseTracker(
     private val firebaseAnalytics: FirebaseAnalytics
 ) : Tracking {
+    override fun setUserId(userId: String?) {
+        firebaseAnalytics.setUserId(userId)
+    }
+
+    override fun setUserProperties(properties: Map<String, String?>) {
+        properties.forEach { (key, value) ->
+            firebaseAnalytics.setUserProperty(key, value)
+        }
+    }
 
     override fun log(event: String, data: String?) {
         firebaseAnalytics.logEvent(event) {

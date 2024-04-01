@@ -1,5 +1,6 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -7,8 +8,13 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AbacusWebSocketImp : exchange.dydx.abacus.protocols.WebSocketProtocol {
+@Singleton
+class AbacusWebSocketImp @Inject constructor() : exchange.dydx.abacus.protocols.WebSocketProtocol {
+
+    private val TAG = "AbacusRestImp"
 
     private var url: String? = null
     private var connected: ((Boolean) -> Unit)? = null
@@ -40,38 +46,53 @@ class AbacusWebSocketImp : exchange.dydx.abacus.protocols.WebSocketProtocol {
 
     private fun connect() {
         url?.let { url ->
-            val request = Request.Builder().url(url).build()
-            val okHttpClient = OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .build()
+            val request: Request?
 
-            val listener = object : WebSocketListener() {
-                override fun onOpen(webSocket: WebSocket, response: Response) {
-                    this@AbacusWebSocketImp.webSocket = webSocket
-                    connected?.invoke(true)
-                }
-
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    received?.invoke(text)
-                }
-
-                override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                    // Handle binary messages if needed
-                }
-
-                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                    webSocket.close(NORMAL_CLOSURE, null)
-                    connected?.invoke(false)
-                }
-
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    connected?.invoke(false)
-                }
+            try {
+                request = Request.Builder().url(url).build()
+            } catch (e: Exception) {
+                connected?.invoke(false)
+                Log.e(TAG, "AbacusWebSocketImp Invalid URL $url, ${e.message}")
+                return
             }
 
-            okHttpClient.newWebSocket(request, listener)
+            if (request != null) {
+                val okHttpClient = OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .build()
+
+                val listener = object : WebSocketListener() {
+                    override fun onOpen(webSocket: WebSocket, response: Response) {
+                        this@AbacusWebSocketImp.webSocket = webSocket
+                        connected?.invoke(true)
+                    }
+
+                    override fun onMessage(webSocket: WebSocket, text: String) {
+                        received?.invoke(text)
+                    }
+
+                    override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                        // Handle binary messages if needed
+                    }
+
+                    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                        webSocket.close(NORMAL_CLOSURE, null)
+                        connected?.invoke(false)
+                    }
+
+                    override fun onFailure(
+                        webSocket: WebSocket,
+                        t: Throwable,
+                        response: Response?
+                    ) {
+                        connected?.invoke(false)
+                    }
+                }
+
+                okHttpClient.newWebSocket(request, listener)
+            }
         }
     }
 }

@@ -16,6 +16,8 @@ import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
+import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
+import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +36,8 @@ class DydxOnboardConnectViewModel @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
     val platformInfo: PlatformInfo,
     private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
+    private val onboardingAnalytics: OnboardingAnalytics,
+    private val walletAnalytics: WalletAnalytics,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
@@ -69,6 +73,9 @@ class DydxOnboardConnectViewModel @Inject constructor(
                         }
                     }
                     is DydxWalletSetup.Status.Signed -> {
+                        onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
+                        walletAnalytics.logConnected(walletId)
+
                         _state.update { state ->
                             state.copy(
                                 steps = listOf(step1(status = ProgressStepView.Status.Completed), step2(status = ProgressStepView.Status.Completed)),

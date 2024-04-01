@@ -18,6 +18,8 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
+import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
+import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +44,8 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val transferInstanceStore: DydxTransferInstanceStoring,
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
+    private val onboardingAnalytics: OnboardingAnalytics,
+    private val transferAnalytics: TransferAnalytics,
 ) : ViewModel(), DydxViewModel {
     private val carteraProvider: CarteraProvider = CarteraProvider(context)
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -151,6 +156,8 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                 val hash = eventResult.result
                 val error = eventResult.error
                 if (hash != null) {
+                    sendOnboardingAnalytics()
+                    transferAnalytics.logDeposit(transferInput)
                     abacusStateManager.resetTransferInputFields()
                     transferInstanceStore.addTransferHash(
                         hash = hash,
@@ -167,6 +174,18 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                     errorFlow.value = DydxTransferError(
                         message = error.localizedMessage ?: "",
                     )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun sendOnboardingAnalytics() {
+        abacusStateManager.state.hasAccount
+            .take(1)
+            .onEach { hasAccount ->
+                // only log for newly onboarded users (i.e., user without an account)
+                if (!hasAccount) {
+                    onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.DEPOSIT_FUNDS)
                 }
             }
             .launchIn(viewModelScope)
