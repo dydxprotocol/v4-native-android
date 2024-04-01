@@ -209,7 +209,7 @@ object DydxTradeInputView : DydxComponent {
                     }
                     if (isolatedMarketEnabled) {
                         DydxTradeInputOrderTypeView.Content(
-                            Modifier,
+                            Modifier.weight(1f),
                         )
                     } else {
                         DydxTradeInputSideView.Content(Modifier.weight(1f))
