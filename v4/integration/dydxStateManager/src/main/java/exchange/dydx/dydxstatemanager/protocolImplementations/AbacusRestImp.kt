@@ -2,8 +2,12 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import android.os.AsyncTask
 import android.util.Log
+import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.utils.IMap
+import exchange.dydx.abacus.utils.filterNotNull
+import exchange.dydx.abacus.utils.toJsonElement
+import exchange.dydx.abacus.utils.toJsonPrettyPrint
 import okhttp3.CacheControl
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -28,7 +32,7 @@ class AbacusRestImp : RestProtocol {
     override fun delete(
         url: String,
         headers: IMap<String, String>?,
-        callback: (response: String?, httpCode: Int) -> Unit,
+        callback: RestCallback,
     ) {
         processRest(url, headers, null, "DELETE", callback)
     }
@@ -36,7 +40,7 @@ class AbacusRestImp : RestProtocol {
     override fun get(
         url: String,
         headers: IMap<String, String>?,
-        callback: (response: String?, httpCode: Int) -> Unit,
+        callback: RestCallback,
     ) {
         processRest(url, headers, null, "GET", callback)
     }
@@ -45,7 +49,7 @@ class AbacusRestImp : RestProtocol {
         url: String,
         headers: IMap<String, String>?,
         body: String?,
-        callback: (response: String?, httpCode: Int) -> Unit,
+        callback: RestCallback,
     ) {
         processRest(url, headers, body, "POST", callback)
     }
@@ -54,7 +58,7 @@ class AbacusRestImp : RestProtocol {
         url: String,
         headers: IMap<String, String>?,
         body: String?,
-        callback: (response: String?, httpCode: Int) -> Unit,
+        callback: RestCallback,
     ) {
         processRest(url, headers, body, "PUT", callback)
     }
@@ -64,7 +68,7 @@ class AbacusRestImp : RestProtocol {
         headers: IMap<String, String>?,
         body: String?,
         verb: String,
-        callback: (String?, Int) -> Unit,
+        callback: RestCallback,
     ) {
         var requestBuilder = Request.Builder()
             .url(url)
@@ -87,21 +91,25 @@ class AbacusRestImp : RestProtocol {
         run(request, callback)
     }
 
-    private fun run(request: Request, callback: (String?, Int) -> Unit) {
+    private fun run(request: Request, callback: RestCallback) {
         beginBackgroundTask()
         // Log.d(TAG, "AbacusRestImp Requesting ${request.url}")
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
                 Log.e(TAG, "AbacusRestImp Request Failed ${request.url}, ${e.message}")
                 endBackgroundTask()
-                callback(null, 0)
+                callback(null, 0, null)
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
                 endBackgroundTask()
                 val code = response.code
                 val body = response.body?.string()
-                callback(body, code)
+                val headerMap: Map<String, Any> = response.headers.names().associateWith {
+                    response.headers.values(it)?.firstOrNull()
+                }.filterNotNull()
+                val headerJsonString = headerMap.toJsonPrettyPrint()
+                callback(body, code, headerJsonString)
             }
         })
     }
