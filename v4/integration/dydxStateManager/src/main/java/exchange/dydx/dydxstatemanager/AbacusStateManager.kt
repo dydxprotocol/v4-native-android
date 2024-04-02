@@ -121,13 +121,13 @@ interface AbacusStateManagerProtocol {
 class AbacusStateManager @Inject constructor(
     private val application: Application,
     private val ioImplementations: IOImplementations,
-    private val parser: ParserProtocol,
     private val walletStateManager: DydxWalletStateManagerProtocol,
     private val transferStateManager: DydxTransferStateManagerProtocol,
     private val cosmosClient: CosmosV4ClientProtocol,
     private val preferencesStore: SharedPreferencesStore,
     @EnvKey private val envKey: String,
     private val featureFlags: DydxFeatureFlags,
+    parser: ParserProtocol,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -183,16 +183,16 @@ class AbacusStateManager @Inject constructor(
 
     // MARK: AbacusStateManagerProtocol
 
-    override var state: AbacusState = AbacusState(
-        walletStatePublisher = walletStateManager.state,
-        perpetualStatePublisher = perpetualStatePublisher,
-        apiStatePublisher = apiStatePublisher,
-        errorsStatePublisher = errorsStatePublisher,
+    override val state: AbacusState = AbacusState(
+        walletState = walletStateManager.state,
+        perpetualState = perpetualStatePublisher,
+        apiPerpetualState = apiStatePublisher,
+        errorsPerpetualState = errorsStatePublisher,
         lastOrderPublisher = lastOrderPublisher,
-        alertsPublisher = alertsPublisher,
-        documentationPublisher = documentationPublisher,
+        alerts = alertsPublisher,
+        documentation = documentationPublisher,
         abacusStateManager = asyncStateManager,
-        transferStatePublisher = transferStateManager.state,
+        transferState = transferStateManager.state,
         parser = parser,
     )
 
