@@ -1,7 +1,10 @@
 package exchange.dydx.trading.feature.receipt.validation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,12 +55,15 @@ object DydxValidationView : DydxComponent {
         val localizer: LocalizerProtocol,
         val state: State = State.None,
         val message: String? = null,
+        val linkText: String? = null,
+        val linkAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 state = State.Warning,
                 message = "This is an error message",
+                linkText = "Learn more",
             )
         }
     }
@@ -78,7 +84,7 @@ object DydxValidationView : DydxComponent {
 
         when (state.state) {
             State.Error, State.Warning -> {
-                ContentInBox(modifier, state.state, state.message)
+                ContentInBox(modifier, state)
             }
             State.None -> {
             }
@@ -88,9 +94,12 @@ object DydxValidationView : DydxComponent {
     @Composable
     private fun ContentInBox(
         modifier: Modifier,
-        state: State,
-        message: String?,
+        viewState: ViewState?
     ) {
+        if (viewState == null) {
+            return
+        }
+
         var size by remember { mutableStateOf(IntSize.Zero) }
 
         val shape = RoundedCornerShape(8.dp)
@@ -98,7 +107,7 @@ object DydxValidationView : DydxComponent {
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = when (state) {
+                    color = when (viewState.state) {
                         State.Error -> ThemeColor.SemanticColor.color_faded_red.color
                         State.Warning -> ThemeColor.SemanticColor.color_faded_yellow.color
                         State.None -> ThemeColor.SemanticColor.layer_2.color
@@ -112,21 +121,38 @@ object DydxValidationView : DydxComponent {
                     .width(6.dp)
                     .height(size.height.toDp)
                     .themeColor(
-                        background = when (state) {
+                        background = when (viewState.state) {
                             State.Error -> ThemeColor.SemanticColor.color_red
                             State.Warning -> ThemeColor.SemanticColor.color_yellow
                             State.None -> ThemeColor.SemanticColor.layer_2
                         },
                     ),
             )
-            Text(
+            Column(
                 modifier = Modifier
                     .onSizeChanged { size = it }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                text = message ?: "",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.small),
-            )
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = viewState.message ?: "",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+                if (viewState.linkText.isNullOrBlank().not()) {
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                viewState.linkAction?.invoke()
+                            },
+                        text = viewState.linkText ?: "",
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.small)
+                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                    )
+                }
+            }
         }
     }
 }
