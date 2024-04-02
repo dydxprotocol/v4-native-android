@@ -5,4 +5,5 @@ object PreferenceKeys {
     const val Theme = "v4_theme"
     const val Env = "env"
     const val DirectionColor = "direction_color_preference"
+    const val Notifications = "should_display_in_app_notifications"
 }
