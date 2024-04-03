@@ -35,7 +35,7 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.responses.ParsingErrorType
 import exchange.dydx.abacus.state.manager.ApiState
-import exchange.dydx.abacus.state.manager.AsyncAbacusStateManager
+import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferState
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
@@ -58,7 +58,7 @@ class AbacusState(
     val alerts: StateFlow<List<Notification>?>,
     val documentation: StateFlow<Documentation?>,
     val transferState: StateFlow<DydxTransferState?>,
-    private val abacusStateManager: AsyncAbacusStateManager,
+    private val abacusStateManager: SingletonAsyncAbacusStateManagerProtocol,
     private val parser: ParserProtocol,
 ) {
 
@@ -94,7 +94,7 @@ class AbacusState(
             .map { it?.transfers }
             .map {
                 val subaccountNumber = subaccountNumber ?: return@map null
-                it?.get(subaccountNumber)?.toList() ?: null
+                it?.get(subaccountNumber)?.toList()
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }

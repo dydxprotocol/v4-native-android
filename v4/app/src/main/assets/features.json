@@ -52,6 +52,26 @@
                         }
                     ]
                 }
+            },
+            {
+                "title":{
+                    "text":"Abacus V2"
+                },
+                "field":{
+                    "field":"enable_abacus_v2",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }

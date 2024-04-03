@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
+
 private const val TAG = "CosmosV4Client"
 
 interface CosmosV4WebviewClientProtocol : JavascriptApi, CosmosV4ClientProtocol
