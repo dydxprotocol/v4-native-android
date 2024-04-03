@@ -3,15 +3,15 @@ package exchange.dydx.dydxstatemanager.clientState.transfers
 import android.os.Build
 import androidx.annotation.RequiresApi
 import exchange.dydx.dydxstatemanager.clientState.DydxClientState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface DydxTransferStateManagerProtocol {
-    val state: Flow<DydxTransferState?>
+    val state: StateFlow<DydxTransferState?>
     fun add(transfer: DydxTransferInstance)
     fun remove(transfer: DydxTransferInstance)
     fun clear()
@@ -33,7 +33,7 @@ class DydxTransferStateManager @Inject constructor(
         mutableState.value = state
     }
 
-    override val state: Flow<DydxTransferState?> by lazy { mutableState }
+    override val state: StateFlow<DydxTransferState?> = mutableState
 
     override fun add(transfer: DydxTransferInstance) {
         val current = mutableState.value ?: DydxTransferState()
