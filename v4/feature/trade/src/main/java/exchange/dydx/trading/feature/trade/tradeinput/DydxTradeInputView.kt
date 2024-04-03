@@ -5,7 +5,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,15 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.dividers.PlatformDivider
-import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
-import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
@@ -71,7 +66,6 @@ import exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.siz
 import exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.timeinforce.DydxTradeInputTimeInForceView
 import exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.triggerprice.DydxTradeInputTriggerPriceView
 import exchange.dydx.trading.feature.trade.tradeinput.components.sheettip.DydxTradeSheetTipView
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -204,14 +198,14 @@ object DydxTradeInputView : DydxComponent {
                                 PlatformButton(
                                     modifier = Modifier.height(52.dp),
                                     state = PlatformButtonState.Secondary,
-                                    text = "Isolated"
+                                    text = "Isolated",
                                 ) {
                                     state.onMarketType()
                                 }
                                 PlatformButton(
                                     modifier = Modifier.height(52.dp),
                                     state = PlatformButtonState.Secondary,
-                                    text = "2x"
+                                    text = "2x",
                                 ) {
                                     state.onTargetLeverage()
                                 }

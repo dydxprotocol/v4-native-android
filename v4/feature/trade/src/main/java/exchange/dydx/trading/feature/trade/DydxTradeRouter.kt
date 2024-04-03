@@ -8,7 +8,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.trade.closeposition.DydxClosePositionInputView
-import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputMarketTypeView
+import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputMarginModeView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputTargetLeverageView
 import exchange.dydx.trading.feature.trade.tradestatus.DydxTradeStatusView
 import timber.log.Timber
@@ -46,7 +46,7 @@ fun NavGraphBuilder.tradeGraph(
         route = TradeRoutes.market_type,
         deepLinks = appRouter.deeplinks(TradeRoutes.status),
     ) { navBackStackEntry ->
-        DydxTradeInputMarketTypeView.Content(Modifier)
+        DydxTradeInputMarginModeView.Content(Modifier)
     }
 
     dydxComposable(
@@ -56,5 +56,4 @@ fun NavGraphBuilder.tradeGraph(
     ) { navBackStackEntry ->
         DydxTradeInputTargetLeverageView.Content(Modifier)
     }
-
 }

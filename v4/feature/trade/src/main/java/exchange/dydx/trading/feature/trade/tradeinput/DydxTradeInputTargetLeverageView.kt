@@ -4,11 +4,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,9 +19,10 @@ import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
-import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
+
+data class LeverageTextAndValue(val text: String, val value: Double)
 
 @Preview
 @Composable
@@ -31,19 +30,25 @@ fun Preview_DydxTradeInputTargetLeverageView() {
     DydxThemedPreviewSurface {
         DydxTradeInputTargetLeverageView.Content(
             Modifier,
-            DydxTradeInputTargetLeverageView.ViewState.preview
+            DydxTradeInputTargetLeverageView.ViewState.preview,
         )
     }
 }
 
 object DydxTradeInputTargetLeverageView : DydxComponent {
     data class ViewState(
+        val title: String?,
         val text: String?,
+        val leverageText: String?,
+        val leverageOptions: List<LeverageTextAndValue>?,
         val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
-                text = "1.0M",
+                title = "title",
+                text = "text",
+                leverageText = "1.0",
+                leverageOptions = listOf(),
             )
         }
     }
@@ -83,8 +88,6 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             }
 
             PlatformDivider()
-
         }
     }
 }
-
