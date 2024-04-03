@@ -64,9 +64,13 @@ object DydxPortfolioPositionItemView {
         val shape = RoundedCornerShape(10.dp)
         Row(
             modifier = modifier
+                .padding(
+                    // outer padding first, before widht and height
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.VerticalPadding,
+                )
                 .fillMaxWidth()
-                .padding(horizontal = ThemeShapes.HorizontalPadding)
-                .height(if (isIsolatedMarketEnabled) 148.dp else 64.dp)
+                .height((if (isIsolatedMarketEnabled) 148.dp else 64.dp) + ThemeShapes.VerticalPadding * 2)
                 .background(
                     brush = position.gradientType.brush(ThemeColor.SemanticColor.layer_3),
                     shape = shape,
@@ -77,6 +81,11 @@ object DydxPortfolioPositionItemView {
                     shape = shape,
                 )
                 .clip(shape)
+                .padding(
+                    // inner paddings after clipping
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.VerticalPadding,
+                )
                 .clickable { onTapAction(position) },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -84,11 +93,9 @@ object DydxPortfolioPositionItemView {
             if (isIsolatedMarketEnabled) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = ThemeShapes.HorizontalPadding),
+                        .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -133,7 +140,6 @@ object DydxPortfolioPositionItemView {
                             position,
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             } else {
                 ComposeAssetPosition(
@@ -268,12 +274,14 @@ object DydxPortfolioPositionItemView {
             horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
             modifier = Modifier.width(80.dp),
         ) {
-            Text(
-                text = localizer.localize("APP.GENERAL.PROFIT_AND_LOSS"),
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.small)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-            )
+            if (forIsolatedMarket) {
+                Text(
+                    text = localizer.localize("APP.GENERAL.PROFIT_AND_LOSS"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+            }
 
             SignedAmountView.Content(
                 modifier = modifier,
@@ -352,9 +360,9 @@ object DydxPortfolioPositionItemView {
                     .width(32.dp)
                     .height(32.dp),
                 action = {
-                         /*
-                         TODO: Implement edit button action
-                          */
+                    /*
+                    TODO: Implement edit button action
+                     */
                 },
                 padding = 0.dp,
                 shape = RoundedCornerShape(4.dp),
