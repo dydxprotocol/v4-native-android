@@ -49,6 +49,8 @@ object MarketRoutes {
 object TradeRoutes {
     const val status = "trade/status"
     const val close_position = "trade/close"
+    const val market_type = "trade/market_type"
+    const val target_leverage = "trade/target_leverage"
 }
 
 object TransferRoutes {
