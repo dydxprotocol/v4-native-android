@@ -105,7 +105,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
             modifier = modifier
                 .animateContentSize()
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_3),
+                .themeColor(ThemeColor.SemanticColor.layer_4),
         ) {
             MarginModeViewHeader(state)
             PlatformDivider()
