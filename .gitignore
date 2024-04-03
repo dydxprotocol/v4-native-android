@@ -1,35 +1,20 @@
-/*.local
-*.iml
+# Gradle
 .gradle
-/local.properties
-/.idea/caches
-/.idea/copilot
-/.idea/libraries
-/.idea/dictionaries
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/deploymentTargetDropDown.xml
+build
+/reports
+
+# Android
+local.properties
+
+# IntelliJ
+/.idea
+*.iml
+
+/*.local
 .DS_Store
-**/build/*.compiler.options
-**/build/.transforms
-**/build/generated
-**/build/intermediates
-**/build/kotlin
-**/build/kotlinToolingMetadata/
-**/build/outputs
-**/build/spotless
-**/build/test-results
-**/build/tmp
-**/build/gmpAppId.txt
-**/build/reports/*
-!**/build/reports/lint-results-debug.txt
 captures
 .externalNativeBuild
 .cxx
-local.properties
 dydxWallet/build
 *.swp
 github.properties
