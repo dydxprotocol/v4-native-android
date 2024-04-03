@@ -52,20 +52,32 @@ class DydxValidationViewModel @Inject constructor(
                 transferError?.isNotEmpty() == true -> transferError
                 else -> null
             },
-            linkText = when {
-                firstBlockingError != null -> firstBlockingError.linkText?.let { localizer.localize(it) }
-                firstWarning != null -> firstWarning.linkText?.let { localizer.localize(it) }
+            link = when {
+                firstBlockingError != null -> createLink(
+                    text = firstBlockingError.linkText,
+                    url = firstBlockingError.link,
+                )
+                firstWarning != null -> createLink(
+                    text = firstWarning.linkText,
+                    url = firstWarning.link,
+                )
                 else -> null
             },
-            linkAction = {
-                val url = when {
-                    firstBlockingError != null -> firstBlockingError.link
-                    firstWarning != null -> firstWarning.link
-                    else -> null
-                }
-                if (url != null) {
-                    router.navigateTo(url)
-                }
+        )
+    }
+
+    private fun createLink(
+        text: String?,
+        url: String?,
+    ): DydxValidationView.Link? {
+        if (text.isNullOrEmpty() || url.isNullOrEmpty()) {
+            return null
+        }
+
+        return DydxValidationView.Link(
+            text = localizer.localize(text),
+            action = {
+                router.navigateTo(url)
             },
         )
     }

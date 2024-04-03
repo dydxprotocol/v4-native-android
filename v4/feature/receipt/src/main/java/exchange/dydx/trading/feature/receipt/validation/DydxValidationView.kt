@@ -51,19 +51,30 @@ object DydxValidationView : DydxComponent {
         Error, Warning, None,
     }
 
+    data class Link(
+        val text: String,
+        val action: () -> Unit,
+    ) {
+        companion object {
+            val preview = Link(
+                text = "Learn more",
+                action = {},
+            )
+        }
+    }
+
     data class ViewState(
         val localizer: LocalizerProtocol,
         val state: State = State.None,
         val message: String? = null,
-        val linkText: String? = null,
-        val linkAction: (() -> Unit)? = null,
+        val link: Link? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 state = State.Warning,
                 message = "This is an error message",
-                linkText = "Learn more",
+                link = Link.preview,
             )
         }
     }
@@ -94,12 +105,8 @@ object DydxValidationView : DydxComponent {
     @Composable
     private fun ContentInBox(
         modifier: Modifier,
-        viewState: ViewState?
+        viewState: ViewState
     ) {
-        if (viewState == null) {
-            return
-        }
-
         var size by remember { mutableStateOf(IntSize.Zero) }
 
         val shape = RoundedCornerShape(8.dp)
@@ -134,19 +141,21 @@ object DydxValidationView : DydxComponent {
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
-                    modifier = Modifier,
-                    text = viewState.message ?: "",
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.small),
-                )
-                if (viewState.linkText.isNullOrBlank().not()) {
+                if (viewState.message != null) {
+                    Text(
+                        modifier = Modifier,
+                        text = viewState.message,
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.small),
+                    )
+                }
+                if (viewState.link != null) {
                     Text(
                         modifier = Modifier
                             .clickable {
-                                viewState.linkAction?.invoke()
+                                viewState.link.action.invoke()
                             },
-                        text = viewState.linkText ?: "",
+                        text = viewState.link.text,
                         style = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.small)
                             .themeColor(ThemeColor.SemanticColor.text_primary),
