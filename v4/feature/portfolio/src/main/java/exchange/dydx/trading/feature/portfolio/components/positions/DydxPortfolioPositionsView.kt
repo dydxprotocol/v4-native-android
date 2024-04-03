@@ -46,6 +46,7 @@ object DydxPortfolioPositionsView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val positions: List<SharedMarketPositionViewState> = listOf(),
+        val isIsolatedMarketEnabled: Boolean,
         val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         companion object {
@@ -55,6 +56,7 @@ object DydxPortfolioPositionsView : DydxComponent {
                     SharedMarketPositionViewState.preview,
                     SharedMarketPositionViewState.preview,
                 ),
+                false,
             )
         }
     }
@@ -72,22 +74,26 @@ object DydxPortfolioPositionsView : DydxComponent {
     fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
         if (state == null) return
 
-        scope.item(key = "header") {
-            CreateHeader(modifier, state)
-        }
-
         if (state.positions.isEmpty()) {
             scope.item(key = "placeholder") {
-                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 32.dp))
+                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 0.dp))
             }
         } else {
+            if (!state.isIsolatedMarketEnabled) {
+                scope.item(key = "header") {
+                    CreateHeader(modifier, state)
+                }
+            }
+
             scope.items(items = state.positions, key = { it.id }) { position ->
-                if (position === state.positions.first()) {
+                if (!state.isIsolatedMarketEnabled && position === state.positions.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 DydxPortfolioPositionItemView.Content(
                     modifier = modifier,
+                    localizer = state.localizer,
                     position = position,
+                    isIsolatedMarketEnabled = state.isIsolatedMarketEnabled,
                     onTapAction = state.onPositionTapAction,
                 )
 
