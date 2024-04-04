@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
-class DydxTakeProfitStopLossViewModel @Inject constructor(
+class DydxTriggerOrderInputViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
@@ -33,10 +33,10 @@ class DydxTakeProfitStopLossViewModel @Inject constructor(
         }
     }
 
-    val state: Flow<DydxTakeProfitStopLossView.ViewState?> = flowOf(createViewState())
+    val state: Flow<DydxTriggerOrderInputView.ViewState?> = flowOf(createViewState())
 
-    private fun createViewState(): DydxTakeProfitStopLossView.ViewState {
-        return DydxTakeProfitStopLossView.ViewState(
+    private fun createViewState(): DydxTriggerOrderInputView.ViewState {
+        return DydxTriggerOrderInputView.ViewState(
             localizer = localizer,
             closeAction = {
                 router.navigateBack()

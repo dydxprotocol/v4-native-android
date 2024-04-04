@@ -10,7 +10,7 @@ import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.trade.closeposition.DydxClosePositionInputView
 import exchange.dydx.trading.feature.trade.tradestatus.DydxTradeStatusView
-import exchange.dydx.trading.feature.trade.trigger.DydxTakeProfitStopLossView
+import exchange.dydx.trading.feature.trade.trigger.DydxTriggerOrderInputView
 import timber.log.Timber
 
 private const val TAG = "DydxTradeRouter"
@@ -53,6 +53,6 @@ fun NavGraphBuilder.tradeGraph(
             appRouter.navigateTo(MarketRoutes.marketList)
             return@dydxComposable
         }
-        DydxTakeProfitStopLossView.Content(Modifier)
+        DydxTriggerOrderInputView.Content(Modifier)
     }
 }

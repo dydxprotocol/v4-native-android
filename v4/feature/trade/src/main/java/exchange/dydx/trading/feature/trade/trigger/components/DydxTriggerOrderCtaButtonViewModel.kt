@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
-class DydxTakeProfitStopLossCtaButtonViewModel @Inject constructor(
+class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxTakeProfitStopLossCtaButtonView.ViewState?> = flowOf(createViewState())
+    val state: Flow<DydxTriggerOrderCtaButtonView.ViewState?> = flowOf(createViewState())
 
-    private fun createViewState(): DydxTakeProfitStopLossCtaButtonView.ViewState {
-        return DydxTakeProfitStopLossCtaButtonView.ViewState(
+    private fun createViewState(): DydxTriggerOrderCtaButtonView.ViewState {
+        return DydxTriggerOrderCtaButtonView.ViewState(
             localizer = localizer,
-            ctaButtonState = DydxTakeProfitStopLossCtaButtonView.State.Disabled(),
+            ctaButtonState = DydxTriggerOrderCtaButtonView.State.Disabled(),
             ctaAction = {
                 // TODO: Implement
             },

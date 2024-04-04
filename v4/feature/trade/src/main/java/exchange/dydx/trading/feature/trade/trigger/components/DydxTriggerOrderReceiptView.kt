@@ -15,7 +15,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import exchange.dydx.abacus.output.input.ReceiptLine
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -31,16 +30,16 @@ import exchange.dydx.trading.common.theme.MockLocalizer
 
 @Preview
 @Composable
-fun Preview_DydxTakeProfitStopLossReceiptView() {
+fun Preview_DydxTriggerOrderReceiptView() {
     DydxThemedPreviewSurface {
-        DydxTakeProfitStopLossReceiptView.Content(
+        DydxTriggerOrderReceiptView.Content(
             Modifier,
-            DydxTakeProfitStopLossReceiptView.ViewState.preview,
+            DydxTriggerOrderReceiptView.ViewState.preview,
         )
     }
 }
 
-object DydxTakeProfitStopLossReceiptView : DydxComponent {
+object DydxTriggerOrderReceiptView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val entryPrice: String? = null,
@@ -57,7 +56,7 @@ object DydxTakeProfitStopLossReceiptView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxTakeProfitStopLossReceiptViewModel = hiltViewModel()
+        val viewModel: DydxTriggerOrderReceiptViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)

@@ -14,16 +14,16 @@ import exchange.dydx.trading.common.theme.MockLocalizer
 
 @Preview
 @Composable
-fun Preview_DydxTakeProfitStopLossCtaButtonView() {
+fun Preview_DydxTriggerOrderCtaButtonView() {
     DydxThemedPreviewSurface {
-        DydxTakeProfitStopLossCtaButtonView.Content(
+        DydxTriggerOrderCtaButtonView.Content(
             Modifier,
-            DydxTakeProfitStopLossCtaButtonView.ViewState.preview,
+            DydxTriggerOrderCtaButtonView.ViewState.preview,
         )
     }
 }
 
-object DydxTakeProfitStopLossCtaButtonView : DydxComponent {
+object DydxTriggerOrderCtaButtonView : DydxComponent {
     sealed class State {
         data class Enabled(val message: String? = null) : State()
         data class Disabled(val message: String? = null) : State()
@@ -44,7 +44,7 @@ object DydxTakeProfitStopLossCtaButtonView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxTakeProfitStopLossCtaButtonViewModel = hiltViewModel()
+        val viewModel: DydxTriggerOrderCtaButtonViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)

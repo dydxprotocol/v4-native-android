@@ -30,18 +30,18 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
-import exchange.dydx.trading.feature.trade.trigger.components.DydxTakeProfitStopLossCtaButtonView
-import exchange.dydx.trading.feature.trade.trigger.components.DydxTakeProfitStopLossReceiptView
+import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderCtaButtonView
+import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderReceiptView
 
 @Preview
 @Composable
-fun Preview_DydxTakeProfitStopLossView() {
+fun Preview_DydxTriggerOrderInputView() {
     DydxThemedPreviewSurface {
-        DydxTakeProfitStopLossView.Content(Modifier, DydxTakeProfitStopLossView.ViewState.preview)
+        DydxTriggerOrderInputView.Content(Modifier, DydxTriggerOrderInputView.ViewState.preview)
     }
 }
 
-object DydxTakeProfitStopLossView : DydxComponent {
+object DydxTriggerOrderInputView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val closeAction: (() -> Unit)? = null,
@@ -55,7 +55,7 @@ object DydxTakeProfitStopLossView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxTakeProfitStopLossViewModel = hiltViewModel()
+        val viewModel: DydxTriggerOrderInputViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
@@ -81,13 +81,13 @@ object DydxTakeProfitStopLossView : DydxComponent {
         ) {
             HeaderView(modifier = Modifier, state = state)
 
-            DydxTakeProfitStopLossReceiptView.Content(
+            DydxTriggerOrderReceiptView.Content(
                 modifier = Modifier.padding(top = 16.dp),
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            DydxTakeProfitStopLossCtaButtonView.Content(
+            DydxTriggerOrderCtaButtonView.Content(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
