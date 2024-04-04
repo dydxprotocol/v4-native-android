@@ -49,6 +49,7 @@ object MarketRoutes {
 object TradeRoutes {
     const val status = "trade/status"
     const val close_position = "trade/close"
+    const val trigger = "trade/trigger"
 }
 
 object TransferRoutes {
