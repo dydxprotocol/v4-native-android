@@ -4,23 +4,39 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformInfoScaffold
+import exchange.dydx.platformui.components.buttons.PlatformButton
+import exchange.dydx.platformui.components.buttons.PlatformButtonState
+import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
+import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
 data class LeverageTextAndValue(val text: String, val value: Double)
 
@@ -37,16 +53,14 @@ fun Preview_DydxTradeInputTargetLeverageView() {
 
 object DydxTradeInputTargetLeverageView : DydxComponent {
     data class ViewState(
-        val title: String?,
-        val text: String?,
+        val localizer: LocalizerProtocol,
         val leverageText: String?,
         val leverageOptions: List<LeverageTextAndValue>?,
         val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
-                title = "title",
-                text = "text",
+                localizer = MockLocalizer(),
                 leverageText = "1.0",
                 leverageOptions = listOf(),
             )
@@ -73,21 +87,172 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             modifier = modifier
                 .animateContentSize()
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_3),
+                .themeColor(ThemeColor.SemanticColor.layer_4),
         ) {
-            Row(
-                modifier
-                    .fillMaxWidth()
-                    .padding(vertical = ThemeShapes.VerticalPadding),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-            ) {
-                HeaderViewCloseBotton(
-                    closeAction = state.closeAction,
+            NavigationHeader(state)
+            PlatformDivider()
+            Description(state)
+            LeverageEditField(state)
+            LeverageOptions(state)
+            Spacer(modifier = Modifier.weight(1f))
+            ActionButton(state)
+        }
+    }
+
+    @Composable
+    fun NavigationHeader(
+        state: ViewState,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                modifier = Modifier.padding(horizontal = 0.dp),
+                style = TextStyle.dydxDefault
+                    .themeFont(
+                        fontSize = ThemeFont.FontSize.large,
+                        fontType = ThemeFont.FontType.plus,
+                    )
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
+                text = state.localizer.localize("APP.TRADE.ADJUST_TARGET_LEVERAGE"),
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            HeaderViewCloseBotton(
+                closeAction = state.closeAction,
+            )
+        }
+    }
+
+    @Composable
+    fun Description(
+        state: ViewState,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                modifier = Modifier.padding(horizontal = 0.dp),
+                text = state.localizer.localize("APP.TRADE.ADJUST_TARGET_LEVERAGE_DESCRIPTION"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+        }
+    }
+
+    @Composable
+    fun LeverageEditField(state: ViewState?) {
+        Row(
+            modifier = Modifier
+                .padding(
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = 8.dp,
+                )
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            InputFieldScarfold(modifier = Modifier) {
+                LabeledTextInput.Content(
+                    modifier = Modifier,
+                    state = LabeledTextInput.ViewState(
+                        localizer = MockLocalizer(),
+                        label = state?.localizer?.localize("APP.TRADE.TARGET_LEVERAGE"),
+                        value = state?.leverageText ?: "",
+                        onValueChanged = {},
+                    ),
                 )
             }
+        }
+    }
 
-            PlatformDivider()
+    @Composable
+    fun LeverageOptions(state: ViewState?) {
+        Row(
+            modifier = Modifier
+                .padding(
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = 8.dp,
+                )
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            PlatformTabGroup(
+                modifier = Modifier.fillMaxWidth(),
+                scrollingEnabled = false,
+                items = state?.leverageOptions?.map {
+                    { modifier ->
+                        PlatformPillItem(
+                            modifier = Modifier
+                                .padding(
+                                    vertical = 4.dp,
+                                    horizontal = 8.dp,
+                                ),
+                            backgroundColor = ThemeColor.SemanticColor.layer_5,
+                        ) {
+                            Text(
+                                text = it.text,
+                                modifier = Modifier,
+                                style = TextStyle.dydxDefault
+                                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                                    .themeFont(fontSize = ThemeFont.FontSize.small),
+
+                            )
+                        }
+                    }
+                } ?: listOf(),
+                selectedItems = state?.leverageOptions?.map {
+                    { modifier ->
+                        PlatformPillItem(
+                            modifier = Modifier
+                                .padding(
+                                    vertical = 4.dp,
+                                    horizontal = 8.dp,
+                                ),
+                            backgroundColor = ThemeColor.SemanticColor.layer_2,
+                        ) {
+                            Text(
+                                text = it.text,
+                                modifier = Modifier,
+                                style = TextStyle.dydxDefault
+                                    .themeColor(ThemeColor.SemanticColor.text_primary)
+                                    .themeFont(fontSize = ThemeFont.FontSize.small),
+
+                            )
+                        }
+                    }
+                } ?: listOf(),
+                equalWeight = false,
+                currentSelection = state?.leverageOptions?.indexOfFirst {
+                    it.text == state.leverageText
+                },
+                onSelectionChanged = {},
+            )
+        }
+    }
+
+    @Composable
+    fun ActionButton(state: ViewState?) {
+        PlatformButton(
+            modifier = Modifier
+                .padding(
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.VerticalPadding,
+                )
+                .fillMaxWidth(),
+            text = state?.localizer?.localize("APP.TRADE.CONFIRM_LEVERAGE"),
+            state = PlatformButtonState.Primary,
+        ) {
         }
     }
 }

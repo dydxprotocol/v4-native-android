@@ -107,7 +107,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_4),
         ) {
-            MarginModeViewHeader(state)
+            NavigationHeader(state)
             PlatformDivider()
             Selection(state.crossMargin)
             Spacer(modifier = Modifier.height(8.dp))
@@ -116,7 +116,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
     }
 
     @Composable
-    fun MarginModeViewHeader(
+    fun NavigationHeader(
         state: ViewState,
     ) {
         Row(
