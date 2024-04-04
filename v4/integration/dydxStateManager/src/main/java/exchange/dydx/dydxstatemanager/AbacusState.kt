@@ -1,5 +1,6 @@
 package exchange.dydx.dydxstatemanager
 
+import com.hoc081098.flowext.ThrottleConfiguration
 import com.hoc081098.flowext.throttleTime
 import exchange.dydx.abacus.output.Account
 import exchange.dydx.abacus.output.Asset
@@ -30,6 +31,7 @@ import exchange.dydx.abacus.output.input.ClosePositionInput
 import exchange.dydx.abacus.output.input.ReceiptLine
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.output.input.TransferInput
+import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.responses.ParsingError
@@ -386,7 +388,7 @@ class AbacusState(
     val tradeInput: StateFlow<TradeInput?> by lazy {
         perpetualState
             .map { it?.input?.trade }
-            .throttleTime(10)
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
@@ -396,7 +398,7 @@ class AbacusState(
     val closePositionInput: StateFlow<ClosePositionInput?> by lazy {
         perpetualState
             .map { it?.input?.closePosition }
-            .throttleTime(10)
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
@@ -406,7 +408,7 @@ class AbacusState(
     val transferInput: StateFlow<TransferInput?> by lazy {
         perpetualState
             .map { it?.input?.transfer }
-            .throttleTime(10)
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
@@ -416,7 +418,7 @@ class AbacusState(
     val receipts: StateFlow<List<ReceiptLine>> by lazy {
         perpetualState
             .map { it?.input?.receiptLines ?: emptyList() }
-            .throttleTime(10)
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, emptyList())
     }
 
@@ -426,7 +428,7 @@ class AbacusState(
     val validationErrors: StateFlow<List<ValidationError>> by lazy {
         perpetualState
             .map { it?.input?.errors ?: emptyList() }
-            .throttleTime(10)
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, emptyList())
     }
 
@@ -505,6 +507,17 @@ class AbacusState(
             .stateIn(stateManagerScope, SharingStarted.Lazily, Restriction.NO_RESTRICTION)
     }
 
+    /**
+     Trigger order input
+     **/
+    val triggerOrdersInput: StateFlow<TriggerOrdersInput?> by lazy {
+        perpetualState
+            .map {
+                it?.input?.triggerOrders
+            }
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+    }
     private val subaccountNumber: String?
         get() = parser.asString(abacusStateManager.subaccountNumber)
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -29,9 +30,16 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderCtaButtonView
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderReceiptView
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderInputType
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderPriceInputType
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.gainloss.DydxTriggerOrderGainLossView
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.limitprice.DydxTriggerOrderLimitPriceSectionView
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.price.DydxTriggerOrderPriceView
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.size.DydxTriggerOrderSizeView
 
 @Preview
 @Composable
@@ -78,17 +86,45 @@ object DydxTriggerOrderInputView : DydxComponent {
                         focusManager.clearFocus()
                     })
                 },
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             HeaderView(modifier = Modifier, state = state)
 
             DydxTriggerOrderReceiptView.Content(
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier,
+            )
+
+            TakeProfitSectionView(
+                modifier = Modifier,
+                state = state,
+            )
+
+            StopLossSectionView(
+                modifier = Modifier,
+                state = state,
+            )
+
+            AdvacedDividerView(
+                modifier = Modifier,
+                state = state,
+            )
+
+            DydxTriggerOrderSizeView.Content(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ThemeShapes.HorizontalPadding),
+            )
+
+            DydxTriggerOrderLimitPriceSectionView.Content(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ThemeShapes.HorizontalPadding),
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             DydxTriggerOrderCtaButtonView.Content(
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
                     .padding(bottom = ThemeShapes.VerticalPadding * 2),
@@ -128,6 +164,93 @@ object DydxTriggerOrderInputView : DydxComponent {
             HeaderViewCloseBotton(
                 modifier = Modifier,
                 closeAction = state.closeAction,
+            )
+        }
+    }
+
+    @Composable
+    private fun TakeProfitSectionView(modifier: Modifier, state: ViewState) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
+        ) {
+            Text(
+                text = state.localizer.localize("TRADE.BRACKET_ORDER_TP.TITLE"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.base)
+                    .themeColor(ThemeColor.SemanticColor.text_secondary),
+            )
+
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                DydxTriggerOrderPriceView.Content(
+                    modifier = Modifier.weight(1f),
+                    inputType = DydxTriggerOrderPriceInputType.TakeProfit,
+                )
+
+                DydxTriggerOrderGainLossView.Content(
+                    modifier = Modifier.weight(1f),
+                    inputType = DydxTriggerOrderInputType.TakeProfit,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun StopLossSectionView(modifier: Modifier, state: ViewState) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
+        ) {
+            Text(
+                text = state.localizer.localize("TRADE.BRACKET_ORDER_SL.TITLE"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.base)
+                    .themeColor(ThemeColor.SemanticColor.text_secondary),
+            )
+
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                DydxTriggerOrderPriceView.Content(
+                    modifier = Modifier.weight(1f),
+                    inputType = DydxTriggerOrderPriceInputType.StopLoss,
+                )
+
+                DydxTriggerOrderGainLossView.Content(
+                    modifier = Modifier.weight(1f),
+                    inputType = DydxTriggerOrderInputType.StopLoss,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun AdvacedDividerView(modifier: Modifier, state: ViewState) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = state.localizer.localize("APP.GENERAL.ADVANCED"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+            PlatformDivider(
+                modifier = Modifier.weight(1f),
             )
         }
     }
