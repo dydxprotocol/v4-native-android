@@ -71,7 +71,7 @@ class DydxTradeInputViewModel @Inject constructor(
             requestedBottomSheetState = buttomSheetState,
             onMarketType = {
                 router.navigateTo(
-                    route = TradeRoutes.market_type,
+                    route = TradeRoutes.margin_type,
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },
