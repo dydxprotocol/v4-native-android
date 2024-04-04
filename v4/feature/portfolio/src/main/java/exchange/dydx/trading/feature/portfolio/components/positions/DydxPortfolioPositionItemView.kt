@@ -81,12 +81,12 @@ object DydxPortfolioPositionItemView {
                     shape = shape,
                 )
                 .clip(shape)
+                .clickable { onTapAction(position) }
                 .padding(
                     // inner paddings after clipping
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = ThemeShapes.VerticalPadding,
-                )
-                .clickable { onTapAction(position) },
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
