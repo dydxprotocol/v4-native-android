@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -76,6 +78,7 @@ object DydxTriggerOrderInputView : DydxComponent {
         }
 
         val focusManager = LocalFocusManager.current
+        val scrollState = rememberScrollState()
 
         Column(
             modifier = modifier
@@ -90,36 +93,43 @@ object DydxTriggerOrderInputView : DydxComponent {
         ) {
             HeaderView(modifier = Modifier, state = state)
 
-            DydxTriggerOrderReceiptView.Content(
-                modifier = Modifier,
-            )
-
-            TakeProfitSectionView(
-                modifier = Modifier,
-                state = state,
-            )
-
-            StopLossSectionView(
-                modifier = Modifier,
-                state = state,
-            )
-
-            AdvacedDividerView(
-                modifier = Modifier,
-                state = state,
-            )
-
-            DydxTriggerOrderSizeView.Content(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = ThemeShapes.HorizontalPadding),
-            )
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                DydxTriggerOrderReceiptView.Content(
+                    modifier = Modifier,
+                )
 
-            DydxTriggerOrderLimitPriceSectionView.Content(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ThemeShapes.HorizontalPadding),
-            )
+                TakeProfitSectionView(
+                    modifier = Modifier,
+                    state = state,
+                )
+
+                StopLossSectionView(
+                    modifier = Modifier,
+                    state = state,
+                )
+
+                AdvacedDividerView(
+                    modifier = Modifier,
+                    state = state,
+                )
+
+                DydxTriggerOrderSizeView.Content(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ThemeShapes.HorizontalPadding),
+                )
+
+                DydxTriggerOrderLimitPriceSectionView.Content(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ThemeShapes.HorizontalPadding),
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
