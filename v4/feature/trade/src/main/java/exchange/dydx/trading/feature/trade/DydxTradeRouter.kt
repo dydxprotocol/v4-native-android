@@ -61,7 +61,7 @@ fun NavGraphBuilder.tradeGraph(
     dydxComposable(
         router = appRouter,
         route = TradeRoutes.margin_type,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        deepLinks = appRouter.deeplinks(TradeRoutes.margin_type),
     ) { navBackStackEntry ->
         DydxTradeInputMarginModeView.Content(Modifier)
     }
@@ -69,7 +69,7 @@ fun NavGraphBuilder.tradeGraph(
     dydxComposable(
         router = appRouter,
         route = TradeRoutes.target_leverage,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        deepLinks = appRouter.deeplinks(TradeRoutes.target_leverage),
     ) { navBackStackEntry ->
         DydxTradeInputTargetLeverageView.Content(Modifier)
     }
