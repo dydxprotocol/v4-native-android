@@ -8,8 +8,10 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import kotlinx.serialization.json.JsonNull.content
@@ -141,6 +143,19 @@ object DydxAnimation {
             visible = visible,
             enter = fadeIn(),
             exit = fadeOut(),
+            content = content,
+        )
+    }
+
+    @Composable
+    fun AnimateExpandInOut(
+        visible: Boolean,
+        content: @Composable AnimatedVisibilityScope.() -> Unit
+    ) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = expandVertically(),
+            exit = shrinkVertically(),
             content = content,
         )
     }

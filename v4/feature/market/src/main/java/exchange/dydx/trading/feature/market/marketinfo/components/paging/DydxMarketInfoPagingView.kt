@@ -1,9 +1,5 @@
 package exchange.dydx.trading.feature.market.marketinfo.components.paging
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,18 +83,5 @@ object DydxMarketInfoPagingView : DydxComponent {
         ) {
             DydxMarketFundingRateView.Content(modifier)
         }
-    }
-
-    @Composable
-    private fun AnimateFadeInOut(
-        visible: Boolean,
-        content: @Composable AnimatedVisibilityScope.() -> Unit
-    ) {
-        AnimatedVisibility(
-            visible = visible,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            content = content,
-        )
     }
 }

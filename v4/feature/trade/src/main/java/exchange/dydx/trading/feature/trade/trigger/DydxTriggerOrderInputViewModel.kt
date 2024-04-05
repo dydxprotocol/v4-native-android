@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -30,6 +31,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             router.navigateBack()
         } else {
             abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
         }
     }
 

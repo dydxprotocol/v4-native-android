@@ -32,6 +32,7 @@ import exchange.dydx.abacus.state.manager.V4Environment
 import exchange.dydx.abacus.state.model.ClosePositionInputField
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.abacus.state.model.TransferInputField
+import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.abacus.state.v2.manager.AsyncAbacusStateManagerV2
 import exchange.dydx.abacus.state.v2.supervisor.AppConfigsV2
 import exchange.dydx.abacus.state.v2.supervisor.OnboardingConfigs
@@ -105,6 +106,8 @@ interface AbacusStateManagerProtocol {
 
     fun screen(address: String, callback: ((Restriction) -> Unit))
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
+
+    fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
 
     // extensions
     fun resetTransferInputFields() {
@@ -374,6 +377,10 @@ class AbacusStateManager @Inject constructor(
 
     override fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit) {
         asyncStateManager.commitCCTPWithdraw(callback)
+    }
+
+    override fun triggerOrders(input: String?, type: TriggerOrdersInputField?) {
+        asyncStateManager.triggerOrders(input, type)
     }
 
     // MARK: StateNotificationProtocol
