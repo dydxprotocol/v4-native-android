@@ -20,7 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.OnLifecycleEvent
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -55,6 +57,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val closeAction: (() -> Unit)? = null,
+        val backHandler: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -68,6 +71,11 @@ object DydxTriggerOrderInputView : DydxComponent {
         val viewModel: DydxTriggerOrderInputViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        OnLifecycleEvent { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                state?.backHandler?.invoke()
+            }
+        }
         Content(modifier, state)
     }
 

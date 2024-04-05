@@ -115,6 +115,13 @@ interface AbacusStateManagerProtocol {
         transfer(null, TransferInputField.usdcSize)
         transfer(null, TransferInputField.type)
     }
+
+    fun resetTriggerOrders() {
+        val fields = TriggerOrdersInputField.values()
+        for (field in fields) {
+            triggerOrders(null, field)
+        }
+    }
 }
 
 // Temporary location, should probably make a separate dagger-qualifiers module.

@@ -49,8 +49,8 @@ object DydxTriggerOrderSizeView : DydxComponent {
         val enabled: Boolean = true,
         val onEnabledChanged: (Boolean) -> Unit = {},
         val labeledTextInput: LabeledTextInput.ViewState,
-        val percentage: Float = 40.0f,
-        val onPercentageChanged: (Float) -> Unit = {},
+        val percentage: Double = 0.4,
+        val onPercentageChanged: (Double) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -104,9 +104,11 @@ object DydxTriggerOrderSizeView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CustomSlider(
-                value = state.percentage,
-                onValueChange = state.onPercentageChanged,
-                valueRange = 0.0f..100.0f,
+                value = state.percentage.toFloat(),
+                onValueChange = {
+                    state.onPercentageChanged(it.toDouble())
+                },
+                valueRange = 0.0f..1.0f,
                 modifier = modifier.weight(1f),
                 showLabel = false,
                 showIndicator = false,

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
@@ -21,11 +22,11 @@ class DydxTriggerOrderLimitPriceSectionViewModel @Inject constructor(
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
-    private val enabled = MutableStateFlow(false)
+    private val enabledFlow = MutableStateFlow(false)
 
     val state: Flow<DydxTriggerOrderLimitPriceSectionView.ViewState?> =
         combine(
-            enabled,
+            enabledFlow,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
         ) { sizeEnabled, triggerOrdersInput, configsAndAssetMap ->
@@ -42,7 +43,19 @@ class DydxTriggerOrderLimitPriceSectionViewModel @Inject constructor(
         return DydxTriggerOrderLimitPriceSectionView.ViewState(
             localizer = localizer,
             enabled = sizeEnabled,
-            onEnabledChanged = { enabled.value = it },
+            onEnabledChanged = { enabled ->
+                enabledFlow.value = enabled
+                if (!enabled) {
+                    abacusStateManager.triggerOrders(
+                        null,
+                        TriggerOrdersInputField.takeProfitLimitPrice,
+                    )
+                    abacusStateManager.triggerOrders(
+                        null,
+                        TriggerOrdersInputField.stopLossLimitPrice,
+                    )
+                }
+            },
         )
     }
 }

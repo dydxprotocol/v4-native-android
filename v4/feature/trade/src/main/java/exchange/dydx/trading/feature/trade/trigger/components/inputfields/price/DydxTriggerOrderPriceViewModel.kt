@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
@@ -85,30 +86,36 @@ open class DydxTriggerOrderPriceViewModel(
         configsAndAsset: MarketConfigsAndAsset?,
     ): DydxTriggerOrderPriceView.ViewState {
         val marketConfigs = configsAndAsset?.configs
-        val value = when (inputType) {
-            DydxTriggerOrderPriceInputType.TakeProfit -> null
-            DydxTriggerOrderPriceInputType.StopLoss -> null
-            DydxTriggerOrderPriceInputType.TakeProfitLimit -> null
-            DydxTriggerOrderPriceInputType.StopLossLimit -> null
-        }
-        val label = when (inputType) {
-            DydxTriggerOrderPriceInputType.TakeProfit -> localizer.localize("APP.TRIGGERS_MODAL.TP_PRICE")
-            DydxTriggerOrderPriceInputType.StopLoss -> localizer.localize("APP.TRIGGERS_MODAL.SL_PRICE")
-            DydxTriggerOrderPriceInputType.TakeProfitLimit -> localizer.localize("APP.TRIGGERS_MODAL.TP_LIMIT")
-            DydxTriggerOrderPriceInputType.StopLossLimit -> localizer.localize("APP.TRIGGERS_MODAL.SL_LIMIT")
-        }
-        return DydxTriggerOrderPriceView.ViewState(
+        val tickSize = marketConfigs?.displayTickSizeDecimals ?: 0
+        val state = DydxTriggerOrderPriceView.ViewState(
             localizer = localizer,
             labeledTextInput = LabeledTextInput.ViewState(
                 localizer = localizer,
-                label = label,
+                label = when (inputType) {
+                    DydxTriggerOrderPriceInputType.TakeProfit -> localizer.localize("APP.TRIGGERS_MODAL.TP_PRICE")
+                    DydxTriggerOrderPriceInputType.StopLoss -> localizer.localize("APP.TRIGGERS_MODAL.SL_PRICE")
+                    DydxTriggerOrderPriceInputType.TakeProfitLimit -> localizer.localize("APP.TRIGGERS_MODAL.TP_LIMIT")
+                    DydxTriggerOrderPriceInputType.StopLossLimit -> localizer.localize("APP.TRIGGERS_MODAL.SL_LIMIT")
+                },
                 token = "USD",
-                value = value,
-                placeholder = formatter.raw(0.0, marketConfigs?.displayTickSizeDecimals ?: 0),
+                value = when (inputType) {
+                    DydxTriggerOrderPriceInputType.TakeProfit -> formatter.raw(triggerOrdersInput?.takeProfitOrder?.price?.triggerPrice, tickSize)
+                    DydxTriggerOrderPriceInputType.StopLoss -> formatter.raw(triggerOrdersInput?.stopLossOrder?.price?.triggerPrice, tickSize)
+                    DydxTriggerOrderPriceInputType.TakeProfitLimit -> formatter.raw(triggerOrdersInput?.takeProfitOrder?.price?.limitPrice, tickSize)
+                    DydxTriggerOrderPriceInputType.StopLossLimit -> formatter.raw(triggerOrdersInput?.stopLossOrder?.price?.limitPrice, tickSize)
+                },
+                placeholder = formatter.raw(0.0, tickSize),
                 onValueChanged = { value ->
-                    //  abacusStateManager.trade(value, TradeInputField.limitPrice)
+                    when (inputType) {
+                        DydxTriggerOrderPriceInputType.TakeProfit -> abacusStateManager.triggerOrders(value, TriggerOrdersInputField.takeProfitPrice)
+                        DydxTriggerOrderPriceInputType.StopLoss -> abacusStateManager.triggerOrders(value, TriggerOrdersInputField.stopLossPrice)
+                        DydxTriggerOrderPriceInputType.TakeProfitLimit -> abacusStateManager.triggerOrders(value, TriggerOrdersInputField.takeProfitLimitPrice)
+                        DydxTriggerOrderPriceInputType.StopLossLimit -> abacusStateManager.triggerOrders(value, TriggerOrdersInputField.stopLossLimitPrice)
+                    }
                 },
             ),
         )
+
+        return state
     }
 }
