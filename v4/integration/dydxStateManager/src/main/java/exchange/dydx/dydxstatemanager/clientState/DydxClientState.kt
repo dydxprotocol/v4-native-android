@@ -6,7 +6,9 @@ import exchange.dydx.utilities.utils.StoreProtocol
 import exchange.dydx.utilities.utils.read
 import exchange.dydx.utilities.utils.save
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DydxClientState @Inject constructor(
     private val sharedPreferencesStore: SharedPreferencesStore,
     private val secureStore: SecureStore,

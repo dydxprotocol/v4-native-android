@@ -96,6 +96,7 @@ class DydxTransferStatusViewModel @Inject constructor(
                 fromChainId = transfer.fromChainId,
                 toChainId = transfer.toChainId,
                 isCctp = transfer.isCctp ?: false,
+                requestId = transfer.requestId,
             )
         }
     }

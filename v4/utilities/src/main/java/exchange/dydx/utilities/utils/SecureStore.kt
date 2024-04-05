@@ -1,12 +1,17 @@
 package exchange.dydx.utilities.utils
 
-import android.content.Context
+import android.app.Application
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SecureStore(
-    context: Context,
+@Singleton
+class SecureStore @Inject constructor(
+    application: Application,
 ) : StoreProtocol {
     companion object {
         private const val PREFERENCES_NAME = "SecureStorePrefs"
@@ -18,10 +23,15 @@ class SecureStore(
     private val sharedPreferences: SharedPreferences = EncryptedSharedPreferences.create(
         PREFERENCES_NAME,
         masterKeyAlias,
-        context,
+        application,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
+
+    private var _stateUpdatedCount = MutableStateFlow(0)
+
+    override val stateUpdatedCount: StateFlow<Int>
+        get() = _stateUpdatedCount
 
     override fun save(data: String, key: String) {
         sharedPreferences.edit().putString(key, data).apply()

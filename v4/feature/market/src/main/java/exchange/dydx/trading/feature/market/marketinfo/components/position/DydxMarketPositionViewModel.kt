@@ -5,6 +5,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TradeRoutes
@@ -23,6 +25,7 @@ class DydxMarketPositionViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     marketInfoStream: MarketInfoStreaming,
     private val router: DydxRouter,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxMarketPositionView.ViewState?> =
@@ -54,6 +57,7 @@ class DydxMarketPositionViewModel @Inject constructor(
                 formatter = formatter,
                 localizer = localizer,
             ),
+            enableTrigger = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger),
         )
     }
 }

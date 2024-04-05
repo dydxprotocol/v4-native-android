@@ -1,29 +1,16 @@
 package exchange.dydx.trading.core.di
 
-import android.content.Context
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.core.DydxRouterImpl
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object CoreModule {
+interface CoreModule {
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideApplicationRouter(
-        @ApplicationContext androidContext: Context,
-        appConfig: AppConfig,
-    ): DydxRouter {
-        return DydxRouterImpl(
-            androidContext = androidContext,
-            appConfig = appConfig,
-        )
-    }
+    @Binds
+    fun bindDydxRouter(dydxRouterImpl: DydxRouterImpl): DydxRouter
 }

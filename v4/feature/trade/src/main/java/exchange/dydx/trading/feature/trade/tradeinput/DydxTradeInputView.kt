@@ -69,7 +69,11 @@ import exchange.dydx.trading.feature.trade.tradeinput.components.sheettip.DydxTr
 @Composable
 fun Preview_DydxTradeInputView() {
     DydxThemedPreviewSurface {
-        DydxTradeInputView.Content(Modifier, DydxTradeInputView.ViewState.preview, rememberBottomSheetScaffoldState().bottomSheetState)
+        DydxTradeInputView.Content(
+            Modifier,
+            DydxTradeInputView.ViewState.preview,
+            rememberBottomSheetScaffoldState().bottomSheetState,
+        )
     }
 }
 
@@ -103,6 +107,7 @@ object DydxTradeInputView : DydxComponent {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val isIsolatedMarketEnabled: Boolean = false,
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
@@ -148,7 +153,7 @@ object DydxTradeInputView : DydxComponent {
 
         val scope = rememberCoroutineScope()
 
-        var sheetState: MutableState<SheetState?> = remember { mutableStateOf(null) }
+        val sheetState: MutableState<SheetState?> = remember { mutableStateOf(null) }
 
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
         val focusManager = LocalFocusManager.current
@@ -171,9 +176,13 @@ object DydxTradeInputView : DydxComponent {
                     DydxTradeSheetTipView.Content(Modifier)
                 }
 
-                DydxTradeInputOrderTypeView.Content(
-                    Modifier,
-                )
+                if (state.isIsolatedMarketEnabled) {
+                    DydxTradeInputSideView.Content(Modifier)
+                } else {
+                    DydxTradeInputOrderTypeView.Content(
+                        Modifier,
+                    )
+                }
 
                 PlatformDivider()
 
@@ -194,7 +203,13 @@ object DydxTradeInputView : DydxComponent {
                             DydxOrderbookGroupView.Content(Modifier.padding(start = 12.dp))
                         }
                     }
-                    DydxTradeInputSideView.Content(Modifier.weight(1f))
+                    if (state.isIsolatedMarketEnabled) {
+                        DydxTradeInputOrderTypeView.Content(
+                            Modifier.weight(1f),
+                        )
+                    } else {
+                        DydxTradeInputSideView.Content(Modifier.weight(1f))
+                    }
                 }
 
                 Row(
@@ -253,8 +268,10 @@ object DydxTradeInputView : DydxComponent {
             when (state.requestedBottomSheetState) {
                 BottomSheetState.Hidden -> {
                 }
+
                 BottomSheetState.Tip -> {
                 }
+
                 BottomSheetState.Expanded -> {
                     LaunchedEffect(key1 = "expand") {
                         bottomSheetState.expand()
@@ -286,30 +303,39 @@ object DydxTradeInputView : DydxComponent {
                     InputField.Size -> {
                         DydxTradeInputSizeView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.Leverage -> {
                         DydxTradeInputLeverageView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.LimitPrice -> {
                         DydxTradeInputLimitPriceView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.TriggerPrice -> {
                         DydxTradeInputTriggerPriceView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.TrailingPercent -> {
                         // DydxTradeInputTriggerPriceView.Content(Modifier)
                     }
+
                     InputField.TimeInForce -> {
                         DydxTradeInputTimeInForceView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.Execution -> {
                         DydxTradeInputExecutionView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.GoodTil -> {
                         DydxTradeInputGoodTilView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.PostOnly -> {
                         DydxTradeInputPostOnlyView.Content(Modifier.animateItemPlacement())
                     }
+
                     InputField.ReduceOnly -> {
                         DydxTradeInputReduceOnlyView.Content(Modifier.animateItemPlacement())
                     }

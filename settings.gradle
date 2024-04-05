@@ -20,9 +20,11 @@ dependencyResolutionManagement {
             def github_token = System.getenv('github_token')
             name = "GitHubPackages_Cartera"
             url = uri("https://maven.pkg.github.com/dydxprotocol/cartera-android")
-            credentials {
-                username github_username
-                password github_token
+            if (github_username != null && github_token != null) {
+                credentials {
+                    username github_username
+                    password github_token
+                }
             }
         }
 
@@ -31,9 +33,11 @@ dependencyResolutionManagement {
             def github_token = System.getenv('github_token')
             name = "GitHubPackages_Abacus"
             url = uri("https://maven.pkg.github.com/dydxprotocol/v4-abacus")
-            credentials {
-                username github_username
-                password github_token
+            if (github_username != null && github_token != null) {
+                credentials {
+                    username github_username
+                    password github_token
+                }
             }
         }
         //  mavenLocal()

@@ -1,6 +1,5 @@
 package exchange.dydx.trading.common.navigation
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.NavController
@@ -16,8 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
  * Essentially it serves as an interface between our routing logic and the underlying Compose framework.
  */
 interface DydxRouter {
-
-    var androidContext: Context?
 
     enum class Presentation {
         Push,
@@ -52,6 +49,6 @@ interface DydxRouter {
     fun deeplinksWithParam(
         destination: String,
         param: String,
-        isPath: Boolean = false,
+        isPath: Boolean = true,
     ): List<NavDeepLink>
 }

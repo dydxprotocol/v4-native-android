@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface DydxFavoriteStoreProtocol {
     val state: Flow<DydxUserFavorite?>
@@ -14,6 +15,7 @@ interface DydxFavoriteStoreProtocol {
     fun clear()
 }
 
+@Singleton
 class DydxFavoriteStore @Inject constructor(
     private val clientState: DydxClientState,
 ) : DydxFavoriteStoreProtocol {

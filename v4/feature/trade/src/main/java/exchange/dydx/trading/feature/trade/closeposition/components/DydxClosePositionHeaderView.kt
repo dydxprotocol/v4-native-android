@@ -72,10 +72,7 @@ object DydxClosePositionHeaderView : DydxComponent {
         Row(
             modifier
                 .fillMaxWidth()
-                .padding(
-                    vertical = ThemeShapes.VerticalPadding,
-                )
-                .padding(top = ThemeShapes.VerticalPadding),
+                .padding(vertical = ThemeShapes.VerticalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
         ) {

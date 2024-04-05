@@ -19,8 +19,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.util.Date
+import javax.inject.Inject
 
-class DydxTransferAlertsProvider(
+class DydxTransferAlertsProvider @Inject constructor(
     private val abacusStateManger: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val localizer: LocalizerProtocol,

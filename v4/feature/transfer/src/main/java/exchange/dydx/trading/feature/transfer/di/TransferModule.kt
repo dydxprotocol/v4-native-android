@@ -1,12 +1,11 @@
 package exchange.dydx.trading.feature.transfer.di
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.DydxTransferSectionsView
@@ -19,69 +18,55 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-class TransferModule {
-    @Provides
-    @ActivityRetainedScoped
-    fun provideSections(
+interface TransferModule {
+    @Binds
+    fun bindSections(
         mutableFlow: MutableStateFlow<DydxTransferSectionsView.Selection>,
-    ): Flow<DydxTransferSectionsView.Selection> {
-        return mutableFlow
-    }
+    ): Flow<DydxTransferSectionsView.Selection>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun providateMutableSections(): MutableStateFlow<DydxTransferSectionsView.Selection> {
-        return MutableStateFlow(DydxTransferSectionsView.Selection.Deposit)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideDydxTransferSearchParam(
+    @Binds
+    fun bindDydxTransferSearchParam(
         mutableFlow: MutableStateFlow<DydxTransferSearchParam?>,
-    ): Flow<DydxTransferSearchParam?> {
-        return mutableFlow
-    }
+    ): Flow<DydxTransferSearchParam?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableDydxTransferSearchParam(): MutableStateFlow<DydxTransferSearchParam?> {
-        return MutableStateFlow(null)
-    }
+    @Binds
+    fun bindDydxTransferInstanceStoring(
+        dydxTransferInstanceStore: DydxTransferInstanceStore
+    ): DydxTransferInstanceStoring
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideDydxTransferInstanceStoring(
-        abausStateManager: AbacusStateManagerProtocol,
-        parser: ParserProtocol,
-    ): DydxTransferInstanceStoring {
-        return DydxTransferInstanceStore(abausStateManager, parser)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideError(
+    @Binds
+    fun bindError(
         mutableFlow: MutableStateFlow<DydxTransferError?>,
-    ): StateFlow<DydxTransferError?> {
-        return mutableFlow
-    }
+    ): StateFlow<DydxTransferError?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableError(): MutableStateFlow<DydxTransferError?> {
-        return MutableStateFlow(null)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideScreenResult(
+    @Binds
+    fun bindScreenResult(
         mutableFlow: MutableStateFlow<DydxScreenResult?>,
-    ): Flow<DydxScreenResult?> {
-        return mutableFlow
-    }
+    ): Flow<DydxScreenResult?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableScreenResult(): MutableStateFlow<DydxScreenResult?> {
-        return MutableStateFlow(null)
+    companion object {
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableDydxTransferSearchParam(): MutableStateFlow<DydxTransferSearchParam?> {
+            return MutableStateFlow(null)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun providateMutableSections(): MutableStateFlow<DydxTransferSectionsView.Selection> {
+            return MutableStateFlow(DydxTransferSectionsView.Selection.Deposit)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableError(): MutableStateFlow<DydxTransferError?> {
+            return MutableStateFlow(null)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableScreenResult(): MutableStateFlow<DydxScreenResult?> {
+            return MutableStateFlow(null)
+        }
     }
 }

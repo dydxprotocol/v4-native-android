@@ -12,14 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -29,6 +33,7 @@ import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
@@ -40,25 +45,32 @@ fun Preview_DydxPortfolioPositionItemView() {
     DydxThemedPreviewSurface {
         DydxPortfolioPositionItemView.Content(
             Modifier,
+            MockLocalizer(),
             SharedMarketPositionViewState.preview,
+            false,
         )
     }
 }
 
 object DydxPortfolioPositionItemView {
-
     @Composable
     fun Content(
         modifier: Modifier,
+        localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
+        isIsolatedMarketEnabled: Boolean,
         onTapAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         val shape = RoundedCornerShape(10.dp)
         Row(
             modifier = modifier
+                .padding(
+                    // outer padding first, before widht and height
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.VerticalPadding,
+                )
                 .fillMaxWidth()
-                .padding(horizontal = ThemeShapes.HorizontalPadding)
-                .height(64.dp)
+                .height((if (isIsolatedMarketEnabled) 148.dp else 64.dp) + ThemeShapes.VerticalPadding * 2)
                 .background(
                     brush = position.gradientType.brush(ThemeColor.SemanticColor.layer_3),
                     shape = shape,
@@ -69,112 +81,300 @@ object DydxPortfolioPositionItemView {
                     shape = shape,
                 )
                 .clip(shape)
-                .clickable { onTapAction(position) },
+                .clickable { onTapAction(position) }
+                .padding(
+                    // inner paddings after clipping
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.VerticalPadding,
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Spacer(modifier = Modifier.width(8.dp))
-
-            PlatformRoundImage(
-                icon = position.logoUrl,
-                size = 36.dp,
-            )
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+            if (isIsolatedMarketEnabled) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Text(
-                        text = position.size ?: "-",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        ComposeAssetPosition(
+                            position,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(64.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        ComposePricing(
+                            localizer,
+                            position,
+                            true,
+                        )
+                        Spacer(modifier = Modifier.weight(1.0f))
 
-                    TokenTextView.Content(
-                        modifier = Modifier,
-                        state = position.token,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.tiny, fontType = ThemeFont.FontType.plus),
-                    )
+                        ComposePNL(
+                            modifier = Modifier,
+                            localizer,
+                            position,
+                            true,
+                        )
+                        Spacer(modifier = Modifier.weight(1.0f))
+
+                        ComposeMargin(
+                            modifier = Modifier,
+                            localizer,
+                            position,
+                            true,
+                        )
+                        ComposeIsolatedMarketEditButton(
+                            position,
+                        )
+                    }
                 }
+            } else {
+                ComposeAssetPosition(
+                    position,
+                )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SideTextView.Content(
-                        modifier = Modifier,
-                        state = position.side?.copy(
-                            coloringOption = SideTextView.ColoringOption.COLORED,
+                Spacer(modifier = Modifier.weight(1f))
 
-                        ),
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.mini)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
+                ComposePricing(
+                    localizer,
+                    position,
+                )
 
-                    Text(
-                        text = " @ ",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.mini)
-                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                    )
-
-                    Text(
-                        text = position.leverage ?: "-",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.mini)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
-                }
+                ComposePNL(
+                    modifier = Modifier,
+                    localizer,
+                    position,
+                )
             }
+        }
+    }
 
-            Spacer(modifier = Modifier.weight(1f))
+    @Composable
+    fun ComposeAssetPosition(
+        position: SharedMarketPositionViewState,
+    ) {
+        PlatformRoundImage(
+            icon = position.logoUrl,
+            size = 36.dp,
+        )
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.End,
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = position.oraclePrice ?: "",
+                    text = position.size ?: "-",
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.small)
                         .themeColor(ThemeColor.SemanticColor.text_primary),
                 )
 
+                Spacer(modifier = Modifier.width(4.dp))
+
+                TokenTextView.Content(
+                    modifier = Modifier,
+                    state = position.token,
+                    textStyle = TextStyle.dydxDefault
+                        .themeFont(
+                            fontSize = ThemeFont.FontSize.tiny,
+                            fontType = ThemeFont.FontType.plus,
+                        ),
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                SideTextView.Content(
+                    modifier = Modifier,
+                    state = position.side?.copy(
+                        coloringOption = SideTextView.ColoringOption.COLORED,
+
+                    ),
+                    textStyle = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.mini)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+
                 Text(
-                    text = position.entryPrice ?: "",
+                    text = " @ ",
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.mini)
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
+
+                Text(
+                    text = position.leverage ?: "-",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.mini)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun ComposePricing(
+        localizer: LocalizerProtocol,
+        position: SharedMarketPositionViewState,
+        forIsolatedMarket: Boolean = false,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
+        ) {
+            if (forIsolatedMarket) {
+                Text(
+                    text = localizer.localize("APP.GENERAL.INDEX_ENTRY"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+            }
+            Text(
+                text = position.oraclePrice ?: "",
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
+            )
+
+            Text(
+                text = position.entryPrice ?: "",
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.mini)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+        }
+    }
+
+    @Composable
+    fun ComposePNL(
+        modifier: Modifier,
+        localizer: LocalizerProtocol,
+        position: SharedMarketPositionViewState,
+        forIsolatedMarket: Boolean = false,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
+            modifier = Modifier.width(80.dp),
+        ) {
+            if (forIsolatedMarket) {
+                Text(
+                    text = localizer.localize("APP.GENERAL.PROFIT_AND_LOSS"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
             }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier.width(80.dp),
+            SignedAmountView.Content(
+                modifier = modifier,
+                state = position.unrealizedPNLPercent,
+                textStyle = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+
+            SignedAmountView.Content(
+                modifier = modifier,
+                state = position.unrealizedPNLAmount,
+                textStyle = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.mini),
+            )
+        }
+    }
+
+    @Composable
+    fun ComposeMargin(
+        modifier: Modifier,
+        localizer: LocalizerProtocol,
+        position: SharedMarketPositionViewState,
+        forIsolatedMarket: Boolean = false,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
+            modifier = Modifier.width(80.dp),
+        ) {
+            Text(
+                text = localizer.localize("APP.GENERAL.MARGIN"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+
+            Text(
+                /*
+                TODO: Get margin from Abacus
+                text = position.margin ?: "",
+                 */
+                text = "$100.00",
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
+            )
+
+            Text(
+                /*
+                TODO: Get margin type from Abacus
+                 */
+                text = localizer.localize("APP.GENERAL.ISOLATED"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.mini)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+        }
+    }
+
+    @Composable
+    fun ComposeIsolatedMarketEditButton(
+        position: SharedMarketPositionViewState,
+    ) {
+        Column(
+            modifier = Modifier
+                .width(32.dp)
+                .padding(0.dp),
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            /*
+            TODO: Only render the button if it is an isolated margin position
+             */
+            Spacer(modifier = Modifier.weight(1.0f))
+            PlatformIconButton(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(32.dp),
+                action = {
+                    /*
+                    TODO: Implement edit button action
+                     */
+                },
+                padding = 0.dp,
+                shape = RoundedCornerShape(4.dp),
+                backgroundColor = ThemeColor.SemanticColor.layer_6,
+                borderColor = ThemeColor.SemanticColor.layer_7,
             ) {
-                SignedAmountView.Content(
-                    modifier = modifier,
-                    state = position.unrealizedPNLPercent,
-                    textStyle = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.small),
-                )
-
-                SignedAmountView.Content(
-                    modifier = modifier,
-                    state = position.unrealizedPNLAmount,
-                    textStyle = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.mini),
+                Icon(
+                    painter = painterResource(id = exchange.dydx.trading.common.R.drawable.ic_edit),
+                    contentDescription = "",
+                    tint = ThemeColor.SemanticColor.text_primary.color,
                 )
             }
-
-            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }

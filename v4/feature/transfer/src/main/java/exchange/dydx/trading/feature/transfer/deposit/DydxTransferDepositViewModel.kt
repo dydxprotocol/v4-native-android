@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,7 @@ import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
@@ -40,6 +42,9 @@ class DydxTransferDepositViewModel @Inject constructor(
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
 ) : ViewModel(), DydxViewModel {
+
+    private val TAG = "DydxTransferDepositViewModel"
+
     private var ethereumInteractor: EthereumInteractor? = null
 
     private val selectedChainFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
@@ -52,25 +57,36 @@ class DydxTransferDepositViewModel @Inject constructor(
             selectedChainFlow,
             selectedTokenFlow,
             tokenAmountFLow,
-        ) { transferInput, selectedChain, selectedToken, tokenMaxAmount ->
-            createViewState(transferInput, selectedChain, selectedToken, tokenMaxAmount)
+            abacusStateManager.state.currentWallet.mapNotNull { it?.ethereumAddress }.distinctUntilChanged(),
+        ) { transferInput, selectedChain, selectedToken, tokenMaxAmount, ethereumAddress ->
+            createViewState(transferInput, selectedChain, selectedToken, tokenMaxAmount, ethereumAddress.isNullOrEmpty())
         }
             .distinctUntilChanged()
 
     init {
-        abacusStateManager.state.transferInput
-            .map { it?.depositOptions?.chains?.toList() }
-            .distinctUntilChanged()
-            .onEach { chains ->
-                selectedChainFlow.value = chains?.firstOrNull()
+        combine(
+            abacusStateManager.state.transferInput
+                .map { it?.depositOptions?.chains?.toList() }
+                .distinctUntilChanged(),
+            abacusStateManager.state.transferInput.map { it?.chain }.distinctUntilChanged(),
+        ) { chains, selected ->
+            chains?.firstOrNull { it.type == selected } ?: chains?.firstOrNull()
+        }
+            .onEach { chain ->
+                selectedChainFlow.value = chain
             }
             .launchIn(viewModelScope)
 
-        abacusStateManager.state.transferInput
-            .map { it?.depositOptions?.assets?.toList() }
-            .distinctUntilChanged()
-            .onEach { tokens ->
-                selectedTokenFlow.value = tokens?.firstOrNull()
+        combine(
+            abacusStateManager.state.transferInput
+                .map { it?.depositOptions?.assets?.toList() }
+                .distinctUntilChanged(),
+            abacusStateManager.state.transferInput.map { it?.token }.distinctUntilChanged(),
+        ) { tokens, selected ->
+            tokens?.firstOrNull { it.type == selected } ?: tokens?.firstOrNull()
+        }
+            .onEach { token ->
+                selectedTokenFlow.value = token
             }
             .launchIn(viewModelScope)
 
@@ -83,6 +99,9 @@ class DydxTransferDepositViewModel @Inject constructor(
             val chainRpc = resources.chainResources?.get(chain)?.rpc ?: return@combine null
             val tokenResource = resources.tokenResources?.get(token) ?: return@combine null
             val tokenDecimals = tokenResource.decimals ?: return@combine null
+            if (ethereumAddress.isNullOrEmpty()) {
+                return@combine null
+            }
             fetchTokenAmount(chainRpc, token, tokenDecimals, ethereumAddress)
         }
             .launchIn(viewModelScope)
@@ -100,6 +119,8 @@ class DydxTransferDepositViewModel @Inject constructor(
                 if (error == null && balance != null) {
                     val tokenAmount = balance.toDouble() / Math.pow(10.0, tokenDecimals.toDouble())
                     tokenAmountFLow.value = tokenAmount
+                } else {
+                    Log.e(TAG, "Failed to fetch token amount (ethGetBalance) $error")
                 }
             }
         } else {
@@ -110,6 +131,8 @@ class DydxTransferDepositViewModel @Inject constructor(
                 if (error == null && balance != null) {
                     val tokenAmount = balance.toDouble() / Math.pow(10.0, tokenDecimals.toDouble())
                     tokenAmountFLow.value = tokenAmount
+                } else {
+                    Log.e(TAG, "Failed to fetch token amount (erc20TokenGetBalance) $error")
                 }
             }
         }
@@ -120,6 +143,7 @@ class DydxTransferDepositViewModel @Inject constructor(
         chain: SelectionOption?,
         token: SelectionOption?,
         tokenMaxAmount: Double?,
+        showConnectWallet: Boolean,
     ): DydxTransferDepositView.ViewState {
         val tokenAddress = token?.type
         val tokenSymbol = if (tokenAddress != null) {
@@ -219,6 +243,13 @@ class DydxTransferDepositViewModel @Inject constructor(
                     )
                 },
             ),
+            showConnectWallet = showConnectWallet,
+            connectWalletAction = {
+                router.navigateTo(
+                    route = OnboardingRoutes.wallet_list + "?mobileOnly=true",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            },
         )
     }
 }

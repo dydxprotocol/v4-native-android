@@ -1,14 +1,15 @@
 package exchange.dydx.utilities.utils
 
-import android.content.Context
+import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import java.io.File
 import java.net.URL
+import javax.inject.Inject
 
-class CachedFileLoader(
-    private val context: Context,
+class CachedFileLoader @Inject constructor(
+    private val application: Application,
 ) {
     fun loadString(filePath: String, url: String?, completion: (String?) -> Unit) {
         loadData(filePath, url) { data ->
@@ -23,7 +24,7 @@ class CachedFileLoader(
         if (cachedFile?.exists() == true) {
             completion(cachedFile.readBytes())
         } else {
-            FileUtils.loadFromAssets(context, filePath)?.let { string ->
+            FileUtils.loadFromAssets(application, filePath)?.let { string ->
                 completion(string.toByteArray())
             }
         }
@@ -57,6 +58,6 @@ class CachedFileLoader(
     }
 
     private fun cachedFilePath(filePath: String): File? {
-        return File(context.filesDir, filePath)
+        return File(application.filesDir, filePath)
     }
 }

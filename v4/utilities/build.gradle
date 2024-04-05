@@ -36,6 +36,8 @@ android {
 }
 
 dependencies {
+    api "com.google.dagger:hilt-android:$hiltVersion"
+
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
     implementation "androidx.compose.ui:ui-unit-android:$composeVersion"
     testImplementation "junit:junit:$junitVersion"

@@ -1,11 +1,14 @@
 package exchange.dydx.utilities.utils
 
 import android.util.Log
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 interface StoreProtocol {
+    val stateUpdatedCount: StateFlow<Int>
+
     fun save(data: String, key: String)
 
     fun read(key: String): String?

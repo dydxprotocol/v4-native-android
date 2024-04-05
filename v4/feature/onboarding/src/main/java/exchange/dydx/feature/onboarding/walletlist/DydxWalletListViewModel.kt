@@ -1,6 +1,7 @@
 package exchange.dydx.feature.onboarding.walletlist
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -23,9 +24,11 @@ class DydxWalletListViewModel @Inject constructor(
     val localizer: LocalizerProtocol,
     val router: DydxRouter,
     val abacusStateManager: AbacusStateManagerProtocol,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
     private var context: Context? = null
+    private val mobileOnly: Boolean = savedStateHandle["mobileOnly"] ?: false
 
     private val _state = MutableStateFlow(DydxWalletListView.ViewState(localizer))
     val state: Flow<DydxWalletListView.ViewState> = _state
@@ -74,8 +77,8 @@ class DydxWalletListViewModel @Inject constructor(
             }
             _state.value = DydxWalletListView.ViewState(
                 localizer = localizer,
-                desktopSync = desktopSync,
-                debugScan = debugScan,
+                desktopSync = if (!mobileOnly) desktopSync else null,
+                debugScan = if (!mobileOnly) debugScan else null,
                 wallets = listState,
                 backButtonHandler = {
                     router.navigateBack()

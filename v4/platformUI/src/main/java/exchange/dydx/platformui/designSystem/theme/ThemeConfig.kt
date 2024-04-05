@@ -1,6 +1,8 @@
 package exchange.dydx.platformui.designSystem.theme
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
 import exchange.dydx.utilities.utils.JsonUtils
 import exchange.dydx.utilities.utils.SharedPreferencesStore
@@ -9,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 class ThemeSettings(
     private val context: Context,
-    val sharedPreferences: SharedPreferencesStore,
+    val sharedPreferences: SharedPreferencesStore?,
     val themeConfig: MutableStateFlow<ThemeConfig?> = MutableStateFlow(ThemeConfig.sampleThemeConfig(context)),
     val styleConfig: MutableStateFlow<StyleConfig?> = MutableStateFlow(StyleConfig.sampleStyleConfig(context)),
 ) {
@@ -47,6 +49,7 @@ data class ThemeConfig(
                 "dark" -> dark(context)
                 "light" -> light(context)
                 "classic_dark" -> classicDark(context)
+                "system" -> if (context.isDarkThemeOn()) dark(context) else light(context)
                 else -> null
             }
 
@@ -56,6 +59,11 @@ data class ThemeConfig(
             } else {
                 config
             }
+        }
+
+        private fun Context.isDarkThemeOn(): Boolean {
+            return resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
         }
     }
 }

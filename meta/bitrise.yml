@@ -1,0 +1,216 @@
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: android
+workflows:
+  _buildApp:
+    description: Build Android app (v4)
+    steps:
+    - set-java-version@1:
+        inputs:
+        - set_java_version: '17'
+    - git-clone@8: {}
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+            # write your script here
+            echo "Pulling Configs!"
+
+            cd ..
+            git clone git@github.com:dydxprotocol/v4-localization.git
+
+            git clone git@github.com:dydxprotocol/v4-web.git
+
+            # or run a script from your repository, like:
+            # bash ./path/to/script.sh
+            # not just bash, e.g.:
+            # ruby ./path/to/script.rb
+        title: Script (Pulling Configs)
+    - script@1:
+        title: Script (Set Secrets)
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+
+            # Check if required environment variables are set
+            if [ -z "$google_services_debug" ]; then
+              echo "Error: google_services_debug environment variable not set."
+              exit 1
+            fi
+
+            if [ -z "$google_services_release" ]; then
+              echo "Error: google_services_release environment variable not set."
+              exit 1
+            fi
+
+            if [ -z "$strings_xml" ]; then
+              echo "Error: strings_xml environment variable not set."
+              exit 1
+            fi
+
+
+            FOLDER=v4/app/src/debug
+            # if folder doesn't exist, create it
+            if [ ! -d "$FOLDER" ]; then
+              mkdir -p $FOLDER
+            fi
+
+            echo "$google_services_debug" > v4/app/src/debug/google-services.json
+
+            FOLDER=v4/app/src/release
+            # if folder doesn't exist, create it
+            if [ ! -d "$FOLDER" ]; then
+              mkdir -p $FOLDER
+            fi
+
+            echo "$google_services_release" > v4/app/src/release/google-services.json
+
+            FOLDER=v4/common/src/main/res/values/
+            # if folder doesn't exist, create it
+            if [ ! -d "$FOLDER" ]; then
+              mkdir -p $FOLDER
+            fi
+
+            echo "$strings_xml" > v4/common/src/main/res/values/strings.xml
+    - cache-pull@2: {}
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: "$PROJECT_LOCATION/gradlew"
+    - change-android-applicationid@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/v4/app/build.gradle"
+        - new_application_id: "$APPLICATION_ID"
+    - android-unit-test@1:
+        inputs:
+        - project_location: "$PROJECT_LOCATION"
+        - module: "$MODULE"
+        - variant: "$VARIANT"
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/v4/app/build.gradle"
+    - android-build@1:
+        inputs:
+        - project_location: "$PROJECT_LOCATION"
+        - module: "$MODULE"
+        - app_path_pattern: |-
+            */v4/app/build/outputs/apk/*.apk
+            */v4/app/build/outputs/bundle/*.aab
+        - variant: "$VARIANT"
+    - cache-push@2: {}
+  _withSsh:
+    description: Set up Auth and Env Vars
+    steps:
+    - activate-ssh-key@4: {}
+    - script@1:
+        inputs:
+        - content: |
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # debug log
+            set -x
+
+            envman add --key=DYDX_DATE_MM_DD --value="$(date +"%m-%d")"
+    envs:
+    - ABACUS_GIT_REPO_URL: git@github.com:dydxprotocol/abacus.git
+      opts:
+        is_expand: false
+  build:
+    description: 'Run CI / release build. Triggers based on build/* branches. Artifacts
+      are discarded.
+
+      '
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - _withSsh
+    - _buildApp
+  primary:
+    description: |
+      Run on every PR.
+
+      Next steps:
+      - Check out [Getting started with Android apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-android-apps.html).
+    steps:
+    - deploy-to-bitrise-io@2: {}
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - _withSsh
+    - _buildApp
+  release:
+    description: 'Official Release Workflow (protected by PR)
+
+      '
+    envs:
+    - VARIANT: release
+      opts:
+        is_expand: false
+    before_run:
+    - build
+    steps:
+    - sign-apk@1:
+        inputs:
+        - output_name: dydx_${ANDROID_VERSION_NAME}_${BITRISE_TRIGGERED_WORKFLOW_TITLE}_${BITRISE_BUILD_NUMBER}
+        - use_apk_signer: 'true'
+    - deploy-to-bitrise-io@2: {}
+    - google-play-deploy@3:
+        inputs:
+        - package_name: "$APPLICATION_ID"
+        - track: internal
+        - status: draft
+        - service_account_json_key_path: "$BITRISEIO_Google_Play_service_account_json_URL"
+        title: Google Play Deploy (internal)
+    - git-tag@1:
+        inputs:
+        - tag_message: |-
+            $BITRISE_PUBLIC_INSTALL_PAGE_URL_MAP
+
+            $BITRISE_PERMANENT_DOWNLOAD_URL_MAP
+        - tag: v${ANDROID_VERSION_NAME}(${BITRISE_BUILD_NUMBER})
+meta:
+  bitrise.io:
+    stack: linux-docker-android-20.04
+    machine_type_id: standard
+app:
+  envs:
+  - PROJECT_LOCATION: "."
+    opts:
+      is_expand: false
+  - opts:
+      is_expand: false
+    MODULE: v4:app
+  - opts:
+      is_expand: false
+    MODULE_PATH: v4/app
+  - opts:
+      is_expand: false
+    APPLICATION_ID: exchange.dydx.trading
+trigger_map:
+- push_branch: releases/*
+  workflow: release
+- push_branch: build/*
+  workflow: build
+- push_branch: main
+  workflow: release
+- pull_request_target_branch: develop
+  workflow: primary

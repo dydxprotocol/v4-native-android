@@ -6,7 +6,7 @@ import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.usdcTokenDecimal
-import exchange.dydx.dydxstatemanager.usdcTokenInfo
+import exchange.dydx.dydxstatemanager.usdcTokenDenom
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
@@ -38,7 +38,7 @@ class DydxTransferSubaccountWorker(
             isStarted = true
 
             combine(
-                abacusStateManager.state.accountBalance(abacusStateManager.environment?.usdcTokenInfo?.denom)
+                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
                     .filter { balance ->
                         balance != null && balance > balanceRetainAmount
                     },
@@ -48,7 +48,7 @@ class DydxTransferSubaccountWorker(
                 val subaccountNumber: Int = selectedSubaccount?.subaccountNumber ?: 0
                 val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
                 if (depositAmount <= 0) return@combine
-                val amountString = formatter.raw(depositAmount, abacusStateManager.usdcTokenDecimal)
+                val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
                     ?: return@combine
 
                 depositToSubaccount(amountString, subaccountNumber, wallet)
@@ -77,7 +77,7 @@ class DydxTransferSubaccountWorker(
             functionName = "deposit",
             paramsInJson = paramsInJson,
             completion = { response ->
-                val trackingData = mapOf(
+                val trackingData = mutableMapOf(
                     "amount" to amountString,
                     "address" to wallet.cosmoAddress,
                 )
@@ -92,7 +92,7 @@ class DydxTransferSubaccountWorker(
                 } else {
                     tracker.log(
                         event = "SubaccountDeposit_Failed",
-                        data = trackingData,
+                        data = trackingData.also { it["error"] = response },
                     )
                     Log.e("DydxTransferSubaccountWorker", "depositToSubaccount: $error")
                 }
