@@ -73,7 +73,6 @@ class DydxRewardsEventsViewModel @Inject constructor(
                     }
                 }
 
-
                 DydxRewardsEventItemView.ViewState(
                     timeText = timeText ?: "",
                     amountText = formatter.raw(reward.amount, 6) ?: "",
