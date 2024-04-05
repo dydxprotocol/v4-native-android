@@ -230,7 +230,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                                )
+                            )
                         }
                     }
                 } ?: listOf(),
@@ -251,7 +251,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_primary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                                )
+                            )
                         }
                     }
                 } ?: listOf(),
