@@ -89,22 +89,38 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_4),
         ) {
-            NavigationHeader(state)
+            NavigationHeader(
+                modifier = Modifier,
+                state = state,
+            )
             PlatformDivider()
-            Description(state)
-            LeverageEditField(state)
-            LeverageOptions(state)
+            Description(
+                modifier = Modifier,
+                state = state,
+            )
+            LeverageEditField(
+                modifier = Modifier,
+                state = state,
+            )
+            LeverageOptions(
+                modifier = Modifier,
+                state = state,
+            )
             Spacer(modifier = Modifier.weight(1f))
-            ActionButton(state)
+            ActionButton(
+                modifier = Modifier,
+                state = state,
+            )
         }
     }
 
     @Composable
     fun NavigationHeader(
+        modifier: Modifier,
         state: ViewState,
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -130,6 +146,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
 
     @Composable
     fun Description(
+        modifier: Modifier,
         state: ViewState,
     ) {
         Row(
@@ -150,7 +167,10 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun LeverageEditField(state: ViewState?) {
+    fun LeverageEditField(
+        modifier: Modifier,
+        state: ViewState?
+    ) {
         Row(
             modifier = Modifier
                 .padding(
@@ -176,7 +196,10 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun LeverageOptions(state: ViewState?) {
+    fun LeverageOptions(
+        modifier: Modifier,
+        state: ViewState?
+    ) {
         Row(
             modifier = Modifier
                 .padding(
@@ -207,7 +230,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                            )
+                                )
                         }
                     }
                 } ?: listOf(),
@@ -228,7 +251,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_primary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                            )
+                                )
                         }
                     }
                 } ?: listOf(),
@@ -242,7 +265,10 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun ActionButton(state: ViewState?) {
+    fun ActionButton(
+        modifier: Modifier,
+        state: ViewState?
+    ) {
         PlatformButton(
             modifier = Modifier
                 .padding(

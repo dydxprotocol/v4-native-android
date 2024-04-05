@@ -107,16 +107,26 @@ object DydxTradeInputMarginModeView : DydxComponent {
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_4),
         ) {
-            NavigationHeader(state)
+            NavigationHeader(
+                modifier = Modifier,
+                state = state
+            )
             PlatformDivider()
-            Selection(state.crossMargin)
+            Selection(
+                modifier = Modifier,
+                marginModeState = state.crossMargin
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Selection(state.isolatedMargin)
+            Selection(
+                modifier = Modifier,
+                marginModeState = state.isolatedMargin
+            )
         }
     }
 
     @Composable
     fun NavigationHeader(
+        modifier: Modifier,
         state: ViewState,
     ) {
         Row(
@@ -156,7 +166,10 @@ object DydxTradeInputMarginModeView : DydxComponent {
     }
 
     @Composable
-    fun Selection(marginModeState: MarginTypeSelection) {
+    fun Selection(
+        modifier: Modifier,
+        marginModeState: MarginTypeSelection
+    ) {
         val shape = RoundedCornerShape(10.dp)
         Row(
             modifier = Modifier
