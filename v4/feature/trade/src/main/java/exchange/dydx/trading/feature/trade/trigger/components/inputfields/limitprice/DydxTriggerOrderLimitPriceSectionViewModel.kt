@@ -2,17 +2,15 @@ package exchange.dydx.trading.feature.trade.trigger.components.inputfields.limit
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,20 +23,12 @@ class DydxTriggerOrderLimitPriceSectionViewModel @Inject constructor(
     private val enabledFlow = MutableStateFlow(false)
 
     val state: Flow<DydxTriggerOrderLimitPriceSectionView.ViewState?> =
-        combine(
-            enabledFlow,
-            abacusStateManager.state.triggerOrdersInput,
-            abacusStateManager.state.configsAndAssetMap,
-        ) { sizeEnabled, triggerOrdersInput, configsAndAssetMap ->
-            val marketId = triggerOrdersInput?.marketId ?: return@combine null
-            createViewState(sizeEnabled, triggerOrdersInput, configsAndAssetMap?.get(marketId))
-        }
+        enabledFlow
+            .map { sizeEnabled -> createViewState(sizeEnabled) }
             .distinctUntilChanged()
 
     private fun createViewState(
         sizeEnabled: Boolean,
-        triggerOrdersInput: TriggerOrdersInput?,
-        configsAndAsset: MarketConfigsAndAsset?,
     ): DydxTriggerOrderLimitPriceSectionView.ViewState {
         return DydxTriggerOrderLimitPriceSectionView.ViewState(
             localizer = localizer,

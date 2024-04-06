@@ -23,6 +23,7 @@ interface TradeStreaming {
 interface MutableTradeStreaming : TradeStreaming {
     fun submitTrade()
     fun closePosition()
+    fun submitTriggerOrders()
 }
 
 @ActivityRetainedScoped
@@ -77,6 +78,15 @@ class TradeStream @Inject constructor(
             val closePositionInput = abacusStateManager.state.closePositionInput.first() ?: return@launch
 
             abacusStateManager.closePosition { submissionStatus ->
+                _submissionStatus.update { submissionStatus }
+            }
+        }
+    }
+
+    override fun submitTriggerOrders() {
+        _submissionStatus.update { null }
+        streamScope.launch {
+            abacusStateManager.submitTriggerOrders { submissionStatus ->
                 _submissionStatus.update { submissionStatus }
             }
         }

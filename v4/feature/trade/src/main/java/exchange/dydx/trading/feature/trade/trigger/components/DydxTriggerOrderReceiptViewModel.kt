@@ -35,7 +35,6 @@ class DydxTriggerOrderReceiptViewModel @Inject constructor(
                 }
                 .filterNotNull()
                 .distinctUntilChanged(),
-            marketIdFlow,
             abacusStateManager.state.configsAndAssetMap,
             marketIdFlow
                 .flatMapLatest { marketId ->
@@ -43,8 +42,8 @@ class DydxTriggerOrderReceiptViewModel @Inject constructor(
                 }
                 .filterNotNull()
                 .distinctUntilChanged(),
-        ) { market, marketId, configsAndAssetMap, position ->
-            createViewState(market, configsAndAssetMap?.get(marketId), position)
+        ) { market, configsAndAssetMap, position ->
+            createViewState(market, configsAndAssetMap?.get(market.id), position)
         }
             .distinctUntilChanged()
 

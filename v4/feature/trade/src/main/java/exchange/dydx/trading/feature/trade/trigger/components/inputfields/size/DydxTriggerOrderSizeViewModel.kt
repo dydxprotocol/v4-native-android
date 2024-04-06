@@ -70,12 +70,8 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 enabledFlow.value = enabled
                 if (!enabled) {
                     abacusStateManager.triggerOrders(
-                        null,
-                        TriggerOrdersInputField.takeProfitOrderSize,
-                    )
-                    abacusStateManager.triggerOrders(
-                        null,
-                        TriggerOrdersInputField.stopLossOrderSize,
+                        formatter.decimalLocaleAgnostic(position.size?.current),
+                        TriggerOrdersInputField.size,
                     )
                 }
             },
