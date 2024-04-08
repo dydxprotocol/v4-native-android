@@ -135,7 +135,6 @@ class TradingActivity : FragmentActivity() {
     private fun MainContent() {
         key(themeChangedState) {
             PlatformInfoScaffold(
-                modifier = Modifier,
                 platformInfo = viewModel.platformInfo,
             ) {
                 DydxNavGraph(

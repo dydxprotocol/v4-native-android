@@ -11,12 +11,12 @@ import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
+import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
@@ -25,6 +25,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    private val triggerOrderStream: MutableTriggerOrderStreaming,
 ) : ViewModel(), DydxViewModel {
 
     private val enabledFlow = MutableStateFlow(false)
@@ -34,12 +35,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
     val state: Flow<DydxTriggerOrderSizeView.ViewState?> =
         combine(
             enabledFlow,
-            marketIdFlow
-                .flatMapLatest { marketId ->
-                    abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId)
-                }
-                .filterNotNull()
-                .distinctUntilChanged(),
+            triggerOrderStream.selectedSubaccountPosition.filterNotNull(),
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
         ) { sizeEnabled, position, triggerOrdersInput, configsAndAssetMap ->

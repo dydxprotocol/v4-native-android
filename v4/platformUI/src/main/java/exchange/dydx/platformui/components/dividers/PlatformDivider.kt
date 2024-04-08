@@ -22,7 +22,7 @@ fun PlatformDivider(modifier: Modifier = Modifier) {
 @Composable
 fun PlatformVerticalDivider(modifier: Modifier = Modifier) {
     PlatformDivider(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight() // fill the max height
             .width(1.dp),
     )

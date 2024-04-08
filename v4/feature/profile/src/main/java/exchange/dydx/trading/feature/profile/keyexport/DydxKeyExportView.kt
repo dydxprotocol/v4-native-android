@@ -81,10 +81,9 @@ object DydxKeyExportView : DydxComponent {
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         PlatformInfoScaffold(
-            modifier = modifier,
             platformInfo = viewModel.platformInfo,
         ) {
-            Content(Modifier, state)
+            Content(modifier, state)
         }
     }
 

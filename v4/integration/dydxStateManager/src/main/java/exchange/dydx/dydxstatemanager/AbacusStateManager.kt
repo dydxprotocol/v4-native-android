@@ -108,7 +108,7 @@ interface AbacusStateManagerProtocol {
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
 
     fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
-    fun submitTriggerOrders(callback: (SubmissionStatus) -> Unit)
+    fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit)
 
     // extensions
     fun resetTransferInputFields() {
@@ -391,7 +391,7 @@ class AbacusStateManager @Inject constructor(
         asyncStateManager.triggerOrders(input, type)
     }
 
-    override fun submitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+    override fun commitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
         asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
             if (successful) {
                 callback(AbacusStateManagerProtocol.SubmissionStatus.Success)

@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.trade.trigger.components.inputfields.limit
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -43,6 +44,23 @@ class DydxTriggerOrderLimitPriceSectionViewModel @Inject constructor(
                     abacusStateManager.triggerOrders(
                         null,
                         TriggerOrdersInputField.stopLossLimitPrice,
+                    )
+                    abacusStateManager.triggerOrders(
+                        OrderType.takeProfitMarket.rawValue,
+                        TriggerOrdersInputField.takeProfitOrderType,
+                    )
+                    abacusStateManager.triggerOrders(
+                        OrderType.stopMarket.rawValue,
+                        TriggerOrdersInputField.stopLossOrderType,
+                    )
+                } else {
+                    abacusStateManager.triggerOrders(
+                        OrderType.takeProfitLimit.rawValue,
+                        TriggerOrdersInputField.takeProfitOrderType,
+                    )
+                    abacusStateManager.triggerOrders(
+                        OrderType.stopLimit.rawValue,
+                        TriggerOrdersInputField.stopLossOrderType,
                     )
                 }
             },

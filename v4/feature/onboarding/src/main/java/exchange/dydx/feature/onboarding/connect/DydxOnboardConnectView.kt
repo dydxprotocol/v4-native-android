@@ -75,7 +75,6 @@ object DydxOnboardConnectView : DydxComponent {
         }
 
         PlatformInfoScaffold(
-            modifier = modifier,
             platformInfo = viewModel.platformInfo,
         ) {
             Content(modifier, state)
