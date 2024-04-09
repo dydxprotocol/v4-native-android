@@ -51,6 +51,7 @@ object DydxTriggerOrderSizeView : DydxComponent {
         val labeledTextInput: LabeledTextInput.ViewState,
         val percentage: Double = 0.4,
         val onPercentageChanged: (Double) -> Unit = {},
+        val canEdit: Boolean = true,
     ) {
         companion object {
             val preview = ViewState(
@@ -85,7 +86,10 @@ object DydxTriggerOrderSizeView : DydxComponent {
                     .themeFont(fontSize = ThemeFont.FontSize.base)
                     .themeColor(ThemeColor.SemanticColor.text_secondary),
                 value = state.enabled,
-                onValueChange = state.onEnabledChanged,
+                onValueChange = {
+                    if (state.canEdit) state.onEnabledChanged(it)
+                },
+                canEdit = state.canEdit,
             )
 
             DydxAnimation.AnimateExpandInOut(

@@ -91,7 +91,7 @@ open class DydxTriggerSectionHeaderViewModel(
                 }
                 GainLossDisplayType.Amount -> orderPrice.percentDiff?.let { diff ->
                     SignedAmountView.ViewState(
-                        text = formatter.percent(kotlin.math.abs(diff), 2),
+                        text = formatter.percent(kotlin.math.abs(diff / 100.0), 2),
                         sign = if (diff > 0.0) PlatformUISign.Plus else PlatformUISign.Minus,
                         coloringOption = SignedAmountView.ColoringOption.SignOnly,
                     )

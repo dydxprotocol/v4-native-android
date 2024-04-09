@@ -36,17 +36,19 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         combine(
             enabledFlow,
             triggerOrderStream.selectedSubaccountPosition.filterNotNull(),
+            triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
-        ) { sizeEnabled, position, triggerOrdersInput, configsAndAssetMap ->
+        ) { sizeEnabled, position, isNewTriggerOrder, triggerOrdersInput, configsAndAssetMap ->
             val marketId = triggerOrdersInput?.marketId ?: return@combine null
-            createViewState(sizeEnabled, position, triggerOrdersInput, configsAndAssetMap?.get(marketId))
+            createViewState(sizeEnabled, position, isNewTriggerOrder, triggerOrdersInput, configsAndAssetMap?.get(marketId))
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         sizeEnabled: Boolean,
         position: SubaccountPosition,
+        isNewTriggerOrder: Boolean,
         triggerOrdersInput: TriggerOrdersInput?,
         configsAndAsset: MarketConfigsAndAsset?,
     ): DydxTriggerOrderSizeView.ViewState {
@@ -61,7 +63,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         }
         return DydxTriggerOrderSizeView.ViewState(
             localizer = localizer,
-            enabled = sizeEnabled,
+            enabled = sizeEnabled && isNewTriggerOrder,
             onEnabledChanged = { enabled ->
                 enabledFlow.value = enabled
                 if (!enabled) {
@@ -88,6 +90,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                     TriggerOrdersInputField.size,
                 )
             },
+            canEdit = isNewTriggerOrder,
         )
     }
 }

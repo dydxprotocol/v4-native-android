@@ -81,7 +81,7 @@ open class DydxTriggerOrderGainLossViewModel(
         fun formatOrder(orderPrice: TriggerPrice) =
             when (displayType) {
                 GainLossDisplayType.Amount -> formatter.raw(orderPrice.usdcDiff, tickSize)
-                GainLossDisplayType.Percent -> formatter.percent(orderPrice.percentDiff, 2)
+                GainLossDisplayType.Percent -> orderPrice.percentDiff?.let { formatter.percent(it / 100.0, 2) }
             }
 
         val inputField: TriggerOrdersInputField = when (inputType) {

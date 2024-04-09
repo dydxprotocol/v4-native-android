@@ -19,9 +19,10 @@ import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -181,7 +182,8 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
 
     private fun subscribeToStatus() {
         triggerOrderStream.submissionStatus
-            .mapNotNull { status ->
+            .filterNotNull()
+            .map { status ->
                 when (status) {
                     is AbacusStateManagerProtocol.SubmissionStatus.Success ->
                         platformInfo.show(
