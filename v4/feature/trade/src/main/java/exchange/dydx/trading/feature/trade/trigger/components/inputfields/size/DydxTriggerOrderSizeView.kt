@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,6 +76,8 @@ object DydxTriggerOrderSizeView : DydxComponent {
             return
         }
 
+        val focusManager = LocalFocusManager.current
+
         Column(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -87,7 +90,10 @@ object DydxTriggerOrderSizeView : DydxComponent {
                     .themeColor(ThemeColor.SemanticColor.text_secondary),
                 value = state.enabled,
                 onValueChange = {
-                    if (state.canEdit) state.onEnabledChanged(it)
+                    if (state.canEdit) {
+                        focusManager.clearFocus()
+                        state.onEnabledChanged(it)
+                    }
                 },
                 canEdit = state.canEdit,
             )

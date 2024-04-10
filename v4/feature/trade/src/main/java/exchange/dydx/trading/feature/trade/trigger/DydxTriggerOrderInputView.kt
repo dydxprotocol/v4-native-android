@@ -35,6 +35,8 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
+import exchange.dydx.trading.feature.receipt.validation.DydxValidationViewModel
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderCtaButtonView
@@ -111,6 +113,7 @@ object DydxTriggerOrderInputView : DydxComponent {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -126,6 +129,10 @@ object DydxTriggerOrderInputView : DydxComponent {
                 StopLossSectionView(
                     modifier = Modifier,
                     state = state,
+                )
+
+                DydxValidationView.Content(
+                    modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
                 )
 
                 AdvancedDividerView(
@@ -145,8 +152,6 @@ object DydxTriggerOrderInputView : DydxComponent {
                         .padding(horizontal = ThemeShapes.HorizontalPadding),
                 )
             }
-
-            Spacer(modifier = Modifier.weight(1f))
 
             DydxTriggerOrderCtaButtonView.Content(
                 modifier = Modifier

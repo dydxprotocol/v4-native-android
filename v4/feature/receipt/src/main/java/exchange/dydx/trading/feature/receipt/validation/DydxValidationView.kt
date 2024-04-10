@@ -34,6 +34,7 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.utilities.utils.toDp
@@ -66,6 +67,7 @@ object DydxValidationView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val state: State = State.None,
+        val title: String? = null,
         val message: String? = null,
         val link: Link? = null,
     ) {
@@ -73,6 +75,7 @@ object DydxValidationView : DydxComponent {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 state = State.Warning,
+                title = "This is a warning",
                 message = "This is an error message",
                 link = Link.preview,
             )
@@ -93,12 +96,13 @@ object DydxValidationView : DydxComponent {
             return
         }
 
-        when (state.state) {
-            State.Error, State.Warning -> {
-                ContentInBox(modifier, state)
+        DydxAnimation.AnimateExpandInOut(
+            visible =  when (state.state) {
+                State.Error, State.Warning -> true
+                State.None -> false
             }
-            State.None -> {
-            }
+        ) {
+            ContentInBox(modifier, state)
         }
     }
 
@@ -141,6 +145,15 @@ object DydxValidationView : DydxComponent {
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                if (viewState.title != null) {
+                    Text(
+                        modifier = Modifier,
+                        text = viewState.title,
+                        style = TextStyle.dydxDefault
+                            .themeColor(ThemeColor.SemanticColor.text_primary)
+                            .themeFont(fontSize = ThemeFont.FontSize.small),
+                    )
+                }
                 if (viewState.message != null) {
                     Text(
                         modifier = Modifier,
