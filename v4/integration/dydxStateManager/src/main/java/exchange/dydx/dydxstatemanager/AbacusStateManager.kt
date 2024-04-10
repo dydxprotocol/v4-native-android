@@ -118,7 +118,9 @@ interface AbacusStateManagerProtocol {
     }
 
     fun resetTriggerOrders() {
-        val fields = TriggerOrdersInputField.values()
+        val fields = TriggerOrdersInputField.values().filter {
+            it != TriggerOrdersInputField.marketId
+        }
         for (field in fields) {
             triggerOrders(null, field)
         }

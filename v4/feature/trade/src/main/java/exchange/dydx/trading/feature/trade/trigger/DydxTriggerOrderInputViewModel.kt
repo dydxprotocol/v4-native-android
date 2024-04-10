@@ -11,6 +11,9 @@ import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.stopLossOrders
+import exchange.dydx.dydxstatemanager.takeProfitOrders
+import exchange.dydx.dydxstatemanager.triggerOrderPosition
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -50,9 +53,9 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         }
 
         combine(
-            triggerOrderStream.selectedSubaccountPosition,
-            triggerOrderStream.takeProfitOrders,
-            triggerOrderStream.stopLossOrders,
+            abacusStateManager.state.triggerOrderPosition,
+            abacusStateManager.state.takeProfitOrders,
+            abacusStateManager.state.stopLossOrders,
             abacusStateManager.state.triggerOrdersInput,
         ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
             updateAbacusTriggerOrder(position, takeProfitOrders, stopLossOrders, triggerOrdersInput)

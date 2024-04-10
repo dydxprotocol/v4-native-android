@@ -3,7 +3,7 @@ package exchange.dydx.platformui.components.buttons
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
@@ -85,7 +85,7 @@ fun PlatformButton(
     }
 
     OutlinedButton(
-        modifier = modifier.height(52.dp),
+        modifier = modifier.defaultMinSize(minHeight = 52.dp),
         border = BorderStroke(1.dp, borderColor),
         shape = RoundedCornerShape(size = 8.dp),
         colors = ButtonDefaults
@@ -102,6 +102,7 @@ fun PlatformButton(
                     style = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
                         .themeColor(foreground = textColor),
                     text = text,
+                    maxLines = 1,
                 )
             }
             if (trailingContent != null) {

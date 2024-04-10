@@ -1,23 +1,14 @@
 package exchange.dydx.trading.feature.trade.streams
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.abacus.output.PositionSide
-import exchange.dydx.abacus.output.SubaccountOrder
-import exchange.dydx.abacus.output.SubaccountPosition
-import exchange.dydx.abacus.output.input.OrderSide
-import exchange.dydx.abacus.output.input.OrderStatus
-import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.stopLossOrders
+import exchange.dydx.dydxstatemanager.takeProfitOrders
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,10 +32,6 @@ interface TriggerOrderStreaming {
     val submissionStatus: Flow<AbacusStateManagerProtocol.SubmissionStatus?>
     val takeProfitGainLossDisplayType: Flow<GainLossDisplayType>
     val stopLossGainLossDisplayType: Flow<GainLossDisplayType>
-    val selectedSubaccountPosition: Flow<SubaccountPosition?>
-    val selectSubaccountOrders: Flow<List<SubaccountOrder>?>
-    val takeProfitOrders: Flow<List<SubaccountOrder>?>
-    val stopLossOrders: Flow<List<SubaccountOrder>?>
     val isNewTriggerOrder: Flow<Boolean>
 }
 
@@ -70,61 +57,10 @@ class TriggerOrderStream @Inject constructor(
 
     private val streamScope = MainScope()
 
-    private val marketIdFlow = abacusStateManager.state.triggerOrdersInput
-        .mapNotNull { it?.marketId }
-
-    override val selectedSubaccountPosition: Flow<SubaccountPosition?> =
-        marketIdFlow
-            .flatMapLatest { marketId ->
-                abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId)
-            }
-            .filterNotNull()
-            .distinctUntilChanged()
-
-    override val selectSubaccountOrders: Flow<List<SubaccountOrder>?> =
-        marketIdFlow
-            .flatMapLatest { marketId ->
-                abacusStateManager.state.selectedSubaccountOrdersOfMarket(marketId)
-            }
-            .map { orders ->
-                orders?.filter { order ->
-                    order.status != OrderStatus.canceling &&
-                        order.status != OrderStatus.cancelled &&
-                        order.status != OrderStatus.filled
-                }
-            }
-            .distinctUntilChanged()
-
-    override val takeProfitOrders: Flow<List<SubaccountOrder>?> =
-        combine(
-            selectedSubaccountPosition,
-            selectSubaccountOrders,
-        ) { position, orders ->
-            orders?.filter { order ->
-                position?.side?.current?.let { currentSide ->
-                    (order.type == OrderType.takeProfitMarket || order.type == OrderType.takeProfitLimit) &&
-                        order.side.isOppositeOf(currentSide)
-                } ?: false
-            }
-        }
-
-    override val stopLossOrders: Flow<List<SubaccountOrder>?> =
-        combine(
-            selectedSubaccountPosition,
-            selectSubaccountOrders,
-        ) { position, orders ->
-            orders?.filter { order ->
-                position?.side?.current?.let { currentSide ->
-                    (order.type == OrderType.stopMarket || order.type == OrderType.stopLimit) &&
-                        order.side.isOppositeOf(currentSide)
-                } ?: false
-            }
-        }
-
     override val isNewTriggerOrder: Flow<Boolean> =
         combine(
-            takeProfitOrders,
-            stopLossOrders,
+            abacusStateManager.state.takeProfitOrders,
+            abacusStateManager.state.stopLossOrders,
         ) { takeProfitOrders, stopLossOrders ->
             takeProfitOrders.isNullOrEmpty() && stopLossOrders.isNullOrEmpty()
         }
@@ -157,6 +93,3 @@ class TriggerOrderStream @Inject constructor(
         _stopLossGainLossDisplayType.update { displayType }
     }
 }
-
-private fun OrderSide.isOppositeOf(that: PositionSide): Boolean =
-    (this == OrderSide.buy && that == PositionSide.SHORT) || (this == OrderSide.sell && that == PositionSide.LONG)

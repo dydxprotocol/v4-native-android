@@ -138,19 +138,21 @@ class AbacusState(
      **/
 
     fun accountBalance(tokenDenom: String?): StateFlow<Double?> {
+        val valueBlock = { state: PerpetualState? ->
+            state?.account?.balances?.get(tokenDenom)?.amount?.toDoubleOrNull()
+        }
         return perpetualState
-            .map { state: PerpetualState? ->
-                state?.account?.balances?.get(tokenDenom)?.amount?.toDoubleOrNull()
-            }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { valueBlock(it) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(perpetualState.value))
     }
 
     fun stakingBalance(tokenDenom: String?): StateFlow<Double?> {
+        val valueBlock = { state: PerpetualState? ->
+            state?.account?.stakingBalances?.get(tokenDenom)?.amount?.toDoubleOrNull()
+        }
         return perpetualState
-            .map { state: PerpetualState? ->
-                state?.account?.stakingBalances?.get(tokenDenom)?.amount?.toDoubleOrNull()
-            }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { valueBlock(it) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(perpetualState.value))
     }
 
     /**
@@ -207,17 +209,20 @@ class AbacusState(
     }
 
     fun selectedSubaccountPositionOfMarket(marketId: String): StateFlow<SubaccountPosition?> {
+        val valueBlock = { positions: List<SubaccountPosition>? ->
+            positions?.first { position ->
+                position?.id == marketId &&
+                    (
+                        position?.side?.current == PositionSide.SHORT ||
+                            position?.side?.current == PositionSide.LONG
+                        )
+            }
+        }
         return selectedSubaccountPositions
             .map { positions ->
-                positions?.first { position ->
-                    position?.id == marketId &&
-                        (
-                            position?.side?.current == PositionSide.SHORT ||
-                                position?.side?.current == PositionSide.LONG
-                            )
-                }
+                valueBlock(positions)
             }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(selectedSubaccountPositions.value))
     }
 
     val selectedSubaccountOrders: StateFlow<List<SubaccountOrder>?> by lazy {
@@ -229,13 +234,16 @@ class AbacusState(
     }
 
     fun selectedSubaccountOrdersOfMarket(marketId: String): StateFlow<List<SubaccountOrder>?> {
+        val valueBlock = { orders: List<SubaccountOrder>? ->
+            orders?.filter { order ->
+                order?.marketId == marketId
+            }
+        }
         return selectedSubaccountOrders
             .map { orders ->
-                orders?.filter { order ->
-                    order?.marketId == marketId
-                }
+                valueBlock(orders)
             }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(selectedSubaccountOrders.value))
     }
 
     val selectedSubaccountPNLs: StateFlow<List<SubaccountHistoricalPNL>?> by lazy {
@@ -263,9 +271,14 @@ class AbacusState(
      Fundings of a given market
      **/
     fun historicalFundings(marketId: String): StateFlow<List<MarketHistoricalFunding>?> {
+        val valueBlock = { fundings: Map<String, List<MarketHistoricalFunding>>? ->
+            fundings?.get(marketId)
+        }
         return historicalFundingsMap
-            .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { fundings ->
+                valueBlock(fundings)
+            }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(historicalFundingsMap.value))
     }
 
     /**
@@ -292,9 +305,12 @@ class AbacusState(
      Candles of a given market
      **/
     fun candles(marketId: String): StateFlow<MarketCandles?> {
+        val valueBlock = { candles: Map<String, MarketCandles>? ->
+            candles?.get(marketId)
+        }
         return candlesMap
-            .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { valueBlock(it) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(candlesMap.value))
     }
 
     /**
@@ -312,9 +328,12 @@ class AbacusState(
      Orderbook of a given market
      **/
     fun orderbook(marketId: String): StateFlow<MarketOrderbook?> {
+        val valueBlock = { orderbooks: Map<String, MarketOrderbook>? ->
+            orderbooks?.get(marketId)
+        }
         return orderbooksMap
-            .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { valueBlock(it) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(orderbooksMap.value))
     }
 
     /**
@@ -330,9 +349,12 @@ class AbacusState(
      Trades of a given market
      **/
     fun trade(marketId: String): StateFlow<List<MarketTrade>?> {
+        val valueBlock = { trades: Map<String, List<MarketTrade>>? ->
+            trades?.get(marketId)
+        }
         return tradesMap
-            .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { valueBlock(it) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(tradesMap.value))
     }
 
     /**
@@ -374,11 +396,12 @@ class AbacusState(
      Market of a given market ID
      **/
     fun market(marketId: String): StateFlow<PerpetualMarket?> {
+        val valueBlock = { markets: Map<String, PerpetualMarket>? ->
+            markets?.get(marketId)
+        }
         return marketMap
-            .map {
-                it?.get(marketId)
-            }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+            .map { valueBlock(it) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(marketMap.value))
     }
 
     /**
