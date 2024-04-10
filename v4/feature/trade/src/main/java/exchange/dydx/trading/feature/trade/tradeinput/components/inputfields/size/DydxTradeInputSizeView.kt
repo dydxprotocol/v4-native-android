@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -80,6 +81,7 @@ object DydxTradeInputSizeView : DydxComponent {
         }
 
         val showingUsdc = remember { mutableStateOf(state.showingUsdc) }
+        val focusManager = LocalFocusManager.current
 
         InputFieldScarfold(modifier) {
             Column {
@@ -111,7 +113,10 @@ object DydxTradeInputSizeView : DydxComponent {
 
                     PlatformAccessoryButton(
                         modifier = Modifier,
-                        action = { showingUsdc.value = !showingUsdc.value },
+                        action = {
+                            focusManager.clearFocus()
+                            showingUsdc.value = !showingUsdc.value
+                        },
                     ) {
                         Column(
                             modifier = Modifier.padding(ThemeShapes.InputPaddingValues),
