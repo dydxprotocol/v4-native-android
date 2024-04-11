@@ -43,8 +43,9 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferState
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -64,10 +65,8 @@ class AbacusState(
     val transferState: StateFlow<DydxTransferState?>,
     private val abacusStateManager: SingletonAsyncAbacusStateManagerProtocol,
     private val parser: ParserProtocol,
+    @CoroutineScopes.App private val stateManagerScope: CoroutineScope,
 ) {
-
-    private val stateManagerScope = MainScope()
-
     var isMainNet: Boolean? = null
         get() = abacusStateManager.environment?.isMainNet ?: false
 

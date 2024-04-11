@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.color
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonNull.content
@@ -53,7 +52,8 @@ fun PlatformInfoScaffold(
 
 data class PlatformInfo(
     internal val snackbarHostState: SnackbarHostState,
-    internal val infoType: MutableStateFlow<InfoType>
+    internal val infoType: MutableStateFlow<InfoType>,
+    private val appScope: CoroutineScope,
 ) {
     enum class InfoType {
         Error, Info, Warning;
@@ -82,7 +82,7 @@ data class PlatformInfo(
         duration: SnackbarDuration = SnackbarDuration.Short,
     ) {
         infoType.value = type
-        CoroutineScope(Dispatchers.Main).launch {
+        appScope.launch {
             val result = snackbarHostState.showSnackbar(
                 message = if (title.isNullOrBlank()) message else title + "\n" + message,
                 actionLabel = buttonTitle,

@@ -44,12 +44,12 @@ import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
 import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsExtensions
 import exchange.dydx.trading.common.R
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -138,6 +138,7 @@ class AbacusStateManager @Inject constructor(
     private val preferencesStore: SharedPreferencesStore,
     @EnvKey private val envKey: String,
     private val featureFlags: DydxFeatureFlags,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
     parser: ParserProtocol,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
@@ -205,6 +206,7 @@ class AbacusStateManager @Inject constructor(
         abacusStateManager = asyncStateManager,
         transferState = transferStateManager.state,
         parser = parser,
+        stateManagerScope = appScope,
     )
 
     override val deploymentUri: String
@@ -447,7 +449,7 @@ class AbacusStateManager @Inject constructor(
     }
 
     private fun start() {
-        CoroutineScope(Dispatchers.Main).launch {
+        appScope.launch {
             val currentWallet = walletStateManager.state.first()?.currentWallet
             if (currentWallet != null) {
                 val ethereumAddress = currentWallet.ethereumAddress
