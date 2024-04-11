@@ -9,6 +9,8 @@ import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +61,7 @@ interface MutableTriggerOrderStreaming : TriggerOrderStreaming {
 @ActivityRetainedScoped
 class TriggerOrderStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : MutableTriggerOrderStreaming {
     override val submissionStatus get() = _submissionStatus
     override val takeProfitGainLossDisplayType get() = _takeProfitGainLossDisplayType
@@ -67,8 +70,6 @@ class TriggerOrderStream @Inject constructor(
     private val _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> = MutableStateFlow(null)
     private val _takeProfitGainLossDisplayType = MutableStateFlow(GainLossDisplayType.Amount)
     private val _stopLossGainLossDisplayType = MutableStateFlow(GainLossDisplayType.Amount)
-
-    private val streamScope = MainScope()
 
     private val marketIdFlow = abacusStateManager.state.triggerOrdersInput
         .mapNotNull { it?.marketId }
@@ -136,7 +137,7 @@ class TriggerOrderStream @Inject constructor(
 
     override fun submitTriggerOrders() {
         _submissionStatus.update { null }
-        streamScope.launch {
+        appScope.launch {
             abacusStateManager.commitTriggerOrders { submissionStatus ->
                 _submissionStatus.update { submissionStatus }
             }
