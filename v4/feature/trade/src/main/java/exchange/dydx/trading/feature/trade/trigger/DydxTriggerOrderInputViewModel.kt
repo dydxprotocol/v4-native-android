@@ -49,7 +49,8 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         if (marketId == null) {
             router.navigateBack()
         } else {
-            triggerOrderStream.setMarketId(marketId)
+            abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
         }
 
         combine(

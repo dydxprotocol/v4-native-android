@@ -7,11 +7,7 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.output.input.OrderType
-import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.trading.common.di.CoroutineScopes
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -21,7 +17,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class GainLossDisplayType {
@@ -51,8 +46,7 @@ interface TriggerOrderStreaming {
 }
 
 interface MutableTriggerOrderStreaming : TriggerOrderStreaming {
-    fun setMarketId(marketId: String)
-    fun submitTriggerOrders()
+    fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?)
     fun clearSubmissionStatus()
     fun setTakeProfitGainLossDisplayType(displayType: GainLossDisplayType)
     fun setStopLossGainLossDisplayType(displayType: GainLossDisplayType)
@@ -61,7 +55,6 @@ interface MutableTriggerOrderStreaming : TriggerOrderStreaming {
 @ActivityRetainedScoped
 class TriggerOrderStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
-    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : MutableTriggerOrderStreaming {
 
     private val _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> = MutableStateFlow(null)
@@ -131,18 +124,8 @@ class TriggerOrderStream @Inject constructor(
             takeProfitOrders.isNullOrEmpty() && stopLossOrders.isNullOrEmpty()
         }
 
-    override fun setMarketId(marketId: String) {
-        abacusStateManager.setMarket(marketId = marketId)
-        abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
-    }
-
-    override fun submitTriggerOrders() {
-        _submissionStatus.update { null }
-        appScope.launch {
-            abacusStateManager.commitTriggerOrders { submissionStatus ->
-                _submissionStatus.update { submissionStatus }
-            }
-        }
+    override fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?) {
+        _submissionStatus.update { status }
     }
 
     override fun clearSubmissionStatus() {
