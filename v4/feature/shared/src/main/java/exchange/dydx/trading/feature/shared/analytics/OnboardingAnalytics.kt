@@ -1,9 +1,11 @@
 package exchange.dydx.trading.feature.shared.analytics
 
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.common.di.CoroutineDispatchers
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.integration.analytics.Tracking
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
@@ -15,6 +17,8 @@ import javax.inject.Singleton
 class OnboardingAnalytics @Inject constructor(
     private val tracker: Tracking,
     private val abacusStateManager: AbacusStateManagerProtocol,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
+    @CoroutineDispatchers.IO private val ioDispatcher: CoroutineDispatcher,
 ) {
     // The three main OnboardingStates:
     // - Disconnected
@@ -46,7 +50,7 @@ class OnboardingAnalytics @Inject constructor(
         DEPOSIT_FUNDS("DepositFunds")
     }
 
-    private val scope = MainScope() + Dispatchers.IO
+    private val scope = appScope + ioDispatcher
 
     fun log(step: OnboardingSteps) {
         abacusStateManager.state.currentWallet

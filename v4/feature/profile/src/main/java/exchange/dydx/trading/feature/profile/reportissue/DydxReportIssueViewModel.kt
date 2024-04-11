@@ -11,11 +11,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineDispatchers
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.utilities.utils.EmailUtils
 import exchange.dydx.utilities.utils.FileUtils
 import exchange.dydx.utilities.utils.LogCatReader
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -30,6 +31,7 @@ class DydxReportIssueViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val router: DydxRouter,
     @ApplicationContext private val context: Context,
+    @CoroutineDispatchers.IO private val ioDispatcher: CoroutineDispatcher,
     val platformInfo: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
@@ -44,7 +46,7 @@ class DydxReportIssueViewModel @Inject constructor(
 
         viewModelScope.launch {
             var logUri: Uri? = null
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
                 // add a delay to show the loading text
                 kotlinx.coroutines.delay(500)
                 logUri = createLog()
