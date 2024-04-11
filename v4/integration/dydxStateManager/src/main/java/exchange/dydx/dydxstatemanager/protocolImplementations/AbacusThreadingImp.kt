@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,13 +23,11 @@ class AbacusThreadingImp @Inject constructor(
     @CoroutineDispatchers.Default private val defaultDispatcher: CoroutineDispatcher,
 ) : ThreadingProtocol {
     override fun async(type: ThreadingType, block: () -> Unit) {
-        appScope.launch {
-            when (type) {
-                main -> block()
-                // Abacus runs lots of computations, but needs to be run without parallelism
-                abacus -> withContext(defaultDispatcher.limitedParallelism(1)) { block() }
-                network -> withContext(ioDispatcher) { block() }
-            }
+        when (type) {
+            main -> appScope.launch { block() }
+            // Abacus runs lots of computations, but needs to be run without parallelism
+            abacus -> appScope.launch(defaultDispatcher.limitedParallelism(1)) { block() }
+            network -> appScope.launch(ioDispatcher) { block() }
         }
     }
 }
