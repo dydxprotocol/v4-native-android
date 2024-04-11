@@ -63,13 +63,14 @@ class TriggerOrderStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
     @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : MutableTriggerOrderStreaming {
-    override val submissionStatus get() = _submissionStatus
-    override val takeProfitGainLossDisplayType get() = _takeProfitGainLossDisplayType
-    override val stopLossGainLossDisplayType get() = _stopLossGainLossDisplayType
 
     private val _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> = MutableStateFlow(null)
     private val _takeProfitGainLossDisplayType = MutableStateFlow(GainLossDisplayType.Amount)
     private val _stopLossGainLossDisplayType = MutableStateFlow(GainLossDisplayType.Amount)
+
+    override val submissionStatus = _submissionStatus
+    override val takeProfitGainLossDisplayType = _takeProfitGainLossDisplayType
+    override val stopLossGainLossDisplayType = _stopLossGainLossDisplayType
 
     private val marketIdFlow = abacusStateManager.state.triggerOrdersInput
         .mapNotNull { it?.marketId }
