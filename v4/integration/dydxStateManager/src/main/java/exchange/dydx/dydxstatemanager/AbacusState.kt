@@ -42,8 +42,9 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferState
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -62,10 +63,8 @@ class AbacusState(
     val transferState: StateFlow<DydxTransferState?>,
     private val abacusStateManager: SingletonAsyncAbacusStateManagerProtocol,
     private val parser: ParserProtocol,
+    @CoroutineScopes.App private val stateManagerScope: CoroutineScope,
 ) {
-
-    private val stateManagerScope = MainScope()
-
     var isMainNet: Boolean? = null
         get() = abacusStateManager.environment?.isMainNet ?: false
 
@@ -79,7 +78,7 @@ class AbacusState(
                     currentWallet.cosmoAddress?.isNotEmpty() == true
                 } ?: false
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), false)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, false)
     }
 
     /**
@@ -88,7 +87,7 @@ class AbacusState(
     val currentWallet: StateFlow<DydxWalletInstance?> by lazy {
         walletState
             .map { it?.currentWallet }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val transfers: StateFlow<List<SubaccountTransfer>?> by lazy {
@@ -98,13 +97,13 @@ class AbacusState(
                 val subaccountNumber = subaccountNumber ?: return@map null
                 it?.get(subaccountNumber)?.toList()
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     fun transferInstance(transactionHash: String?): StateFlow<DydxTransferInstance?> {
         return transferState
             .map { it?.transfers?.first { it.transactionHash == transactionHash } }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -113,7 +112,7 @@ class AbacusState(
     val transferStatuses: StateFlow<Map<String, TransferStatus>> by lazy {
         perpetualState
             .map { it?.transferStatuses ?: emptyMap() }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), emptyMap())
+            .stateIn(stateManagerScope, SharingStarted.Lazily, emptyMap())
     }
 
     /**
@@ -122,13 +121,13 @@ class AbacusState(
     val account: StateFlow<Account?> by lazy {
         perpetualState
             .map { it?.account }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val hasAccount: StateFlow<Boolean> by lazy {
         account
             .map { it != null }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), false)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, false)
     }
 
     /**
@@ -140,7 +139,7 @@ class AbacusState(
             .map { state: PerpetualState? ->
                 state?.account?.balances?.get(tokenDenom)?.amount?.toDoubleOrNull()
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     fun stakingBalance(tokenDenom: String?): StateFlow<Double?> {
@@ -148,7 +147,7 @@ class AbacusState(
             .map { state: PerpetualState? ->
                 state?.account?.stakingBalances?.get(tokenDenom)?.amount?.toDoubleOrNull()
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -157,7 +156,7 @@ class AbacusState(
     fun subaccount(subaccountNumber: String): StateFlow<Subaccount?> {
         return account
             .map { it?.subaccounts?.get(subaccountNumber) }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccount: StateFlow<Subaccount?> by lazy {
@@ -169,7 +168,7 @@ class AbacusState(
                     null
                 }
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountFills: StateFlow<List<SubaccountFill>?> by lazy {
@@ -181,7 +180,7 @@ class AbacusState(
                     null
                 }
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountFundings: StateFlow<List<SubaccountFundingPayment>?> by lazy {
@@ -193,7 +192,7 @@ class AbacusState(
                     null
                 }
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountPositions: StateFlow<List<SubaccountPosition>?> by lazy {
@@ -201,7 +200,7 @@ class AbacusState(
             .map { subaccount ->
                 subaccount?.openPositions
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountOrders: StateFlow<List<SubaccountOrder>?> by lazy {
@@ -209,7 +208,7 @@ class AbacusState(
             .map { subaccount ->
                 subaccount?.orders
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountPNLs: StateFlow<List<SubaccountHistoricalPNL>?> by lazy {
@@ -221,7 +220,7 @@ class AbacusState(
                     null
                 }
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -230,7 +229,7 @@ class AbacusState(
     val historicalFundingsMap: StateFlow<Map<String, List<MarketHistoricalFunding>>?> by lazy {
         perpetualState
             .map { it?.historicalFundings }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -239,7 +238,7 @@ class AbacusState(
     fun historicalFundings(marketId: String): StateFlow<List<MarketHistoricalFunding>?> {
         return historicalFundingsMap
             .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -250,7 +249,7 @@ class AbacusState(
             .map {
                 it?.marketsSummary
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -259,7 +258,7 @@ class AbacusState(
     val candlesMap: StateFlow<Map<String, MarketCandles>?> by lazy {
         perpetualState
             .map { it?.candles }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -268,7 +267,7 @@ class AbacusState(
     fun candles(marketId: String): StateFlow<MarketCandles?> {
         return candlesMap
             .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -279,7 +278,7 @@ class AbacusState(
             .map {
                 it?.orderbooks
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -288,7 +287,7 @@ class AbacusState(
     fun orderbook(marketId: String): StateFlow<MarketOrderbook?> {
         return orderbooksMap
             .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -297,7 +296,7 @@ class AbacusState(
     val tradesMap: StateFlow<Map<String, List<MarketTrade>>?> by lazy {
         perpetualState
             .map { it?.trades }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -306,7 +305,7 @@ class AbacusState(
     fun trade(marketId: String): StateFlow<List<MarketTrade>?> {
         return tradesMap
             .map { it?.get(marketId) }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -315,7 +314,7 @@ class AbacusState(
     val markeeIds: StateFlow<List<String>?> by lazy {
         marketSummary
             .map { it?.marketIds() }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -326,7 +325,7 @@ class AbacusState(
             .map {
                 it?.markets
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -341,7 +340,7 @@ class AbacusState(
                 map?.get(id)
             }
         }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -352,7 +351,7 @@ class AbacusState(
             .map {
                 it?.get(marketId)
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -361,7 +360,7 @@ class AbacusState(
     val assetMap: StateFlow<Map<String, Asset>?> by lazy {
         perpetualState
             .map { it?.assets }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -379,7 +378,7 @@ class AbacusState(
             }
             output
         }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -389,7 +388,7 @@ class AbacusState(
         perpetualState
             .map { it?.input?.trade }
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -399,7 +398,7 @@ class AbacusState(
         perpetualState
             .map { it?.input?.closePosition }
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -409,7 +408,7 @@ class AbacusState(
         perpetualState
             .map { it?.input?.transfer }
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -419,7 +418,7 @@ class AbacusState(
         perpetualState
             .map { it?.input?.receiptLines ?: emptyList() }
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), emptyList())
+            .stateIn(stateManagerScope, SharingStarted.Lazily, emptyList())
     }
 
     /**
@@ -429,7 +428,7 @@ class AbacusState(
         perpetualState
             .map { it?.input?.errors ?: emptyList() }
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), emptyList())
+            .stateIn(stateManagerScope, SharingStarted.Lazily, emptyList())
     }
 
     /**
@@ -437,7 +436,7 @@ class AbacusState(
      */
     val lastOrder: StateFlow<SubaccountOrder?> by lazy {
         lastOrderPublisher
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -453,7 +452,7 @@ class AbacusState(
                     }
                 }
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -462,7 +461,7 @@ class AbacusState(
     val configs: StateFlow<Configs?> by lazy {
         perpetualState
             .map { it?.configs }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -471,7 +470,7 @@ class AbacusState(
     val user: StateFlow<User?> by lazy {
         perpetualState
             .map { it?.wallet?.user }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -482,7 +481,7 @@ class AbacusState(
             .map {
                 it?.launchIncentive
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val launchIncentivePoints: StateFlow<LaunchIncentivePoints?> by lazy {
@@ -490,7 +489,7 @@ class AbacusState(
             .map {
                 it?.account?.launchIncentivePoints
             }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), null)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     /**
@@ -504,7 +503,7 @@ class AbacusState(
     val restriction: StateFlow<Restriction> by lazy {
         perpetualState
             .map { it?.restriction?.restriction ?: Restriction.NO_RESTRICTION }
-            .stateIn(stateManagerScope, SharingStarted.WhileSubscribed(), Restriction.NO_RESTRICTION)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, Restriction.NO_RESTRICTION)
     }
 
     /**
