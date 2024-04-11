@@ -198,6 +198,7 @@ class AbacusStateManager @Inject constructor(
         abacusStateManager = asyncStateManager,
         transferState = transferStateManager.state,
         parser = parser,
+        stateManagerScope = appScope,
     )
 
     override val deploymentUri: String

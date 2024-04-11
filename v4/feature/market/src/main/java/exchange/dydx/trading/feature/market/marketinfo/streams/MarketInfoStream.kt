@@ -8,17 +8,19 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketViewState
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 interface MarketInfoStreaming {
@@ -38,10 +40,8 @@ class MarketInfoStream @Inject constructor(
     val formatter: DydxFormatter,
     val localizer: LocalizerProtocol,
     val favoriteStore: DydxFavoriteStoreProtocol,
+    @CoroutineScopes.App private val streamScope: CoroutineScope,
 ) : MutableMarketInfoStreaming {
-
-    private val streamScope = MainScope()
-
     override fun update(marketId: String?) {
         abacusStateManager.setMarket(marketId)
         abacusStateManager.startTrade()
@@ -54,7 +54,8 @@ class MarketInfoStream @Inject constructor(
                 abacusStateManager.state.market(marketId)
             }
             .distinctUntilChanged()
-            .shareIn(streamScope, SharingStarted.WhileSubscribed(), 1)
+            .flowOn(Dispatchers.Default)
+            .shareIn(streamScope, SharingStarted.Lazily, 1)
 
     override val marketAndAsset: Flow<MarketAndAsset?> =
         abacusStateManager.marketId
@@ -77,7 +78,8 @@ class MarketInfoStream @Inject constructor(
                 }
             }
             .distinctUntilChanged()
-            .shareIn(streamScope, SharingStarted.WhileSubscribed(), 1)
+            .flowOn(Dispatchers.Default)
+            .shareIn(streamScope, SharingStarted.Lazily, 1)
 
     override val selectedSubaccountPosition: Flow<SubaccountPosition?> =
         combine(
@@ -93,7 +95,8 @@ class MarketInfoStream @Inject constructor(
             }
         }
             .distinctUntilChanged()
-            .shareIn(streamScope, SharingStarted.WhileSubscribed(), 1)
+            .flowOn(Dispatchers.Default)
+            .shareIn(streamScope, SharingStarted.Lazily, 1)
 
     override val sharedMarketViewState: Flow<SharedMarketViewState?> =
         combine(
@@ -113,7 +116,8 @@ class MarketInfoStream @Inject constructor(
             }
         }
             .distinctUntilChanged()
-            .shareIn(streamScope, SharingStarted.WhileSubscribed(), 1)
+            .flowOn(Dispatchers.Default)
+            .shareIn(streamScope, SharingStarted.Lazily, 1)
 }
 
 data class MarketAndAsset(
