@@ -27,7 +27,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledSelectionInput
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderInputType
@@ -46,7 +46,7 @@ fun Preview_DydxTriggerOrderGainLossView() {
 object DydxTriggerOrderGainLossView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val labeledTextInput: LabeledTextInput.ViewState? = null,
+        val labeledTextInput: LabeledTextInput.ViewState,
         val labeledSelectionInput: LabeledSelectionInput.ViewState? = null,
     ) {
         companion object {
@@ -89,7 +89,10 @@ object DydxTriggerOrderGainLossView : DydxComponent {
             mutableStateOf(false)
         }
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(
+            modifier = modifier,
+            alertState = state.labeledTextInput.alertState,
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {

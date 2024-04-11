@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.leverage
 
-import android.util.Half.toFloat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +38,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.GradientSlider
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import kotlin.math.abs
@@ -94,7 +93,7 @@ object DydxTradeInputLeverageView : DydxComponent {
             return
         }
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(modifier) {
             Column(
                 modifier = modifier
                     .padding(ThemeShapes.InputPaddingValues)

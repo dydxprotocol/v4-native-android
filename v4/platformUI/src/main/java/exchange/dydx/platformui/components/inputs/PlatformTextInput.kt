@@ -44,6 +44,7 @@ fun PlatformTextInput(
                 fontSize = ThemeFont.FontSize.medium,
                 fontType = ThemeFont.FontType.number,
             ),
+    alertState: PlatformInputAlertState = PlatformInputAlertState.None,
     placeHolder: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit = {},
@@ -62,6 +63,7 @@ fun PlatformTextInput(
             val isFocused by interactionSource.collectIsFocusedAsState()
             val currentValue = remember { mutableStateOf<String?>(null) }
             val displayValue = if (isFocused) currentValue.value ?: "" else value ?: ""
+            val textColor = if (isFocused) ThemeColor.SemanticColor.text_primary else alertState.textColor
 
             BasicTextField(
                 modifier = Modifier.focusRequester(focusRequester = focusRequester),
@@ -74,7 +76,7 @@ fun PlatformTextInput(
                 keyboardOptions = keyboardOptions,
                 interactionSource = interactionSource,
                 textStyle = textStyle
-                    .themeColor(ThemeColor.SemanticColor.text_primary),
+                    .themeColor(textColor),
                 cursorBrush = SolidColor(ThemeColor.SemanticColor.text_primary.color),
                 decorationBox = { innerTextField ->
                     Row(modifier = Modifier.fillMaxWidth()) {
