@@ -57,7 +57,8 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         validationErrors: List<ValidationError>?,
     ): DydxTriggerOrderSizeView.ViewState {
         val marketConfigs = configsAndAsset?.configs
-        val stepSize = marketConfigs?.displayStepSizeDecimals ?: 0
+        val stepSizeDecimals = marketConfigs?.displayStepSizeDecimals ?: 0
+        val stepSize = marketConfigs?.displayStepSize ?: 0.0
         val size = triggerOrdersInput?.size ?: 0.0
         val positionSize = position.size?.current ?: 0.0
         val percentage = if (positionSize > 0.0) {
@@ -84,23 +85,25 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 localizer = localizer,
                 label = localizer.localize("APP.GENERAL.AMOUNT"),
                 token = configsAndAsset?.asset?.id,
-                value = formatter.decimalLocaleAgnostic(size, stepSize),
+                value = formatter.decimalLocaleAgnostic(size, stepSizeDecimals),
                 alertState = if (firstError?.fields?.contains(TriggerOrdersInputField.size.rawValue) == true) {
                     firstError.alertState
                 } else {
                     PlatformInputAlertState.None
                 },
-                placeholder = formatter.raw(0.0, stepSize),
+                placeholder = formatter.raw(0.0, stepSizeDecimals),
                 onValueChanged = { value ->
                     abacusStateManager.triggerOrders(value, TriggerOrdersInputField.size)
                 },
             ),
             percentage = percentage,
             onPercentageChanged = { percentage ->
-                abacusStateManager.triggerOrders(
-                    formatter.decimalLocaleAgnostic(positionSize * percentage, stepSize),
-                    TriggerOrdersInputField.size,
-                )
+                val value = if (stepSize >= 10.0) {
+                    formatter.decimalLocaleAgnostic((positionSize * percentage / stepSize).toLong() * stepSize)
+                } else {
+                    formatter.decimalLocaleAgnostic(positionSize * percentage, stepSizeDecimals)
+                }
+                abacusStateManager.triggerOrders(value, TriggerOrdersInputField.size)
             },
             canEdit = isNewTriggerOrder,
         )

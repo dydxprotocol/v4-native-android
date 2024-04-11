@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.trade.trigger.components.inputfields.heade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
@@ -87,6 +88,8 @@ object DydxTriggerSectionHeaderView : DydxComponent {
             modifier = modifier,
             horizontalArrangement = Arrangement.End,
         ) {
+            Spacer(modifier = Modifier.weight(1f))
+
             Row(
                 modifier = Modifier.height(24.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -98,7 +101,8 @@ object DydxTriggerSectionHeaderView : DydxComponent {
                 )
 
                 SignedAmountView.Content(
-                    modifier = Modifier.padding(start = 8.dp).weight(1f),
+                    modifier = Modifier
+                        .padding(start = 8.dp),
                     state = state.amount,
                 )
 
