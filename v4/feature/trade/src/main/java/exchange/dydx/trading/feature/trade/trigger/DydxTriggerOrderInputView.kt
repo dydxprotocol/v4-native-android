@@ -4,7 +4,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,10 +32,10 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
-import exchange.dydx.trading.feature.receipt.validation.DydxValidationViewModel
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderCtaButtonView
@@ -58,10 +57,20 @@ fun Preview_DydxTriggerOrderInputView() {
 }
 
 object DydxTriggerOrderInputView : DydxComponent {
+
+    enum class ValidationErrorSection {
+        TakeProfit,
+        StopLoss,
+        Size,
+        LimitPrice,
+        None,
+    }
+
     data class ViewState(
         val localizer: LocalizerProtocol,
         val closeAction: (() -> Unit)? = null,
         val backHandler: (() -> Unit)? = null,
+        val validationErrorSection: ValidationErrorSection = ValidationErrorSection.None,
     ) {
         companion object {
             val preview = ViewState(
@@ -131,10 +140,6 @@ object DydxTriggerOrderInputView : DydxComponent {
                     state = state,
                 )
 
-                DydxValidationView.Content(
-                    modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
-                )
-
                 AdvancedDividerView(
                     modifier = Modifier,
                     state = state,
@@ -146,11 +151,27 @@ object DydxTriggerOrderInputView : DydxComponent {
                         .padding(horizontal = ThemeShapes.HorizontalPadding),
                 )
 
+                DydxAnimation.AnimateExpandInOut(
+                    visible = state.validationErrorSection == ValidationErrorSection.Size,
+                ) {
+                    DydxValidationView.Content(
+                        modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                    )
+                }
+
                 DydxTriggerOrderLimitPriceSectionView.Content(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = ThemeShapes.HorizontalPadding),
                 )
+
+                DydxAnimation.AnimateExpandInOut(
+                    visible = state.validationErrorSection == ValidationErrorSection.LimitPrice,
+                ) {
+                    DydxValidationView.Content(
+                        modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                    )
+                }
             }
 
             DydxTriggerOrderCtaButtonView.Content(
@@ -242,6 +263,14 @@ object DydxTriggerOrderInputView : DydxComponent {
                 )
             }
         }
+
+        DydxAnimation.AnimateExpandInOut(
+            visible = state.validationErrorSection == ValidationErrorSection.TakeProfit,
+        ) {
+            DydxValidationView.Content(
+                modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+            )
+        }
     }
 
     @Composable
@@ -287,6 +316,14 @@ object DydxTriggerOrderInputView : DydxComponent {
                     inputType = DydxTriggerOrderInputType.StopLoss,
                 )
             }
+        }
+
+        DydxAnimation.AnimateExpandInOut(
+            visible = state.validationErrorSection == ValidationErrorSection.StopLoss,
+        ) {
+            DydxValidationView.Content(
+                modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+            )
         }
     }
 

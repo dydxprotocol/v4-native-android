@@ -97,10 +97,10 @@ object DydxValidationView : DydxComponent {
         }
 
         DydxAnimation.AnimateExpandInOut(
-            visible =  when (state.state) {
+            visible = when (state.state) {
                 State.Error, State.Warning -> true
                 State.None -> false
-            }
+            },
         ) {
             ContentInBox(modifier, state)
         }

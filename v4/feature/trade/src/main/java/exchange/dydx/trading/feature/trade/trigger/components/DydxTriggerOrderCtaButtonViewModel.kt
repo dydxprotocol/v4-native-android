@@ -48,9 +48,9 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
             localizer = localizer,
             ctaButtonState = if (
                 (
-                        triggerOrdersInput?.takeProfitOrder?.price?.triggerPrice != null || triggerOrdersInput?.takeProfitOrder?.orderId != null ||
-                                triggerOrdersInput?.stopLossOrder?.price?.triggerPrice != null || triggerOrdersInput?.stopLossOrder?.orderId != null
-                        ) &&
+                    triggerOrdersInput?.takeProfitOrder?.price?.triggerPrice != null || triggerOrdersInput?.takeProfitOrder?.orderId != null ||
+                        triggerOrdersInput?.stopLossOrder?.price?.triggerPrice != null || triggerOrdersInput?.stopLossOrder?.orderId != null
+                    ) &&
                 triggerOrdersInput?.size ?: 0.0 > 0.0 &&
                 firstBlockingError == null
             ) {
