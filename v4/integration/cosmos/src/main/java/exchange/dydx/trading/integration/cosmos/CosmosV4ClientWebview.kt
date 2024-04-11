@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.Locale
@@ -17,11 +19,12 @@ private const val TAG = "CosmosV4ClientWebview"
 @Singleton
 class CosmosV4ClientWebview @Inject constructor(
     application: Application,
+    @CoroutineScopes.App appScope: CoroutineScope,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,
         description = WEBVIEW_FILENAME,
-        runner = JavascriptRunnerV4.runnerFromFile(application, WEBVIEW_FILENAME)
+        runner = JavascriptRunnerV4.runnerFromFile(appScope, application, WEBVIEW_FILENAME)
             ?: throw IOException("Fatal, unable to load runner from: $WEBVIEW_FILENAME"),
     ) {
 

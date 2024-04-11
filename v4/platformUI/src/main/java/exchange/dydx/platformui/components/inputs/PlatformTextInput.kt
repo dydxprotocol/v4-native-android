@@ -11,7 +11,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -61,7 +60,10 @@ fun PlatformTextInput(
             }
             val interactionSource = remember { MutableInteractionSource() }
             val isFocused by interactionSource.collectIsFocusedAsState()
-            val currentValue = remember { mutableStateOf<String?>(null) }
+            val currentValue = remember { mutableStateOf<String?>(value) } // value during editing
+            if (!isFocused) {
+                currentValue.value = value
+            }
             val displayValue = if (isFocused) currentValue.value ?: "" else value ?: ""
             val textColor = if (isFocused) ThemeColor.SemanticColor.text_primary else alertState.textColor
 
@@ -100,69 +102,6 @@ fun PlatformTextInput(
                     )
                 },
             )
-
-//        TextField(
-//            modifier = Modifier,
-//            value = displayValue,
-//            onValueChange = {
-//                currentValue.value = it
-//                onValueChange(it)
-//            },
-//            //  label = label,
-//            placeholder = {
-//                Text(
-//                    text = placeHolder ?: "",
-//                    style = TextStyle.dydxDefault
-//                        .themeFont(fontSize = ThemeFont.FontSize.medium)
-//                        .themeColor(ThemeColor.SemanticColor.text_tertiary)
-//                )
-//            },
-//            interactionSource = interactionSource,
-//            singleLine = true,
-//            colors = inputFieldColors,
-//            textStyle = TextStyle.dydxDefault
-//                .themeFont(fontSize = ThemeFont.FontSize.medium)
-//        )
         }
     }
 }
-
-@Composable
-fun PlatformTextInput(
-    labelText: String? = null,
-    value: String? = null,
-    placeHolder: String? = null,
-    onValueChange: (String) -> Unit = {},
-) {
-    PlatformTextInput(
-        label = if (labelText?.isNotEmpty() == true) { {
-            Text(
-                text = labelText ?: "",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.mini)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-            )
-        } } else {
-            null
-        },
-        value = value,
-        placeHolder = placeHolder,
-        onValueChange = onValueChange,
-    )
-}
-
-private val inputFieldColors: TextFieldColors
-    @Composable
-    get() = TextFieldDefaults.textFieldColors(
-        textColor = ThemeColor.SemanticColor.text_primary.color,
-        disabledTextColor = ThemeColor.SemanticColor.text_tertiary.color,
-        backgroundColor = ThemeColor.SemanticColor.transparent.color,
-        focusedIndicatorColor = ThemeColor.SemanticColor.transparent.color,
-        unfocusedIndicatorColor = ThemeColor.SemanticColor.transparent.color,
-        errorIndicatorColor = ThemeColor.SemanticColor.transparent.color,
-        cursorColor = ThemeColor.SemanticColor.text_primary.color,
-        errorCursorColor = ThemeColor.SemanticColor.color_yellow.color,
-        errorLabelColor = ThemeColor.SemanticColor.color_yellow.color,
-        errorLeadingIconColor = ThemeColor.SemanticColor.color_yellow.color,
-        errorTrailingIconColor = ThemeColor.SemanticColor.color_yellow.color,
-    )

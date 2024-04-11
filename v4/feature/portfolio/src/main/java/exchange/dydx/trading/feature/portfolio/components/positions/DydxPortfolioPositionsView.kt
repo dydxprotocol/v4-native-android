@@ -3,7 +3,6 @@ package exchange.dydx.trading.feature.portfolio.components.positions
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -66,8 +65,10 @@ object DydxPortfolioPositionsView : DydxComponent {
         val viewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        LazyColumn {
-            ListContent(this, modifier, state)
+        LazyColumn(
+            modifier = modifier,
+        ) {
+            ListContent(this, Modifier, state)
         }
     }
 
@@ -76,28 +77,28 @@ object DydxPortfolioPositionsView : DydxComponent {
 
         if (state.positions.isEmpty()) {
             scope.item(key = "placeholder") {
-                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 0.dp))
+                DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
             }
         } else {
             if (!state.isIsolatedMarketEnabled) {
                 scope.item(key = "header") {
-                    CreateHeader(modifier, state)
+                    CreateHeader(Modifier, state)
                 }
             }
 
             scope.items(items = state.positions, key = { it.id }) { position ->
-                if (!state.isIsolatedMarketEnabled && position === state.positions.first()) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+//                if (!state.isIsolatedMarketEnabled && position === state.positions.first()) {
+//                    Spacer(modifier = Modifier.height(16.dp))
+//                }
                 DydxPortfolioPositionItemView.Content(
-                    modifier = modifier,
+                    modifier = Modifier,
                     localizer = state.localizer,
                     position = position,
                     isIsolatedMarketEnabled = state.isIsolatedMarketEnabled,
                     onTapAction = state.onPositionTapAction,
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+//              Spacer(modifier = Modifier.height(10.dp))
             }
         }
     }
