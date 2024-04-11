@@ -4,6 +4,8 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.feature.shared.NotificationEnabled
+import exchange.dydx.utilities.utils.SharedPreferencesStore
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -16,6 +18,7 @@ class DydxAlertsWorker(
     private val localizer: LocalizerProtocol,
     private val router: DydxRouter,
     private val platformInfo: PlatformInfo,
+    private val preferencesStore: SharedPreferencesStore,
 ) : WorkerProtocol {
     private val handledAlertHashes = mutableSetOf<String>()
 
@@ -48,6 +51,11 @@ class DydxAlertsWorker(
             .sortedBy { it.updateTimeInMilliseconds }
             .forEach { alert ->
                 val alertText = alert.text ?: return@forEach
+
+                if (!NotificationEnabled.enabled(preferencesStore)) {
+                    return@forEach
+                }
+
                 val link = alert.link
                 platformInfo.show(
                     title = alert.title,

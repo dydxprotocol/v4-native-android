@@ -43,8 +43,11 @@ dependencies {
     implementation project(path: ':v4:common')
     implementation project(path: ':v4:utilities')
     implementation project(path: ':v4:integration:dydxStateManager')
+    implementation project(path: ':v4:integration:analytics')
     implementation project(path: ':v4:platformUI')
     implementation project(':v4:integration:chart')
+
+    implementation "dydxprotocol:cartera-android:$carteraVersion"
 
     testImplementation "junit:junit:$junitVersion"
 //    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"

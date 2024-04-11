@@ -89,8 +89,8 @@ ext {
     compileSdkVersion = 34
 
     // App dependencies
-    abacusVersion = '1.4.14'
-    carteraVersion = '0.1.12'
+    abacusVersion = '1.6.40'
+    carteraVersion = '0.1.13'
     kollectionsVersion = '2.0.16'
 
     accompanistVersion = '0.23.1'
@@ -136,5 +136,5 @@ ext {
     flowExtVersion = '0.7.1'
     material3Version = '1.2.0-rc01'
     web3jVersion = '4.8.8-android'
-    walletConnectVersion = '1.15.0'
+    walletConnectVersion = '1.23.0'
 }

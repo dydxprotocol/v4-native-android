@@ -1,5 +1,6 @@
 package exchange.dydx.dydxstatemanager
 
+import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -25,11 +26,16 @@ import exchange.dydx.abacus.state.manager.AsyncAbacusStateManager
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.abacus.state.manager.OrderbookGrouping
+import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.abacus.state.manager.TokenInfo
 import exchange.dydx.abacus.state.manager.V4Environment
 import exchange.dydx.abacus.state.model.ClosePositionInputField
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.abacus.state.model.TransferInputField
+import exchange.dydx.abacus.state.model.TriggerOrdersInputField
+import exchange.dydx.abacus.state.v2.manager.AsyncAbacusStateManagerV2
+import exchange.dydx.abacus.state.v2.supervisor.AppConfigsV2
+import exchange.dydx.abacus.state.v2.supervisor.OnboardingConfigs
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
@@ -37,17 +43,20 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateMan
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
 import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsExtensions
+import exchange.dydx.trading.common.R
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
 interface AbacusStateManagerProtocol {
 
@@ -66,7 +75,7 @@ interface AbacusStateManagerProtocol {
     val candlesPeriod: StateFlow<String>
 
     fun setEnvironmentId(environment: String?)
-    fun setV3(ethereumAddress: String, walletId: String?, apiKey: String, secret: String, passPhrase: String)
+
     fun setV4(ethereumAddress: String, walletId: String?, cosmosAddress: String, mnemonic: String)
 
     fun logOut()
@@ -93,10 +102,12 @@ interface AbacusStateManagerProtocol {
 
     fun addTransferInstance(transfer: DydxTransferInstance)
     fun removeTransferInstance(transfer: DydxTransferInstance)
-    fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean)
+    fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean, requestId: String?)
 
     fun screen(address: String, callback: ((Restriction) -> Unit))
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
+
+    fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
 
     // extensions
     fun resetTransferInputFields() {
@@ -106,16 +117,21 @@ interface AbacusStateManagerProtocol {
     }
 }
 
+// Temporary location, should probably make a separate dagger-qualifiers module.
+@Qualifier annotation class EnvKey
+
+@Singleton
 class AbacusStateManager @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val ioImplementations: IOImplementations,
-    private val parser: ParserProtocol,
     private val walletStateManager: DydxWalletStateManagerProtocol,
     private val transferStateManager: DydxTransferStateManagerProtocol,
     private val cosmosClient: CosmosV4ClientProtocol,
     private val preferencesStore: SharedPreferencesStore,
-    private val envKey: String,
+    @EnvKey private val envKey: String,
     private val featureFlags: DydxFeatureFlags,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
+    parser: ParserProtocol,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -125,44 +141,64 @@ class AbacusStateManager @Inject constructor(
     private val alertsPublisher: MutableStateFlow<List<Notification>?> = MutableStateFlow(null)
     private val documentationPublisher: MutableStateFlow<Documentation?> = MutableStateFlow(null)
 
-    private val asyncStateManager: AsyncAbacusStateManager by lazy {
+    private val asyncStateManager: SingletonAsyncAbacusStateManagerProtocol by lazy {
         UIImplementationsExtensions.reset(language = null, ioImplementations)
 
         val deployment: String
         val appConfigs: AppConfigs
+        val appConfigsV2: AppConfigsV2
         if (featureFlags.isFeatureEnabled(DydxFeatureFlag.force_mainnet)) {
             deployment = "MAINNET"
             appConfigs = AppConfigs.forApp
+            appConfigsV2 = AppConfigsV2.forApp
         } else {
-            deployment = "DEV"
-            appConfigs = if (BuildConfig.DEBUG) AppConfigs.forAppDebug else AppConfigs.forApp
+            deployment = application.getString(R.string.app_deployment)
+            appConfigs =
+                if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
+            appConfigsV2 =
+                if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigsV2.forAppDebug else AppConfigsV2.forApp
         }
 
         appConfigs.squidVersion = AppConfigs.SquidVersion.V2
-        AsyncAbacusStateManager(
-            deploymentUri = deploymentUri,
-            deployment = deployment,
-            appConfigs = appConfigs,
-            ioImplementations = ioImplementations,
-            uiImplementations = UIImplementationsExtensions.shared!!,
-            stateNotification = this,
-            dataNotification = null,
-        )
+        appConfigsV2.onboardingConfigs.squidVersion = OnboardingConfigs.SquidVersion.V2
+
+        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2)) {
+            AsyncAbacusStateManagerV2(
+                deploymentUri = deploymentUri,
+                deployment = deployment,
+                appConfigs = appConfigsV2,
+                ioImplementations = ioImplementations,
+                uiImplementations = UIImplementationsExtensions.shared!!,
+                stateNotification = this,
+                dataNotification = null,
+            )
+        } else {
+            AsyncAbacusStateManager(
+                deploymentUri = deploymentUri,
+                deployment = deployment,
+                appConfigs = appConfigs,
+                ioImplementations = ioImplementations,
+                uiImplementations = UIImplementationsExtensions.shared!!,
+                stateNotification = this,
+                dataNotification = null,
+            )
+        }
     }
 
     // MARK: AbacusStateManagerProtocol
 
-    override var state: AbacusState = AbacusState(
-        walletStatePublisher = walletStateManager.state,
-        perpetualStatePublisher = perpetualStatePublisher,
-        apiStatePublisher = apiStatePublisher,
-        errorsStatePublisher = errorsStatePublisher,
+    override val state: AbacusState = AbacusState(
+        walletState = walletStateManager.state,
+        perpetualState = perpetualStatePublisher,
+        apiPerpetualState = apiStatePublisher,
+        errorsPerpetualState = errorsStatePublisher,
         lastOrderPublisher = lastOrderPublisher,
-        alertsPublisher = alertsPublisher,
-        documentationPublisher = documentationPublisher,
+        alerts = alertsPublisher,
+        documentation = documentationPublisher,
         abacusStateManager = asyncStateManager,
-        transferStatePublisher = transferStateManager.state,
+        transferState = transferStateManager.state,
         parser = parser,
+        stateManagerScope = appScope,
     )
 
     override val deploymentUri: String
@@ -171,7 +207,7 @@ class AbacusStateManager @Inject constructor(
             if (!urlOverride.isNullOrEmpty()) {
                 return urlOverride
             } else {
-                return "https://" + context.getString(exchange.dydx.trading.common.R.string.app_web_host)
+                return "https://" + application.getString(R.string.app_web_host)
             }
         }
 
@@ -190,7 +226,7 @@ class AbacusStateManager @Inject constructor(
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.monitorConnectivity(context)
+            this.monitorConnectivity(application)
         }
     }
 
@@ -206,12 +242,6 @@ class AbacusStateManager @Inject constructor(
             }
             start()
         }
-    }
-
-    override fun setV3(ethereumAddress: String, walletId: String?, apiKey: String, secret: String, passPhrase: String) {
-        val wallet = DydxWalletInstance.v3(ethereumAddress, walletId, apiKey, passPhrase, secret)
-        walletStateManager.setCurrentWallet(wallet)
-        asyncStateManager.accountAddress = ethereumAddress
     }
 
     override fun setV4(ethereumAddress: String, walletId: String?, cosmosAddress: String, mnemonic: String) {
@@ -339,8 +369,8 @@ class AbacusStateManager @Inject constructor(
         transferStateManager.remove(transfer)
     }
 
-    override fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean) {
-        asyncStateManager.transferStatus(hash, fromChainId, toChainId, isCctp)
+    override fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean, requestId: String?) {
+        asyncStateManager.transferStatus(hash, fromChainId, toChainId, isCctp, requestId)
     }
 
     override fun screen(address: String, callback: ((Restriction) -> Unit)) {
@@ -349,6 +379,10 @@ class AbacusStateManager @Inject constructor(
 
     override fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit) {
         asyncStateManager.commitCCTPWithdraw(callback)
+    }
+
+    override fun triggerOrders(input: String?, type: TriggerOrdersInputField?) {
+        asyncStateManager.triggerOrders(input, type)
     }
 
     // MARK: StateNotificationProtocol
@@ -397,23 +431,16 @@ class AbacusStateManager @Inject constructor(
     }
 
     private fun start() {
-        CoroutineScope(Dispatchers.Main).launch {
+        appScope.launch {
             val currentWallet = walletStateManager.state.first()?.currentWallet
             if (currentWallet != null) {
                 val ethereumAddress = currentWallet.ethereumAddress
                 val cosmoAddress = currentWallet.cosmoAddress
                 val mnemonic = currentWallet.mnemonic
-                val apiKey = currentWallet.apiKey
-                val passPhrase = currentWallet.passPhrase
-                val secret = currentWallet.secret
                 val walletId = currentWallet.walletId
 
                 if (cosmoAddress != null && mnemonic != null) {
                     setV4(ethereumAddress, walletId, cosmoAddress, mnemonic)
-                }
-
-                if (apiKey != null && passPhrase != null && secret != null) {
-                    setV3(ethereumAddress, walletId, apiKey, secret, passPhrase)
                 }
             }
 
@@ -435,7 +462,7 @@ class AbacusStateManager @Inject constructor(
             .build()
 
         open class NetworkCallback(
-            private val abacusStateManager: AsyncAbacusStateManager,
+            private val abacusStateManager: SingletonAsyncAbacusStateManagerProtocol,
         ) : ConnectivityManager.NetworkCallback()
 
         connectivityManager.registerNetworkCallback(

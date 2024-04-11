@@ -1,14 +1,11 @@
 package exchange.dydx.trading.feature.market.di
 
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketAccountTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketStatsTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tiles.DydxMarketTilesView
@@ -20,106 +17,79 @@ import exchange.dydx.trading.feature.market.marketlist.components.SortAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-// @InstallIn(ViewModelComponent::class)
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object MarketListModule {
+interface MarketListModule {
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideFilterActionFlow(
+    @Binds fun bindFilterActionFlow(
         mutableFlow: MutableStateFlow<FilterAction?>,
-    ): Flow<FilterAction?> {
-        return mutableFlow
-    }
+    ): Flow<FilterAction?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableFilterActionFlow(): MutableStateFlow<FilterAction?> {
-        return MutableStateFlow(null)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideSortActionFlow(
+    @Binds fun bindSortActionFlow(
         mutableFlow: MutableStateFlow<SortAction?>,
-    ): Flow<SortAction?> {
-        return mutableFlow
-    }
+    ): Flow<SortAction?>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableSortActionFlow(): MutableStateFlow<SortAction?> {
-        return MutableStateFlow(null)
+    companion object {
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableFilterActionFlow(): MutableStateFlow<FilterAction?> {
+            return MutableStateFlow(null)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableSortActionFlow(): MutableStateFlow<SortAction?> {
+            return MutableStateFlow(null)
+        }
     }
 }
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-object MarketIfoModule {
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableMarketInfoStream(
-        abacusStateManager: AbacusStateManagerProtocol,
-        formatter: DydxFormatter,
-        localizer: LocalizerProtocol,
-        favoriteStore: DydxFavoriteStoreProtocol,
-    ): MutableMarketInfoStreaming {
-        return MarketInfoStream(
-            abacusStateManager = abacusStateManager,
-            formatter = formatter,
-            localizer = localizer,
-            favoriteStore = favoriteStore,
-        )
-    }
+interface MarketInfoModule {
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMarketInfoStream(
+    @Binds
+    fun bindMutableMarketInfoStreaming(
+        marketInfoStream: MarketInfoStream,
+    ): MutableMarketInfoStreaming
+
+    @Binds
+    fun bindMarketInfoStreaming(
         mutableMarketInfoStream: MutableMarketInfoStreaming,
-    ): MarketInfoStreaming {
-        return mutableMarketInfoStream
-    }
+    ): MarketInfoStreaming
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideStatsTabSelection(
+    @Binds
+    fun bindStatsTabSelection(
         mutableStatsTabFlow: MutableStateFlow<DydxMarketStatsTabView.Selection>,
-    ): Flow<DydxMarketStatsTabView.Selection> {
-        return mutableStatsTabFlow
-    }
+    ): Flow<DydxMarketStatsTabView.Selection>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableStatsTabSelection(): MutableStateFlow<DydxMarketStatsTabView.Selection> {
-        return MutableStateFlow(DydxMarketStatsTabView.Selection.Statistics)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideAccountTabSelection(
+    @Binds
+    fun bindAccountTabSelection(
         mutableAccountTabFlow: MutableStateFlow<DydxMarketAccountTabView.Selection>,
-    ): Flow<DydxMarketAccountTabView.Selection> {
-        return mutableAccountTabFlow
-    }
+    ): Flow<DydxMarketAccountTabView.Selection>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableAccountTabSelection(): MutableStateFlow<DydxMarketAccountTabView.Selection> {
-        return MutableStateFlow(DydxMarketAccountTabView.Selection.Position)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideTileSelection(
+    @Binds
+    fun bindTileSelection(
         mutableTileFlow: MutableStateFlow<DydxMarketTilesView.Tile>,
-    ): Flow<DydxMarketTilesView.Tile> {
-        return mutableTileFlow
-    }
+    ): Flow<DydxMarketTilesView.Tile>
 
-    @Provides
-    @ActivityRetainedScoped
-    fun provideMutableTileSelection(): MutableStateFlow<DydxMarketTilesView.Tile> {
-        return MutableStateFlow(DydxMarketTilesView.Tile(DydxMarketTilesView.TileType.PRICE))
+    companion object {
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableStatsTabSelection(): MutableStateFlow<DydxMarketStatsTabView.Selection> {
+            return MutableStateFlow(DydxMarketStatsTabView.Selection.Statistics)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableAccountTabSelection(): MutableStateFlow<DydxMarketAccountTabView.Selection> {
+            return MutableStateFlow(DydxMarketAccountTabView.Selection.Position)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideMutableTileSelection(): MutableStateFlow<DydxMarketTilesView.Tile> {
+            return MutableStateFlow(DydxMarketTilesView.Tile(DydxMarketTilesView.TileType.PRICE))
+        }
     }
 }

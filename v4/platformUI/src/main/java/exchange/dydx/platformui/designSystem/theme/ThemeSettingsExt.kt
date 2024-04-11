@@ -128,14 +128,22 @@ private fun family(
 }
 
 val ThemeColor.SemanticColor.Companion.positiveColor: ThemeColor.SemanticColor
-    get() = if (ThemeSettings.shared.sharedPreferences.read("direction_color_preference", "green_is_up") == "green_is_up") {
+    get() = if ((
+            ThemeSettings.shared.sharedPreferences?.read("direction_color_preference")
+                ?: "green_is_up"
+            ) == "green_is_up"
+    ) {
         ThemeColor.SemanticColor.color_green
     } else {
         ThemeColor.SemanticColor.color_red
     }
 
 val ThemeColor.SemanticColor.Companion.negativeColor: ThemeColor.SemanticColor
-    get() = if (ThemeSettings.shared.sharedPreferences.read("direction_color_preference", "green_is_up") == "green_is_up") {
+    get() = if ((
+            ThemeSettings.shared.sharedPreferences?.read("direction_color_preference")
+                ?: "green_is_up"
+            ) == "green_is_up"
+    ) {
         ThemeColor.SemanticColor.color_red
     } else {
         ThemeColor.SemanticColor.color_green

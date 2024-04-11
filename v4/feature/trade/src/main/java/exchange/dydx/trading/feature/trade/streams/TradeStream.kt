@@ -1,8 +1,10 @@
 package exchange.dydx.trading.feature.trade.streams
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.common.di.CoroutineScopes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +13,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
+import javax.inject.Inject
 
 interface TradeStreaming {
     val submissionStatus: Flow<AbacusStateManagerProtocol.SubmissionStatus?>
@@ -23,11 +25,11 @@ interface MutableTradeStreaming : TradeStreaming {
     fun closePosition()
 }
 
-class TradeStream(
+@ActivityRetainedScoped
+class TradeStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
+    @CoroutineScopes.App val appScope: CoroutineScope
 ) : MutableTradeStreaming {
-
-    private val streamScope = CoroutineScope(newSingleThreadContext("TradeStream"))
 
     private var _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> =
         MutableStateFlow(null)
@@ -56,7 +58,7 @@ class TradeStream(
 
     override fun submitTrade() {
         _submissionStatus.update { null }
-        streamScope.launch {
+        appScope.launch {
             val tradeInput = abacusStateManager.state.tradeInput.first() ?: return@launch
 
             abacusStateManager.placeOrder { submissionStatus ->
@@ -70,7 +72,7 @@ class TradeStream(
 
     override fun closePosition() {
         _submissionStatus.update { null }
-        streamScope.launch {
+        appScope.launch {
             val closePositionInput = abacusStateManager.state.closePositionInput.first() ?: return@launch
 
             abacusStateManager.closePosition { submissionStatus ->

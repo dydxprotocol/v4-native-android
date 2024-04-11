@@ -5,8 +5,9 @@ import exchange.dydx.trading.feature.newsalerts.alerts.alertprovider.providers.D
 import exchange.dydx.trading.feature.newsalerts.alerts.alertprovider.providers.DydxTransferAlertsProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
-class DydxAlertsProvider(
+class DydxAlertsProvider @Inject constructor(
     val dydxSystemAlertsProvider: DydxSystemAlertsProvider,
     val dydxTransferAlertsProvider: DydxTransferAlertsProvider,
     val dydxFrontEndAlertsProvider: DydxFrontendAlertsProvider,

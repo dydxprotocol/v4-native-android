@@ -25,7 +25,6 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.PreviewAppConfig
 import exchange.dydx.utilities.utils.JsonUtils
-import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonNull.content
 
@@ -66,7 +65,7 @@ fun DydxThemedPreviewSurface(
     val themeConfig = MutableStateFlow<ThemeConfig?>(theme)
     val styleConfig =
         MutableStateFlow<StyleConfig?>(JsonUtils.loadFromAssets(appContext, "dydxStyle.json"))
-    ThemeSettings.shared = ThemeSettings(appContext, SharedPreferencesStore(appContext), themeConfig, styleConfig)
+    ThemeSettings.shared = ThemeSettings(appContext, null, themeConfig, styleConfig)
 
     Surface(
         color = background.color,

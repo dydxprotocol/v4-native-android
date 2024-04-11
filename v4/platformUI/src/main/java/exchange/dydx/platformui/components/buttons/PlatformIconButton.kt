@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,9 +29,9 @@ fun PlatformIconButton(
     size: Dp = 42.dp,
     padding: Dp = 8.dp,
     enabled: Boolean = true,
+    shape: Shape = CircleShape,
     content: @Composable () -> Unit
 ) {
-    val shape = CircleShape
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

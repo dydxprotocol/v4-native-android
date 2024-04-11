@@ -1,6 +1,6 @@
 package exchange.dydx.trading.core
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.net.toUri
@@ -10,6 +10,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.navDeepLink
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
@@ -17,6 +18,7 @@ import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.integration.analytics.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
+import javax.inject.Inject
 
 private const val TAG = "DydxRouterImpl"
 
@@ -27,10 +29,11 @@ private const val TAG = "DydxRouterImpl"
  *
  * So this is a very powerful class in terms of, bridging the dependency tree.
  */
-class DydxRouterImpl(
-    override var androidContext: Context?,
-    private val appConfig: AppConfig,
+@ActivityRetainedScoped
+class DydxRouterImpl @Inject constructor(
+    private val application: Application,
     private val tracker: Tracking,
+    appConfig: AppConfig,
 ) : DydxRouter {
 
     private lateinit var navHostController: NavHostController
@@ -58,6 +61,19 @@ class DydxRouterImpl(
         "${appConfig.appScheme}://${appConfig.appSchemeHost}",
     )
 
+    // All routes paths that are used for deeplinking
+    // This should match what's declared as intent-filters in the AndroidManifest
+    private val deeplinkRoutes: List<String> = listOf(
+        "markets",
+        "market",
+        "portfolio",
+        "settings",
+        "onboard",
+        "rewards",
+        "action",
+        "transfer",
+    )
+
     private val destinationChangedListener: (controller: NavController, destination: NavDestination, arguments: Bundle?) -> Unit =
         { controller, destination, arguments ->
             val dest = Destination(controller, destination, arguments)
@@ -68,15 +84,7 @@ class DydxRouterImpl(
 
             val destinationRoute = destination.route
             if (destinationRoute != null) {
-
-                val trackingData: MutableMap<String, String> = mutableMapOf()
-                destination.arguments.keys.forEach { key ->
-                    trackingData[key] = arguments?.getString(key) ?: ""
-                }
-                tracker.log(
-                    event = destinationRoute,
-                    data = trackingData,
-                )
+                trackRoute(destinationRoute, destination, arguments)
 
                 if (tabRoutes.contains(destinationRoute)) {
                     routeQueue.clear()
@@ -118,7 +126,8 @@ class DydxRouterImpl(
         val routePath = routePath(route)
         if (routePath.startsWith("http://") || routePath.startsWith("https://")) {
             val intent = Intent(Intent.ACTION_VIEW, routePath.toUri())
-            androidContext?.startActivity(intent)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            application.startActivity(intent)
         } else {
             pendingPresentation =
                 presentation // Let destinationChangedListener handle the presentation state change
@@ -193,15 +202,41 @@ class DydxRouterImpl(
     }
 
     private fun routePath(route: String): String {
-        var route = route
+        val route = trimUrlHead(route)
+        return if (route.startsWith("/")) route.substring(1) else route
+    }
+
+    private fun trimUrlHead(route: String): String {
+        // Remove the url head from the route if the route is a deeplink the app supports
+        // For example, if the route is "https://{app_web_host]/markets", return "/markets"
         for (url in dydxUris) {
-            if (route.startsWith(url)) {
-                route = route.replace(url, "")
+            for (path in deeplinkRoutes) {
+                val urlPath = "$url/$path"
+                if (route.startsWith(urlPath)) {
+                    return route.replace(url, "")
+                }
             }
         }
-        if (route.startsWith("/")) {
-            return route.substring(1)
-        }
         return route
+    }
+
+    private fun trackRoute(destinationRoute: String, destination: NavDestination, arguments: Bundle?) {
+        val trackingData: MutableMap<String, String> = mutableMapOf()
+        destination.arguments.keys.forEach { key ->
+            trackingData[key] = arguments?.getString(key) ?: ""
+        }
+        // Remove query parameters from the route and remove the last component if it's a dynamic route
+        var sanitizedRoute = destinationRoute.split("?").first()
+        val components = sanitizedRoute.split("/")
+        val lastComponent = components.last()
+        if (lastComponent.startsWith("{") && lastComponent.endsWith("}")) {
+            sanitizedRoute = components.dropLast(1).joinToString("_")
+        } else {
+            sanitizedRoute = components.joinToString("_")
+        }
+        tracker.log(
+            event = sanitizedRoute,
+            data = trackingData,
+        )
     }
 }

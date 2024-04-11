@@ -1,5 +1,6 @@
 package exchange.dydx.trading.common
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -35,7 +36,7 @@ interface AppConfig {
 }
 
 data class AppConfigImpl(
-    override val appContext: Context?,
+    override val appContext: Application?,
     override val appVersionName: String,
     override val appVersionCode: String,
     override val debug: Boolean,
