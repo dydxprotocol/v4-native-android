@@ -17,6 +17,7 @@ import exchange.dydx.abacus.output.Notification
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.output.PerpetualState
+import exchange.dydx.abacus.output.PositionSide
 import exchange.dydx.abacus.output.Restriction
 import exchange.dydx.abacus.output.Subaccount
 import exchange.dydx.abacus.output.SubaccountFill
@@ -48,6 +49,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -203,10 +205,34 @@ class AbacusState(
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
+    fun selectedSubaccountPositionOfMarket(marketId: String): StateFlow<SubaccountPosition?> {
+        return selectedSubaccountPositions
+            .map { positions ->
+                positions?.first { position ->
+                    position?.id == marketId &&
+                        (
+                            position?.side?.current == PositionSide.SHORT ||
+                                position?.side?.current == PositionSide.LONG
+                            )
+                }
+            }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+    }
+
     val selectedSubaccountOrders: StateFlow<List<SubaccountOrder>?> by lazy {
         selectedSubaccount
             .map { subaccount ->
                 subaccount?.orders
+            }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+    }
+
+    fun selectedSubaccountOrdersOfMarket(marketId: String): StateFlow<List<SubaccountOrder>?> {
+        return selectedSubaccountOrders
+            .map { orders ->
+                orders?.filter { order ->
+                    order?.marketId == marketId
+                }
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }

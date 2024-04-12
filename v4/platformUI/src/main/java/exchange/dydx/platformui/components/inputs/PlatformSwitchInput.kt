@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -24,20 +25,23 @@ fun PlatformSwitchInput(
         .themeFont(fontSize = ThemeFont.FontSize.small),
     value: Boolean? = null,
     onValueChange: (Boolean) -> Unit = {},
+    canEdit: Boolean = true,
 ) {
+    val alpha = if (canEdit) 1f else 0.4f
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (label != null) {
             Text(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).alpha(alpha),
                 text = label,
                 style = textStyle,
             )
         }
 
         Switch(
+            modifier = Modifier.alpha(alpha),
             checked = value ?: false,
             onCheckedChange = onValueChange,
             colors = SwitchDefaults.colors(

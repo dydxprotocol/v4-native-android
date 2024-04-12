@@ -108,12 +108,20 @@ interface AbacusStateManagerProtocol {
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
 
     fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
+    fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit)
 
     // extensions
     fun resetTransferInputFields() {
         transfer(null, TransferInputField.size)
         transfer(null, TransferInputField.usdcSize)
         transfer(null, TransferInputField.type)
+    }
+
+    fun resetTriggerOrders() {
+        val fields = TriggerOrdersInputField.values()
+        for (field in fields) {
+            triggerOrders(null, field)
+        }
     }
 }
 
@@ -383,6 +391,16 @@ class AbacusStateManager @Inject constructor(
 
     override fun triggerOrders(input: String?, type: TriggerOrdersInputField?) {
         asyncStateManager.triggerOrders(input, type)
+    }
+
+    override fun commitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+        asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
+            if (successful) {
+                callback(AbacusStateManagerProtocol.SubmissionStatus.Success)
+            } else {
+                callback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
+            }
+        }
     }
 
     // MARK: StateNotificationProtocol

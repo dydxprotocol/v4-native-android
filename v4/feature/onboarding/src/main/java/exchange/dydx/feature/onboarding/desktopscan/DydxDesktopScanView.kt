@@ -52,7 +52,7 @@ object DydxDesktopScanView : DydxComponent {
             modifier = modifier,
             platformInfo = viewModel.platformInfo,
         ) {
-            Content(modifier, state)
+            Content(it, state)
         }
 
         PlatformDialogScaffold(dialog = viewModel.platformDialog)

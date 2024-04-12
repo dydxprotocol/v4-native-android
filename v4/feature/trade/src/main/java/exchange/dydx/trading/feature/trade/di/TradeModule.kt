@@ -7,8 +7,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.trading.feature.trade.streams.MutableTradeStreaming
+import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import exchange.dydx.trading.feature.trade.streams.TradeStream
 import exchange.dydx.trading.feature.trade.streams.TradeStreaming
+import exchange.dydx.trading.feature.trade.streams.TriggerOrderStream
+import exchange.dydx.trading.feature.trade.streams.TriggerOrderStreaming
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +38,16 @@ interface TradeModule {
     fun bindMutableTradeStream(
         tradeStream: TradeStream,
     ): MutableTradeStreaming
+
+    @Binds
+    fun bindTriggerOrderStream(
+        mutableStream: MutableTriggerOrderStreaming,
+    ): TriggerOrderStreaming
+
+    @Binds
+    fun bindMutableTriggerOrderStream(
+        triggerOrderStream: TriggerOrderStream,
+    ): MutableTriggerOrderStreaming
 
     companion object {
         @Provides

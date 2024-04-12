@@ -50,7 +50,7 @@ object DydxTransferFaucetView : DydxComponent {
             modifier = modifier,
             platformInfo = viewModel.platformInfo,
         ) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 
