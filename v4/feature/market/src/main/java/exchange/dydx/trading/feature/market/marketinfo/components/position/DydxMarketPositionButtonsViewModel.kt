@@ -9,7 +9,6 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
-import exchange.dydx.dydxstatemanager.triggerOrderPosition
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -18,6 +17,7 @@ import exchange.dydx.trading.feature.market.marketinfo.streams.MarketInfoStreami
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
@@ -36,9 +36,9 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
     val state: Flow<DydxMarketPositionButtonsView.ViewState?> =
         combine(
             marketIdFlow,
-            abacusStateManager.state.triggerOrderPosition,
-            abacusStateManager.state.takeProfitOrders,
-            abacusStateManager.state.stopLossOrders,
+            marketIdFlow.flatMapLatest { abacusStateManager.state.selectedSubaccountPositionOfMarket(it) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it) },
             abacusStateManager.state.configsAndAssetMap,
         ) { marketId, position, takeProfitOrders, stopLossOrders, configsAndAssetMap ->
             createViewState(marketId, position, takeProfitOrders, stopLossOrders, configsAndAssetMap?.get(marketId))

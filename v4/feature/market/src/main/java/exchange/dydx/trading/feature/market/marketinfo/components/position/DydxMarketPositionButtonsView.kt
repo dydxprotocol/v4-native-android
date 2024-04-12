@@ -196,13 +196,12 @@ object DydxMarketPositionButtonsView : DydxComponent {
         action: () -> Unit = {}
     ) {
         InputFieldScaffold(
-            modifier = modifier
-                .clickable {
-                    action()
-                },
+            modifier = modifier,
         ) {
             Column(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier
+                    .clickable { action() }
+                    .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
             ) {
                 Row(

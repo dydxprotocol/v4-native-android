@@ -1,16 +1,15 @@
 package exchange.dydx.trading.feature.trade.streams
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 enum class GainLossDisplayType {
@@ -36,8 +35,7 @@ interface TriggerOrderStreaming {
 }
 
 interface MutableTriggerOrderStreaming : TriggerOrderStreaming {
-    fun setMarketId(marketId: String)
-    fun submitTriggerOrders()
+    fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?)
     fun clearSubmissionStatus()
     fun setTakeProfitGainLossDisplayType(displayType: GainLossDisplayType)
     fun setStopLossGainLossDisplayType(displayType: GainLossDisplayType)
@@ -47,36 +45,28 @@ interface MutableTriggerOrderStreaming : TriggerOrderStreaming {
 class TriggerOrderStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
 ) : MutableTriggerOrderStreaming {
-    override val submissionStatus get() = _submissionStatus
-    override val takeProfitGainLossDisplayType get() = _takeProfitGainLossDisplayType
-    override val stopLossGainLossDisplayType get() = _stopLossGainLossDisplayType
 
     private val _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> = MutableStateFlow(null)
     private val _takeProfitGainLossDisplayType = MutableStateFlow(GainLossDisplayType.Amount)
     private val _stopLossGainLossDisplayType = MutableStateFlow(GainLossDisplayType.Amount)
 
-    private val streamScope = MainScope()
+    override val submissionStatus = _submissionStatus
+    override val takeProfitGainLossDisplayType = _takeProfitGainLossDisplayType
+    override val stopLossGainLossDisplayType = _stopLossGainLossDisplayType
+
+    private val marketIdFlow = abacusStateManager.state.triggerOrdersInput
+        .mapNotNull { it?.marketId }
 
     override val isNewTriggerOrder: Flow<Boolean> =
         combine(
-            abacusStateManager.state.takeProfitOrders,
-            abacusStateManager.state.stopLossOrders,
+            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it) },
         ) { takeProfitOrders, stopLossOrders ->
             takeProfitOrders.isNullOrEmpty() && stopLossOrders.isNullOrEmpty()
         }
 
-    override fun setMarketId(marketId: String) {
-        abacusStateManager.setMarket(marketId = marketId)
-        abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
-    }
-
-    override fun submitTriggerOrders() {
-        _submissionStatus.update { null }
-        streamScope.launch {
-            abacusStateManager.commitTriggerOrders { submissionStatus ->
-                _submissionStatus.update { submissionStatus }
-            }
-        }
+    override fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?) {
+        _submissionStatus.update { status }
     }
 
     override fun clearSubmissionStatus() {

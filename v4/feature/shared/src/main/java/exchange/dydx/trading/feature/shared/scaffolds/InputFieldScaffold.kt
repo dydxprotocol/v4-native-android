@@ -17,16 +17,17 @@ fun InputFieldScaffold(
     alertState: PlatformInputAlertState = PlatformInputAlertState.None,
     content: @Composable () -> Unit,
 ) {
+    val shape = RoundedCornerShape(8.dp)
     Box(
         modifier = modifier
             .background(
                 color = ThemeColor.SemanticColor.layer_4.color,
-                shape = RoundedCornerShape(8.dp),
+                shape = shape,
             )
             .border(
                 width = 1.dp,
                 color = alertState.borderColor.color,
-                shape = RoundedCornerShape(8.dp),
+                shape = shape,
             ),
     ) {
         content()

@@ -91,9 +91,10 @@ object DydxTriggerOrderInputView : DydxComponent {
         }
 
         PlatformInfoScaffold(
+            modifier = modifier,
             platformInfo = viewModel.platformInfo,
         ) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 
@@ -227,7 +228,7 @@ object DydxTriggerOrderInputView : DydxComponent {
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
         ) {
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -247,7 +248,7 @@ object DydxTriggerOrderInputView : DydxComponent {
             }
 
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -281,7 +282,7 @@ object DydxTriggerOrderInputView : DydxComponent {
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
         ) {
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -301,7 +302,7 @@ object DydxTriggerOrderInputView : DydxComponent {
             }
 
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),

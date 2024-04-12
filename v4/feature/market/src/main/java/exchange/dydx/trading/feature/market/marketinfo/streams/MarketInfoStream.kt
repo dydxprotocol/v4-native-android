@@ -6,7 +6,6 @@ import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.PositionSide
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -45,7 +44,6 @@ class MarketInfoStream @Inject constructor(
 ) : MutableMarketInfoStreaming {
     override fun update(marketId: String?) {
         abacusStateManager.setMarket(marketId)
-        abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
         abacusStateManager.startTrade()
     }
 
