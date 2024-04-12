@@ -117,7 +117,7 @@ object DydxTriggerOrderInputView : DydxComponent {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_2)
+                .themeColor(ThemeColor.SemanticColor.layer_3)
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         focusManager.clearFocus()

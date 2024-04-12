@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.portfolio.components.orders
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
+import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.viewstate.SharedOrderViewState
 
 @Preview
@@ -52,6 +54,7 @@ object DydxPortfolioOrdersView : DydxComponent {
         val localizer: LocalizerProtocol,
         val orders: List<SharedOrderViewState> = listOf(),
         val onOrderTappedAction: (String) -> Unit = {},
+        val onBackTappedAction: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -66,11 +69,40 @@ object DydxPortfolioOrdersView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
+        Content(modifier, isFullScreen = false)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, isFullScreen: Boolean) {
         val viewModel: DydxPortfolioOrdersViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        LazyColumn {
-            ListContent(this, modifier, state)
+        if (isFullScreen) {
+            Column(
+                modifier = modifier.fillMaxWidth(),
+            ) {
+                HeaderView(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = state?.localizer?.localize("APP.GENERAL.ORDERS") ?: "",
+                    backAction = state?.onBackTappedAction,
+                )
+
+                PlatformDivider()
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    ListContent(this, Modifier, state)
+                }
+            }
+        } else {
+            LazyColumn {
+                ListContent(this, modifier, state)
+            }
         }
     }
 

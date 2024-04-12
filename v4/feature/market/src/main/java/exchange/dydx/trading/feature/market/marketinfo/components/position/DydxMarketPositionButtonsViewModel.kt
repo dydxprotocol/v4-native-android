@@ -66,31 +66,30 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },
-            takeProfitTrigger = takeProfitOrders?.firstOrNull()?.let {
-                createTriggerViewState(
-                    label = "TP",
-                    position = position,
-                    order = it,
-                    configsAndAsset = configsAndAsset,
-                )
-            },
-            stopLossTrigger = stopLossOrders?.firstOrNull()?.let {
-                createTriggerViewState(
-                    label = "SL",
-                    position = position,
-                    order = it,
-                    configsAndAsset = configsAndAsset,
-                )
-            },
+            takeProfitTrigger = createTriggerViewState(
+                label = "TP",
+                position = position,
+                orders = takeProfitOrders,
+                configsAndAsset = configsAndAsset,
+            ),
+            stopLossTrigger = createTriggerViewState(
+                label = "SL",
+                position = position,
+                orders = stopLossOrders,
+                configsAndAsset = configsAndAsset,
+            ),
         )
     }
 
     private fun createTriggerViewState(
         label: String,
         position: SubaccountPosition?,
-        order: SubaccountOrder,
+        orders: List<SubaccountOrder>?,
         configsAndAsset: MarketConfigsAndAsset?,
-    ): DydxMarketPositionButtonsView.TriggerViewState {
+    ): DydxMarketPositionButtonsView.TriggerViewState? {
+        val order = orders?.firstOrNull()
+            ?: return null
+
         val tickSize = configsAndAsset?.configs?.displayTickSizeDecimals ?: 0
         val size = order.size
         val positionSize = position?.size?.current ?: 0.0
@@ -104,6 +103,7 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
             triggerPrice = order.triggerPrice?.let { formatter.dollar(it, tickSize) },
             limitPrice = order.price.let { formatter.dollar(it, tickSize) },
             sizePercent = formatter.percent(percentage, 2),
+            hasMultipleOrders = orders.size > 1,
         )
     }
 }

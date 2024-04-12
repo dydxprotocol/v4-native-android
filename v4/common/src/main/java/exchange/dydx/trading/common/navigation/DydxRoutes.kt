@@ -12,6 +12,7 @@ object OnboardingRoutes {
 object PortfolioRoutes {
     const val main = "portfolio"
     const val order_details = "orders"
+    const val orders = "portfolio/orders"
 }
 
 object ProfileRoutes {

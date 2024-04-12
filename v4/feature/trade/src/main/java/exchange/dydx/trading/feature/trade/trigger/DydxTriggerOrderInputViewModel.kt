@@ -20,6 +20,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -134,10 +135,10 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             hasMultipleTP = takeProfitOrders?.size ?: 0 > 1,
             hasMultipleSL = stopLossOrders?.size ?: 0 > 1,
             showOrderListAction = {
-//                router.navigateTo(
-//                    route = DydxRouter.Routes.triggerOrderList,
-//                    presentation = DydxRouter.Presentation.Modal,
-//                )
+                router.navigateTo(
+                    route = PortfolioRoutes.orders,
+                    presentation = DydxRouter.Presentation.Push,
+                )
             },
         )
     }
