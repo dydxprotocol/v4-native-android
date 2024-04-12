@@ -70,7 +70,7 @@ object DydxTransferStatusView : DydxComponent {
         PlatformInfoScaffold(
             platformInfo = viewModel.platformInfo,
         ) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 

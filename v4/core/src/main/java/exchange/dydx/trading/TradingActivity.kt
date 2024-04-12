@@ -139,7 +139,7 @@ class TradingActivity : FragmentActivity() {
             ) {
                 DydxNavGraph(
                     appRouter = viewModel.router,
-                    modifier = Modifier,
+                    modifier = it,
                 )
             }
         }

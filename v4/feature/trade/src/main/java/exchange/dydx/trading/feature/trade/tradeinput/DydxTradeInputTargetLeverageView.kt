@@ -59,7 +59,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 

@@ -208,20 +208,17 @@ class AbacusState(
     }
 
     fun selectedSubaccountPositionOfMarket(marketId: String): StateFlow<SubaccountPosition?> {
-        val valueBlock = { positions: List<SubaccountPosition>? ->
-            positions?.first { position ->
-                position?.id == marketId &&
-                    (
-                        position?.side?.current == PositionSide.SHORT ||
-                            position?.side?.current == PositionSide.LONG
-                        )
-            }
-        }
         return selectedSubaccountPositions
             .map { positions ->
-                valueBlock(positions)
+                positions?.first { position ->
+                    position?.id == marketId &&
+                        (
+                            position?.side?.current == PositionSide.SHORT ||
+                                position?.side?.current == PositionSide.LONG
+                            )
+                }
             }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(selectedSubaccountPositions.value))
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountOrders: StateFlow<List<SubaccountOrder>?> by lazy {
@@ -233,16 +230,13 @@ class AbacusState(
     }
 
     fun selectedSubaccountOrdersOfMarket(marketId: String): StateFlow<List<SubaccountOrder>?> {
-        val valueBlock = { orders: List<SubaccountOrder>? ->
-            orders?.filter { order ->
-                order?.marketId == marketId
-            }
-        }
         return selectedSubaccountOrders
             .map { orders ->
-                valueBlock(orders)
+                orders?.filter { order ->
+                    order?.marketId == marketId
+                }
             }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, valueBlock(selectedSubaccountOrders.value))
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
     val selectedSubaccountPNLs: StateFlow<List<SubaccountHistoricalPNL>?> by lazy {

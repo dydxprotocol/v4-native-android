@@ -17,6 +17,7 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val triggerOrderStream: MutableTriggerOrderStreaming,
+
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTriggerOrderCtaButtonView.ViewState?> =
@@ -51,7 +52,10 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
                 DydxTriggerOrderCtaButtonView.State.Disabled(buttonTitle)
             },
             ctaAction = {
-                triggerOrderStream.submitTriggerOrders()
+                triggerOrderStream.updatesubmissionStatus(null)
+                abacusStateManager.commitTriggerOrders { status ->
+                    triggerOrderStream.updatesubmissionStatus(status)
+                }
             },
         )
     }

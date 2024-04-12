@@ -16,9 +16,11 @@ import exchange.dydx.dydxstatemanager.takeProfitOrders
 import exchange.dydx.dydxstatemanager.triggerOrderPosition
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +39,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     val platformInfo: PlatformInfo,
     private val triggerOrderStream: MutableTriggerOrderStreaming,
+    @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
 
     private val marketId: String?
@@ -49,7 +52,8 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         if (marketId == null) {
             router.navigateBack()
         } else {
-            triggerOrderStream.setMarketId(marketId)
+            abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
         }
 
         combine(
