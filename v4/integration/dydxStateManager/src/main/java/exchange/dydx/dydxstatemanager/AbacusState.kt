@@ -208,7 +208,7 @@ class AbacusState(
     fun selectedSubaccountPositionOfMarket(marketId: String): StateFlow<SubaccountPosition?> {
         return selectedSubaccountPositions
             .map { positions ->
-                positions?.first { position ->
+                positions?.firstOrNull { position ->
                     position?.id == marketId &&
                         (
                             position?.side?.current == PositionSide.SHORT ||

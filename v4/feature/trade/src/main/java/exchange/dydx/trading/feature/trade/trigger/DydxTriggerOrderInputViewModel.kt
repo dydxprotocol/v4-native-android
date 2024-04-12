@@ -23,9 +23,11 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -42,21 +44,25 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
 
-    private val marketId: String?
+    private var marketIdFlow: MutableStateFlow<String?> = MutableStateFlow(null)
 
     val state: Flow<DydxTriggerOrderInputView.ViewState?> =
-        abacusStateManager.state.validationErrors
-            .map { validationErrors ->
-                createViewState(validationErrors)
-            }
+        combine(
+            abacusStateManager.state.validationErrors,
+            marketIdFlow.filterNotNull().flatMapLatest { abacusStateManager.state.takeProfitOrders(it) },
+            marketIdFlow.filterNotNull().flatMapLatest { abacusStateManager.state.stopLossOrders(it) },
+        ) { validationErrors, takeProfitOrders, stopLossOrders ->
+            createViewState(validationErrors, takeProfitOrders, stopLossOrders)
+        }
             .distinctUntilChanged()
 
     init {
-        marketId = savedStateHandle["marketId"]
+        val marketId: String? = savedStateHandle["marketId"]
 
         if (marketId == null) {
             router.navigateBack()
         } else {
+            marketIdFlow.value = marketId
             abacusStateManager.setMarket(marketId = marketId)
             abacusStateManager.triggerOrders(
                 input = marketId,
@@ -77,18 +83,19 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                 )
             }
                 .launchIn(viewModelScope)
-        }
 
-        subscribeToStatus()
+            subscribeToStatus()
+        }
     }
 
     private fun createViewState(
-        errors: List<ValidationError>?
+        errors: List<ValidationError>?,
+        takeProfitOrders: List<SubaccountOrder>?,
+        stopLossOrders: List<SubaccountOrder>?,
     ): DydxTriggerOrderInputView.ViewState {
         val firstError = errors?.firstOrNull { it.type == ErrorType.error }
         val firstWarning = errors?.firstOrNull { it.type == ErrorType.warning }
         val fieldString = firstError?.fields?.firstOrNull() ?: firstWarning?.fields?.firstOrNull()
-        print("fieldString: $fieldString")
         val field: TriggerOrdersInputField? = fieldString?.let {
             TriggerOrdersInputField.invoke(it)
         }
@@ -124,6 +131,14 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         DydxTriggerOrderInputView.ValidationErrorSection.None
                 }
             } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
+            hasMultipleTP = takeProfitOrders?.size ?: 0 > 1,
+            hasMultipleSL = stopLossOrders?.size ?: 0 > 1,
+            showOrderListAction = {
+//                router.navigateTo(
+//                    route = DydxRouter.Routes.triggerOrderList,
+//                    presentation = DydxRouter.Presentation.Modal,
+//                )
+            },
         )
     }
 
