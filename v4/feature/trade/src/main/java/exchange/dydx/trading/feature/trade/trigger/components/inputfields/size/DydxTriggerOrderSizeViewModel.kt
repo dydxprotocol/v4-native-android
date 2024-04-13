@@ -53,7 +53,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         configsAndAsset: MarketConfigsAndAsset?,
     ): DydxTriggerOrderSizeView.ViewState {
         val marketConfigs = configsAndAsset?.configs
-        val stepSize = marketConfigs?.displayStepSizeDecimals ?: 0
+        val stepSize = marketConfigs?.stepSize
         val size = triggerOrdersInput?.size ?: 0.0
         val positionSize = position.size?.current ?: 0.0
         val percentage = if (positionSize > 0.0) {
@@ -68,7 +68,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 enabledFlow.value = enabled
                 if (!enabled) {
                     abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(position.size?.current),
+                        formatter.decimalLocaleAgnostic(position.size?.current, size = stepSize),
                         TriggerOrdersInputField.size,
                     )
                 }
@@ -86,7 +86,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
             percentage = percentage,
             onPercentageChanged = { percentage ->
                 abacusStateManager.triggerOrders(
-                    formatter.decimalLocaleAgnostic(positionSize * percentage),
+                    formatter.decimalLocaleAgnostic(positionSize * percentage, size = stepSize),
                     TriggerOrdersInputField.size,
                 )
             },

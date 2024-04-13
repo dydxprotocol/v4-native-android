@@ -12,10 +12,10 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
-import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.absoluteValue
+import kotlin.math.round
 
 @Singleton
 class DydxFormatter @Inject constructor() {
@@ -101,11 +101,14 @@ class DydxFormatter @Inject constructor() {
         return localFormatted(number?.toBigDecimal(), digits)
     }
 
-    fun localFormatted(number: BigDecimal?, digits: Int): String? {
+    fun localFormatted(number: BigDecimal?, digits: Int?): String? {
         if (number != null) {
+            val number = if (digits != null) rounded(number, digits) else number
             val decimalFormat = NumberFormat.getInstance(locale) as? DecimalFormat
-            decimalFormat?.minimumFractionDigits = maxOf(digits, 0)
-            decimalFormat?.maximumFractionDigits = maxOf(digits, 0)
+            if (digits != null) {
+                decimalFormat?.minimumFractionDigits = maxOf(digits, 0)
+                decimalFormat?.maximumFractionDigits = maxOf(digits, 0)
+            }
 
             val formatted = decimalFormat?.format(number)
             val parsed = decimalFormat?.parse(formatted)
@@ -118,38 +121,28 @@ class DydxFormatter @Inject constructor() {
         return null
     }
 
-    fun localFormatted(number: BigDecimal?, size: String): String? {
+    fun localFormatted(number: BigDecimal?, size: Double): String? {
         val digits = digits(size)
         return localFormatted(number, digits)
     }
 
-    private fun digits(size: String): Int {
-        val pattern = Pattern.compile("\\.(\\d+)")
-
-        val matcher = pattern.matcher(size)
-        if (matcher.find()) {
-            return matcher.group(1).length
-        }
-        return 2 // Default digits
+    fun dollar(number: Double?, size: Double? = null): String? {
+        return dollar(bigDecimal = number?.toBigDecimal(), size = size)
     }
 
-    fun dollar(number: Double?, size: String? = null): String? {
-        return dollar(number = number?.toBigDecimal(), size = size)
+    fun dollar(bigDecimal: BigDecimal?, size: Double? = null): String? {
+        return dollar(bigDecimal = bigDecimal, digits = digits(size))
     }
 
-    fun dollar(number: BigDecimal?, size: String? = null): String? {
-        return dollar(number, digits = digits(size ?: "0.01"))
+    fun dollar(number: Double?, digits: Int?): String? {
+        return dollar(bigDecimal = number?.toBigDecimal(), digits = digits)
     }
 
-    fun dollar(number: Double?, digits: Int): String? {
-        return dollar(number = number?.toBigDecimal(), digits = digits)
-    }
-
-    fun dollar(number: BigDecimal?, digits: Int): String? {
-        if (number == null) return null
-        val formattedNumber = localFormatted(number.abs(), digits)
+    fun dollar(bigDecimal: BigDecimal?, digits: Int?): String? {
+        if (bigDecimal == null) return null
+        val formattedNumber = localFormatted(bigDecimal.abs(), digits)
         return formattedNumber?.let {
-            val rawDouble = raw(number.toDouble(), digits)?.toDouble() ?: 0.0
+            val rawDouble = raw(bigDecimal.toDouble(), digits)?.toDouble() ?: 0.0
             if (rawDouble >= 0.0) {
                 "$$it"
             } else {
@@ -265,16 +258,44 @@ class DydxFormatter @Inject constructor() {
     }
 
     /*
+    xxxxx.yyyyy
+
+      Will take the number and round it to the closest step size
+      e.g. if number is 1021 and step size is "100" then output is "1000"
+    */
+    fun decimalLocaleAgnostic(number: Double?, size: Double? = null): String? {
+        return raw(number = number, size = size, locale = Locale.US)
+    }
+
+    /*
    xxxxx.yyyyy
+
    */
-    fun decimalLocaleAgnostic(number: Double?, digits: Int? = null): String? {
+    fun decimalLocaleAgnostic(number: Double?, digits: Int?): String? {
         return raw(number = number, digits = digits, locale = Locale.US)
     }
 
     /*
      xxxxxx,yyyyy or xxxxx.yyyyy
+
+      Will take the number and round it to the closest step size
+      e.g. if number is 1021 and step size is "100" then output is "1000"
      */
-    fun raw(number: Double?, digits: Int? = null, locale: Locale = Locale.getDefault()): String? {
+    fun raw(number: Double?, size: Double? = null, locale: Locale = Locale.getDefault()): String? {
+        val digits = digits(size) ?: return raw(number, digits = null, locale)
+
+        return if (number != null) {
+            val rounded = rounded(number, digits)
+            raw(number = rounded, digits = digits, locale = locale)
+        } else {
+            null
+        }
+    }
+
+    /*
+     xxxxxx,yyyyy or xxxxx.yyyyy
+     */
+    fun raw(number: Double?, digits: Int?, locale: Locale = Locale.getDefault()): String? {
         return number?.let { value ->
             if (value.isFinite()) {
                 if (digits != null) {
@@ -292,11 +313,48 @@ class DydxFormatter @Inject constructor() {
                         formatted
                     }
                 } else {
-                    BigDecimal(number).toPlainString()
+                    number.toString()
                 }
             } else {
                 "∞"
             }
+        }
+    }
+
+    private fun rounded(bigDecimal: BigDecimal, digits: Int): BigDecimal {
+        return BigDecimal(rounded(bigDecimal.toDouble(), digits))
+    }
+
+    private fun rounded(number: Double, digits: Int): Double {
+        if (digits >= 0) {
+            return number
+        } else {
+            val reversed = digits * -1
+            val divideBy = Math.pow(10.0, reversed.toDouble() - 1)
+            return round(number / divideBy).toInt() * divideBy
+        }
+    }
+
+    private fun digits(size: Double?): Int? {
+        if (size == null || size <= 0.0) return null
+
+        var size = size
+        if (size >= 1) {
+            var count = 0
+            while (size >= 1) {
+                count++
+                size /= 10
+            }
+            return count * -1
+        } else if (size <= 0.1) {
+            var count = 0
+            while (size <= 0.1) {
+                count++
+                size *= 10
+            }
+            return count
+        } else {
+            return null
         }
     }
 }
