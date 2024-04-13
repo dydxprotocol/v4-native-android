@@ -282,14 +282,8 @@ class DydxFormatter @Inject constructor() {
       e.g. if number is 1021 and step size is "100" then output is "1000"
      */
     fun raw(number: Double?, size: Double? = null, locale: Locale = Locale.getDefault()): String? {
-        val digits = digits(size) ?: return raw(number, digits = null, locale)
-
-        return if (number != null) {
-            val rounded = rounded(number, digits)
-            raw(number = rounded, digits = digits, locale = locale)
-        } else {
-            null
-        }
+        val digits = digits(size)
+        return raw(number = number, digits = digits, locale = locale)
     }
 
     /*
@@ -299,13 +293,14 @@ class DydxFormatter @Inject constructor() {
         return number?.let { value ->
             if (value.isFinite()) {
                 if (digits != null) {
+                    val rounded = rounded(value, digits)
                     val rawFormatter = DecimalFormat.getInstance(locale).apply {
                         minimumFractionDigits = maxOf(digits, 0)
                         maximumFractionDigits = maxOf(digits, 0)
                         roundingMode = RoundingMode.HALF_UP
                         isGroupingUsed = false
                     }
-                    val formatted = rawFormatter.format(number)
+                    val formatted = rawFormatter.format(rounded)
                     val number = rawFormatter.parse(formatted)
                     if (number.toDouble() == 0.0) { // handle -0.0
                         rawFormatter.format(0.0)
