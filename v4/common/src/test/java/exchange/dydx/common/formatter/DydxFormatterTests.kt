@@ -266,7 +266,7 @@ class DydxFormatterTests {
     }
 
     @Test
-    fun testDecimalLocaleAgnostic_Doubleize() {
+    fun testDecimalLocaleAgnostic_DoubleSize() {
         val formatter = DydxFormatter()
         data class TestCase(
             val number: Double,
