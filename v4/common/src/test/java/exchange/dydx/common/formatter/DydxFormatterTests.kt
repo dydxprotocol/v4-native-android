@@ -97,6 +97,7 @@ class DydxFormatterTests {
             val number: Double,
             val digits: Int = 2,
             val expected: String,
+            val locale: Locale = Locale.US,
         )
 
         val testCases = listOf(
@@ -108,9 +109,18 @@ class DydxFormatterTests {
             TestCase(number = 0.0, digits = 0, expected = "$0"),
             TestCase(number = 0.0, digits = 1, expected = "$0.0"),
             TestCase(number = 0.6, digits = 0, expected = "$1"),
+            TestCase(number = 1.0, digits = 2, expected = "$1,00", locale = Locale.FRANCE),
+            TestCase(number = 0.5, digits = 2, expected = "$0,50", locale = Locale.FRANCE),
+            TestCase(number = -0.25, digits = 2, expected = "-$0,25", locale = Locale.FRANCE),
+            TestCase(number = -0.0002, digits = 2, expected = "$0,00", locale = Locale.FRANCE),
+            TestCase(number = 0.0, digits = 2, expected = "$0,00", locale = Locale.FRANCE),
+            TestCase(number = 0.0, digits = 0, expected = "$0", locale = Locale.FRANCE),
+            TestCase(number = 0.0, digits = 1, expected = "$0,0", locale = Locale.FRANCE),
+            TestCase(number = 0.6, digits = 0, expected = "$1", locale = Locale.FRANCE),
         )
 
         testCases.forEach { testCase ->
+            formatter.locale = testCase.locale
             val formatted = formatter.dollar(number = testCase.number, digits = testCase.digits)
             assert(formatted == testCase.expected) { "Test case: $testCase, formatted: $formatted" }
         }

@@ -1,6 +1,7 @@
 package exchange.dydx.trading.common.formatter
 
 import java.math.BigDecimal
+import java.math.BigDecimal.ZERO
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -142,8 +143,8 @@ class DydxFormatter @Inject constructor() {
         if (bigDecimal == null) return null
         val formattedNumber = localFormatted(bigDecimal.abs(), digits)
         return formattedNumber?.let {
-            val rawDouble = raw(bigDecimal.toDouble(), digits)?.toDouble() ?: 0.0
-            if (rawDouble >= 0.0) {
+            val rounded = if (digits != null) bigDecimal.setScale(digits, RoundingMode.HALF_UP) else bigDecimal
+            if (rounded >= BigDecimal.ZERO) {
                 "$$it"
             } else {
                 "-$$it"
