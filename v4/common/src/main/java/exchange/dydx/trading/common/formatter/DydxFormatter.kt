@@ -1,13 +1,14 @@
 package exchange.dydx.trading.common.formatter
 
 import java.math.BigDecimal
-import java.math.BigDecimal.ZERO
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -15,6 +16,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.round
 
@@ -38,12 +40,12 @@ class DydxFormatter @Inject constructor() {
         DateTimeFormatter.ofPattern("MMM dd").withZone(ZoneOffset.UTC)
     }
 
-    private val timeFormatter: SimpleDateFormat by lazy {
-        SimpleDateFormat("HH:mm:ss", locale)
+    private val timeFormatter: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern("HH:mm:ss", locale)
     }
 
-    private val dateTimeFormatter: SimpleDateFormat by lazy {
-        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale)
+    private val dateTimeFormatter: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", locale)
     }
 
     fun dollarVolume(number: Double?, digits: Int = 2): String? {
@@ -98,11 +100,7 @@ class DydxFormatter @Inject constructor() {
             null
         }
     }
-    fun localFormatted(number: Double?, digits: Int): String? {
-        return localFormatted(number?.toBigDecimal(), digits)
-    }
-
-    fun localFormatted(number: BigDecimal?, digits: Int?): String? {
+    fun localFormatted(number: Double?, digits: Int?): String? {
         if (number != null) {
             val number = if (digits != null) rounded(number, digits) else number
             val decimalFormat = NumberFormat.getInstance(locale) as? DecimalFormat
@@ -122,27 +120,15 @@ class DydxFormatter @Inject constructor() {
         return null
     }
 
-    fun localFormatted(number: BigDecimal?, size: Double): String? {
-        val digits = digits(size)
-        return localFormatted(number, digits)
-    }
-
     fun dollar(number: Double?, size: Double? = null): String? {
-        return dollar(bigDecimal = number?.toBigDecimal(), size = size)
-    }
-
-    fun dollar(bigDecimal: BigDecimal?, size: Double? = null): String? {
-        return dollar(bigDecimal = bigDecimal, digits = digits(size))
+        return dollar(number = number, digits = digits(size))
     }
 
     fun dollar(number: Double?, digits: Int?): String? {
-        return dollar(bigDecimal = number?.toBigDecimal(), digits = digits)
-    }
-
-    fun dollar(bigDecimal: BigDecimal?, digits: Int?): String? {
-        if (bigDecimal == null) return null
-        val formattedNumber = localFormatted(bigDecimal.abs(), digits)
+        if (number == null) return null
+        val formattedNumber = localFormatted(abs(number), digits)
         return formattedNumber?.let {
+            val bigDecimal = BigDecimal(number)
             val rounded = if (digits != null) bigDecimal.setScale(digits, RoundingMode.HALF_UP) else bigDecimal
             if (rounded >= BigDecimal.ZERO) {
                 "$$it"
@@ -153,10 +139,6 @@ class DydxFormatter @Inject constructor() {
     }
 
     fun percent(number: Double?, digits: Int, minDigits: Int? = null): String? {
-        return percent(number = number?.toBigDecimal(), digits = digits, minDigits = minDigits)
-    }
-
-    fun percent(number: BigDecimal?, digits: Int, minDigits: Int? = null): String? {
         if (number != null) {
             percentFormatter.minimumFractionDigits = minDigits ?: digits
             percentFormatter.maximumFractionDigits = digits
@@ -227,17 +209,19 @@ class DydxFormatter @Inject constructor() {
         }
     }
 
-    fun dateTime(time: Instant?): String? {
+    fun dateTime(time: Instant?, timeZone: ZoneId = ZoneId.systemDefault()): String? {
         return if (time != null) {
-            dateTimeFormatter.format(Date.from(time))
+            val ldt: LocalDateTime = time.atZone(timeZone).toLocalDateTime()
+            dateTimeFormatter.format(ldt)
         } else {
             null
         }
     }
 
-    fun clock(time: Instant?): String? {
+    fun clock(time: Instant?, timeZone: ZoneId = ZoneId.systemDefault()): String? {
         return if (time != null) {
-            timeFormatter.format(Date.from(time))
+            val ldt: LocalDateTime = time.atZone(timeZone).toLocalDateTime()
+            timeFormatter.format(ldt)
         } else {
             null
         }
@@ -282,9 +266,9 @@ class DydxFormatter @Inject constructor() {
       Will take the number and round it to the closest step size
       e.g. if number is 1021 and step size is "100" then output is "1000"
      */
-    fun raw(number: Double?, size: Double? = null, locale: Locale = Locale.getDefault()): String? {
+    fun raw(number: Double?, size: Double? = null, locale: Locale? = null): String? {
         val digits = digits(size)
-        return raw(number = number, digits = digits, locale = locale)
+        return raw(number = number, digits = digits, locale = locale ?: this.locale)
     }
 
     /*
@@ -331,6 +315,15 @@ class DydxFormatter @Inject constructor() {
         }
     }
 
+    /*
+       Returns the number of digits for a given size specified in the format of 10^(-x)
+         e.g.
+         0.001 -> 3,
+         0.1 -> 1,
+         1 -> 0,
+         10 -> -1
+         1000 -> -3
+     */
     private fun digits(size: Double?): Int? {
         if (size == null || size <= 0.0) return null
 

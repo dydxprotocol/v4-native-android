@@ -18,11 +18,12 @@ class ExampleUnitTest {
     @Test
     fun eth_interactor() {
         val waiter = Waiter()
-        val interactor = EthereumInteractor("https://ethereum-goerli.publicnode.com")
+        val interactor = EthereumInteractor("https://ethereum-sepolia-rpc.publicnode.com")
         interactor.netVersion { error, networkVersion ->
             println("error: $error")
             println("networkVersion: $networkVersion")
+            waiter.resume()
         }
-        waiter.await(1000)
+        waiter.await(5000)
     }
 }

@@ -4,6 +4,7 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import org.junit.Assert
 import org.junit.Test
 import java.time.Instant
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -212,14 +213,14 @@ class DydxFormatterTests {
     @Test
     fun testDateTime() {
         val formatter = DydxFormatter()
-        val time = formatter.dateTime(Instant.parse("2021-10-01T00:00:00Z"))
+        val time = formatter.dateTime(Instant.parse("2021-10-01T00:00:00Z"), ZoneId.of("America/Los_Angeles"))
         Assert.assertEquals("2021-09-30 17:00:00", time)
     }
 
     @Test
     fun testClock() {
         val formatter = DydxFormatter()
-        val time = formatter.clock(Instant.parse("2021-10-01T00:00:00Z"))
+        val time = formatter.clock(Instant.parse("2021-10-01T00:00:00Z"), ZoneId.of("America/Los_Angeles"))
         Assert.assertEquals("17:00:00", time)
     }
 
