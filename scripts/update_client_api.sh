@@ -44,3 +44,6 @@ if [ -d "$TARGET_DIR" ]; then
 else
     echo "Target directory $TARGET_DIR does not exist. File not copied."
 fi
+
+# Replace private functions and properties that start with #
+${ORIG_DIR}/replace_hash_sign.sh "$TARGET_DIR/v4-native-client.js"

@@ -46,6 +46,7 @@ import exchange.dydx.platformui.designSystem.theme.ThemeConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.AppConfigImpl
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.theme.DydxTheme
 import exchange.dydx.trading.common.theme.DydxThemeImpl
 import exchange.dydx.trading.feature.shared.PreferenceKeys
@@ -57,6 +58,7 @@ import exchange.dydx.trading.integration.cosmos.CosmosV4ClientWebview
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.JsonUtils
 import exchange.dydx.utilities.utils.SharedPreferencesStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
@@ -109,10 +111,13 @@ interface AppModule {
         fun provideLanguageKey(): String = PreferenceKeys.Language
 
         @Provides
-        fun providePlatformInfo(): PlatformInfo =
+        fun providePlatformInfo(
+            @CoroutineScopes.App appScope: CoroutineScope,
+        ): PlatformInfo =
             PlatformInfo(
                 snackbarHostState = SnackbarHostState(),
                 infoType = MutableStateFlow(PlatformInfo.InfoType.Info),
+                appScope = appScope,
             )
 
         @Provides
@@ -161,7 +166,7 @@ interface AppModule {
 
     @Binds fun bindTrackingProtocol(abacusTrackingImp: AbacusTrackingImp): TrackingProtocol
 
-    @Binds fun bindTracking(abacusTrackingImp: AbacusTrackingImp): Tracking
+    @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
 
     @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
 

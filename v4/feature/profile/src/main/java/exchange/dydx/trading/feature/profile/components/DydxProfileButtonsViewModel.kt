@@ -10,6 +10,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.ProfileRoutes
+import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,6 +22,7 @@ class DydxProfileButtonsViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val logoutDialog: PlatformDialog,
+    private val walletAnalytics: WalletAnalytics,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxProfileButtonsView.ViewState?> =
@@ -55,6 +57,7 @@ class DydxProfileButtonsViewModel @Inject constructor(
                     cancelTitle = localizer.localize("APP.GENERAL.CANCEL"),
                     confirmTitle = localizer.localize("APP.GENERAL.SIGN_OUT"),
                     confirmAction = {
+                        walletAnalytics.logDisconnected(currentWallet?.walletId)
                         abacusStateManager.logOut()
                     },
                 )

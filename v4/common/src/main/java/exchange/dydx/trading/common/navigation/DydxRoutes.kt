@@ -32,6 +32,8 @@ object ProfileRoutes {
     const val help = "help"
     const val rewards = "rewards"
     const val debug_enable = "action/debug/enable"
+    const val report_issue = "settings/report_issue"
+    const val notifications = "settings/notifications"
 }
 
 object NewsAlertsRoutes {
@@ -47,6 +49,9 @@ object MarketRoutes {
 object TradeRoutes {
     const val status = "trade/status"
     const val close_position = "trade/close"
+    const val margin_type = "trade/margin_type"
+    const val target_leverage = "trade/target_leverage"
+    const val trigger = "trade/take_profit_stop_loss"
 }
 
 object TransferRoutes {

@@ -15,6 +15,8 @@ import exchange.dydx.trading.feature.profile.help.DydxHelpView
 import exchange.dydx.trading.feature.profile.history.DydxHistoryView
 import exchange.dydx.trading.feature.profile.keyexport.DydxKeyExportView
 import exchange.dydx.trading.feature.profile.language.DydxLanguageView
+import exchange.dydx.trading.feature.profile.notifications.DydxNotificationsView
+import exchange.dydx.trading.feature.profile.reportissue.DydxReportIssueView
 import exchange.dydx.trading.feature.profile.rewards.DydxRewardsView
 import exchange.dydx.trading.feature.profile.settings.DydxSettingsView
 import exchange.dydx.trading.feature.profile.systemstatus.DydxSystemStatusView
@@ -160,5 +162,21 @@ fun NavGraphBuilder.profileGraph(
         deepLinks = appRouter.deeplinks(ProfileRoutes.debug_enable),
     ) { navBackStackEntry ->
         DydxDebugEnableView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = ProfileRoutes.report_issue,
+        deepLinks = appRouter.deeplinks(ProfileRoutes.report_issue),
+    ) { navBackStackEntry ->
+        DydxReportIssueView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = ProfileRoutes.notifications,
+        deepLinks = appRouter.deeplinks(ProfileRoutes.notifications),
+    ) { navBackStackEntry ->
+        DydxNotificationsView.Content(Modifier)
     }
 }

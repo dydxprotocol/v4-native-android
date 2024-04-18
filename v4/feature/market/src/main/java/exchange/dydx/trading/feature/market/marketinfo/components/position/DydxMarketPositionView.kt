@@ -57,6 +57,7 @@ object DydxMarketPositionView : DydxComponent {
         val shareAction: (() -> Unit)? = null,
         val closeAction: (() -> Unit)? = null,
         val sharedMarketPositionViewState: SharedMarketPositionViewState? = null,
+        val enableTrigger: Boolean = false,
     ) {
         companion object {
             val preview = ViewState(
@@ -87,7 +88,11 @@ object DydxMarketPositionView : DydxComponent {
         ) {
             CreateCollection(Modifier, state)
 
-            CreateButtons(Modifier, state)
+            if (state.enableTrigger) {
+                DydxMarketPositionButtonsView.Content(Modifier)
+            } else {
+                CreateButtons(Modifier, state)
+            }
 
             CreateList(Modifier, state)
         }

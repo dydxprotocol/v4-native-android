@@ -7,6 +7,7 @@ import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -19,6 +20,7 @@ class DydxTosViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val setupStatusFlow: StateFlow<DydxWalletSetup.Status.Signed?>,
+    private val onboardingAnalytics: OnboardingAnalytics,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTosView.ViewState?> =
@@ -52,6 +54,8 @@ class DydxTosViewModel @Inject constructor(
                             mnemonic = mnemonic,
                         )
                     }
+
+                    onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.ACKNOWLEDGE_TERMS)
                 }
 
                 router.navigateBack()

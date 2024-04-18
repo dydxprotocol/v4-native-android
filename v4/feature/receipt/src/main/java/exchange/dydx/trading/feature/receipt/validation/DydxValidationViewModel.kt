@@ -9,6 +9,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class DydxValidationViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxValidationView.ViewState?> =
@@ -49,6 +51,33 @@ class DydxValidationViewModel @Inject constructor(
                 firstWarning != null -> firstWarning.resources.text?.localizedString(localizer)
                 transferError?.isNotEmpty() == true -> transferError
                 else -> null
+            },
+            link = when {
+                firstBlockingError != null -> createLink(
+                    text = firstBlockingError.linkText,
+                    url = firstBlockingError.link,
+                )
+                firstWarning != null -> createLink(
+                    text = firstWarning.linkText,
+                    url = firstWarning.link,
+                )
+                else -> null
+            },
+        )
+    }
+
+    private fun createLink(
+        text: String?,
+        url: String?,
+    ): DydxValidationView.Link? {
+        if (text.isNullOrEmpty() || url.isNullOrEmpty()) {
+            return null
+        }
+
+        return DydxValidationView.Link(
+            text = localizer.localize(text),
+            action = {
+                router.navigateTo(url)
             },
         )
     }

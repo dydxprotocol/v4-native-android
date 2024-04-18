@@ -19,6 +19,9 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 fun PlatformSwitchInput(
     modifier: Modifier = Modifier,
     label: String? = null,
+    textStyle: TextStyle = TextStyle.dydxDefault
+        .themeColor(ThemeColor.SemanticColor.text_tertiary)
+        .themeFont(fontSize = ThemeFont.FontSize.small),
     value: Boolean? = null,
     onValueChange: (Boolean) -> Unit = {},
 ) {
@@ -30,9 +33,7 @@ fun PlatformSwitchInput(
             Text(
                 modifier = Modifier.weight(1f),
                 text = label,
-                style = TextStyle.dydxDefault
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
-                    .themeFont(fontSize = ThemeFont.FontSize.small),
+                style = textStyle,
             )
         }
 

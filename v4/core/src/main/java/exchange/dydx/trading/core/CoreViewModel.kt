@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
@@ -17,6 +17,7 @@ import exchange.dydx.trading.integration.analytics.CompositeTracking
 import exchange.dydx.trading.integration.analytics.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
+import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -30,13 +31,14 @@ class CoreViewModel @Inject constructor(
     val cosmosClient: CosmosV4WebviewClientProtocol,
     val platformInfo: PlatformInfo,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val localizer: LocalizerProtocol,
+    private val localizer: AbacusLocalizerProtocol,
     @ApplicationContext context: Context,
     private val cachedFileLoader: CachedFileLoader,
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
     val compositeTracking: CompositeTracking,
+    private val preferencesStore: SharedPreferencesStore,
 ) : ViewModel() {
     private var globalWorkers: DydxGlobalWorkers? = null
 
@@ -53,6 +55,7 @@ class CoreViewModel @Inject constructor(
             formatter = formatter,
             parser = parser,
             tracker = tracker,
+            preferencesStore = preferencesStore,
         )
     }
 
@@ -61,15 +64,14 @@ class CoreViewModel @Inject constructor(
     fun start() {
         cosmosClient.initialized
             .onEach { initialized ->
-                // Wait for the cosmos client to be initialized before starting the workers
+                // Wait for the cosmos client to be initialized before setting the environment
                 if (initialized) {
                     resetEnv()
-                    startWorkers()
                 }
             }.launchIn(viewModelScope)
     }
 
-    private fun startWorkers() {
+    fun startWorkers() {
         globalWorkers?.start()
     }
 

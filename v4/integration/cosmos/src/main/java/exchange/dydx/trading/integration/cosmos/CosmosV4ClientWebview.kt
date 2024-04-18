@@ -1,8 +1,11 @@
 package exchange.dydx.trading.integration.cosmos
 
 import android.app.Application
+import android.util.Log
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.Locale
@@ -11,14 +14,17 @@ import javax.inject.Singleton
 
 private const val WEBVIEW_FILENAME = "v4-native-client.js"
 
+private const val TAG = "CosmosV4ClientWebview"
+
 @Singleton
 class CosmosV4ClientWebview @Inject constructor(
     application: Application,
+    @CoroutineScopes.App appScope: CoroutineScope,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,
         description = WEBVIEW_FILENAME,
-        runner = JavascriptRunnerV4.runnerFromFile(application, WEBVIEW_FILENAME)
+        runner = JavascriptRunnerV4.runnerFromFile(appScope, application, WEBVIEW_FILENAME)
             ?: throw IOException("Fatal, unable to load runner from: $WEBVIEW_FILENAME"),
     ) {
 
@@ -201,13 +207,13 @@ class CosmosV4ClientWebview @Inject constructor(
                 function = functionName,
                 params = jsParams,
             ) { result ->
+                Log.d(TAG, "callNativeClient $functionName result: $result")
                 completion(result?.response)
             }
         }
     }
 
     override fun echo(value: String, completion: CosmosV4ClientResponseHandler) {
-//        completion.onSuccess(value)
         callNativeClient(
             "echoCallback",
             listOf(value),

@@ -77,7 +77,6 @@ object DydxMarketInfoHeaderView : DydxComponent {
             modifier
                 .fillMaxWidth()
                 .padding(vertical = ThemeShapes.VerticalPadding)
-                .padding(top = ThemeShapes.VerticalPadding)
                 .padding(end = ThemeShapes.HorizontalPadding)
                 .height(60.dp),
             verticalAlignment = Alignment.CenterVertically,

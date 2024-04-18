@@ -25,10 +25,13 @@
             },
             {
                 "title" : {
-                    "text" : "APP.V4.SYSTEM_STATUS"
+                    "text" : "APP.V4.NOTIFICATIONS"
                 },
                 "link" : {
-                    "text" : "settings/status"
+                    "text" : "settings/notifications"
+                },
+                "field":{
+                    "field":"should_display_in_app_notifications"
                 }
             },
             {
@@ -40,6 +43,14 @@
                 },
                 "field":{
                     "field":"direction_color_preference"
+                }
+            },
+            {
+                "title" : {
+                    "text" : "APP.V4.SYSTEM_STATUS"
+                },
+                "link" : {
+                    "text" : "settings/status"
                 }
             }
         ]

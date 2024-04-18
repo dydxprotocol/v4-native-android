@@ -12,6 +12,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.profile.color.DydxDirectionColorPreferenceViewModel
 import exchange.dydx.trading.feature.profile.language.DydxLanguageViewModel
+import exchange.dydx.trading.feature.profile.notifications.DydxNotificationsViewModel
 import exchange.dydx.trading.feature.profile.theme.DydxThemeViewModel
 import exchange.dydx.trading.feature.profile.tradingnetwork.DydxTradingNetworkViewModel
 import exchange.dydx.trading.feature.shared.PreferenceKeys
@@ -19,7 +20,7 @@ import exchange.dydx.trading.feature.shared.views.SettingsView
 import exchange.dydx.utilities.utils.DebugEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +33,7 @@ class DydxSettingsViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<SettingsView.ViewState?> = flowOf(createViewState())
+    val state: Flow<SettingsView.ViewState?> = preferencesStore.stateUpdatedCount.map { createViewState() }
 
     private fun createViewState(): SettingsView.ViewState {
         val settingsFile = if (DebugEnabled.enabled(preferencesStore)) {
@@ -80,6 +81,12 @@ class DydxSettingsViewModel @Inject constructor(
                         return@createFrom DydxTradingNetworkViewModel.currentValueText(
                             localizer = localizer,
                             abacusStateManager = abacusStateManager,
+                        )
+                    }
+                    PreferenceKeys.Notifications -> {
+                        return@createFrom DydxNotificationsViewModel.currentValueText(
+                            localizer = localizer,
+                            preferencesStore = preferencesStore,
                         )
                     }
                     else -> {
