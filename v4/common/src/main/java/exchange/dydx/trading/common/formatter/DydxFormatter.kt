@@ -301,10 +301,6 @@ class DydxFormatter @Inject constructor() {
         }
     }
 
-    private fun rounded(bigDecimal: BigDecimal, digits: Int): BigDecimal {
-        return BigDecimal(rounded(bigDecimal.toDouble(), digits))
-    }
-
     private fun rounded(number: Double, digits: Int): Double {
         if (digits >= 0) {
             return number
