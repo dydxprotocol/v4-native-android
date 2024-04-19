@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.leverage
 
-import android.util.Half.toFloat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -67,7 +66,7 @@ object DydxTradeInputLeverageView : DydxComponent {
         val maxLeverage: Double?,
         val side: OrderSide = OrderSide.Buy,
         val sideToggleAction: (OrderSide) -> Unit = {},
-        val leverageUpdateAction: (Double) -> Unit = {},
+        val leverageUpdateAction: (String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -148,11 +147,7 @@ object DydxTradeInputLeverageView : DydxComponent {
             modifier = modifier,
             value = leverageValue,
             onValueChange = {
-                try {
-                    val value = it.toDouble()
-                    state.leverageUpdateAction(value)
-                } catch (e: Exception) {
-                }
+                state.leverageUpdateAction(it)
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
@@ -224,7 +219,9 @@ object DydxTradeInputLeverageView : DydxComponent {
                 OrderSide.Buy -> positionLeverage..maxLeverage
             },
             onValueChange = {
-                state.leverageUpdateAction(it.toDouble())
+                state.formatter.raw(it.toDouble())?.let { stringValue ->
+                    state.leverageUpdateAction(stringValue)
+                }
                 focusManager.clearFocus()
             },
             leftRatio = when (state.side) {
