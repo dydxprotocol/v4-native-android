@@ -1,6 +1,5 @@
 package exchange.dydx.trading.common.formatter
 
-import exchange.dydx.abacus.state.app.helper.round
 import exchange.dydx.utilities.utils.rounded
 import java.math.BigDecimal
 import java.math.RoundingMode
