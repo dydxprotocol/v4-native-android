@@ -4,6 +4,7 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import org.junit.Assert
 import org.junit.Test
 import java.time.Instant
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -127,6 +128,33 @@ class DydxFormatterTests {
     }
 
     @Test
+    fun testDollar_DoubleSize() {
+        val formatter = DydxFormatter()
+
+        data class TestCase(
+            val number: Double,
+            val size: Double?,
+            val expected: String,
+        )
+
+        val testCases = listOf(
+            TestCase(number = 0.6, size = 1.0, expected = "$1"),
+            TestCase(number = 1.0, size = 0.01, expected = "$1.00"),
+            TestCase(number = 0.5, size = 0.01, expected = "$0.50"),
+            TestCase(number = -0.25, size = 0.01, expected = "-$0.25"),
+            TestCase(number = -0.0002, size = 0.01, expected = "$0.00"),
+            TestCase(number = 0.0, size = 0.01, expected = "$0.00"),
+            TestCase(number = 0.0, size = 1.0, expected = "$0"),
+            TestCase(number = 0.0, size = 0.1, expected = "$0.0"),
+        )
+
+        testCases.forEach { testCase ->
+            val formatted = formatter.dollar(number = testCase.number, size = testCase.size)
+            assert(formatted == testCase.expected) { "Test case: $testCase, formatted: $formatted" }
+        }
+    }
+
+    @Test
     fun testPercent() {
         val formatter = DydxFormatter()
 
@@ -185,14 +213,14 @@ class DydxFormatterTests {
     @Test
     fun testDateTime() {
         val formatter = DydxFormatter()
-        val time = formatter.dateTime(Instant.parse("2021-10-01T00:00:00Z"))
+        val time = formatter.dateTime(Instant.parse("2021-10-01T00:00:00Z"), ZoneId.of("America/Los_Angeles"))
         Assert.assertEquals("2021-09-30 17:00:00", time)
     }
 
     @Test
     fun testClock() {
         val formatter = DydxFormatter()
-        val time = formatter.clock(Instant.parse("2021-10-01T00:00:00Z"))
+        val time = formatter.clock(Instant.parse("2021-10-01T00:00:00Z"), ZoneId.of("America/Los_Angeles"))
         Assert.assertEquals("17:00:00", time)
     }
 
@@ -249,6 +277,39 @@ class DydxFormatterTests {
     }
 
     @Test
+    fun testDecimalLocaleAgnostic_DoubleSize() {
+        val formatter = DydxFormatter()
+        data class TestCase(
+            val number: Double,
+            val size: Double?,
+            val expected: String,
+        )
+
+        val testCases = listOf(
+            TestCase(number = 1.0, size = 0.01, expected = "1.00"),
+            TestCase(number = -0.001, size = 0.0, expected = "-0.001"), // invalid size
+            TestCase(number = -0.001, size = 0.001, expected = "-0.001"),
+            TestCase(number = -0.001, size = 0.01, expected = "0.00"),
+            TestCase(number = 0.001, size = 0.01, expected = "0.00"),
+            TestCase(number = -0.005, size = 0.01, expected = "-0.01"),
+            TestCase(number = -0.0051, size = 0.01, expected = "-0.01"),
+            TestCase(number = 1.6, size = 1.0, expected = "2"),
+            TestCase(number = 1123345.123, size = 0.01, expected = "1123345.12"),
+            TestCase(number = 1123345.126, size = 0.01, expected = "1123345.13"),
+            TestCase(number = 1123349.123, size = 10.0, expected = "1123350"),
+            TestCase(number = 1123341.123, size = 10.0, expected = "1123340"),
+            TestCase(number = -1123341.123, size = 10.0, expected = "-1123340"),
+            TestCase(number = 1123341.123, size = 100000000.0, expected = "0"),
+            TestCase(number = 1123341.123, size = null, expected = "1123341.123"),
+        )
+
+        testCases.forEach { testCase ->
+            val formatted = formatter.decimalLocaleAgnostic(number = testCase.number, size = testCase.size)
+            assert(formatted == testCase.expected) { "Test case: $testCase, formatted: $formatted" }
+        }
+    }
+
+    @Test
     fun testRaw() {
         val formatter = DydxFormatter()
         data class TestCase(
@@ -266,13 +327,47 @@ class DydxFormatterTests {
             TestCase(number = 0.001, digits = 2, expected = "0.00"),
             TestCase(number = -0.005, digits = 2, expected = "-0.01"),
             TestCase(number = -0.0051, digits = 2, expected = "-0.01"),
-            TestCase(number = 1.0, digits = null, expected = "1"),
+            TestCase(number = 1.0, digits = null, expected = "1.0"),
             TestCase(number = 1123345.123, digits = 2, expected = "1123345.12"),
             TestCase(number = 1123345.123, digits = 2, expected = "1123345,12", locale = Locale.FRANCE),
         )
 
         testCases.forEach { testCase ->
             val formatted = formatter.raw(number = testCase.number, digits = testCase.digits, locale = testCase.locale)
+            assert(formatted == testCase.expected) { "Test case: $testCase, formatted: $formatted" }
+        }
+    }
+
+    @Test
+    fun testRaw_DoubleSize() {
+        val formatter = DydxFormatter()
+
+        data class TestCase(
+            val number: Double,
+            val size: Double?,
+            val expected: String,
+            var locale: Locale = Locale.getDefault()
+        )
+
+        val testCases = listOf(
+            TestCase(number = 1.0, size = 0.01, expected = "1.00"),
+            TestCase(number = -0.001, size = 0.0, expected = "-0.001"), // invalid size
+            TestCase(number = -0.001, size = 0.001, expected = "-0.001"),
+            TestCase(number = -0.001, size = 0.01, expected = "0.00"),
+            TestCase(number = 0.001, size = 0.01, expected = "0.00"),
+            TestCase(number = -0.005, size = 0.01, expected = "-0.01"),
+            TestCase(number = -0.0051, size = 0.01, expected = "-0.01"),
+            TestCase(number = 1.0, size = null, expected = "1.0"),
+            TestCase(number = 1123345.123, size = 0.01, expected = "1123345.12"),
+            TestCase(number = 1123345.123, size = 0.01, expected = "1123345,12", locale = Locale.FRANCE),
+            TestCase(number = 1123349.123, size = 10.0, expected = "1123350", locale = Locale.FRANCE),
+            TestCase(number = 1123344.123, size = 10.0, expected = "1123340", locale = Locale.FRANCE),
+            TestCase(number = 1.0, size = null, expected = "1.0", locale = Locale.FRANCE),
+            TestCase(number = 1123341.123, size = 100000000.0, expected = "0", locale = Locale.FRANCE),
+        )
+
+        testCases.forEach { testCase ->
+            val formatted = formatter.raw(number = testCase.number, size = testCase.size, locale = testCase.locale)
             assert(formatted == testCase.expected) { "Test case: $testCase, formatted: $formatted" }
         }
     }

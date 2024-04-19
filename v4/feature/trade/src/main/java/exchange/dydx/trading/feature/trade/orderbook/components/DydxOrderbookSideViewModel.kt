@@ -158,7 +158,7 @@ private fun createViewState(
                 price = line.price,
                 size = line.size,
                 sizeText = formatter.raw(line.size, market?.configs?.displayStepSizeDecimals ?: 4) ?: "",
-                priceText = formatter.dollar(line.price, orderbook?.grouping?.tickSize.toString()) ?: "",
+                priceText = formatter.dollar(line.price, orderbook?.grouping?.tickSize) ?: "",
                 depth = line.depth,
                 taken = usage?.size,
                 textColor = textColor,
