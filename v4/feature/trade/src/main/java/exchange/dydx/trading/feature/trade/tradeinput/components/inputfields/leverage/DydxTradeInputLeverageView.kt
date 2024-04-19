@@ -42,6 +42,7 @@ import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
 import exchange.dydx.trading.feature.shared.views.GradientSlider
 import exchange.dydx.trading.feature.shared.views.SideTextView
+import exchange.dydx.utilities.utils.rounded
 import kotlin.math.abs
 
 @Preview
@@ -213,8 +214,7 @@ object DydxTradeInputLeverageView : DydxComponent {
             return
         }
 
-        val positionRatio = state.formatter.raw((positionLeverage / maxLeverage).toDouble(), 1)
-            ?.toFloat() ?: 0f
+        val positionRatio = (positionLeverage / maxLeverage).rounded(toPlaces = 1)
 
         val sliderViewState = GradientSlider.ViewState(
             localizer = state.localizer,
@@ -237,10 +237,9 @@ object DydxTradeInputLeverageView : DydxComponent {
             },
         )
 
-        val absPositionLeverage = state.formatter.raw(abs(positionLeverage).toDouble(), 1)
-            ?.toFloat() ?: 0f
-        val absMaxLeverage = state.formatter.raw(abs(maxLeverage).toDouble(), 1)
-            ?.toFloat() ?: 0f
+        val absPositionLeverage = abs(positionLeverage).rounded(1)
+        val absMaxLeverage = abs(maxLeverage).rounded(1)
+
         Column(
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(0.dp),
