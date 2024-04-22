@@ -88,7 +88,6 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         val firstError = errors?.firstOrNull { it.type == ErrorType.error }
         val firstWarning = errors?.firstOrNull { it.type == ErrorType.warning }
         val fieldString = firstError?.fields?.firstOrNull() ?: firstWarning?.fields?.firstOrNull()
-        print("fieldString: $fieldString")
         val field: TriggerOrdersInputField? = fieldString?.let {
             TriggerOrdersInputField.invoke(it)
         }

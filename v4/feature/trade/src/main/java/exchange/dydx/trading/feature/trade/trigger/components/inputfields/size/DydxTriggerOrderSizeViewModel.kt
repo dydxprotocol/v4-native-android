@@ -69,7 +69,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         } else {
             0.0
         }
-        val firstError = validationErrors?.firstOrNull { it.type == ErrorType.error }
+        val firstErrorOrWarning = validationErrors?.firstOrNull { it.type == ErrorType.error }
             ?: validationErrors?.firstOrNull { it.type == ErrorType.warning }
 
         return DydxTriggerOrderSizeView.ViewState(
@@ -89,8 +89,8 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 label = localizer.localize("APP.GENERAL.AMOUNT"),
                 token = configsAndAsset?.asset?.id,
                 value = formatter.decimalLocaleAgnostic(size, size = stepSize),
-                alertState = if (firstError?.fields?.contains(TriggerOrdersInputField.size.rawValue) == true) {
-                    firstError.alertState
+                alertState = if (firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.size.rawValue) == true) {
+                    firstErrorOrWarning.alertState
                 } else {
                     PlatformInputAlertState.None
                 },
