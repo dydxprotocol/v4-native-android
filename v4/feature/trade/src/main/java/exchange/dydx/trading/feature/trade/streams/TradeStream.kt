@@ -6,6 +6,8 @@ import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
@@ -28,8 +30,8 @@ class TradeStream @Inject constructor(
 
     private var _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> =
         MutableStateFlow(null)
-    override val submissionStatus: Flow<AbacusStateManagerProtocol.SubmissionStatus?> =
-        _submissionStatus
+    override val submissionStatus: StateFlow<AbacusStateManagerProtocol.SubmissionStatus?> =
+        _submissionStatus.asStateFlow()
 
     override val lastOrder: Flow<SubaccountOrder?> =
         combine(
