@@ -41,6 +41,7 @@ import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.GradientSlider
 import exchange.dydx.trading.feature.shared.views.SideTextView
+import exchange.dydx.utilities.utils.rounded
 import kotlin.math.abs
 
 @Preview
@@ -65,7 +66,7 @@ object DydxTradeInputLeverageView : DydxComponent {
         val maxLeverage: Double?,
         val side: OrderSide = OrderSide.Buy,
         val sideToggleAction: (OrderSide) -> Unit = {},
-        val leverageUpdateAction: (Double) -> Unit = {},
+        val leverageUpdateAction: (String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -146,11 +147,7 @@ object DydxTradeInputLeverageView : DydxComponent {
             modifier = modifier,
             value = leverageValue,
             onValueChange = {
-                try {
-                    val value = it.toDouble()
-                    state.leverageUpdateAction(value)
-                } catch (e: Exception) {
-                }
+                state.leverageUpdateAction(it)
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
@@ -212,8 +209,7 @@ object DydxTradeInputLeverageView : DydxComponent {
             return
         }
 
-        val positionRatio = state.formatter.raw((positionLeverage / maxLeverage).toDouble(), 1)
-            ?.toFloat() ?: 0f
+        val positionRatio = (positionLeverage / maxLeverage).rounded(toPlaces = 1)
 
         val sliderViewState = GradientSlider.ViewState(
             localizer = state.localizer,
@@ -223,7 +219,9 @@ object DydxTradeInputLeverageView : DydxComponent {
                 OrderSide.Buy -> positionLeverage..maxLeverage
             },
             onValueChange = {
-                state.leverageUpdateAction(it.toDouble())
+                state.formatter.raw(it.toDouble())?.let { stringValue ->
+                    state.leverageUpdateAction(stringValue)
+                }
                 focusManager.clearFocus()
             },
             leftRatio = when (state.side) {
@@ -236,10 +234,9 @@ object DydxTradeInputLeverageView : DydxComponent {
             },
         )
 
-        val absPositionLeverage = state.formatter.raw(abs(positionLeverage).toDouble(), 1)
-            ?.toFloat() ?: 0f
-        val absMaxLeverage = state.formatter.raw(abs(maxLeverage).toDouble(), 1)
-            ?.toFloat() ?: 0f
+        val absPositionLeverage = abs(positionLeverage).rounded(1)
+        val absMaxLeverage = abs(maxLeverage).rounded(1)
+
         Column(
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(0.dp),

@@ -93,7 +93,7 @@ open class DydxTriggerOrderPriceViewModel(
     ): DydxTriggerOrderPriceView.ViewState {
         val marketConfigs = configsAndAsset?.configs
         val tickSize = marketConfigs?.displayTickSizeDecimals ?: 0
-        val firstError = validationErrors?.firstOrNull { it.type == ErrorType.error }
+        val firstErrorOrWarning = validationErrors?.firstOrNull { it.type == ErrorType.error }
             ?: validationErrors?.firstOrNull { it.type == ErrorType.warning }
 
         val state = DydxTriggerOrderPriceView.ViewState(
@@ -128,8 +128,8 @@ open class DydxTriggerOrderPriceViewModel(
                         tickSize,
                     )
                 },
-                alertState = if (firstError?.fields?.contains(inputType.abacusInputField.rawValue) == true) {
-                    firstError.alertState
+                alertState = if (firstErrorOrWarning?.fields?.contains(inputType.abacusInputField.rawValue) == true) {
+                    firstErrorOrWarning.alertState
                 } else {
                     PlatformInputAlertState.None
                 },

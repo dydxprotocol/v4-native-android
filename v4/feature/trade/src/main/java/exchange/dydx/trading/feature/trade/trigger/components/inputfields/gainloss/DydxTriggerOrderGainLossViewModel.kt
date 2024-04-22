@@ -83,7 +83,7 @@ open class DydxTriggerOrderGainLossViewModel(
     ): DydxTriggerOrderGainLossView.ViewState {
         val marketConfigs = configsAndAsset?.configs
         val tickSize = marketConfigs?.displayTickSizeDecimals ?: 0
-        val firstError = validationErrors?.firstOrNull { it.type == ErrorType.error }
+        val firstErrorOrWarning = validationErrors?.firstOrNull { it.type == ErrorType.error }
             ?: validationErrors?.firstOrNull { it.type == ErrorType.warning }
 
         fun formatOrder(orderPrice: TriggerPrice) =
@@ -130,19 +130,19 @@ open class DydxTriggerOrderGainLossViewModel(
                 },
                 alertState = when (inputType) {
                     DydxTriggerOrderInputType.TakeProfit ->
-                        if (firstError?.fields?.contains(TriggerOrdersInputField.takeProfitPercentDiff.rawValue) == true ||
-                            firstError?.fields?.contains(TriggerOrdersInputField.takeProfitUsdcDiff.rawValue) == true
+                        if (firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.takeProfitPercentDiff.rawValue) == true ||
+                            firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.takeProfitUsdcDiff.rawValue) == true
                         ) {
-                            firstError.alertState
+                            firstErrorOrWarning.alertState
                         } else {
                             PlatformInputAlertState.None
                         }
 
                     DydxTriggerOrderInputType.StopLoss ->
-                        if (firstError?.fields?.contains(TriggerOrdersInputField.stopLossPercentDiff.rawValue) == true ||
-                            firstError?.fields?.contains(TriggerOrdersInputField.stopLossUsdcDiff.rawValue) == true
+                        if (firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.stopLossPercentDiff.rawValue) == true ||
+                            firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.stopLossUsdcDiff.rawValue) == true
                         ) {
-                            firstError.alertState
+                            firstErrorOrWarning.alertState
                         } else {
                             PlatformInputAlertState.None
                         }
