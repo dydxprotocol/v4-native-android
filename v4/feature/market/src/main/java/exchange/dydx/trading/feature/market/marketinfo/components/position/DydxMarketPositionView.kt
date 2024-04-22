@@ -65,6 +65,7 @@ object DydxMarketPositionView : DydxComponent {
                 shareAction = {},
                 closeAction = {},
                 sharedMarketPositionViewState = SharedMarketPositionViewState.preview,
+                enableTrigger = true,
             )
         }
     }

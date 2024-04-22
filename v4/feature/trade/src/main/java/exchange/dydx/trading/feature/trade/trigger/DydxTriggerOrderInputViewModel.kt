@@ -11,6 +11,8 @@ import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.stopLossOrders
+import exchange.dydx.dydxstatemanager.takeProfitOrders
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -50,18 +52,26 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             router.navigateBack()
         } else {
             abacusStateManager.setMarket(marketId = marketId)
-            abacusStateManager.triggerOrders(input = marketId, type = TriggerOrdersInputField.marketId)
-        }
+            abacusStateManager.triggerOrders(
+                input = marketId,
+                type = TriggerOrdersInputField.marketId,
+            )
 
-        combine(
-            triggerOrderStream.selectedSubaccountPosition,
-            triggerOrderStream.takeProfitOrders,
-            triggerOrderStream.stopLossOrders,
-            abacusStateManager.state.triggerOrdersInput,
-        ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
-            updateAbacusTriggerOrder(position, takeProfitOrders, stopLossOrders, triggerOrdersInput)
+            combine(
+                abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
+                abacusStateManager.state.takeProfitOrders(marketId),
+                abacusStateManager.state.stopLossOrders(marketId),
+                abacusStateManager.state.triggerOrdersInput,
+            ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
+                updateAbacusTriggerOrder(
+                    position,
+                    takeProfitOrders,
+                    stopLossOrders,
+                    triggerOrdersInput,
+                )
+            }
+                .launchIn(viewModelScope)
         }
-            .launchIn(viewModelScope)
 
         subscribeToStatus()
     }

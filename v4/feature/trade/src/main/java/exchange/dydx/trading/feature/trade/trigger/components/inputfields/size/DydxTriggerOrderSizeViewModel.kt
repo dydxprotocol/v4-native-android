@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
@@ -29,13 +29,15 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
 ) : ViewModel(), DydxViewModel {
 
     private val enabledFlow = MutableStateFlow(false)
-    private val marketIdFlow = abacusStateManager.state.triggerOrdersInput
-        .mapNotNull { it?.marketId }
 
     val state: Flow<DydxTriggerOrderSizeView.ViewState?> =
         combine(
             enabledFlow,
-            triggerOrderStream.selectedSubaccountPosition.filterNotNull(),
+            abacusStateManager.state.triggerOrdersInput
+                .mapNotNull { it?.marketId }
+                .flatMapLatest {
+                    abacusStateManager.state.selectedSubaccountPositionOfMarket(it)
+                },
             triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
@@ -47,7 +49,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
 
     private fun createViewState(
         sizeEnabled: Boolean,
-        position: SubaccountPosition,
+        position: SubaccountPosition?,
         isNewTriggerOrder: Boolean,
         triggerOrdersInput: TriggerOrdersInput?,
         configsAndAsset: MarketConfigsAndAsset?,
@@ -55,7 +57,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         val marketConfigs = configsAndAsset?.configs
         val stepSize = marketConfigs?.stepSize
         val size = triggerOrdersInput?.size ?: 0.0
-        val positionSize = position.size?.current ?: 0.0
+        val positionSize = position?.size?.current ?: 0.0
         val percentage = if (positionSize > 0.0) {
             size / positionSize
         } else {
@@ -68,7 +70,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 enabledFlow.value = enabled
                 if (!enabled) {
                     abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(position.size?.current, size = stepSize),
+                        formatter.decimalLocaleAgnostic(position?.size?.current, size = stepSize),
                         TriggerOrdersInputField.size,
                     )
                 }
