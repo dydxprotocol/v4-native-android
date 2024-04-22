@@ -67,7 +67,7 @@ object DydxClosePositionInputSizeView : DydxComponent {
                         modifier = Modifier.weight(1f),
                         state = LabeledTextInput.ViewState(
                             localizer = state.localizer,
-                            label = state?.localizer?.localize("APP.GENERAL.AMOUNT"),
+                            label = state.localizer?.localize("APP.GENERAL.AMOUNT"),
                             token = state.token,
                             value = state.size,
                             placeholder = state.placeholder ?: "",

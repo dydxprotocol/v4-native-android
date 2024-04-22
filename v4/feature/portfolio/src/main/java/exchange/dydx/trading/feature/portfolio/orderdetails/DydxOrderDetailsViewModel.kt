@@ -52,11 +52,11 @@ class DydxOrderDetailsViewModel @Inject constructor(
             abacusStateManager.state.marketMap,
             abacusStateManager.state.assetMap,
         ) { fills, orders, marketMap, assetMap ->
-            if (fills == null || orders == null || marketMap == null || assetMap == null) {
+            if (marketMap == null || assetMap == null) {
                 return@combine null
             }
-            val fill = fills.firstOrNull { it.id == orderOrFillId }
-            val order = orders.firstOrNull { it.id == orderOrFillId }
+            val fill = fills?.firstOrNull { it.id == orderOrFillId }
+            val order = orders?.firstOrNull { it.id == orderOrFillId }
             if (fill != null) {
                 createFillViewState(fill, marketMap, assetMap)
             } else if (order != null) {
