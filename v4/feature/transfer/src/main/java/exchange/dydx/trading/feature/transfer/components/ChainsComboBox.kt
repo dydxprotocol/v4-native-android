@@ -27,7 +27,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.R
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 
 @Preview
 @Composable
@@ -61,7 +61,7 @@ object ChainsComboBox {
             return
         }
 
-        InputFieldScarfold(
+        InputFieldScaffold(
             modifier = modifier.then(
                 state.onTapAction?.let {
                     Modifier.clickable(onClick = it)

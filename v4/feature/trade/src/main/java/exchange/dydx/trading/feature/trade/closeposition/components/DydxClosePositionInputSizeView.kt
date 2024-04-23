@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.trade.closeposition.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +12,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
 @Preview
@@ -59,7 +58,7 @@ object DydxClosePositionInputSizeView : DydxComponent {
             return
         }
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(modifier) {
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -68,7 +67,7 @@ object DydxClosePositionInputSizeView : DydxComponent {
                         modifier = Modifier.weight(1f),
                         state = LabeledTextInput.ViewState(
                             localizer = state.localizer,
-                            label = state?.localizer?.localize("APP.GENERAL.AMOUNT"),
+                            label = state.localizer?.localize("APP.GENERAL.AMOUNT"),
                             token = state.token,
                             value = state.size,
                             placeholder = state.placeholder ?: "",

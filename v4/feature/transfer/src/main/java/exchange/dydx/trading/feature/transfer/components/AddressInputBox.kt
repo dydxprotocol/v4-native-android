@@ -23,7 +23,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 
 @Preview
 @Composable
@@ -57,7 +57,7 @@ object AddressInputBox {
         if (state == null) {
             return
         }
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(modifier) {
             Column(
                 modifier = modifier
                     .padding(horizontal = ThemeShapes.HorizontalPadding)

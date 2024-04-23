@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.output.input.TriggerOrdersInput
+import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -24,7 +26,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -43,7 +44,12 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
 
     private val marketId: String?
 
-    val state: Flow<DydxTriggerOrderInputView.ViewState?> = flowOf(createViewState())
+    val state: Flow<DydxTriggerOrderInputView.ViewState?> =
+        abacusStateManager.state.validationErrors
+            .map { validationErrors ->
+                createViewState(validationErrors)
+            }
+            .distinctUntilChanged()
 
     init {
         marketId = savedStateHandle["marketId"]
@@ -76,7 +82,15 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         subscribeToStatus()
     }
 
-    private fun createViewState(): DydxTriggerOrderInputView.ViewState {
+    private fun createViewState(
+        errors: List<ValidationError>?
+    ): DydxTriggerOrderInputView.ViewState {
+        val firstError = errors?.firstOrNull { it.type == ErrorType.error }
+        val firstWarning = errors?.firstOrNull { it.type == ErrorType.warning }
+        val fieldString = firstError?.fields?.firstOrNull() ?: firstWarning?.fields?.firstOrNull()
+        val field: TriggerOrdersInputField? = fieldString?.let {
+            TriggerOrdersInputField.invoke(it)
+        }
         return DydxTriggerOrderInputView.ViewState(
             localizer = localizer,
             closeAction = {
@@ -86,6 +100,29 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                 abacusStateManager.resetTriggerOrders()
                 triggerOrderStream.clearSubmissionStatus()
             },
+            validationErrorSection = field?.let {
+                when (it) {
+                    TriggerOrdersInputField.size ->
+                        DydxTriggerOrderInputView.ValidationErrorSection.Size
+
+                    TriggerOrdersInputField.takeProfitPrice,
+                    TriggerOrdersInputField.takeProfitUsdcDiff,
+                    TriggerOrdersInputField.takeProfitPercentDiff ->
+                        DydxTriggerOrderInputView.ValidationErrorSection.TakeProfit
+
+                    TriggerOrdersInputField.stopLossPrice,
+                    TriggerOrdersInputField.stopLossUsdcDiff,
+                    TriggerOrdersInputField.stopLossPercentDiff ->
+                        DydxTriggerOrderInputView.ValidationErrorSection.StopLoss
+
+                    TriggerOrdersInputField.takeProfitLimitPrice,
+                    TriggerOrdersInputField.stopLossLimitPrice ->
+                        DydxTriggerOrderInputView.ValidationErrorSection.LimitPrice
+
+                    else ->
+                        DydxTriggerOrderInputView.ValidationErrorSection.None
+                }
+            } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
         )
     }
 

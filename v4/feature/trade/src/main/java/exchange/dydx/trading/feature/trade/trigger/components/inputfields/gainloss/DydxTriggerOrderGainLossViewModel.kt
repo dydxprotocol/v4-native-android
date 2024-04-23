@@ -2,16 +2,20 @@ package exchange.dydx.trading.feature.trade.trigger.components.inputfields.gainl
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.output.input.TriggerPrice
+import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
+import exchange.dydx.platformui.components.inputs.PlatformInputAlertState
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.LabeledSelectionInput
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
+import exchange.dydx.trading.feature.trade.alertState
 import exchange.dydx.trading.feature.trade.streams.GainLossDisplayType
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderInputType
@@ -64,9 +68,10 @@ open class DydxTriggerOrderGainLossViewModel(
             },
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
-        ) { displayType, triggerOrdersInput, configsAndAssetMap ->
+            abacusStateManager.state.validationErrors,
+        ) { displayType, triggerOrdersInput, configsAndAssetMap, validationErrors ->
             val marketId = triggerOrdersInput?.marketId ?: return@combine null
-            createViewState(displayType, triggerOrdersInput, configsAndAssetMap?.get(marketId))
+            createViewState(displayType, triggerOrdersInput, configsAndAssetMap?.get(marketId), validationErrors)
         }
             .distinctUntilChanged()
 
@@ -74,14 +79,22 @@ open class DydxTriggerOrderGainLossViewModel(
         displayType: GainLossDisplayType,
         triggerOrdersInput: TriggerOrdersInput?,
         configsAndAsset: MarketConfigsAndAsset?,
+        validationErrors: List<ValidationError>?,
     ): DydxTriggerOrderGainLossView.ViewState {
         val marketConfigs = configsAndAsset?.configs
         val tickSize = marketConfigs?.displayTickSizeDecimals ?: 0
+        val firstErrorOrWarning = validationErrors?.firstOrNull { it.type == ErrorType.error }
+            ?: validationErrors?.firstOrNull { it.type == ErrorType.warning }
 
         fun formatOrder(orderPrice: TriggerPrice) =
             when (displayType) {
                 GainLossDisplayType.Amount -> formatter.raw(orderPrice.usdcDiff, tickSize)
-                GainLossDisplayType.Percent -> orderPrice.percentDiff?.let { formatter.percent(it / 100.0, 2) }
+                GainLossDisplayType.Percent -> orderPrice.percentDiff?.let {
+                    formatter.percent(
+                        it / 100.0,
+                        2,
+                    )
+                }
             }
 
         val inputField: TriggerOrdersInputField = when (inputType) {
@@ -90,6 +103,7 @@ open class DydxTriggerOrderGainLossViewModel(
                     GainLossDisplayType.Amount -> TriggerOrdersInputField.takeProfitUsdcDiff
                     GainLossDisplayType.Percent -> TriggerOrdersInputField.takeProfitPercentDiff
                 }
+
             DydxTriggerOrderInputType.StopLoss ->
                 when (displayType) {
                     GainLossDisplayType.Amount -> TriggerOrdersInputField.stopLossUsdcDiff
@@ -109,9 +123,29 @@ open class DydxTriggerOrderGainLossViewModel(
                     DydxTriggerOrderInputType.TakeProfit -> triggerOrdersInput?.takeProfitOrder?.price?.let {
                         formatOrder(it)
                     }
+
                     DydxTriggerOrderInputType.StopLoss -> triggerOrdersInput?.stopLossOrder?.price?.let {
                         formatOrder(it)
                     }
+                },
+                alertState = when (inputType) {
+                    DydxTriggerOrderInputType.TakeProfit ->
+                        if (firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.takeProfitPercentDiff.rawValue) == true ||
+                            firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.takeProfitUsdcDiff.rawValue) == true
+                        ) {
+                            firstErrorOrWarning.alertState
+                        } else {
+                            PlatformInputAlertState.None
+                        }
+
+                    DydxTriggerOrderInputType.StopLoss ->
+                        if (firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.stopLossPercentDiff.rawValue) == true ||
+                            firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.stopLossUsdcDiff.rawValue) == true
+                        ) {
+                            firstErrorOrWarning.alertState
+                        } else {
+                            PlatformInputAlertState.None
+                        }
                 },
                 placeholder = formatter.raw(0.0, tickSize),
                 onValueChanged = { value ->
@@ -124,8 +158,13 @@ open class DydxTriggerOrderGainLossViewModel(
                 selectedIndex = GainLossDisplayType.list.indexOf(displayType),
                 onSelectionChanged = { index ->
                     when (inputType) {
-                        DydxTriggerOrderInputType.TakeProfit -> triggerOrderStream.setTakeProfitGainLossDisplayType(GainLossDisplayType.list[index])
-                        DydxTriggerOrderInputType.StopLoss -> triggerOrderStream.setStopLossGainLossDisplayType(GainLossDisplayType.list[index])
+                        DydxTriggerOrderInputType.TakeProfit -> triggerOrderStream.setTakeProfitGainLossDisplayType(
+                            GainLossDisplayType.list[index],
+                        )
+
+                        DydxTriggerOrderInputType.StopLoss -> triggerOrderStream.setStopLossGainLossDisplayType(
+                            GainLossDisplayType.list[index],
+                        )
                     }
                 },
             ),
