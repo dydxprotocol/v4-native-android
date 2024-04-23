@@ -10,6 +10,7 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import javax.inject.Inject
@@ -22,12 +23,32 @@ class AbacusThreadingImp @Inject constructor(
     @CoroutineDispatchers.IO private val ioDispatcher: CoroutineDispatcher,
     @CoroutineDispatchers.Default private val defaultDispatcher: CoroutineDispatcher,
 ) : ThreadingProtocol {
+
+    private val mainScope = appScope
+
+    // Abacus runs lots of computations, but needs to be run without parallelism
+    private val abacusScope = appScope + defaultDispatcher.limitedParallelism(1)
+    private val networkScope = appScope + ioDispatcher
+
     override fun async(type: ThreadingType, block: () -> Unit) {
         when (type) {
-            main -> appScope.launch { block() }
-            // Abacus runs lots of computations, but needs to be run without parallelism
-            abacus -> appScope.launch(defaultDispatcher.limitedParallelism(1)) { block() }
-            network -> appScope.launch(ioDispatcher) { block() }
+            main ->
+                mainScope
+                    .launch {
+                        block()
+                    }
+
+            abacus ->
+                abacusScope
+                    .launch {
+                        block()
+                    }
+
+            network ->
+                networkScope
+                    .launch {
+                        block()
+                    }
         }
     }
 }
