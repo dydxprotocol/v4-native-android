@@ -52,7 +52,7 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
                     triggerOrdersInput?.takeProfitOrder?.price?.triggerPrice != null || triggerOrdersInput?.takeProfitOrder?.orderId != null ||
                         triggerOrdersInput?.stopLossOrder?.price?.triggerPrice != null || triggerOrdersInput?.stopLossOrder?.orderId != null
                     ) &&
-                triggerOrdersInput?.size ?: 0.0 != 0.0 &&
+                (triggerOrdersInput?.size ?: 0.0) != 0.0 &&
                 firstBlockingError == null
             ) {
                 DydxTriggerOrderCtaButtonView.State.Enabled(buttonTitle)
