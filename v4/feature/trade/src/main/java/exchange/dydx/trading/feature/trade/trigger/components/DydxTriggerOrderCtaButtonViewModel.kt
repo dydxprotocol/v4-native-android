@@ -60,9 +60,9 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
                 DydxTriggerOrderCtaButtonView.State.Disabled(buttonTitle)
             },
             ctaAction = {
-                triggerOrderStream.updatesubmissionStatus(null)
+                triggerOrderStream.updateSubmissionStatus(null)
                 abacusStateManager.commitTriggerOrders { status ->
-                    triggerOrderStream.updatesubmissionStatus(status)
+                    triggerOrderStream.updateSubmissionStatus(status)
                 }
             },
         )

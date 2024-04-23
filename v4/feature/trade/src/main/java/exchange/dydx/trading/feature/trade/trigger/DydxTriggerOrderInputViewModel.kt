@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -65,6 +66,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         } else {
             marketIdFlow.value = marketId
             abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.resetTriggerOrders()
             abacusStateManager.triggerOrders(
                 input = marketId,
                 type = TriggerOrdersInputField.marketId,
@@ -74,7 +76,9 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                 abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
                 abacusStateManager.state.takeProfitOrders(marketId),
                 abacusStateManager.state.stopLossOrders(marketId),
-                abacusStateManager.state.triggerOrdersInput,
+                abacusStateManager.state.triggerOrdersInput
+                    .filter { it?.marketId == marketId }
+                    .distinctUntilChanged(),
             ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
                 updateAbacusTriggerOrder(
                     position,

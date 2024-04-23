@@ -35,7 +35,7 @@ interface TriggerOrderStreaming {
 }
 
 interface MutableTriggerOrderStreaming : TriggerOrderStreaming {
-    fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?)
+    fun updateSubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?)
     fun clearSubmissionStatus()
     fun setTakeProfitGainLossDisplayType(displayType: GainLossDisplayType)
     fun setStopLossGainLossDisplayType(displayType: GainLossDisplayType)
@@ -65,7 +65,7 @@ class TriggerOrderStream @Inject constructor(
             takeProfitOrders.isNullOrEmpty() && stopLossOrders.isNullOrEmpty()
         }
 
-    override fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?) {
+    override fun updateSubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?) {
         _submissionStatus.update { status }
     }
 
