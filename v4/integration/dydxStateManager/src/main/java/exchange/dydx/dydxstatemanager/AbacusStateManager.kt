@@ -172,6 +172,12 @@ class AbacusStateManager @Inject constructor(
         appConfigs.squidVersion = AppConfigs.SquidVersion.V2
         appConfigsV2.onboardingConfigs.squidVersion = OnboardingConfigs.SquidVersion.V2
 
+        // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
+        if (BuildConfig.DEBUG) {
+            appConfigs.enableLogger = false
+            appConfigsV2.enableLogger = false
+        }
+
         if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2)) {
             AsyncAbacusStateManagerV2(
                 deploymentUri = deploymentUri,
