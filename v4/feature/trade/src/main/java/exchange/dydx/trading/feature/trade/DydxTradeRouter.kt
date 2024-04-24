@@ -22,8 +22,9 @@ fun NavGraphBuilder.tradeGraph(
 ) {
     dydxComposable(
         router = appRouter,
-        route = TradeRoutes.status,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        route = TradeRoutes.status + "/{tradeType}",
+        arguments = listOf(navArgument("tradeType") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.status, "tradeType", true),
     ) { navBackStackEntry ->
         DydxTradeStatusView.Content(Modifier)
     }
