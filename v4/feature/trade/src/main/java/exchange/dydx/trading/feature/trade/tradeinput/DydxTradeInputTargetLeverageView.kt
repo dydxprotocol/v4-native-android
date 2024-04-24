@@ -34,6 +34,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
@@ -180,15 +181,17 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            LabeledTextInput.Content(
-                modifier = Modifier,
-                state = LabeledTextInput.ViewState(
-                    localizer = MockLocalizer(),
-                    label = state?.localizer?.localize("APP.TRADE.TARGET_LEVERAGE"),
-                    value = state?.leverageText ?: "",
-                    onValueChanged = {},
-                ),
-            )
+            InputFieldScaffold(modifier) {
+                LabeledTextInput.Content(
+                    modifier = Modifier,
+                    state = LabeledTextInput.ViewState(
+                        localizer = MockLocalizer(),
+                        label = state?.localizer?.localize("APP.TRADE.TARGET_LEVERAGE"),
+                        value = state?.leverageText ?: "",
+                        onValueChanged = {},
+                    ),
+                )
+            }
         }
     }
 
@@ -227,7 +230,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                                )
+                            )
                         }
                     }
                 } ?: listOf(),
@@ -248,7 +251,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_primary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                                )
+                            )
                         }
                     }
                 } ?: listOf(),
