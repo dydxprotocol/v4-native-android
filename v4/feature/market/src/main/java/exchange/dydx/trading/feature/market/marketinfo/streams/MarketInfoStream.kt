@@ -8,6 +8,7 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketViewState
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.newSingleThreadContext
 import javax.inject.Inject
 
 interface MarketInfoStreaming {
@@ -40,10 +40,8 @@ class MarketInfoStream @Inject constructor(
     val formatter: DydxFormatter,
     val localizer: LocalizerProtocol,
     val favoriteStore: DydxFavoriteStoreProtocol,
+    @CoroutineScopes.App private val streamScope: CoroutineScope,
 ) : MutableMarketInfoStreaming {
-
-    private val streamScope = CoroutineScope(newSingleThreadContext("MarketInfoStream"))
-
     override fun update(marketId: String?) {
         abacusStateManager.setMarket(marketId)
         abacusStateManager.startTrade()

@@ -46,6 +46,12 @@ class DydxValidationViewModel @Inject constructor(
                 transferError?.isNotEmpty() == true -> DydxValidationView.State.Error
                 else -> DydxValidationView.State.None
             },
+            title = when {
+                firstBlockingError != null -> firstBlockingError.resources.title?.localizedString(localizer)
+                firstWarning != null -> firstWarning.resources.title?.localizedString(localizer)
+                transferError?.isNotEmpty() == true -> null
+                else -> null
+            },
             message = when {
                 firstBlockingError != null -> firstBlockingError.resources.text?.localizedString(localizer)
                 firstWarning != null -> firstWarning.resources.text?.localizedString(localizer)

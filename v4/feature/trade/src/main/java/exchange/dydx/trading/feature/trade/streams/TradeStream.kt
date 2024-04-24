@@ -4,15 +4,13 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import javax.inject.Inject
 
 interface TradeStreaming {
@@ -30,11 +28,10 @@ class TradeStream @Inject constructor(
     val abacusStateManager: AbacusStateManagerProtocol,
 ) : MutableTradeStreaming {
 
-    private val streamScope = CoroutineScope(newSingleThreadContext("TradeStream"))
-
     private var _submissionStatus: MutableStateFlow<AbacusStateManagerProtocol.SubmissionStatus?> =
         MutableStateFlow(null)
-    override val submissionStatus: Flow<AbacusStateManagerProtocol.SubmissionStatus?> = _submissionStatus
+    override val submissionStatus: StateFlow<AbacusStateManagerProtocol.SubmissionStatus?> =
+        _submissionStatus.asStateFlow()
 
     override val lastOrder: Flow<SubaccountOrder?> =
         combine(
@@ -58,9 +55,8 @@ class TradeStream @Inject constructor(
             .distinctUntilChanged()
 
     override fun submitTrade() {
-        _submissionStatus.update { null }
-        streamScope.launch {
-            val tradeInput = abacusStateManager.state.tradeInput.first() ?: return@launch
+        if (abacusStateManager.state.tradeInput != null) {
+            _submissionStatus.update { null }
 
             abacusStateManager.placeOrder { submissionStatus ->
                 if (submissionStatus == AbacusStateManagerProtocol.SubmissionStatus.Success) {
@@ -72,9 +68,8 @@ class TradeStream @Inject constructor(
     }
 
     override fun closePosition() {
-        _submissionStatus.update { null }
-        streamScope.launch {
-            val closePositionInput = abacusStateManager.state.closePositionInput.first() ?: return@launch
+        if (abacusStateManager.state.closePositionInput != null) {
+            _submissionStatus.update { null }
 
             abacusStateManager.closePosition { submissionStatus ->
                 _submissionStatus.update { submissionStatus }

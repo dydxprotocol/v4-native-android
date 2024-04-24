@@ -65,12 +65,12 @@ object DydxPortfolioPositionItemView {
         Row(
             modifier = modifier
                 .padding(
-                    // outer padding first, before widht and height
+                    // outer padding first, before width and height
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = ThemeShapes.VerticalPadding,
                 )
                 .fillMaxWidth()
-                .height((if (isIsolatedMarketEnabled) 148.dp else 64.dp) + ThemeShapes.VerticalPadding * 2)
+                .height((if (isIsolatedMarketEnabled) 148.dp else 48.dp) + ThemeShapes.VerticalPadding * 2)
                 .background(
                     brush = position.gradientType.brush(ThemeColor.SemanticColor.layer_3),
                     shape = shape,

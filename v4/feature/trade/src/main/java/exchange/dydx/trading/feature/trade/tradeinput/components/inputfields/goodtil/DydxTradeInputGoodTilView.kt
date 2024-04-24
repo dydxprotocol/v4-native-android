@@ -27,7 +27,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledSelectionInput
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
@@ -72,7 +72,7 @@ object DydxTradeInputGoodTilView : DydxComponent {
             mutableStateOf(false)
         }
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(modifier) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
 

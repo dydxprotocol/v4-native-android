@@ -4,6 +4,8 @@ import android.app.Application
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV3
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.IOException
@@ -14,11 +16,12 @@ private const val STARKEX_FILENAME: String = "starkex-lib.js"
 @ActivityRetainedScoped
 class StarkexLib @Inject constructor(
     application: Application,
+    @CoroutineScopes.App appScope: CoroutineScope,
 ) :
     JavascriptApiImpl(
         context = application,
         description = STARKEX_FILENAME,
-        runner = JavascriptRunnerV3.runnerFromFile(application, STARKEX_FILENAME)
+        runner = JavascriptRunnerV3.runnerFromFile(appScope, application, STARKEX_FILENAME)
             ?: throw IOException("Fatal, unable to load runner from: $STARKEX_FILENAME"),
     ) {
 
@@ -60,9 +63,10 @@ private const val STARKEX_ETH_FILENAME: String = "starkex-eth.js"
 @ActivityRetainedScoped
 class StarkexEth @Inject constructor(
     application: Application,
+    @CoroutineScopes.App appScope: CoroutineScope,
 ) : JavascriptApiImpl(
     context = application,
     description = STARKEX_ETH_FILENAME,
-    runner = JavascriptRunnerV3.runnerFromFile(application, STARKEX_ETH_FILENAME)
+    runner = JavascriptRunnerV3.runnerFromFile(appScope, application, STARKEX_ETH_FILENAME)
         ?: throw IOException("Fatal, unable to load runner from: $STARKEX_ETH_FILENAME"),
 )

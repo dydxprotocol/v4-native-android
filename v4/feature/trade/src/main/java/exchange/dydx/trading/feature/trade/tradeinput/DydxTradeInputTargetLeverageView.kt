@@ -34,7 +34,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
@@ -73,7 +73,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 
@@ -181,7 +181,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            InputFieldScarfold(modifier = Modifier) {
+            InputFieldScaffold(modifier) {
                 LabeledTextInput.Content(
                     modifier = Modifier,
                     state = LabeledTextInput.ViewState(
@@ -230,7 +230,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                                )
+                            )
                         }
                     }
                 } ?: listOf(),
@@ -251,7 +251,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_primary)
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                                )
+                            )
                         }
                     }
                 } ?: listOf(),

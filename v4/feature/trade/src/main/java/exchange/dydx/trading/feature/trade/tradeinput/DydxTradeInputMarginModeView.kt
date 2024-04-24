@@ -91,7 +91,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 
@@ -109,17 +109,17 @@ object DydxTradeInputMarginModeView : DydxComponent {
         ) {
             NavigationHeader(
                 modifier = Modifier,
-                state = state
+                state = state,
             )
             PlatformDivider()
             Selection(
                 modifier = Modifier,
-                marginModeState = state.crossMargin
+                marginModeState = state.crossMargin,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Selection(
                 modifier = Modifier,
-                marginModeState = state.isolatedMargin
+                marginModeState = state.isolatedMargin,
             )
         }
     }

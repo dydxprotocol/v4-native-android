@@ -9,7 +9,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderPriceInputType
 
@@ -72,7 +72,10 @@ object DydxTriggerOrderPriceView : DydxComponent {
             return
         }
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(
+            modifier = modifier,
+            alertState = state.labeledTextInput.alertState,
+        ) {
             LabeledTextInput.Content(
                 modifier = Modifier,
                 state = state.labeledTextInput,
