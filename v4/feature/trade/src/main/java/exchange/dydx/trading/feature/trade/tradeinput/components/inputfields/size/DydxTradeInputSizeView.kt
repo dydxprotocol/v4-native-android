@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.R
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 
@@ -80,8 +81,9 @@ object DydxTradeInputSizeView : DydxComponent {
         }
 
         val showingUsdc = remember { mutableStateOf(state.showingUsdc) }
+        val focusManager = LocalFocusManager.current
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(modifier) {
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -111,7 +113,10 @@ object DydxTradeInputSizeView : DydxComponent {
 
                     PlatformAccessoryButton(
                         modifier = Modifier,
-                        action = { showingUsdc.value = !showingUsdc.value },
+                        action = {
+                            focusManager.clearFocus()
+                            showingUsdc.value = !showingUsdc.value
+                        },
                     ) {
                         Column(
                             modifier = Modifier.padding(ThemeShapes.InputPaddingValues),

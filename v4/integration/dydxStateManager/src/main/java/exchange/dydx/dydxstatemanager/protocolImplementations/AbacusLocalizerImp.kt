@@ -37,7 +37,8 @@ class AbacusLocalizerImp @Inject constructor(
         }
     }
 
-    private val localizer = UIImplementationsExtensions.shared?.localizer as? DynamicLocalizer
+    private val localizer: DynamicLocalizer?
+        get() = UIImplementationsExtensions.shared?.localizer as? DynamicLocalizer
 
     override val languages: List<SelectionOption>
         get() {

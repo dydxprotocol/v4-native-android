@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.trade.trigger.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -56,6 +57,8 @@ object DydxTriggerOrderCtaButtonView : DydxComponent {
             return
         }
 
+        val focusManager = LocalFocusManager.current
+
         PlatformButton(
             modifier = modifier,
             text = when (state.ctaButtonState) {
@@ -74,6 +77,7 @@ object DydxTriggerOrderCtaButtonView : DydxComponent {
                 is State.Thinking -> PlatformButtonState.Disabled
             },
         ) {
+            focusManager.clearFocus()
             state.ctaAction()
         }
     }

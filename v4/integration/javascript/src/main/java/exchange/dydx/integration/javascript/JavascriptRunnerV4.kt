@@ -8,7 +8,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import exchange.dydx.trading.common.AppConfig
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,6 +20,7 @@ val LOGGER = if (DO_LOG) Timber.tag(TAG) else null
 class JavascriptRunnerV4 constructor(
     private val scriptDescription: String,
     private val scriptInitializationCode: String,
+    private val scope: CoroutineScope,
 ) : JavascriptRunner {
 
     override val initialized = MutableStateFlow(false)
@@ -29,12 +29,13 @@ class JavascriptRunnerV4 constructor(
 
     companion object {
         fun runnerFromFile(
+            scope: CoroutineScope,
             context: Context,
             file: String,
         ): JavascriptRunnerV4? {
             val script = JavascriptUtils.loadAsset(context, file)
             if (script != null) {
-                return JavascriptRunnerV4(file, script)
+                return JavascriptRunnerV4(file, script, scope)
             }
             return null
         }
@@ -121,7 +122,7 @@ class JavascriptRunnerV4 constructor(
 
     val pattern = Pattern.compile("""^"(.*)"\$""")
     private fun launchJs(script: String, callback: ResultCallback) {
-        CoroutineScope(Main).launch {
+        scope.launch {
             webappInterface.callback = callback
             val localWebview = webview
             if (localWebview == null) {

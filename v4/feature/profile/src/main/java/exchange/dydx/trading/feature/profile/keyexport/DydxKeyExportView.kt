@@ -84,7 +84,7 @@ object DydxKeyExportView : DydxComponent {
             modifier = modifier,
             platformInfo = viewModel.platformInfo,
         ) {
-            Content(Modifier, state)
+            Content(it, state)
         }
     }
 

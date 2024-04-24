@@ -6,14 +6,11 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.InputStream
-import java.time.ZonedDateTime
 
 private const val TAG: String = "JavascriptRunner(V3)"
 
@@ -35,19 +32,20 @@ private fun loadAsset(context: Context, fileName: String?): String? {
 class JavascriptRunnerV3 constructor(
     private val scriptDescription: String,
     private val scriptInitializationCode: String,
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    private val scope: CoroutineScope,
 ) : JavascriptRunner {
 
     override val initialized = MutableStateFlow(false)
 
     companion object {
         fun runnerFromFile(
+            scope: CoroutineScope,
             context: Context,
             file: String,
         ): JavascriptRunnerV3? {
             val script = loadAsset(context, file)
             if (script != null) {
-                return JavascriptRunnerV3(file, script)
+                return JavascriptRunnerV3(file, script, scope)
             }
             return null
         }
@@ -85,7 +83,7 @@ class JavascriptRunnerV3 constructor(
             }
 
             override fun onPageFinished(view: WebView, weburl: String) {
-                coroutineScope.launch {
+                scope.launch {
                     initializeJavascriptEnvironment()
                 }
             }
@@ -102,28 +100,17 @@ class JavascriptRunnerV3 constructor(
             Timber.tag(TAG).w("Unable to run script, assign a webview first.\n%s", script)
             return
         }
-        CoroutineScope(Main).launch {
-            try {
-                val time = ZonedDateTime.now()
-                webview.evaluateJavascript(script) { resultString: String ->
-                    try {
-                        Timber.tag(TAG).i("Evaluated javascript: %s", resultString)
-
-//                        if (SDK_INT >= O) {
-//                            val interval = Duration.between(time, ZonedDateTime.now())
-//                            Timber.tag(TAG).i("Javascript time interval: $interval")
-//                        }
-
-//                    val replacedResult = (resultString as? String)?.replace("\"", "")
-
-                        callback.invoke(JavascriptRunnerResult(resultString))
-                    } catch (e: Exception) {
-                        Timber.tag(TAG).e(e)
-                    }
+        try {
+            webview.evaluateJavascript(script) { resultString: String ->
+                try {
+                    Timber.tag(TAG).i("Evaluated javascript: %s", resultString)
+                    callback.invoke(JavascriptRunnerResult(resultString))
+                } catch (e: Exception) {
+                    Timber.tag(TAG).e(e)
                 }
-            } catch (e: Exception) {
-                Timber.tag(TAG).e(e)
             }
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e)
         }
     }
 
