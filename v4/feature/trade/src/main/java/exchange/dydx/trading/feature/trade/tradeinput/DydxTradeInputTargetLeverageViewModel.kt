@@ -35,8 +35,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
         val maxLeverage = tradeInput?.options?.maxLeverage ?: 5.0
         val leverages = leverageOptions(maxLeverage)
         return DydxTradeInputTargetLeverageView.ViewState(
-            localizer.localize("APP.TRADE.ADJUST_TARGET_LEVERAGE"),
-            localizer.localize("APP.TRADE.ADJUST_TARGET_LEVERAGE_DESCRIPTION"),
+            localizer,
             formatter.localFormatted(targetLeverage, 1),
             leverages,
             {
