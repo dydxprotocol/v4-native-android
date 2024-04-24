@@ -22,8 +22,9 @@ fun NavGraphBuilder.tradeGraph(
 ) {
     dydxComposable(
         router = appRouter,
-        route = TradeRoutes.status,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        route = TradeRoutes.status + "/{tradeType}",
+        arguments = listOf(navArgument("tradeType") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.status, "tradeType", true),
     ) { navBackStackEntry ->
         DydxTradeStatusView.Content(Modifier)
     }
@@ -61,7 +62,7 @@ fun NavGraphBuilder.tradeGraph(
     dydxComposable(
         router = appRouter,
         route = TradeRoutes.margin_type,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        deepLinks = appRouter.deeplinks(TradeRoutes.margin_type),
     ) { navBackStackEntry ->
         DydxTradeInputMarginModeView.Content(Modifier)
     }
@@ -69,7 +70,7 @@ fun NavGraphBuilder.tradeGraph(
     dydxComposable(
         router = appRouter,
         route = TradeRoutes.target_leverage,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        deepLinks = appRouter.deeplinks(TradeRoutes.target_leverage),
     ) { navBackStackEntry ->
         DydxTradeInputTargetLeverageView.Content(Modifier)
     }
