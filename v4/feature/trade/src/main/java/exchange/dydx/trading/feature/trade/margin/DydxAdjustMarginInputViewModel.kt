@@ -5,8 +5,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -17,6 +19,8 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    private val router: DydxRouter,
+    val platformInfo: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxAdjustMarginInputView.ViewState?> = abacusStateManager.state.tradeInput
@@ -30,8 +34,9 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
         Abacus not implemented for adjust margin yet. This is a placeholder.
          */
         return DydxAdjustMarginInputView.ViewState(
+            localizer = localizer,
             direction = DydxAdjustMarginInputView.MarginDirection.Add,
-            percentageText = "50%",
+            percentage = 0.5,
             percentageOptions = listOf(
                 DydxAdjustMarginInputView.PercentageOption("10%", 0.1),
                 DydxAdjustMarginInputView.PercentageOption("20%", 0.2),
@@ -49,6 +54,9 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                 liquidationPrice = listOf("1200.00", "1000.00"),
             ),
             error = null,
+            closeAction = {
+                router.navigateBack()
+            }
         )
     }
 }

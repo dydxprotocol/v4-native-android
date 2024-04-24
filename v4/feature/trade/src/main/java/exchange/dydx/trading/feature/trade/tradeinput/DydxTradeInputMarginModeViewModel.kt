@@ -33,25 +33,24 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
 
     private fun createViewState(tradeInput: TradeInput?): DydxTradeInputMarginModeView.ViewState {
         return DydxTradeInputMarginModeView.ViewState(
-            localizer.localize("APP.GENERAL.MARGIN_MODE"),
-            tradeInput?.marketId ?: "",
-            DydxTradeInputMarginModeView.MarginTypeSelection(
+            title = localizer.localize("APP.GENERAL.MARGIN_MODE"),
+            asset = tradeInput?.marketId ?: "",
+            crossMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 localizer.localize("APP.GENERAL.CROSS_MARGIN"),
                 localizer.localize("APP.GENERAL.CROSS_MARGIN_DESCRIPTION"),
                 tradeInput?.marginMode == MarginMode.cross,
-                {
-                },
-            ),
-            DydxTradeInputMarginModeView.MarginTypeSelection(
+            ) {
+            },
+            isolatedMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 localizer.localize("APP.GENERAL.ISOLATED_MARGIN"),
                 localizer.localize("APP.GENERAL.ISOLATED_MARGIN_DESCRIPTION"),
                 tradeInput?.marginMode == MarginMode.isolated,
-                {
-                },
-            ),
-            null,
-            {
+            ) {
             },
+            errorText = null,
+            closeAction = {
+                router.navigateBack()
+            }
         )
     }
 }
