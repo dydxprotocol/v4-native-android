@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.trade.margin
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,33 +10,44 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
+import exchange.dydx.platformui.components.changes.PlatformAmountChange
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
+import exchange.dydx.trading.feature.shared.views.SignedAmountView
+import exchange.dydx.trading.feature.shared.views.SizeTextView
 
 @Preview
 @Composable
@@ -69,6 +81,7 @@ object DydxAdjustMarginInputView : DydxComponent {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val formatter: DydxFormatter,
         val direction: MarginDirection = MarginDirection.Add,
         val percentage: Double?,
         val percentageOptions: List<PercentageOption>,
@@ -78,12 +91,14 @@ object DydxAdjustMarginInputView : DydxComponent {
         val error: String?,
         val marginDirectionAction: (() -> Unit) = {},
         val percentageAction: (() -> Unit) = {},
+        val editAction: ((String) -> Unit) = {},
         val action: (() -> Unit) = {},
         val closeAction: (() -> Unit) = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                formatter = DydxFormatter(),
                 direction = MarginDirection.Add,
                 percentage = 0.5,
                 percentageOptions = listOf(
@@ -145,11 +160,11 @@ object DydxAdjustMarginInputView : DydxComponent {
                 state = state,
             )
             Spacer(modifier = Modifier.height(8.dp))
-//            InputAndSubaccountReceipt(
-//                modifier = Modifier,
-//                state = state,
-//            )
-//            Spacer(modifier = Modifier.weight(1f))
+            InputAndSubaccountReceipt(
+                modifier = Modifier,
+                state = state,
+            )
+            Spacer(modifier = Modifier.weight(1f))
 //            if (state.error == null) {
 //                LiquidationPrice(
 //                    modifier = Modifier,
@@ -310,6 +325,185 @@ object DydxAdjustMarginInputView : DydxComponent {
             },
             onSelectionChanged = {},
         )
+    }
+
+    @Composable
+    fun InputAndSubaccountReceipt(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Column {
+            InputFieldScaffold(modifier.zIndex(1f)) {
+                AmountBox(modifier, state)
+            }
+            val shape = RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp)
+            Column(
+                modifier = modifier
+                    .offset(y = (-4).dp)
+                    .background(color = ThemeColor.SemanticColor.layer_1.color, shape = shape)
+                    .padding(horizontal = ThemeShapes.HorizontalPadding)
+                    .padding(vertical = ThemeShapes.VerticalPadding)
+                    .padding(top = 4.dp),
+            ) {
+                CrossFreeCollateralContent(modifier = Modifier, state)
+                CrossMarginContent(modifier = Modifier, state)
+            }
+        }
+    }
+
+
+    @Composable
+    private fun AmountBox(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier
+                .padding(horizontal = ThemeShapes.HorizontalPadding)
+                .padding(vertical = ThemeShapes.VerticalPadding),
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.AMOUNT"),
+                    style = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                        .themeFont(fontSize = ThemeFont.FontSize.mini),
+                )
+
+                PlatformTextInput(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = state.amountText ?: "",
+                    textStyle = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_primary)
+                        .themeFont(fontSize = ThemeFont.FontSize.medium),
+                    placeHolder = if (state.amountText == null) {
+                        state.formatter.raw(0.0, 2)
+                    } else {
+                        null
+                    },
+                    onValueChange = { state.editAction.invoke(it) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun CrossFreeCollateralContent(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = state.localizer.localize("APP.GENERAL.CROSS_FREE_COLLATERAL"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            CrossFreeCollateralChange(modifier = Modifier, state = state)
+        }
+    }
+
+    @Composable
+    private fun CrossFreeCollateralChange(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier,
+        ) {
+            PlatformAmountChange(
+                before = {
+                    SizeTextView.Content(
+                        modifier = Modifier,
+                        state = SizeTextView.ViewState(
+                            localizer = state.localizer,
+                            formatter = state.formatter,
+                            size = state.subaccountReceipt.freeCollateral.firstOrNull()?.toDoubleOrNull(),
+                            stepSize = 2,
+                        ),
+                    )
+                },
+                after = {
+                    SizeTextView.Content(
+                        modifier = Modifier,
+                        state = SizeTextView.ViewState(
+                            localizer = state.localizer,
+                            formatter = state.formatter,
+                            size = state.subaccountReceipt.freeCollateral.lastOrNull()?.toDoubleOrNull(),
+                            stepSize = 2,
+                        ),
+                    )
+                },
+            )
+        }
+    }
+
+
+    @Composable
+    private fun CrossMarginContent(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = state.localizer.localize("APP.GENERAL.CROSS_MARGIN_USAGE"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            CrossMarginUsageChange(modifier = Modifier, state = state)
+        }
+    }
+
+    @Composable
+    private fun CrossMarginUsageChange(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier,
+        ) {
+            PlatformAmountChange(
+                before = {
+                    SizeTextView.Content(
+                        modifier = Modifier,
+                        state = SizeTextView.ViewState(
+                            localizer = state.localizer,
+                            formatter = state.formatter,
+                            size = state.subaccountReceipt.marginUsage.firstOrNull()?.toDoubleOrNull(),
+                            stepSize = 2,
+                        ),
+                    )
+                },
+                after = {
+                    SizeTextView.Content(
+                        modifier = Modifier,
+                        state = SizeTextView.ViewState(
+                            localizer = state.localizer,
+                            formatter = state.formatter,
+                            size = state.subaccountReceipt.marginUsage.lastOrNull()?.toDoubleOrNull(),
+                            stepSize = 2,
+                        ),
+                    )
+                },
+            )
+        }
     }
 }
 

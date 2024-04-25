@@ -35,6 +35,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
          */
         return DydxAdjustMarginInputView.ViewState(
             localizer = localizer,
+            formatter = formatter,
             direction = DydxAdjustMarginInputView.MarginDirection.Add,
             percentage = 0.5,
             percentageOptions = listOf(
@@ -54,6 +55,10 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                 liquidationPrice = listOf("1200.00", "1000.00"),
             ),
             error = null,
+            marginDirectionAction = { },
+            percentageAction = { },
+            editAction = { },
+            action = { },
             closeAction = {
                 router.navigateBack()
             }
