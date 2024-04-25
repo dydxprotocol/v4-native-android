@@ -1,6 +1,13 @@
 #!/bin/sh
 
-# This script is used to build the abacus project locally
+# This script is used to build the abacus project locally.
+#
+# Please run this after making local change to the abacus project.  The change will be
+# picked up by the v4-native-android project (via the local maven repository).
+#
+# The script will update both the v4-abacus and v4-native-android repositories, so please make sure
+# you clean-up/revert the changes after you are done with the local testing
+
 ABACUS_DIR=~/v4-abacus
 ANDROID_DIR=~/v4-native-android
 
