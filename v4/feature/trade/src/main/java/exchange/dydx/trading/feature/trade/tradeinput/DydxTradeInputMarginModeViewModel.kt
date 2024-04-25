@@ -50,7 +50,7 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
             errorText = null,
             closeAction = {
                 router.navigateBack()
-            }
+            },
         )
     }
 }

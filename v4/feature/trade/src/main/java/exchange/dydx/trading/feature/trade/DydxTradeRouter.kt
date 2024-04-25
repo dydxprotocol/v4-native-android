@@ -90,5 +90,4 @@ fun NavGraphBuilder.tradeGraph(
         }
         DydxAdjustMarginInputView.Content(Modifier)
     }
-
 }

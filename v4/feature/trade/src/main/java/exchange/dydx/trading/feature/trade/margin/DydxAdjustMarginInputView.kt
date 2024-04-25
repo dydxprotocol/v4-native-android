@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.trade.margin
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,7 +45,6 @@ import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
-import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.SizeTextView
 
 @Preview
@@ -89,7 +87,7 @@ object DydxAdjustMarginInputView : DydxComponent {
         val subaccountReceipt: SubaccountReceipt,
         val positionReceipt: PositionReceipt,
         val error: String?,
-        val marginDirectionAction: (() -> Unit) = {},
+        val marginDirectionAction: ((direction: MarginDirection) -> Unit) = {},
         val percentageAction: (() -> Unit) = {},
         val editAction: ((String) -> Unit) = {},
         val action: (() -> Unit) = {},
@@ -142,24 +140,25 @@ object DydxAdjustMarginInputView : DydxComponent {
             modifier = modifier
                 .animateContentSize()
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_4),
+                .themeColor(ThemeColor.SemanticColor.layer_4)
+                .padding(horizontal = 16.dp),
         ) {
             NavigationHeader(
                 modifier = Modifier,
-                state = state
+                state = state,
             )
             PlatformDivider()
-            // Add to remove margin
+            Spacer(modifier = Modifier.height(16.dp))
             MarginDirection(
                 modifier = Modifier,
                 state = state,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             PercentageOptions(
                 modifier = Modifier,
                 state = state,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             InputAndSubaccountReceipt(
                 modifier = Modifier,
                 state = state,
@@ -214,59 +213,77 @@ object DydxAdjustMarginInputView : DydxComponent {
         }
     }
 
+    private fun marginDirectionText(direction: MarginDirection, localizer: LocalizerProtocol): String {
+        return when (direction) {
+            MarginDirection.Add -> localizer.localize("APP.TRADE.ADD_MARGIN")
+            MarginDirection.Remove -> localizer.localize("APP.TRADE.REMOVE_MARGIN")
+        }
+    }
 
     @Composable
     fun MarginDirection(
         modifier: Modifier,
         state: ViewState,
     ) {
-        val shape = RoundedCornerShape(10.dp)
-        Row(
-            modifier = Modifier
-                .padding(
-                    horizontal = ThemeShapes.HorizontalPadding,
-                    vertical = ThemeShapes.VerticalPadding,
-                )
-                .fillMaxWidth()
-                .padding(
-                    horizontal = ThemeShapes.HorizontalPadding,
-                    vertical = 16.dp,
-                )
-                .clickable { state.marginDirectionAction() },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 0.dp),
-                    style = TextStyle.dydxDefault
-                        .themeFont(
-                            fontSize = ThemeFont.FontSize.medium,
-                            fontType = ThemeFont.FontType.book,
-                        )
-                        .themeColor(ThemeColor.SemanticColor.text_primary),
-                    text = state.localizer.localize("APP.TRADE.ADD_MARGIN"),
-                )
+        val directions = listOf(MarginDirection.Add, MarginDirection.Remove)
 
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 0.dp),
-                    style = TextStyle.dydxDefault
-                        .themeFont(
-                            fontSize = ThemeFont.FontSize.small,
-                            fontType = ThemeFont.FontType.book,
+        PlatformTabGroup(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(42.dp),
+            scrollingEnabled = false,
+            items = directions.map {
+                { modifier ->
+                    PlatformPillItem(
+                        modifier = Modifier
+                            .padding(
+                                vertical = 4.dp,
+                                horizontal = 8.dp,
+                            ),
+                        backgroundColor = ThemeColor.SemanticColor.layer_5,
+                    ) {
+                        Text(
+                            text = marginDirectionText(it, state.localizer),
+                            modifier = Modifier,
+                            style = TextStyle.dydxDefault
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                                .themeFont(fontSize = ThemeFont.FontSize.small),
+
                         )
-                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                    text = state.localizer.localize("APP.TRADE.REMOVE_MARGIN"),
-                )
-            }
-        }
+                    }
+                }
+            },
+            selectedItems = directions.map {
+                { modifier ->
+                    PlatformPillItem(
+                        modifier = Modifier
+                            .padding(
+                                vertical = 4.dp,
+                                horizontal = 8.dp,
+                            ),
+                        backgroundColor = ThemeColor.SemanticColor.layer_2,
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = marginDirectionText(it, state.localizer),
+                                modifier = Modifier,
+                                style = TextStyle.dydxDefault
+                                    .themeColor(ThemeColor.SemanticColor.text_primary)
+                                    .themeFont(fontSize = ThemeFont.FontSize.small),
+                            )
+                        }
+                    }
+                }
+            },
+            currentSelection = if (state.direction == MarginDirection.Add) 0 else 1,
+            onSelectionChanged = { it ->
+                state.marginDirectionAction.invoke(directions[it])
+            },
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        )
     }
 
     @Composable
@@ -294,7 +311,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                                 .themeColor(ThemeColor.SemanticColor.text_tertiary)
                                 .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                            )
+                        )
                     }
                 }
             } ?: listOf(),
@@ -315,7 +332,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                                 .themeColor(ThemeColor.SemanticColor.text_primary)
                                 .themeFont(fontSize = ThemeFont.FontSize.small),
 
-                            )
+                        )
                     }
                 }
             } ?: listOf(),
@@ -350,7 +367,6 @@ object DydxAdjustMarginInputView : DydxComponent {
             }
         }
     }
-
 
     @Composable
     private fun AmountBox(
@@ -448,7 +464,6 @@ object DydxAdjustMarginInputView : DydxComponent {
         }
     }
 
-
     @Composable
     private fun CrossMarginContent(
         modifier: Modifier,
@@ -506,4 +521,3 @@ object DydxAdjustMarginInputView : DydxComponent {
         }
     }
 }
-

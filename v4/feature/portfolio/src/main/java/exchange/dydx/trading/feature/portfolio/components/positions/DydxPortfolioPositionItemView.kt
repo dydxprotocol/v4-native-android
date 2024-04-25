@@ -206,7 +206,7 @@ object DydxPortfolioPositionItemView {
                     state = position.side?.copy(
                         coloringOption = SideTextView.ColoringOption.COLORED,
 
-                        ),
+                    ),
                     textStyle = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.mini)
                         .themeColor(ThemeColor.SemanticColor.text_primary),

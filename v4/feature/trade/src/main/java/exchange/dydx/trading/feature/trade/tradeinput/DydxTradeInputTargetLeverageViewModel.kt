@@ -40,7 +40,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
             leverageOptions = leverages,
             closeAction = {
                 router.navigateBack()
-            }
+            },
         )
     }
 

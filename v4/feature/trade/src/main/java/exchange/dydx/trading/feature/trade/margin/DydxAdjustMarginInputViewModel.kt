@@ -61,7 +61,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
             action = { },
             closeAction = {
                 router.navigateBack()
-            }
+            },
         )
     }
 }
