@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.trade.closeposition.DydxClosePositionInputView
+import exchange.dydx.trading.feature.trade.margin.DydxAdjustMarginInputView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputMarginModeView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputTargetLeverageView
 import exchange.dydx.trading.feature.trade.tradestatus.DydxTradeStatusView
@@ -74,4 +75,20 @@ fun NavGraphBuilder.tradeGraph(
     ) { navBackStackEntry ->
         DydxTradeInputTargetLeverageView.Content(Modifier)
     }
+
+    dydxComposable(
+        router = appRouter,
+        route = TradeRoutes.adjust_margin + "/{marketId}",
+        arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.adjust_margin, "marketId", true),
+    ) { navBackStackEntry ->
+        val id = navBackStackEntry.arguments?.getString("marketId")
+        if (id == null) {
+            Timber.w("No marketId passed")
+            appRouter.navigateTo(MarketRoutes.marketList)
+            return@dydxComposable
+        }
+        DydxAdjustMarginInputView.Content(Modifier)
+    }
+
 }

@@ -60,6 +60,7 @@ object DydxPortfolioPositionItemView {
         position: SharedMarketPositionViewState,
         isIsolatedMarketEnabled: Boolean,
         onTapAction: (SharedMarketPositionViewState) -> Unit = {},
+        onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         val shape = RoundedCornerShape(10.dp)
         Row(
@@ -205,7 +206,7 @@ object DydxPortfolioPositionItemView {
                     state = position.side?.copy(
                         coloringOption = SideTextView.ColoringOption.COLORED,
 
-                    ),
+                        ),
                     textStyle = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.mini)
                         .themeColor(ThemeColor.SemanticColor.text_primary),
@@ -360,9 +361,7 @@ object DydxPortfolioPositionItemView {
                     .width(32.dp)
                     .height(32.dp),
                 action = {
-                    /*
-                    TODO: Implement edit button action
-                     */
+                    position.onAdjustMarginAction?.invoke()
                 },
                 padding = 0.dp,
                 shape = RoundedCornerShape(4.dp),

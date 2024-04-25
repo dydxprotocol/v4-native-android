@@ -56,6 +56,12 @@ class DydxMarketPositionViewModel @Inject constructor(
                 asset = marketAndAsset.asset,
                 formatter = formatter,
                 localizer = localizer,
+                onAdjustMarginAction = {
+                    router.navigateTo(
+                        route = TradeRoutes.adjust_margin + "/${marketAndAsset.market.id}",
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                },
             ),
             enableTrigger = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger),
         )

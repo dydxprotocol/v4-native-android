@@ -190,7 +190,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                         fontType = ThemeFont.FontType.plus,
                     )
                     .themeColor(ThemeColor.SemanticColor.text_primary),
-                text = state.localizer.localize("APP.GENERAL.ADJUST_MARGIN"),
+                text = state.localizer.localize("APP.TRADE.ADJUST_ISOLATED_MARGIN"),
             )
             Spacer(modifier = Modifier.weight(1f))
             HeaderViewCloseBotton(
@@ -236,7 +236,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                             fontType = ThemeFont.FontType.book,
                         )
                         .themeColor(ThemeColor.SemanticColor.text_primary),
-                    text = state.localizer.localize("APP.GENERAL.ADD_MARGIN"),
+                    text = state.localizer.localize("APP.TRADE.ADD_MARGIN"),
                 )
 
                 Text(
@@ -248,7 +248,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                             fontType = ThemeFont.FontType.book,
                         )
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                    text = state.localizer.localize("APP.GENERAL.REMOVE_MARGIN"),
+                    text = state.localizer.localize("APP.TRADE.REMOVE_MARGIN"),
                 )
             }
         }
