@@ -136,8 +136,8 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         DydxTriggerOrderInputView.ValidationErrorSection.None
                 }
             } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
-            hasMultipleTP = takeProfitOrders?.size ?: 0 > 1,
-            hasMultipleSL = stopLossOrders?.size ?: 0 > 1,
+            hasMultipleTP = (takeProfitOrders?.size ?: 0) > 1,
+            hasMultipleSL = (stopLossOrders?.size ?: 0) > 1,
             showOrderListAction = {
                 router.navigateTo(
                     route = PortfolioRoutes.orders,
