@@ -20,6 +20,7 @@ fun BarChart.config(config: IBarChartConfig) {
 }
 
 private fun BarChart.configInteraction(interaction: InteractionConfig) {
+    setTouchEnabled(interaction.touchEnabled)
     isDragEnabled = interaction.pan
     isDoubleTapToZoomEnabled = interaction.doubleTap
     isScaleXEnabled = interaction.zoom

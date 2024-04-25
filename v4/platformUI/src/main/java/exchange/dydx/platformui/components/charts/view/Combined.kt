@@ -31,6 +31,7 @@ fun CombinedChart.config(config: ICombinedChartConfig) {
 }
 
 private fun CombinedChart.configInteraction(interaction: InteractionConfig) {
+    setTouchEnabled(interaction.touchEnabled)
     isDragEnabled = interaction.pan
     isDoubleTapToZoomEnabled = interaction.doubleTap
     isScaleXEnabled = interaction.zoom
