@@ -34,11 +34,17 @@ data class InteractionConfig(
     val highlight: Boolean = true,
     val highlightDistance: Float = 500.0f,
     val selectionListener: OnChartValueSelectedListener? = null,
-    val touchEnabled: Boolean = true, // enable/disable all touches
 ) {
+    val touchEnabled = pan || doubleTap || zoom || highlight
+
     companion object {
         val default = InteractionConfig()
-        val noTouch = InteractionConfig(touchEnabled = false)
+        val noTouch = InteractionConfig(
+            pan = false,
+            doubleTap = false,
+            zoom = false,
+            highlight = false,
+        )
     }
 }
 
