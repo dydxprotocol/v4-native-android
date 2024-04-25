@@ -34,7 +34,13 @@ data class InteractionConfig(
     val highlight: Boolean = true,
     val highlightDistance: Float = 500.0f,
     val selectionListener: OnChartValueSelectedListener? = null,
-)
+    val touchEnabled: Boolean = true, // enable/disable all touches
+) {
+    companion object {
+        val default = InteractionConfig()
+        val noTouch = InteractionConfig(touchEnabled = false)
+    }
+}
 
 data class LineChartDrawingConfig(
     val lineWidth: Float = 1.0f,
@@ -99,7 +105,7 @@ data class LineChartConfig(
             return LineChartConfig(
                 lineDrawing = LineChartDrawingConfig(),
                 drawing = DrawingConfig(),
-                interaction = InteractionConfig(),
+                interaction = InteractionConfig.default,
                 xAxis = AxisConfig(),
                 leftAxis = null,
                 rightAxis = null,
@@ -125,7 +131,7 @@ data class CombinedChartConfig(
                 barDrawing = BarDrawingConfig(),
                 lineDrawing = LineChartDrawingConfig(),
                 drawing = DrawingConfig(),
-                interaction = InteractionConfig(),
+                interaction = InteractionConfig.default,
                 xAxis = AxisConfig(),
                 leftAxis = AxisConfig(),
                 rightAxis = AxisConfig(),
