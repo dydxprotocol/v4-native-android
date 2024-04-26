@@ -53,6 +53,7 @@ object TradeRoutes {
     const val margin_type = "trade/margin_type"
     const val target_leverage = "trade/target_leverage"
     const val trigger = "trade/take_profit_stop_loss"
+    const val adjust_margin = "trade/adjust_margin"
 }
 
 object TransferRoutes {
