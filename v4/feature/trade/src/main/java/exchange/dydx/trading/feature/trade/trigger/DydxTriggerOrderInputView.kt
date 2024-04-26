@@ -106,7 +106,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    fun Content(modifier: Modifier, state: ViewState?) {
+    fun Content(modifier: Modifier = Modifier, state: ViewState?) {
         if (state == null) {
             return
         }
@@ -194,7 +194,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun HeaderView(modifier: Modifier, state: ViewState) {
+    private fun HeaderView(modifier: Modifier = Modifier, state: ViewState) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -230,7 +230,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun TakeProfitSectionView(modifier: Modifier, state: ViewState) {
+    private fun TakeProfitSectionView(modifier: Modifier = Modifier, state: ViewState) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -284,7 +284,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun StopLossSectionView(modifier: Modifier, state: ViewState) {
+    private fun StopLossSectionView(modifier: Modifier = Modifier, state: ViewState) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -338,7 +338,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun AdvancedDividerView(modifier: Modifier, state: ViewState) {
+    private fun AdvancedDividerView(modifier: Modifier = Modifier, state: ViewState) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -360,7 +360,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun MultipleOrderFoundView(modifier: Modifier, state: ViewState) {
+    private fun MultipleOrderFoundView(modifier: Modifier = Modifier, state: ViewState) {
         Row(
             modifier = modifier
                 .padding(horizontal = ThemeShapes.HorizontalPadding)

@@ -92,7 +92,7 @@ object DydxPortfolioOrdersView : DydxComponent {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 LazyColumn(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
                 ) {
@@ -100,8 +100,10 @@ object DydxPortfolioOrdersView : DydxComponent {
                 }
             }
         } else {
-            LazyColumn {
-                ListContent(this, modifier, state)
+            LazyColumn(
+                modifier = modifier,
+            ) {
+                ListContent(this, Modifier, state)
             }
         }
     }

@@ -46,7 +46,8 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
 
-    private var marketIdFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val marketIdFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val marketId: String?
 
     val state: Flow<DydxTriggerOrderInputView.ViewState?> =
         combine(
@@ -59,7 +60,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             .distinctUntilChanged()
 
     init {
-        val marketId: String? = savedStateHandle["marketId"]
+        marketId = savedStateHandle["marketId"]
 
         if (marketId == null) {
             router.navigateBack()
