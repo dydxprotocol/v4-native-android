@@ -164,22 +164,22 @@ object DydxAdjustMarginInputView : DydxComponent {
                 state = state,
             )
             Spacer(modifier = Modifier.weight(1f))
-//            if (state.error == null) {
-//                LiquidationPrice(
-//                    modifier = Modifier,
-//                    state = state,
-//                )
-//            } else {
-//                Error(
-//                    modifier = Modifier,
-//                    error = state.error,
-//                )
-//            }
-//            Spacer(modifier = Modifier.height(8.dp))
-//            PositionReceiptAndButton(
-//                modifier = Modifier,
-//                state = state,
-//            )
+            if (state.error == null) {
+                LiquidationPrice(
+                    modifier = Modifier,
+                    state = state,
+                )
+            } else {
+                Error(
+                    modifier = Modifier,
+                    error = state.error,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            PositionReceiptAndButton(
+                modifier = Modifier,
+                state = state,
+            )
         }
     }
 
@@ -519,5 +519,29 @@ object DydxAdjustMarginInputView : DydxComponent {
                 },
             )
         }
+    }
+
+    @Composable
+    private fun LiquidationPrice(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        // TODO, implement this
+    }
+
+    @Composable
+    private fun Error(
+        modifier: Modifier,
+        error: String,
+    ) {
+        // TODO, implement this
+    }
+
+    @Composable
+    private fun PositionReceiptAndButton(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        // TODO, implement this
     }
 }
