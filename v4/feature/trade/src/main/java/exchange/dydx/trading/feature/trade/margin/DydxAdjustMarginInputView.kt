@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,6 +30,7 @@ import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.changes.PlatformAmountChange
 import exchange.dydx.platformui.components.changes.PlatformDirection
+import exchange.dydx.platformui.components.changes.PlatformDirectionArrow
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
@@ -609,6 +611,7 @@ object DydxAdjustMarginInputView : DydxComponent {
             Column(
                 modifier = Modifier,
                 verticalArrangement = Arrangement.spacedBy(2.dp),
+                horizontalAlignment = Alignment.End,
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 if (state.isolatedMarginReceipt.liquidationPrice.before != null) {
@@ -619,13 +622,22 @@ object DydxAdjustMarginInputView : DydxComponent {
                             .themeColor(ThemeColor.SemanticColor.text_tertiary),
                     )
                 }
-                AmountText.Content(
-                    state = state.isolatedMarginReceipt.liquidationPrice.after,
-                    textStyle = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number)
-                        .themeColor(ThemeColor.SemanticColor.text_primary),
-                )
-
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    PlatformDirectionArrow(
+                        direction = PlatformDirection.None,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    AmountText.Content(
+                        state = state.isolatedMarginReceipt.liquidationPrice.after,
+                        textStyle = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number)
+                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                    )
+                }
                 Spacer(modifier = Modifier.weight(1f))
             }
         }

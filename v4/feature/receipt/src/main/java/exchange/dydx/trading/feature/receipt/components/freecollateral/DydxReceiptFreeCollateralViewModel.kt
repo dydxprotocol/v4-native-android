@@ -62,22 +62,22 @@ class DydxReceiptFreeCollateralViewModel @Inject constructor(
         val position = positions?.firstOrNull { it.id == marketId }
         return DydxReceiptFreeCollateralView.ViewState(
             localizer = localizer,
-            before = if (position?.buyingPower?.current != null) {
+            before = if (position?.freeCollateral?.current != null) {
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = position?.buyingPower?.current,
+                    amount = position.freeCollateral?.current,
                     tickSize = 0,
                     requiresPositive = true,
                 )
             } else {
                 null
             },
-            after = if (position?.buyingPower?.postOrder != null) {
+            after = if (position?.freeCollateral?.postOrder != null) {
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = position?.buyingPower?.postOrder,
+                    amount = position.freeCollateral?.postOrder,
                     tickSize = 0,
                     requiresPositive = true,
                 )
@@ -93,22 +93,22 @@ class DydxReceiptFreeCollateralViewModel @Inject constructor(
     ): DydxReceiptFreeCollateralView.ViewState {
         return DydxReceiptFreeCollateralView.ViewState(
             localizer = localizer,
-            before = if (subaccount?.buyingPower?.current != null) {
+            before = if (subaccount?.freeCollateral?.current != null) {
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = subaccount?.buyingPower?.current,
+                    amount = subaccount.freeCollateral?.current,
                     tickSize = 0,
                     requiresPositive = true,
                 )
             } else {
                 null
             },
-            after = if (subaccount?.buyingPower?.postOrder != null) {
+            after = if (subaccount?.freeCollateral?.postOrder != null) {
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = subaccount?.buyingPower?.postOrder,
+                    amount = subaccount.freeCollateral?.postOrder,
                     tickSize = 0,
                     requiresPositive = true,
                 )
