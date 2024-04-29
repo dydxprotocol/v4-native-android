@@ -73,12 +73,12 @@ object DydxAdjustMarginInputView : DydxComponent {
         val percentage: Double,
     )
 
-    data class IsolatedMarginReceipt(
+    data class CrossMarginReceipt(
         val freeCollateral: DydxReceiptFreeCollateralView.ViewState,
         val marginUsage: DydxReceiptMarginUsageView.ViewState,
     )
 
-    data class ParentSubaccountReceipt(
+    data class IsolatedMarginReceipt(
         val liquidationPrice: DydxReceiptLiquidationPriceView.ViewState,
         val receipts: DydxReceiptView.ViewState,
     )
@@ -90,8 +90,8 @@ object DydxAdjustMarginInputView : DydxComponent {
         val percentage: Double?,
         val percentageOptions: List<PercentageOption>,
         val amountText: String?,
+        val crossMarginReceipt: CrossMarginReceipt,
         val isolatedMarginReceipt: IsolatedMarginReceipt,
-        val parentSubaccountReceipt: ParentSubaccountReceipt,
         val error: String?,
         val marginDirectionAction: ((direction: MarginDirection) -> Unit) = {},
         val percentageAction: (() -> Unit) = {},
@@ -112,11 +112,11 @@ object DydxAdjustMarginInputView : DydxComponent {
                     PercentageOption("50%", 0.5),
                 ),
                 amountText = "500",
-                isolatedMarginReceipt = IsolatedMarginReceipt(
+                crossMarginReceipt = CrossMarginReceipt(
                     freeCollateral = DydxReceiptFreeCollateralView.ViewState.preview,
                     marginUsage = DydxReceiptMarginUsageView.ViewState.preview,
                 ),
-                parentSubaccountReceipt = ParentSubaccountReceipt(
+                isolatedMarginReceipt = IsolatedMarginReceipt(
                     liquidationPrice = DydxReceiptLiquidationPriceView.ViewState.preview,
                     receipts = DydxReceiptView.ViewState(
                         localizer = MockLocalizer(),
@@ -453,10 +453,10 @@ object DydxAdjustMarginInputView : DydxComponent {
         ) {
             PlatformAmountChange(
                 modifier = Modifier.weight(1f),
-                before = if (state.isolatedMarginReceipt.freeCollateral.before != null) {
+                before = if (state.crossMarginReceipt.freeCollateral.before != null) {
                     {
                         AmountText.Content(
-                            state = state.isolatedMarginReceipt.freeCollateral.before,
+                            state = state.crossMarginReceipt.freeCollateral.before,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
                                     fontType = ThemeFont.FontType.number,
@@ -468,10 +468,10 @@ object DydxAdjustMarginInputView : DydxComponent {
                 } else {
                     null
                 },
-                after = if (state.isolatedMarginReceipt.freeCollateral.after != null) {
+                after = if (state.crossMarginReceipt.freeCollateral.after != null) {
                     {
                         AmountText.Content(
-                            state = state.isolatedMarginReceipt.freeCollateral.after,
+                            state = state.crossMarginReceipt.freeCollateral.after,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
                                     fontType = ThemeFont.FontType.number,
@@ -484,8 +484,8 @@ object DydxAdjustMarginInputView : DydxComponent {
                     null
                 },
                 direction = PlatformDirection.from(
-                    state.isolatedMarginReceipt.freeCollateral.before?.amount,
-                    state.isolatedMarginReceipt.freeCollateral.after?.amount,
+                    state.crossMarginReceipt.freeCollateral.before?.amount,
+                    state.crossMarginReceipt.freeCollateral.after?.amount,
                 ),
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -526,10 +526,10 @@ object DydxAdjustMarginInputView : DydxComponent {
         ) {
             PlatformAmountChange(
                 modifier = Modifier.weight(1f),
-                before = if (state.isolatedMarginReceipt.marginUsage.before != null) {
+                before = if (state.crossMarginReceipt.marginUsage.before != null) {
                     {
                         MarginUsageView.Content(
-                            state = state.isolatedMarginReceipt.marginUsage.before,
+                            state = state.crossMarginReceipt.marginUsage.before,
                             formatter = state.formatter,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
@@ -543,10 +543,10 @@ object DydxAdjustMarginInputView : DydxComponent {
                     null
                 },
                 after =
-                if (state.isolatedMarginReceipt.marginUsage.after != null) {
+                if (state.crossMarginReceipt.marginUsage.after != null) {
                     {
                         MarginUsageView.Content(
-                            state = state.isolatedMarginReceipt.marginUsage.after,
+                            state = state.crossMarginReceipt.marginUsage.after,
                             formatter = state.formatter,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
@@ -560,8 +560,8 @@ object DydxAdjustMarginInputView : DydxComponent {
                     null
                 },
                 direction = PlatformDirection.from(
-                    state.isolatedMarginReceipt.marginUsage.after?.percent,
-                    state.isolatedMarginReceipt.marginUsage.before?.percent,
+                    state.crossMarginReceipt.marginUsage.after?.percent,
+                    state.crossMarginReceipt.marginUsage.before?.percent,
                 ),
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -600,7 +600,7 @@ object DydxAdjustMarginInputView : DydxComponent {
             DydxReceiptView.Content(
                 modifier = Modifier
                     .offset(y = ThemeShapes.VerticalPadding),
-                state = state.parentSubaccountReceipt.receipts,
+                state = state.isolatedMarginReceipt.receipts,
             )
             DydxAdjustMarginCtaButton.Content(
                 Modifier

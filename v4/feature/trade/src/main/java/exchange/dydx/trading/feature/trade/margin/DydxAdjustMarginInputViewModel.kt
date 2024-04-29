@@ -64,19 +64,19 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                 DydxAdjustMarginInputView.PercentageOption("50%", 0.5),
             ),
             amountText = "500",
-            isolatedMarginReceipt = DydxAdjustMarginInputView.IsolatedMarginReceipt(
+            crossMarginReceipt = DydxAdjustMarginInputView.CrossMarginReceipt(
                 freeCollateral = DydxReceiptFreeCollateralView.ViewState(
                     localizer = localizer,
                     before = AmountText.ViewState(
                         localizer = localizer,
                         formatter = formatter,
-                        amount = isolatedMargin?.freeCollateral?.current,
+                        amount = subaccount?.freeCollateral?.current,
                         tickSize = 2,
                     ),
                     after = AmountText.ViewState(
                         localizer = localizer,
                         formatter = formatter,
-                        amount = isolatedMargin?.freeCollateral?.postOrder,
+                        amount = subaccount?.freeCollateral?.postOrder,
                         tickSize = 2,
                     ),
                 ),
@@ -86,16 +86,16 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                     before = MarginUsageView.ViewState(
                         localizer = localizer,
                         displayOption = MarginUsageView.DisplayOption.IconAndValue,
-//                        percent = isolatedMargin?.marginUsage?.current ?: 0.5,
+                        percent = subaccount?.marginUsage?.current ?: 0.5,
                     ),
                     after = MarginUsageView.ViewState(
                         localizer = localizer,
                         displayOption = MarginUsageView.DisplayOption.IconAndValue,
-//                        percent = isolatedMargin?.marginUsage?.current ?: 0.5,
+                        percent = subaccount?.marginUsage?.current ?: 0.5,
                     ),
                 ),
             ),
-            parentSubaccountReceipt = DydxAdjustMarginInputView.ParentSubaccountReceipt(
+            isolatedMarginReceipt = DydxAdjustMarginInputView.IsolatedMarginReceipt(
                 liquidationPrice = DydxReceiptLiquidationPriceView.ViewState(
                     localizer = localizer,
                     before = AmountText.ViewState(
@@ -116,8 +116,8 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                     height = 128.dp,
                     padding = 0.dp,
                     lineTypes = listOf(
-                        DydxReceiptView.ReceiptLineType.FreeCollateral,
-                        DydxReceiptView.ReceiptLineType.MarginUsage,
+                        DydxReceiptView.ReceiptLineType.IsolatedPositionMarginUsage,
+                        DydxReceiptView.ReceiptLineType.IsolatedPositionLeverage,
                     ),
                 ),
             ),
