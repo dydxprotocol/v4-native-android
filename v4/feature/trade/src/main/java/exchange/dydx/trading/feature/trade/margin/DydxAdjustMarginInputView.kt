@@ -575,7 +575,60 @@ object DydxAdjustMarginInputView : DydxComponent {
         modifier: Modifier,
         state: ViewState,
     ) {
-        // TODO, implement this
+        val shape = RoundedCornerShape(8.dp)
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(color = ThemeColor.SemanticColor.layer_5.color, shape = shape)
+                .padding(horizontal = ThemeShapes.HorizontalPadding)
+                .padding(vertical = ThemeShapes.VerticalPadding),
+        ) {
+            Column(
+                modifier = Modifier,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.ESTIMATED"),
+                    style = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+                Text(
+                    text = state.localizer.localize("APP.TRADE.LIQUIDATION_PRICE"),
+                    style = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_secondary)
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            Column(
+                modifier = Modifier,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                if (state.isolatedMarginReceipt.liquidationPrice.before != null) {
+                    AmountText.Content(
+                        state = state.isolatedMarginReceipt.liquidationPrice.before,
+                        textStyle = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    )
+                }
+                AmountText.Content(
+                    state = state.isolatedMarginReceipt.liquidationPrice.after,
+                    textStyle = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
     }
 
     @Composable
@@ -591,8 +644,6 @@ object DydxAdjustMarginInputView : DydxComponent {
         modifier: Modifier,
         state: ViewState,
     ) {
-        //  Spacer(modifier = Modifier.weight(1f))
-
         Column(
             modifier = modifier
                 .fillMaxWidth(),
