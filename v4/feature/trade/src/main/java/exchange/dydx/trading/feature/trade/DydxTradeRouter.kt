@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.trade.closeposition.DydxClosePositionInputView
+import exchange.dydx.trading.feature.trade.margin.DydxAdjustMarginInputView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputMarginModeView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputTargetLeverageView
 import exchange.dydx.trading.feature.trade.tradestatus.DydxTradeStatusView
@@ -22,8 +23,9 @@ fun NavGraphBuilder.tradeGraph(
 ) {
     dydxComposable(
         router = appRouter,
-        route = TradeRoutes.status,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        route = TradeRoutes.status + "/{tradeType}",
+        arguments = listOf(navArgument("tradeType") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.status, "tradeType", true),
     ) { navBackStackEntry ->
         DydxTradeStatusView.Content(Modifier)
     }
@@ -61,7 +63,7 @@ fun NavGraphBuilder.tradeGraph(
     dydxComposable(
         router = appRouter,
         route = TradeRoutes.margin_type,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        deepLinks = appRouter.deeplinks(TradeRoutes.margin_type),
     ) { navBackStackEntry ->
         DydxTradeInputMarginModeView.Content(Modifier)
     }
@@ -69,8 +71,23 @@ fun NavGraphBuilder.tradeGraph(
     dydxComposable(
         router = appRouter,
         route = TradeRoutes.target_leverage,
-        deepLinks = appRouter.deeplinks(TradeRoutes.status),
+        deepLinks = appRouter.deeplinks(TradeRoutes.target_leverage),
     ) { navBackStackEntry ->
         DydxTradeInputTargetLeverageView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TradeRoutes.adjust_margin + "/{marketId}",
+        arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.adjust_margin, "marketId", true),
+    ) { navBackStackEntry ->
+        val id = navBackStackEntry.arguments?.getString("marketId")
+        if (id == null) {
+            Timber.w("No marketId passed")
+            appRouter.navigateTo(MarketRoutes.marketList)
+            return@dydxComposable
+        }
+        DydxAdjustMarginInputView.Content(Modifier)
     }
 }

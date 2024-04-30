@@ -32,7 +32,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.R
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 
@@ -83,7 +83,7 @@ object DydxTradeInputSizeView : DydxComponent {
         val showingUsdc = remember { mutableStateOf(state.showingUsdc) }
         val focusManager = LocalFocusManager.current
 
-        InputFieldScarfold(modifier) {
+        InputFieldScaffold(modifier) {
             Column {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

@@ -60,7 +60,7 @@ class DydxClosePositionInputCtaButtonViewModel @Inject constructor(
                 tradeStream.closePosition()
                 router.navigateBack()
                 router.navigateTo(
-                    route = TradeRoutes.status,
+                    route = TradeRoutes.status + "/closePosition",
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },

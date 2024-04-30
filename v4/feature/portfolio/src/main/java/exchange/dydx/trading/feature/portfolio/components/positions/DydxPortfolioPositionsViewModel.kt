@@ -13,6 +13,7 @@ import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
+import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketPositionViewState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -58,6 +59,12 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                     asset = assetMap?.get(position.assetId),
                     formatter = formatter,
                     localizer = localizer,
+                    onAdjustMarginAction = {
+                        router.navigateTo(
+                            route = TradeRoutes.adjust_margin + "/${market.id}",
+                            presentation = DydxRouter.Presentation.Modal,
+                        )
+                    },
                 )
             } ?: listOf(),
             isIsolatedMarketEnabled = isIsolatedMarketEnabled,
@@ -65,6 +72,13 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                 val market = marketMap?.get(position.id) ?: return@ViewState
                 router.navigateTo(
                     route = MarketRoutes.marketInfo + "/${market.id}",
+                    presentation = DydxRouter.Presentation.Push,
+                )
+            },
+            onModifyMarginAction = { position ->
+                val market = marketMap?.get(position.id) ?: return@ViewState
+                router.navigateTo(
+                    route = TradeRoutes.adjust_margin + "/${market.id}",
                     presentation = DydxRouter.Presentation.Push,
                 )
             },

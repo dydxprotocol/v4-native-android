@@ -66,14 +66,7 @@ object DydxMarketSparklineView : DydxComponent {
             0.0f,
             true,
         ),
-        interaction = InteractionConfig(
-            false,
-            false,
-            false,
-            false,
-            500.0f,
-
-        ),
+        interaction = InteractionConfig.noTouch,
         xAxis = AxisConfig(false, false),
         leftAxis = AxisConfig(false, false),
         rightAxis = null,
@@ -99,12 +92,12 @@ object DydxMarketSparklineView : DydxComponent {
             }
         }
         regularView.update(
-            state.sharedMarketViewState?.sparkline ?: LineChartDataSet(
+            set = state.sharedMarketViewState?.sparkline ?: LineChartDataSet(
                 listOf<Entry>(),
                 "Sparkline",
             ),
-            config,
-            state.sharedMarketViewState?.priceChangePercent24H?.sign?.let {
+            config = config,
+            lineColor = state.sharedMarketViewState?.priceChangePercent24H?.sign?.let {
                 when (it) {
                     PlatformUISign.Plus -> ThemeColor.SemanticColor.positiveColor.color.toArgb()
                     PlatformUISign.Minus -> ThemeColor.SemanticColor.negativeColor.color.toArgb()

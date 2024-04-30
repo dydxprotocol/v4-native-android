@@ -77,7 +77,7 @@ class DydxTradeInputCtaButtonViewModel @Inject constructor(
                 ctaAction = {
                     tradeStream.submitTrade()
                     router.navigateTo(
-                        route = TradeRoutes.status,
+                        route = TradeRoutes.status + "/trade",
                         presentation = DydxRouter.Presentation.Modal,
                     )
                 },

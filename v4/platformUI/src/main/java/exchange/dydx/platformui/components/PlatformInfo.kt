@@ -22,7 +22,7 @@ import kotlinx.serialization.json.JsonNull.content
 
 @Composable
 fun PlatformInfoScaffold(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     platformInfo: PlatformInfo,
     content: @Composable (Modifier) -> Unit,
 ) {

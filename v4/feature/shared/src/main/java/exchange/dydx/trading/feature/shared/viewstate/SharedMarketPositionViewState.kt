@@ -33,6 +33,7 @@ data class SharedMarketPositionViewState(
     val entryPrice: String? = null,
     val exitPrice: String? = null,
     val funding: SignedAmountView.ViewState? = null,
+    val onAdjustMarginAction: (() -> Unit)? = null,
 ) {
     companion object {
         val preview = SharedMarketPositionViewState(
@@ -61,6 +62,7 @@ data class SharedMarketPositionViewState(
             asset: Asset?,
             formatter: DydxFormatter,
             localizer: LocalizerProtocol,
+            onAdjustMarginAction: (() -> Unit)
         ): SharedMarketPositionViewState? {
             val configs = market.configs ?: return null
             val positionSize = position.size?.current ?: 0.0
@@ -137,6 +139,7 @@ data class SharedMarketPositionViewState(
                     sign = netFundingSign,
                     coloringOption = SignedAmountView.ColoringOption.SignOnly,
                 ),
+                onAdjustMarginAction = onAdjustMarginAction,
             )
         }
     }

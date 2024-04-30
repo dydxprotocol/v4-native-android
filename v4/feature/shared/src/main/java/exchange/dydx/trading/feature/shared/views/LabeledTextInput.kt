@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.inputs.PlatformInputAlertState
 import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -40,6 +41,7 @@ object LabeledTextInput {
         val value: String? = null,
         val placeholder: String? = null,
         val onValueChanged: (String) -> Unit = {},
+        val alertState: PlatformInputAlertState = PlatformInputAlertState.None,
     ) {
         companion object {
             val preview = ViewState(
@@ -90,6 +92,7 @@ object LabeledTextInput {
                 }
             },
             value = state.value,
+            alertState = state.alertState,
             placeHolder = state.placeholder,
             onValueChange = state.onValueChanged,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

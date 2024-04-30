@@ -24,9 +24,12 @@ fun Preview_DydxTradeStatusCtaButtonView() {
 }
 
 object DydxTradeStatusCtaButtonView : DydxComponent {
+
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val returnAction: () -> Unit = {},
+        val ctaButtonTitle: String = "Try again",
+        val ctaButtonState: PlatformButtonState = PlatformButtonState.Secondary,
+        val ctaButtonAction: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -51,10 +54,10 @@ object DydxTradeStatusCtaButtonView : DydxComponent {
 
         PlatformButton(
             modifier = modifier,
-            text = state.localizer.localize("APP.TRADE.RETURN_TO_MARKET"),
-            state = PlatformButtonState.Secondary,
+            text = state.ctaButtonTitle,
+            state = state.ctaButtonState,
         ) {
-            state.returnAction()
+            state.ctaButtonAction()
         }
     }
 }

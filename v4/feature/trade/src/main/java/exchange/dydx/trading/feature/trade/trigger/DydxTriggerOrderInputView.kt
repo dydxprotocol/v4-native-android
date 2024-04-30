@@ -4,7 +4,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +19,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.OnLifecycleEvent
+import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -30,8 +32,10 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderCtaButtonView
@@ -39,6 +43,7 @@ import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderRe
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderInputType
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.DydxTriggerOrderPriceInputType
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.gainloss.DydxTriggerOrderGainLossView
+import exchange.dydx.trading.feature.trade.trigger.components.inputfields.headersection.DydxTriggerSectionHeaderView
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.limitprice.DydxTriggerOrderLimitPriceSectionView
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.price.DydxTriggerOrderPriceView
 import exchange.dydx.trading.feature.trade.trigger.components.inputfields.size.DydxTriggerOrderSizeView
@@ -52,9 +57,20 @@ fun Preview_DydxTriggerOrderInputView() {
 }
 
 object DydxTriggerOrderInputView : DydxComponent {
+
+    enum class ValidationErrorSection {
+        TakeProfit,
+        StopLoss,
+        Size,
+        LimitPrice,
+        None,
+    }
+
     data class ViewState(
         val localizer: LocalizerProtocol,
         val closeAction: (() -> Unit)? = null,
+        val backHandler: (() -> Unit)? = null,
+        val validationErrorSection: ValidationErrorSection = ValidationErrorSection.None,
     ) {
         companion object {
             val preview = ViewState(
@@ -68,7 +84,18 @@ object DydxTriggerOrderInputView : DydxComponent {
         val viewModel: DydxTriggerOrderInputViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        Content(modifier, state)
+        OnLifecycleEvent { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                state?.backHandler?.invoke()
+            }
+        }
+
+        PlatformInfoScaffold(
+            modifier = modifier,
+            platformInfo = viewModel.platformInfo,
+        ) {
+            Content(it, state)
+        }
     }
 
     @Composable
@@ -96,6 +123,7 @@ object DydxTriggerOrderInputView : DydxComponent {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -113,7 +141,7 @@ object DydxTriggerOrderInputView : DydxComponent {
                     state = state,
                 )
 
-                AdvacedDividerView(
+                AdvancedDividerView(
                     modifier = Modifier,
                     state = state,
                 )
@@ -124,14 +152,28 @@ object DydxTriggerOrderInputView : DydxComponent {
                         .padding(horizontal = ThemeShapes.HorizontalPadding),
                 )
 
+                DydxAnimation.AnimateExpandInOut(
+                    visible = state.validationErrorSection == ValidationErrorSection.Size,
+                ) {
+                    DydxValidationView.Content(
+                        modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                    )
+                }
+
                 DydxTriggerOrderLimitPriceSectionView.Content(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = ThemeShapes.HorizontalPadding),
                 )
-            }
 
-            Spacer(modifier = Modifier.weight(1f))
+                DydxAnimation.AnimateExpandInOut(
+                    visible = state.validationErrorSection == ValidationErrorSection.LimitPrice,
+                ) {
+                    DydxValidationView.Content(
+                        modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                    )
+                }
+            }
 
             DydxTriggerOrderCtaButtonView.Content(
                 modifier = Modifier
@@ -185,15 +227,28 @@ object DydxTriggerOrderInputView : DydxComponent {
                 .fillMaxWidth()
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
         ) {
-            Text(
-                text = state.localizer.localize("TRADE.BRACKET_ORDER_TP.TITLE"),
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.base)
-                    .themeColor(ThemeColor.SemanticColor.text_secondary),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = state.localizer.localize("TRADE.BRACKET_ORDER_TP.TITLE"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.base)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+
+                DydxTriggerSectionHeaderView.Content(
+                    modifier = Modifier.weight(1f),
+                    inputType = DydxTriggerOrderInputType.TakeProfit,
+                )
+            }
 
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -209,6 +264,14 @@ object DydxTriggerOrderInputView : DydxComponent {
                 )
             }
         }
+
+        DydxAnimation.AnimateExpandInOut(
+            visible = state.validationErrorSection == ValidationErrorSection.TakeProfit,
+        ) {
+            DydxValidationView.Content(
+                modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+            )
+        }
     }
 
     @Composable
@@ -218,15 +281,28 @@ object DydxTriggerOrderInputView : DydxComponent {
                 .fillMaxWidth()
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
         ) {
-            Text(
-                text = state.localizer.localize("TRADE.BRACKET_ORDER_SL.TITLE"),
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.base)
-                    .themeColor(ThemeColor.SemanticColor.text_secondary),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = state.localizer.localize("TRADE.BRACKET_ORDER_SL.TITLE"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.base)
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+
+                DydxTriggerSectionHeaderView.Content(
+                    modifier = Modifier.weight(1f),
+                    inputType = DydxTriggerOrderInputType.StopLoss,
+                )
+            }
 
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -242,13 +318,22 @@ object DydxTriggerOrderInputView : DydxComponent {
                 )
             }
         }
+
+        DydxAnimation.AnimateExpandInOut(
+            visible = state.validationErrorSection == ValidationErrorSection.StopLoss,
+        ) {
+            DydxValidationView.Content(
+                modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+            )
+        }
     }
 
     @Composable
-    private fun AdvacedDividerView(modifier: Modifier, state: ViewState) {
+    private fun AdvancedDividerView(modifier: Modifier, state: ViewState) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
+                .padding(vertical = ThemeShapes.VerticalPadding)
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,

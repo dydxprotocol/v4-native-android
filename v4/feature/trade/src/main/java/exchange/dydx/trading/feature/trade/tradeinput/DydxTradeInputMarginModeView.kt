@@ -91,7 +91,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(modifier, state)
+            Content(it, state)
         }
     }
 
@@ -107,7 +107,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_4),
         ) {
-            MarginModeViewHeader(
+            NavigationHeader(
                 modifier = Modifier,
                 state = state,
             )
@@ -125,12 +125,12 @@ object DydxTradeInputMarginModeView : DydxComponent {
     }
 
     @Composable
-    fun MarginModeViewHeader(
+    fun NavigationHeader(
         modifier: Modifier,
         state: ViewState,
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -172,7 +172,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
     ) {
         val shape = RoundedCornerShape(10.dp)
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = ThemeShapes.VerticalPadding,

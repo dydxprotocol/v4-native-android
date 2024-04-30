@@ -296,13 +296,8 @@ class DydxMarketPricesViewModel @Inject constructor(
                 null,
                 true,
             ),
-            interaction = InteractionConfig(
-                true,
-                false,
-                true,
-                true,
-                500.0f,
-                this,
+            interaction = InteractionConfig.default.copy(
+                selectionListener = this,
             ),
             xAxis = AxisConfig(
                 true,

@@ -22,6 +22,7 @@ fun CandleStickChartView.config(config: IBarChartConfig) {
 }
 
 private fun CandleStickChartView.configInteraction(interaction: InteractionConfig) {
+    setTouchEnabled(interaction.touchEnabled)
     isDragEnabled = interaction.pan
     isDoubleTapToZoomEnabled = interaction.doubleTap
     isScaleXEnabled = interaction.zoom
