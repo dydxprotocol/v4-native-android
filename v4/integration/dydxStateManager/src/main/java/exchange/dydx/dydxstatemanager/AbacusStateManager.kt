@@ -108,12 +108,22 @@ interface AbacusStateManagerProtocol {
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
 
     fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
+    fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit)
 
     // extensions
     fun resetTransferInputFields() {
         transfer(null, TransferInputField.size)
         transfer(null, TransferInputField.usdcSize)
         transfer(null, TransferInputField.type)
+    }
+
+    fun resetTriggerOrders() {
+        val fields = TriggerOrdersInputField.values().filter {
+            it != TriggerOrdersInputField.marketId
+        }
+        for (field in fields) {
+            triggerOrders(null, field)
+        }
     }
 }
 
@@ -161,6 +171,12 @@ class AbacusStateManager @Inject constructor(
 
         appConfigs.squidVersion = AppConfigs.SquidVersion.V2
         appConfigsV2.onboardingConfigs.squidVersion = OnboardingConfigs.SquidVersion.V2
+
+        // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
+        if (BuildConfig.DEBUG) {
+            appConfigs.enableLogger = false
+            appConfigsV2.enableLogger = false
+        }
 
         if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2)) {
             AsyncAbacusStateManagerV2(
@@ -383,6 +399,16 @@ class AbacusStateManager @Inject constructor(
 
     override fun triggerOrders(input: String?, type: TriggerOrdersInputField?) {
         asyncStateManager.triggerOrders(input, type)
+    }
+
+    override fun commitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+        asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
+            if (successful) {
+                callback(AbacusStateManagerProtocol.SubmissionStatus.Success)
+            } else {
+                callback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
+            }
+        }
     }
 
     // MARK: StateNotificationProtocol

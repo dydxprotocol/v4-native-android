@@ -1,5 +1,8 @@
 package exchange.dydx.trading.feature.market.marketinfo
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -155,11 +158,23 @@ object DydxMarketInfoView : DydxComponent {
                         )
                     }
                     item(key = "stats") {
-                        when (state.statsTabSelection) {
-                            DydxMarketStatsTabView.Selection.Statistics -> {
-                                DydxMarketStatsView.Content(Modifier)
-                            }
-                            DydxMarketStatsTabView.Selection.About -> {
+                        AnimatedVisibility(
+                            visible =
+                            state.statsTabSelection == DydxMarketStatsTabView.Selection.Statistics,
+                            enter = expandVertically(),
+                            exit = shrinkVertically(),
+                        ) {
+                            DydxMarketStatsView.Content(Modifier)
+                        }
+                        AnimatedVisibility(
+                            visible =
+                            state.statsTabSelection == DydxMarketStatsTabView.Selection.About,
+                            enter = expandVertically(),
+                            exit = shrinkVertically(),
+                        ) {
+                            Column(
+                                modifier = Modifier,
+                            ) {
                                 DydxMarketResourcesView.Content(Modifier)
                                 Spacer(modifier = Modifier.height(ThemeShapes.VerticalPadding))
                                 DydxMarketConfigsView.Content(Modifier)

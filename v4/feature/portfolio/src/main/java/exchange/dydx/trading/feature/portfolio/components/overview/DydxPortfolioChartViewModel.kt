@@ -53,13 +53,8 @@ class DydxPortfolioChartViewModel @Inject constructor(
             true,
             null,
         ),
-        interaction = InteractionConfig(
-            true,
-            false,
-            true,
-            true,
-            500.0f,
-            this,
+        interaction = InteractionConfig.default.copy(
+            selectionListener = this,
         ),
         xAxis = AxisConfig(false, false, null),
         leftAxis = AxisConfig(false, false, null),

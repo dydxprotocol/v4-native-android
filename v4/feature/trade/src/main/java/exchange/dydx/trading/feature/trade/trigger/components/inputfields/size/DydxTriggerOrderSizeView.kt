@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
 @Preview
@@ -49,8 +50,9 @@ object DydxTriggerOrderSizeView : DydxComponent {
         val enabled: Boolean = true,
         val onEnabledChanged: (Boolean) -> Unit = {},
         val labeledTextInput: LabeledTextInput.ViewState,
-        val percentage: Float = 40.0f,
-        val onPercentageChanged: (Float) -> Unit = {},
+        val percentage: Double = 0.4,
+        val onPercentageChanged: (Double) -> Unit = {},
+        val canEdit: Boolean = true,
     ) {
         companion object {
             val preview = ViewState(
@@ -74,6 +76,8 @@ object DydxTriggerOrderSizeView : DydxComponent {
             return
         }
 
+        val focusManager = LocalFocusManager.current
+
         Column(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -85,7 +89,13 @@ object DydxTriggerOrderSizeView : DydxComponent {
                     .themeFont(fontSize = ThemeFont.FontSize.base)
                     .themeColor(ThemeColor.SemanticColor.text_secondary),
                 value = state.enabled,
-                onValueChange = state.onEnabledChanged,
+                onValueChange = {
+                    if (state.canEdit) {
+                        focusManager.clearFocus()
+                        state.onEnabledChanged(it)
+                    }
+                },
+                canEdit = state.canEdit,
             )
 
             DydxAnimation.AnimateExpandInOut(
@@ -104,9 +114,11 @@ object DydxTriggerOrderSizeView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CustomSlider(
-                value = state.percentage,
-                onValueChange = state.onPercentageChanged,
-                valueRange = 0.0f..100.0f,
+                value = state.percentage.toFloat(),
+                onValueChange = {
+                    state.onPercentageChanged(it.toDouble())
+                },
+                valueRange = 0.0f..1.0f,
                 modifier = modifier.weight(1f),
                 showLabel = false,
                 showIndicator = false,
@@ -128,8 +140,9 @@ object DydxTriggerOrderSizeView : DydxComponent {
                 },
             )
 
-            InputFieldScarfold(
+            InputFieldScaffold(
                 modifier = Modifier.width(120.dp),
+                alertState = state.labeledTextInput.alertState,
             ) {
                 LabeledTextInput.Content(
                     modifier = Modifier,

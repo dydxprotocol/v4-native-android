@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
@@ -36,7 +35,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.shared.scarfolds.InputFieldScarfold
+import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.SizeTextView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 import java.lang.Double.max
@@ -91,7 +90,7 @@ object TransferAmountBox {
         }
 
         Column {
-            InputFieldScarfold(modifier.zIndex(1f)) {
+            InputFieldScaffold(modifier.zIndex(1f)) {
                 TopContent(modifier, state)
             }
             val shape = RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp)

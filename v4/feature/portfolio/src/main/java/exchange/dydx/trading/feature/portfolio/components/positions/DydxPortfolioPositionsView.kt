@@ -47,6 +47,7 @@ object DydxPortfolioPositionsView : DydxComponent {
         val positions: List<SharedMarketPositionViewState> = listOf(),
         val isIsolatedMarketEnabled: Boolean,
         val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
+        val onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -96,6 +97,7 @@ object DydxPortfolioPositionsView : DydxComponent {
                     position = position,
                     isIsolatedMarketEnabled = state.isIsolatedMarketEnabled,
                     onTapAction = state.onPositionTapAction,
+                    onModifyMarginAction = state.onModifyMarginAction,
                 )
 
 //              Spacer(modifier = Modifier.height(10.dp))
