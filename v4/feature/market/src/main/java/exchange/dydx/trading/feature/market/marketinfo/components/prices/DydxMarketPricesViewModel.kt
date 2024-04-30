@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.MarketCandle
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.input.OrderSide
+import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.config.AxisConfig
@@ -89,9 +90,9 @@ class DydxMarketPricesViewModel @Inject constructor(
     private val resolutionIndex = MutableStateFlow(candlesPeriods.indexOf(abacusStateManager.candlesPeriod.value))
     private val selectedPrice = MutableStateFlow<MarketCandle?>(null)
 
-    val offset = 900
+    private val offset = 900
 
-    val anchorDateTime: Instant = run {
+    private val anchorDateTime: Instant = run {
         val now = Instant.now()
         now.truncatedTo(ChronoUnit.DAYS)
         now
@@ -117,7 +118,10 @@ class DydxMarketPricesViewModel @Inject constructor(
             val allPrices = candlesMap?.get(marketId)
             val candlesPeriod = candlesPeriods[resolutionIndex]
             val prices = allPrices?.candles?.get(candlesPeriod)
-            val orderData = ordersForMarket?.map { OrderData(it.price, it.side) }.orEmpty()
+            val orderData = ordersForMarket?.run {
+                filter { it.status in listOf(OrderStatus.open, OrderStatus.untriggered, OrderStatus.partiallyFilled) }
+                    .map { OrderData(it.price, it.side) }
+            }.orEmpty()
             createViewState(
                 prices = prices,
                 market = market,
