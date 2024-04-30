@@ -39,6 +39,7 @@ dependencies {
     implementation project(path: ':v4:integration:cosmos')
     implementation project(path: ':v4:integration:dydxCartera')
     implementation project(path: ':v4:integration:analytics')
+    implementation project(':v4:platformUI')
 
     testImplementation "junit:junit:$junitVersion"
 //    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"

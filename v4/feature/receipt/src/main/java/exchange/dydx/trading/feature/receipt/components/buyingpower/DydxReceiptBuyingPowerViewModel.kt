@@ -12,7 +12,6 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.receipt.ReceiptType
 import exchange.dydx.trading.feature.shared.views.AmountText
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,7 +27,6 @@ class DydxReceiptBuyingPowerViewModel @Inject constructor(
     private val receiptTypeFlow: Flow<@JvmSuppressWildcards ReceiptType?>,
 ) : ViewModel(), DydxViewModel {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val state: Flow<DydxReceiptBuyingPowerView.ViewState?> =
         receiptTypeFlow
             .flatMapLatest { receiptType ->

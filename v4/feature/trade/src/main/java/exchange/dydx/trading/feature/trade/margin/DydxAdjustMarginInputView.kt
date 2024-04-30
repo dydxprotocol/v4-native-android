@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.changes.PlatformAmountChange
 import exchange.dydx.platformui.components.dividers.PlatformDivider
@@ -125,9 +124,7 @@ object DydxAdjustMarginInputView : DydxComponent {
         val viewModel: DydxAdjustMarginInputViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(modifier, state)
-        }
+        Content(modifier, state)
     }
 
     @Composable

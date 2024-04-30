@@ -28,7 +28,7 @@ class DydxTransferFaucetViewModel @Inject constructor(
                         is AbacusStateManagerProtocol.SubmissionStatus.Success -> {
                             platformInfo.show(
                                 title = "Faucet Request Submitted",
-                                message = "Your portofolio balance will be updated after a short while.",
+                                message = "Your portfolio balance will be updated after a short while.",
                             )
                         }
                         is AbacusStateManagerProtocol.SubmissionStatus.Failed -> {

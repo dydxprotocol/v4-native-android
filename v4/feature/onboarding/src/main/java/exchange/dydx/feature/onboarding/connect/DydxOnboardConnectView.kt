@@ -16,7 +16,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -74,12 +73,7 @@ object DydxOnboardConnectView : DydxComponent {
             viewModel.updateContext(context)
         }
 
-        PlatformInfoScaffold(
-            modifier = modifier,
-            platformInfo = viewModel.platformInfo,
-        ) {
-            Content(it, state)
-        }
+        Content(modifier, state)
     }
 
     @Composable

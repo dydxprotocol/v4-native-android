@@ -10,7 +10,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.PlatformDialogScaffold
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.camera.PlatformQrScanner
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -48,12 +47,7 @@ object DydxDesktopScanView : DydxComponent {
         val viewModel: DydxDesktopScanViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        PlatformInfoScaffold(
-            modifier = modifier,
-            platformInfo = viewModel.platformInfo,
-        ) {
-            Content(it, state)
-        }
+        Content(modifier, state)
 
         PlatformDialogScaffold(dialog = viewModel.platformDialog)
 
