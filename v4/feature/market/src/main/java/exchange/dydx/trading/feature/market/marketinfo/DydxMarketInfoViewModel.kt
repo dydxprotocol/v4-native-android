@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketAccountTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketStatsTabView
@@ -21,7 +20,6 @@ class DydxMarketInfoViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val mutableMarketInfoStream: MutableMarketInfoStreaming,
     private val marketInfoStream: MarketInfoStreaming,
-    private val abacusStateManager: AbacusStateManagerProtocol,
     statsTabFlow: Flow<@JvmSuppressWildcards DydxMarketStatsTabView.Selection>,
     accountTabFlow: Flow<@JvmSuppressWildcards DydxMarketAccountTabView.Selection>,
     tileFlow: Flow<@JvmSuppressWildcards DydxMarketTilesView.Tile>,

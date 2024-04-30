@@ -22,7 +22,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.OnLifecycleEvent
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -90,12 +89,7 @@ object DydxTriggerOrderInputView : DydxComponent {
             }
         }
 
-        PlatformInfoScaffold(
-            modifier = modifier,
-            platformInfo = viewModel.platformInfo,
-        ) {
-            Content(it, state)
-        }
+        Content(modifier, state)
     }
 
     @Composable

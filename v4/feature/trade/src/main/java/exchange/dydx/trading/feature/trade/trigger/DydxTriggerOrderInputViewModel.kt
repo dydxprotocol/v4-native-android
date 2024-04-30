@@ -15,7 +15,6 @@ import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
-import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -25,7 +24,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -37,7 +35,6 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     private val router: DydxRouter,
     private val formatter: DydxFormatter,
     savedStateHandle: SavedStateHandle,
-    val platformInfo: PlatformInfo,
     private val triggerOrderStream: MutableTriggerOrderStreaming,
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
@@ -78,8 +75,6 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             }
                 .launchIn(viewModelScope)
         }
-
-        subscribeToStatus()
     }
 
     private fun createViewState(
@@ -229,34 +224,5 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun subscribeToStatus() {
-        triggerOrderStream.submissionStatus
-            .filterNotNull()
-            .map { status ->
-                when (status) {
-                    is AbacusStateManagerProtocol.SubmissionStatus.Success ->
-                        platformInfo.show(
-                            title = localizer.localize("trade.trigger.order.submission.success.title"),
-                            message = localizer.localize("trade.trigger.order.submission.success.message"),
-                            buttonTitle = localizer.localize("APP.GENERAL.BACK"),
-                            buttonAction = {
-                                router.navigateBack()
-                            },
-                        )
-
-                    is AbacusStateManagerProtocol.SubmissionStatus.Failed ->
-                        platformInfo.show(
-                            title = localizer.localize("trade.trigger.order.submission.failed.title"),
-                            message = localizer.localize("trade.trigger.order.submission.failed.message"),
-                            type = PlatformInfo.InfoType.Error,
-                        )
-
-                    else -> null
-                }
-            }
-            .distinctUntilChanged()
-            .launchIn(viewModelScope)
     }
 }
