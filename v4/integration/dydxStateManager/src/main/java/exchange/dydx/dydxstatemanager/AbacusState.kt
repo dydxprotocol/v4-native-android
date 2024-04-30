@@ -231,7 +231,7 @@ class AbacusState(
         return selectedSubaccountOrders
             .map { orders ->
                 orders?.filter { order ->
-                    order?.marketId == marketId
+                    order.marketId == marketId
                 }
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)

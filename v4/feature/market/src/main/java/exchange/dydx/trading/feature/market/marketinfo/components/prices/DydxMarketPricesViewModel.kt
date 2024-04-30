@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.market.marketinfo.components.prices
 
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleDataSet
@@ -13,6 +14,7 @@ import com.hoc081098.flowext.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.MarketCandle
 import exchange.dydx.abacus.output.PerpetualMarket
+import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.config.AxisConfig
@@ -25,17 +27,24 @@ import exchange.dydx.platformui.components.charts.config.InteractionConfig
 import exchange.dydx.platformui.components.charts.config.LabelConfig
 import exchange.dydx.platformui.components.charts.config.LineChartDrawingConfig
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
-import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.negativeColor
 import exchange.dydx.platformui.designSystem.theme.positiveColor
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -45,6 +54,7 @@ class DydxMarketPricesViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
     /*
     The library works well with x range up to 1000
@@ -87,15 +97,19 @@ class DydxMarketPricesViewModel @Inject constructor(
         now
     }
 
-    val state: Flow<DydxMarketPricesView.ViewState?> =
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: StateFlow<DydxMarketPricesView.ViewState?> =
         combine(
             abacusStateManager.state.tradeInput.map { it?.marketId },
             abacusStateManager.state.marketMap,
             abacusStateManager.state.candlesMap,
+            abacusStateManager.state.tradeInput.map { it?.marketId }
+                .filterNotNull()
+                .flatMapLatest { abacusStateManager.state.selectedSubaccountOrdersOfMarket(it) },
             selectedPrice,
             typeIndex,
             resolutionIndex,
-        ) { marketId, marketMap, candlesMap, selectedPrice, typeIndex, resolutionIndex ->
+        ) { marketId, marketMap, candlesMap, ordersForMarket, selectedPrice, typeIndex, resolutionIndex ->
             if (marketId == null) {
                 return@combine null
             }
@@ -103,20 +117,24 @@ class DydxMarketPricesViewModel @Inject constructor(
             val allPrices = candlesMap?.get(marketId)
             val candlesPeriod = candlesPeriods[resolutionIndex]
             val prices = allPrices?.candles?.get(candlesPeriod)
+            val orderData = ordersForMarket?.map { OrderData(it.price, it.side) }.orEmpty()
             createViewState(
-                prices,
-                market,
-                candlesPeriod,
-                selectedPrice,
-                typeIndex,
-                resolutionIndex,
+                prices = prices,
+                market = market,
+                orderData = orderData,
+                candlesPeriod = candlesPeriod,
+                selectedPrice = selectedPrice,
+                typeIndex = typeIndex,
+                resolutionIndex = resolutionIndex,
             )
         }
             .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     private fun createViewState(
         prices: List<MarketCandle>?,
         market: PerpetualMarket?,
+        orderData: List<OrderData>,
         candlesPeriod: String,
         selectedPrice: MarketCandle?,
         typeIndex: Int,
@@ -194,9 +212,19 @@ class DydxMarketPricesViewModel @Inject constructor(
             localizer = localizer,
             config = config(market, candlesPeriod),
             market = market?.id,
-            CandleDataSet(candles, "candles"),
-            BarDataSet(volumes, "volumes"),
-            LineChartDataSet(lines, "lines"),
+            candles = CandleDataSet(candles, "candles"),
+            volumes = BarDataSet(volumes, "volumes"),
+            prices = LineChartDataSet(lines, "lines"),
+            orderLines = orderData.map { (price, side) ->
+                LimitLine(price.toFloat())
+                    .apply {
+                        lineColor = when (side) {
+                            OrderSide.buy -> SemanticColor.positiveColor.color.toArgb()
+                            OrderSide.sell -> SemanticColor.negativeColor.color.toArgb()
+                        }
+                        enableDashedLine(20f, 10f, 0f)
+                    }
+            },
             typeOptions = SelectionOptions(
                 typeTitles,
                 typeIndex,
@@ -279,17 +307,17 @@ class DydxMarketPricesViewModel @Inject constructor(
     private fun config(market: PerpetualMarket?, candlesPeriod: String?): CombinedChartConfig {
         return CombinedChartConfig(
             candlesDrawing = CandlesDrawingConfig(
-                increasingColor = ThemeColor.SemanticColor.positiveColor.color.toArgb(),
-                decreasingColor = ThemeColor.SemanticColor.negativeColor.color.toArgb(),
-                neutralColor = exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.text_primary.color.toArgb(),
+                increasingColor = SemanticColor.positiveColor.color.toArgb(),
+                decreasingColor = SemanticColor.negativeColor.color.toArgb(),
+                neutralColor = SemanticColor.text_primary.color.toArgb(),
             ),
             barDrawing = BarDrawingConfig(
-                borderColor = exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.layer_6.color.toArgb(),
-                fillColor = exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.layer_6.color.toArgb(),
+                borderColor = SemanticColor.layer_6.color.toArgb(),
+                fillColor = SemanticColor.layer_6.color.toArgb(),
             ),
             lineDrawing = LineChartDrawingConfig(
                 2.0f,
-                exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.text_secondary.color.toArgb(),
+                SemanticColor.text_secondary.color.toArgb(),
                 null,
             ),
             drawing = DrawingConfig(
@@ -305,7 +333,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                 LabelConfig(
                     DateTimeAxisFormatter(anchorDateTime, candlesPeriod, offset),
                     8.0f,
-                    exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.text_secondary.color.toArgb(),
+                    SemanticColor.text_secondary.color.toArgb(),
                     AxisTextPosition.OUTSIDE,
                 ),
             ),
@@ -315,7 +343,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                 LabelConfig(
                     PriceAxisFormatter(formatter, market?.configs?.tickSizeDecimals ?: 4),
                     8.0f,
-                    exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.text_secondary.color.toArgb(),
+                    SemanticColor.text_secondary.color.toArgb(),
                     AxisTextPosition.OUTSIDE,
                 ),
             ),
@@ -335,3 +363,8 @@ class DydxMarketPricesViewModel @Inject constructor(
         selectedPrice.value = null
     }
 }
+
+private data class OrderData(
+    val price: Double,
+    val side: OrderSide
+)
