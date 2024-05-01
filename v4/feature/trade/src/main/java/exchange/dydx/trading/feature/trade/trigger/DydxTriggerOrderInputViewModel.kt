@@ -15,6 +15,7 @@ import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -39,7 +40,9 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
 
-    private val marketId: String?
+    private val marketId: String? = savedStateHandle["marketId"]
+
+    private val includeLimitOrders = abacusStateManager.environment?.featureFlags?.isSlTpLimitOrdersEnabled == true || BuildConfig.DEBUG
 
     val state: Flow<DydxTriggerOrderInputView.ViewState?> =
         abacusStateManager.state.validationErrors
@@ -49,8 +52,6 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             .distinctUntilChanged()
 
     init {
-        marketId = savedStateHandle["marketId"]
-
         if (marketId == null) {
             router.navigateBack()
         } else {
@@ -62,8 +63,8 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
 
             combine(
                 abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
-                abacusStateManager.state.takeProfitOrders(marketId),
-                abacusStateManager.state.stopLossOrders(marketId),
+                abacusStateManager.state.takeProfitOrders(marketId, includeLimitOrders),
+                abacusStateManager.state.stopLossOrders(marketId, includeLimitOrders),
                 abacusStateManager.state.triggerOrdersInput,
             ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
                 updateAbacusTriggerOrder(
@@ -118,6 +119,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         DydxTriggerOrderInputView.ValidationErrorSection.None
                 }
             } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
+            showLimitPrice = includeLimitOrders,
         )
     }
 
@@ -148,10 +150,12 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         formatter.decimalLocaleAgnostic(order.triggerPrice),
                         TriggerOrdersInputField.takeProfitPrice,
                     )
-                    abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(order.price),
-                        TriggerOrdersInputField.takeProfitLimitPrice,
-                    )
+                    if (triggerOrdersInput?.takeProfitOrder?.type == OrderType.takeProfitLimit) {
+                        abacusStateManager.triggerOrders(
+                            formatter.decimalLocaleAgnostic(order.price),
+                            TriggerOrdersInputField.takeProfitLimitPrice,
+                        )
+                    }
                 }
             }
         } else {
@@ -184,10 +188,12 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         formatter.decimalLocaleAgnostic(order.triggerPrice),
                         TriggerOrdersInputField.stopLossPrice,
                     )
-                    abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(order.price),
-                        TriggerOrdersInputField.stopLossLimitPrice,
-                    )
+                    if (triggerOrdersInput?.stopLossOrder?.type == OrderType.stopLimit) {
+                        abacusStateManager.triggerOrders(
+                            formatter.decimalLocaleAgnostic(order.price),
+                            TriggerOrdersInputField.stopLossLimitPrice,
+                        )
+                    }
                 }
             }
         } else {

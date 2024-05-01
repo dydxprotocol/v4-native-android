@@ -20,6 +20,7 @@ import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
@@ -40,7 +41,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
             abacusStateManager.state.triggerOrdersInput
                 .mapNotNull { it?.marketId }
                 .flatMapLatest {
-                    abacusStateManager.state.selectedSubaccountPositionOfMarket(it)
+                    abacusStateManager.state.selectedSubaccountPositionOfMarket(it).filterNotNull()
                 },
             triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
