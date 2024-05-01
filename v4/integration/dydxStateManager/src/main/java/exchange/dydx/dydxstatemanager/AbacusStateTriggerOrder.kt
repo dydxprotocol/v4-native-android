@@ -19,28 +19,30 @@ fun AbacusState.triggerOrders(marketId: String): Flow<List<SubaccountOrder>?> =
         }
         .distinctUntilChanged()
 
-fun AbacusState.takeProfitOrders(marketId: String): Flow<List<SubaccountOrder>?> =
+fun AbacusState.takeProfitOrders(marketId: String, includeLimitOrders: Boolean): Flow<List<SubaccountOrder>?> =
     combine(
         selectedSubaccountPositionOfMarket(marketId),
         triggerOrders(marketId),
     ) { position, orders ->
         orders?.filter { order ->
             position?.side?.current?.let { currentSide ->
-                (order.type == OrderType.takeProfitMarket || order.type == OrderType.takeProfitLimit) &&
+                (order.type == OrderType.takeProfitMarket ||
+                        (order.type == OrderType.takeProfitLimit && includeLimitOrders)) &&
                     order.side.isOppositeOf(currentSide)
             } ?: false
         }
     }
         .distinctUntilChanged()
 
-fun AbacusState.stopLossOrders(marketId: String): Flow<List<SubaccountOrder>?> =
+fun AbacusState.stopLossOrders(marketId: String, includeLimitOrders: Boolean): Flow<List<SubaccountOrder>?> =
     combine(
         selectedSubaccountPositionOfMarket(marketId),
         triggerOrders(marketId),
     ) { position, orders ->
         orders?.filter { order ->
             position?.side?.current?.let { currentSide ->
-                (order.type == OrderType.stopMarket || order.type == OrderType.stopLimit) &&
+                (order.type == OrderType.stopMarket ||
+                        (order.type == OrderType.stopLimit && includeLimitOrders)) &&
                     order.side.isOppositeOf(currentSide)
             } ?: false
         }

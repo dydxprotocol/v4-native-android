@@ -4,6 +4,7 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
+import exchange.dydx.trading.common.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -57,10 +58,12 @@ class TriggerOrderStream @Inject constructor(
     private val marketIdFlow = abacusStateManager.state.triggerOrdersInput
         .mapNotNull { it?.marketId }
 
+    private val includeLimitOrders = abacusStateManager.environment?.featureFlags?.isSlTpLimitOrdersEnabled == true || BuildConfig.DEBUG
+
     override val isNewTriggerOrder: Flow<Boolean> =
         combine(
-            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it) },
-            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it, includeLimitOrders) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it, includeLimitOrders) },
         ) { takeProfitOrders, stopLossOrders ->
             takeProfitOrders.isNullOrEmpty() && stopLossOrders.isNullOrEmpty()
         }

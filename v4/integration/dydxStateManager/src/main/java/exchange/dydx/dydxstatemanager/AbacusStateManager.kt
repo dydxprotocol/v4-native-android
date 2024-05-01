@@ -405,7 +405,7 @@ class AbacusStateManager @Inject constructor(
     }
 
     override fun commitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
-        asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
+       asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
             if (successful) {
                 callback(AbacusStateManagerProtocol.SubmissionStatus.Success)
             } else {
