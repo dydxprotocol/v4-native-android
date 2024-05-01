@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
@@ -26,6 +28,7 @@ class DydxMarketPositionViewModel @Inject constructor(
     marketInfoStream: MarketInfoStreaming,
     private val router: DydxRouter,
     private val featureFlags: DydxFeatureFlags,
+    private val abacusStateManager: AbacusStateManagerProtocol,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxMarketPositionView.ViewState?> =
@@ -63,7 +66,12 @@ class DydxMarketPositionViewModel @Inject constructor(
                     )
                 },
             ),
-            enableTrigger = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger),
+            enableTrigger = if (BuildConfig.DEBUG) {
+                featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger)
+            } else {
+                featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger) &&
+                        abacusStateManager.environment?.featureFlags?.isSlTpEnabled == true
+            }
         )
     }
 }
