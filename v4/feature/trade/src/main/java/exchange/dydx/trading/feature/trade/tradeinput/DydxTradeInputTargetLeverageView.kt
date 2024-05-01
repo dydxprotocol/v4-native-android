@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
@@ -72,9 +71,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         val viewModel: DydxTradeInputTargetLeverageViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(it, state)
-        }
+        Content(modifier, state)
     }
 
     @Composable

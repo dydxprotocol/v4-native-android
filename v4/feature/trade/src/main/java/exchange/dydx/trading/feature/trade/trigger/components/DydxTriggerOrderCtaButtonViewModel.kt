@@ -8,6 +8,7 @@ import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -19,7 +20,7 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val triggerOrderStream: MutableTriggerOrderStreaming,
-
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTriggerOrderCtaButtonView.ViewState?> =
@@ -60,9 +61,9 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
                 DydxTriggerOrderCtaButtonView.State.Disabled(buttonTitle)
             },
             ctaAction = {
-                triggerOrderStream.updateSubmissionStatus(null)
-                abacusStateManager.commitTriggerOrders { status ->
-                    triggerOrderStream.updateSubmissionStatus(status)
+                router.navigateBack()
+                abacusStateManager.commitTriggerOrders { _ ->
+                    // order status will be shown from PresentationProtocol.showToast()
                 }
             },
         )

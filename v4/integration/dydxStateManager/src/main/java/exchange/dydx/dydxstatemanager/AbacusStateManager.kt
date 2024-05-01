@@ -17,6 +17,7 @@ import exchange.dydx.abacus.output.Restriction
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.StateNotificationProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.changes.StateChanges
@@ -142,6 +143,7 @@ class AbacusStateManager @Inject constructor(
     private val featureFlags: DydxFeatureFlags,
     @CoroutineScopes.App private val appScope: CoroutineScope,
     parser: ParserProtocol,
+    private val presentationProtocol: PresentationProtocol,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -187,6 +189,7 @@ class AbacusStateManager @Inject constructor(
                 uiImplementations = UIImplementationsExtensions.shared!!,
                 stateNotification = this,
                 dataNotification = null,
+                presentationProtocol = presentationProtocol,
             )
         } else {
             AsyncAbacusStateManager(
