@@ -26,8 +26,10 @@ fun AbacusState.takeProfitOrders(marketId: String, includeLimitOrders: Boolean):
     ) { position, orders ->
         orders?.filter { order ->
             position?.side?.current?.let { currentSide ->
-                (order.type == OrderType.takeProfitMarket ||
-                        (order.type == OrderType.takeProfitLimit && includeLimitOrders)) &&
+                (
+                    order.type == OrderType.takeProfitMarket ||
+                        (order.type == OrderType.takeProfitLimit && includeLimitOrders)
+                    ) &&
                     order.side.isOppositeOf(currentSide)
             } ?: false
         }
@@ -41,8 +43,10 @@ fun AbacusState.stopLossOrders(marketId: String, includeLimitOrders: Boolean): F
     ) { position, orders ->
         orders?.filter { order ->
             position?.side?.current?.let { currentSide ->
-                (order.type == OrderType.stopMarket ||
-                        (order.type == OrderType.stopLimit && includeLimitOrders)) &&
+                (
+                    order.type == OrderType.stopMarket ||
+                        (order.type == OrderType.stopLimit && includeLimitOrders)
+                    ) &&
                     order.side.isOppositeOf(currentSide)
             } ?: false
         }

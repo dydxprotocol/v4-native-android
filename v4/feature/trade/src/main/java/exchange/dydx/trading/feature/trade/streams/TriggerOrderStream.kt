@@ -8,6 +8,8 @@ import exchange.dydx.trading.common.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
@@ -62,11 +64,12 @@ class TriggerOrderStream @Inject constructor(
 
     override val isNewTriggerOrder: Flow<Boolean> =
         combine(
-            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it, includeLimitOrders) },
-            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it, includeLimitOrders) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it, includeLimitOrders).filterNotNull() },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it, includeLimitOrders).filterNotNull() },
         ) { takeProfitOrders, stopLossOrders ->
-            takeProfitOrders.isNullOrEmpty() && stopLossOrders.isNullOrEmpty()
+            takeProfitOrders.isEmpty() && stopLossOrders.isEmpty()
         }
+            .distinctUntilChanged()
 
     override fun updatesubmissionStatus(status: AbacusStateManagerProtocol.SubmissionStatus?) {
         _submissionStatus.update { status }

@@ -70,8 +70,8 @@ class DydxMarketPositionViewModel @Inject constructor(
                 featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger)
             } else {
                 featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger) &&
-                        abacusStateManager.environment?.featureFlags?.isSlTpEnabled == true
-            }
+                    abacusStateManager.environment?.featureFlags?.isSlTpEnabled == true
+            },
         )
     }
 }
