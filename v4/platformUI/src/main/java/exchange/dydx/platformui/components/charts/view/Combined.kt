@@ -9,7 +9,6 @@ import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData
 import com.github.mikephil.charting.data.CombinedData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
-import com.google.android.gms.common.data.DataBufferUtils.hasData
 import exchange.dydx.platformui.components.charts.config.DrawingConfig
 import exchange.dydx.platformui.components.charts.config.IBarChartConfig
 import exchange.dydx.platformui.components.charts.config.ICandlesChartConfig
@@ -21,12 +20,21 @@ import exchange.dydx.platformui.components.charts.presenter.CandleChartDataSet
 import exchange.dydx.platformui.components.charts.presenter.LineChartData
 import exchange.dydx.platformui.components.charts.touch.LineChartTouchHandler
 import exchange.dydx.platformui.components.charts.touch.LongPressTouchListener
+import kotlin.math.abs
 
 fun CombinedChart.config(config: ICombinedChartConfig) {
     defaultConfig()
     xAxis.config(config.xAxis)
-    leftAxis.config(config.leftAxis, null, 0.2f)
-    rightAxis.config(config.rightAxis, 0.85f, 0.0f)
+    leftAxis.config(
+        config = config.leftAxis,
+        spaceTop = null,
+        spaceBottom = 0.8f,
+    )
+    rightAxis.config(
+        config = config.rightAxis,
+        spaceTop = 0.85f,
+        spaceBottom = 0.0f,
+    )
     configDrawing(config.drawing)
     configInteraction(config.interaction)
 }
@@ -107,6 +115,8 @@ fun CombinedChart.update(
     lineColor: Int? = null,
     updateRange: (lastX: Float) -> Unit = {}
 ) {
+    config(config)
+
     candles?.update(
         config.candlesDrawing,
         config.drawing,
@@ -144,23 +154,55 @@ fun CombinedChart.update(
         data.setData(LineChartData(listOf()))
     }
 
-    val hadData = hasData()
+    // Call updateRange when there is a significant change in data size
+    // This is to handle progressive loading of data so that the range
+    // is updated only when the data size changes significantly
+    val dataSizeChanged = dataSizeChangedOverThreshold(data)
     this.data = data
-    if (!hadData) {
-        bars?.values?.lastOrNull()?.x?.let {
-            updateRange(it)
+    if (dataSizeChanged) {
+        val lastValue = candles?.values?.lastOrNull()?.x ?: bars?.values?.lastOrNull()?.x ?: line?.values?.lastOrNull()?.x
+        if (lastValue != null) {
+            updateRange(lastValue)
         }
     }
 
+    axisLeft.removeAllLimitLines()
     limits.forEach {
-        this.axisLeft.addLimitLine(it)
+        axisLeft.addLimitLine(it)
     }
 
     notifyDataSetChanged()
     invalidate()
 }
 
-fun CombinedChart.hasData(): Boolean {
+private fun CombinedChart.dataSizeChangedOverThreshold(newData: CombinedData): Boolean {
+    val diffThreshold = 10 // threshold for entry count difference
+    val oldData = data
+    if (oldData?.lineData?.dataSets?.size != newData.lineData.dataSets.size ||
+        oldData.candleData.dataSets.size != newData.candleData.dataSets.size ||
+        oldData.barData.dataSets.size != newData.barData.dataSets.size
+    ) {
+        return true
+    }
+    for (i in 0 until newData.lineData.dataSets.size) {
+        if (abs(oldData.lineData.dataSets[i].entryCount - newData.lineData.dataSets[i].entryCount) > diffThreshold) {
+            return true
+        }
+    }
+    for (i in 0 until newData.candleData.dataSets.size) {
+        if (abs(oldData.candleData.dataSets[i].entryCount - newData.candleData.dataSets[i].entryCount) > diffThreshold) {
+            return true
+        }
+    }
+    for (i in 0 until newData.barData.dataSets.size) {
+        if (abs(oldData.barData.dataSets[i].entryCount - newData.barData.dataSets[i].entryCount) > diffThreshold) {
+            return true
+        }
+    }
+    return false
+}
+
+private fun CombinedChart.hasData(): Boolean {
     data?.let {
         val lineData = it.lineData
         lineData?.dataSets?.forEach { set ->

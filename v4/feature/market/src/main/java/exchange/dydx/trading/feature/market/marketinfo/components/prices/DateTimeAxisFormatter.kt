@@ -11,7 +11,7 @@ class DateTimeAxisFormatter(
     private val offset: Int,
 ) : ValueAxisFormatter() {
     private val minuteFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    private val hourFormatter = DateTimeFormatter.ofPattern("HH")
+    private val hourFormatter = DateTimeFormatter.ofPattern("HH:mm")
     private val dayFormatter = DateTimeFormatter.ofPattern("MMM dd", Locale.ENGLISH)
 
     override fun getFormattedValue(value: Float): String {
@@ -49,11 +49,11 @@ class DateTimeAxisFormatter(
             }
         }.atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()
         return when (candlesPeriod) {
-            "1DAY" -> {
+            "1DAY", "4HOURS" -> {
                 datetime.format(dayFormatter)
             }
 
-            "1HOUR", "4HOURS" -> {
+            "1HOUR" -> {
                 datetime.format(hourFormatter)
             }
 
