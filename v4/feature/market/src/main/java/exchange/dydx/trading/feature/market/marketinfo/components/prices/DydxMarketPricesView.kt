@@ -129,8 +129,6 @@ object DydxMarketPricesView : DydxComponent {
         }
     }
 
-    private var market: String? = null
-
     @Composable
     override fun Content(modifier: Modifier) {
         val viewModel: DydxMarketPricesViewModel = hiltViewModel()
@@ -361,26 +359,22 @@ object DydxMarketPricesView : DydxComponent {
                     .fillMaxHeight(),
                 update = { chart ->
                     chart.update(
-                        if (state.typeOptions.index == 0) state.candles else null,
-                        state.volumes,
-                        if (state.typeOptions.index == 0) null else state.prices,
-                        state.orderLines,
-                        state.config,
-                        null,
+                        candles = if (state.typeOptions.index == 0) state.candles else null,
+                        bars = state.volumes,
+                        line = if (state.typeOptions.index == 0) null else state.prices,
+                        limits = state.orderLines,
+                        config = state.config,
+                        lineColor = null,
                     ) { lastX ->
-                        if (market != state.market) {
-                            // Show 40 items
-                            chart.data.barData.dataSets.firstOrNull()?.xMax?.let {
-                                chart.setVisibleXRange(40f, 40f)
-                                chart.moveViewToX(lastX)
-                                // The minXRange has a higher number than maxXRange
-                                // because the minXRange is the range for minXScale
-                                // and the maxXRange is the range for maxXScale
-                                // and range and scale are inverse
-                                chart.setVisibleXRange(160f, 40f)
-                            }
-                            market = state.market
-                        }
+                        // Show 40 items
+                        chart.setVisibleXRange(40f, 40f)
+                        chart.moveViewToX(lastX)
+                        //        chart.moveViewToAnimated(lastX, 0f, YAxis.AxisDependency.RIGHT, 500)
+                        // The minXRange has a higher number than maxXRange
+                        // because the minXRange is the range for minXScale
+                        // and the maxXRange is the range for maxXScale
+                        // and range and scale are inverse
+                        chart.setVisibleXRange(160f, 40f)
                     }
                 },
             )

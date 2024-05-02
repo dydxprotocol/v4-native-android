@@ -78,6 +78,7 @@ class DydxMarketPricesViewModel @Inject constructor(
         "4HOURS",
         "1DAY",
     )
+    private val defaultResolution = candlesPeriods.indexOf("1HOUR")
     private val resolutionTitles = listOf(
         localizer.localize("APP.GENERAL.TIME_STRINGS.1MIN"),
         localizer.localize("APP.GENERAL.TIME_STRINGS.5MIN"),
@@ -87,7 +88,7 @@ class DydxMarketPricesViewModel @Inject constructor(
         localizer.localize("APP.GENERAL.TIME_STRINGS.4H"),
         localizer.localize("APP.GENERAL.TIME_STRINGS.1D"),
     )
-    private val resolutionIndex = MutableStateFlow(candlesPeriods.indexOf(abacusStateManager.candlesPeriod.value))
+    private val resolutionIndex = MutableStateFlow(defaultResolution)
     private val selectedPrice = MutableStateFlow<MarketCandle?>(null)
 
     private val offset = 900
@@ -101,21 +102,15 @@ class DydxMarketPricesViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<DydxMarketPricesView.ViewState?> =
         combine(
-            abacusStateManager.state.tradeInput.map { it?.marketId },
-            abacusStateManager.state.marketMap,
-            abacusStateManager.state.candlesMap,
-            abacusStateManager.state.tradeInput.map { it?.marketId }
+            abacusStateManager.marketId.filterNotNull().flatMapLatest { abacusStateManager.state.market(it).filterNotNull().distinctUntilChanged() },
+            abacusStateManager.marketId.filterNotNull().flatMapLatest { abacusStateManager.state.candles(it).filterNotNull().distinctUntilChanged() },
+            abacusStateManager.marketId
                 .filterNotNull()
                 .flatMapLatest { abacusStateManager.state.selectedSubaccountOrdersOfMarket(it) },
             selectedPrice,
             typeIndex,
             resolutionIndex,
-        ) { marketId, marketMap, candlesMap, ordersForMarket, selectedPrice, typeIndex, resolutionIndex ->
-            if (marketId == null) {
-                return@combine null
-            }
-            val market = marketMap?.get(marketId)
-            val allPrices = candlesMap?.get(marketId)
+        ) { market, allPrices, ordersForMarket, selectedPrice, typeIndex, resolutionIndex ->
             val candlesPeriod = candlesPeriods[resolutionIndex]
             val prices = allPrices?.candles?.get(candlesPeriod)
             val orderData = ordersForMarket?.run {
@@ -135,6 +130,10 @@ class DydxMarketPricesViewModel @Inject constructor(
             .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
+    init {
+        abacusStateManager.setCandlesPeriod(candlesPeriods[defaultResolution])
+    }
+
     private fun createViewState(
         prices: List<MarketCandle>?,
         market: PerpetualMarket?,
@@ -152,11 +151,11 @@ class DydxMarketPricesViewModel @Inject constructor(
         prices?.forEach { it ->
             x = reduce(it.startedAtMilliseconds, candlesPeriod).toFloat()
             val candleEntry = CandleEntry(
-                x,
-                it.high.toFloat(),
-                it.low.toFloat(),
-                it.open.toFloat(),
-                it.close.toFloat(),
+                /* x = */ x,
+                /* shadowH = */ it.high.toFloat(),
+                /* shadowL = */ it.low.toFloat(),
+                /* open = */ it.open.toFloat(),
+                /* close = */ it.close.toFloat(),
             )
             candleEntry.data = it
             candles.add(candleEntry)
@@ -167,15 +166,15 @@ class DydxMarketPricesViewModel @Inject constructor(
                 leftPadded = true
             }
             val barEntry = BarEntry(
-                x,
-                it.usdVolume.toFloat(),
+                /* x = */ x,
+                /* y = */ it.usdVolume.toFloat(),
             )
             barEntry.data = it
             volumes.add(barEntry)
 
             val lineEntry = Entry(
-                x,
-                it.close.toFloat(),
+                /* x = */ x,
+                /* y = */ it.close.toFloat(),
             )
             lineEntry.data = it
             lines.add(lineEntry)
@@ -244,7 +243,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                     abacusStateManager.setCandlesPeriod(candlesPeriods[it])
                 },
             ),
-            highlight,
+            highlight = highlight,
         )
     }
 
@@ -320,41 +319,48 @@ class DydxMarketPricesViewModel @Inject constructor(
                 fillColor = SemanticColor.layer_6.color.toArgb(),
             ),
             lineDrawing = LineChartDrawingConfig(
-                2.0f,
-                SemanticColor.text_secondary.color.toArgb(),
-                null,
+                lineWidth = 2.0f,
+                lineColor = SemanticColor.text_secondary.color.toArgb(),
+                fillAlpha = null,
             ),
             drawing = DrawingConfig(
-                null,
-                true,
+                margin = null,
+                autoScale = true,
             ),
             interaction = InteractionConfig.default.copy(
                 selectionListener = this,
             ),
             xAxis = AxisConfig(
-                true,
-                false,
-                LabelConfig(
-                    DateTimeAxisFormatter(anchorDateTime, candlesPeriod, offset),
-                    8.0f,
-                    SemanticColor.text_secondary.color.toArgb(),
-                    AxisTextPosition.OUTSIDE,
+                drawLine = true,
+                drawGrid = false,
+                label = LabelConfig(
+                    formatter = DateTimeAxisFormatter(
+                        anchorDateTime = anchorDateTime,
+                        candlesPeriod = candlesPeriod,
+                        offset = offset,
+                    ),
+                    size = 8.0f,
+                    color = SemanticColor.text_secondary.color.toArgb(),
+                    position = AxisTextPosition.OUTSIDE,
                 ),
             ),
             leftAxis = AxisConfig(
-                false,
-                false,
-                LabelConfig(
-                    PriceAxisFormatter(formatter, market?.configs?.tickSizeDecimals ?: 4),
-                    8.0f,
-                    SemanticColor.text_secondary.color.toArgb(),
-                    AxisTextPosition.OUTSIDE,
+                drawLine = false,
+                drawGrid = false,
+                label = LabelConfig(
+                    formatter = PriceAxisFormatter(
+                        formatter = formatter,
+                        tickSizeDecimals = market?.configs?.tickSizeDecimals ?: 4,
+                    ),
+                    size = 8.0f,
+                    color = SemanticColor.text_secondary.color.toArgb(),
+                    position = AxisTextPosition.OUTSIDE,
                 ),
             ),
             rightAxis = AxisConfig(
-                false,
-                false,
-                null,
+                drawLine = false,
+                drawGrid = false,
+                label = null,
             ),
         )
     }
