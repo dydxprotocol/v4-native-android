@@ -17,13 +17,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.mikephil.charting.charts.CombinedChart
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleEntry
@@ -80,6 +80,7 @@ object DydxMarketPricesView : DydxComponent {
         val candles: CandleChartDataSet?,
         val volumes: BarDataSet?,
         val prices: LineChartDataSet?,
+        val orderLines: List<LimitLine>,
         val typeOptions: SelectionOptions,
         val resolutionOptions: SelectionOptions,
         val highlight: PriceHighlight? = null,
@@ -113,6 +114,9 @@ object DydxMarketPricesView : DydxComponent {
                     ),
                     "funding",
                 ),
+                listOf(
+                    LimitLine(1f),
+                ),
                 typeOptions = SelectionOptions(
                     titles = listOf("Candles", "Lines"),
                     index = 0,
@@ -131,7 +135,7 @@ object DydxMarketPricesView : DydxComponent {
     override fun Content(modifier: Modifier) {
         val viewModel: DydxMarketPricesViewModel = hiltViewModel()
 
-        val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        val state = viewModel.state.collectAsStateWithLifecycle().value
         Content(modifier, state)
     }
 
@@ -341,47 +345,44 @@ object DydxMarketPricesView : DydxComponent {
 
     @Composable
     private fun ChartContent(modifier: Modifier, state: ViewState) {
-        val context = LocalContext.current
-        // Create a reference to the regular Android View
-
-        val chart = remember {
-            CombinedChart(context).apply {
-                config(state.config)
-            }
-        }
-
-        chart.update(
-            if (state.typeOptions.index == 0) state.candles else null,
-            state.volumes,
-            if (state.typeOptions.index == 0) null else state.prices,
-            state.config,
-            null,
-        ) {
-            if (market != state.market) {
-                // Show 40 items
-                chart.data.barData.dataSets.firstOrNull()?.xMax?.let {
-                    chart.setVisibleXRange(40f, 40f)
-                    chart.moveViewToX(it)
-                    // The minXRange has a higher number than maxXRange
-                    // because the minXRange is the range for minXScale
-                    // and the maxXRange is the range for maxXScale
-                    // and range and scale are inverse
-                    chart.setVisibleXRange(160f, 40f)
-                }
-                market = state.market
-            }
-        }
-
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
         ) {
             AndroidView(
-                factory = { chart },
+                factory = { context ->
+                    CombinedChart(context).apply {
+                        config(state.config)
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
+                update = { chart ->
+                    chart.update(
+                        if (state.typeOptions.index == 0) state.candles else null,
+                        state.volumes,
+                        if (state.typeOptions.index == 0) null else state.prices,
+                        state.orderLines,
+                        state.config,
+                        null,
+                    ) { lastX ->
+                        if (market != state.market) {
+                            // Show 40 items
+                            chart.data.barData.dataSets.firstOrNull()?.xMax?.let {
+                                chart.setVisibleXRange(40f, 40f)
+                                chart.moveViewToX(lastX)
+                                // The minXRange has a higher number than maxXRange
+                                // because the minXRange is the range for minXScale
+                                // and the maxXRange is the range for maxXScale
+                                // and range and scale are inverse
+                                chart.setVisibleXRange(160f, 40f)
+                            }
+                            market = state.market
+                        }
+                    }
+                },
             )
         }
     }
