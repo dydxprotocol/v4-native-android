@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -58,6 +59,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
         val triggerPrice: String? = null,
         val limitPrice: String? = null,
         val sizePercent: String? = null,
+        val hasMultipleOrders: Boolean = false,
     ) {
         companion object {
             val preview = TriggerViewState(
@@ -65,6 +67,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
                 triggerPrice = "$120.0",
                 limitPrice = "$110.0",
                 sizePercent = "10%",
+                hasMultipleOrders = false,
             )
         }
     }
@@ -201,11 +204,13 @@ object DydxMarketPositionButtonsView : DydxComponent {
             Column(
                 modifier = Modifier
                     .clickable { action() }
-                    .padding(8.dp),
+                    .padding(vertical = ThemeShapes.VerticalPadding),
                 verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
             ) {
                 Row(
-                    modifier = Modifier,
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 36.dp)
+                        .padding(horizontal = ThemeShapes.HorizontalPadding),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -218,20 +223,30 @@ object DydxMarketPositionButtonsView : DydxComponent {
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Text(
-                        modifier = Modifier,
-                        text = state.triggerPrice ?: "",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.medium)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
+                    if (state.hasMultipleOrders) {
+                        Text(
+                            text = localizer.localize("APP.GENERAL.MULTIPLE"),
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.medium)
+                                .themeColor(ThemeColor.SemanticColor.text_secondary),
+                        )
+                    } else {
+                        Text(
+                            modifier = Modifier,
+                            text = state.triggerPrice ?: "",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.medium)
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
                 }
 
-                if (state.limitPrice != null || state.sizePercent != null) {
+                if (!state.hasMultipleOrders && (state.limitPrice != null || state.sizePercent != null)) {
                     PlatformDivider()
 
                     Row(
-                        modifier = Modifier,
+                        modifier = Modifier
+                            .padding(horizontal = ThemeShapes.HorizontalPadding),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

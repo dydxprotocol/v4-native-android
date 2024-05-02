@@ -20,13 +20,17 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,22 +44,28 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
 
+    private val marketIdFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     private val marketId: String? = savedStateHandle["marketId"]
 
     private val includeLimitOrders = abacusStateManager.environment?.featureFlags?.isSlTpLimitOrdersEnabled == true || BuildConfig.DEBUG
 
     val state: Flow<DydxTriggerOrderInputView.ViewState?> =
-        abacusStateManager.state.validationErrors
-            .map { validationErrors ->
-                createViewState(validationErrors)
-            }
+        combine(
+            abacusStateManager.state.validationErrors,
+            marketIdFlow.filterNotNull().flatMapLatest { abacusStateManager.state.takeProfitOrders(it, includeLimitOrders) },
+            marketIdFlow.filterNotNull().flatMapLatest { abacusStateManager.state.stopLossOrders(it, includeLimitOrders) },
+        ) { validationErrors, takeProfitOrders, stopLossOrders ->
+            createViewState(validationErrors, takeProfitOrders, stopLossOrders)
+        }
             .distinctUntilChanged()
 
     init {
         if (marketId == null) {
             router.navigateBack()
         } else {
+            marketIdFlow.value = marketId
             abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.resetTriggerOrders()
             abacusStateManager.triggerOrders(
                 input = marketId,
                 type = TriggerOrdersInputField.marketId,
@@ -65,7 +75,9 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                 abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
                 abacusStateManager.state.takeProfitOrders(marketId, includeLimitOrders),
                 abacusStateManager.state.stopLossOrders(marketId, includeLimitOrders),
-                abacusStateManager.state.triggerOrdersInput,
+                abacusStateManager.state.triggerOrdersInput
+                    .filter { it?.marketId == marketId }
+                    .distinctUntilChanged(),
             ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
                 updateAbacusTriggerOrder(
                     position,
@@ -79,7 +91,9 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     }
 
     private fun createViewState(
-        errors: List<ValidationError>?
+        errors: List<ValidationError>?,
+        takeProfitOrders: List<SubaccountOrder>?,
+        stopLossOrders: List<SubaccountOrder>?,
     ): DydxTriggerOrderInputView.ViewState {
         val firstError = errors?.firstOrNull { it.type == ErrorType.error }
         val firstWarning = errors?.firstOrNull { it.type == ErrorType.warning }
@@ -119,6 +133,14 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         DydxTriggerOrderInputView.ValidationErrorSection.None
                 }
             } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
+            hasMultipleTP = (takeProfitOrders?.size ?: 0) > 1,
+            hasMultipleSL = (stopLossOrders?.size ?: 0) > 1,
+            showOrderListAction = {
+                router.navigateTo(
+                    route = PortfolioRoutes.orders,
+                    presentation = DydxRouter.Presentation.Push,
+                )
+            },
             showLimitPrice = includeLimitOrders,
         )
     }

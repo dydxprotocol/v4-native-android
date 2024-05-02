@@ -1,5 +1,7 @@
 package exchange.dydx.trading.feature.trade.trigger
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -70,6 +74,9 @@ object DydxTriggerOrderInputView : DydxComponent {
         val closeAction: (() -> Unit)? = null,
         val backHandler: (() -> Unit)? = null,
         val validationErrorSection: ValidationErrorSection = ValidationErrorSection.None,
+        val hasMultipleTP: Boolean = false,
+        val hasMultipleSL: Boolean = false,
+        val showOrderListAction: (() -> Unit)? = null,
         val showLimitPrice: Boolean = true,
     ) {
         companion object {
@@ -94,7 +101,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    fun Content(modifier: Modifier, state: ViewState?) {
+    fun Content(modifier: Modifier = Modifier, state: ViewState?) {
         if (state == null) {
             return
         }
@@ -105,7 +112,7 @@ object DydxTriggerOrderInputView : DydxComponent {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_2)
+                .themeColor(ThemeColor.SemanticColor.layer_3)
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         focusManager.clearFocus()
@@ -126,15 +133,17 @@ object DydxTriggerOrderInputView : DydxComponent {
                     modifier = Modifier,
                 )
 
-                TakeProfitSectionView(
-                    modifier = Modifier,
-                    state = state,
-                )
+                if (state.hasMultipleTP) {
+                    MultipleOrderFoundView(modifier = Modifier, state = state)
+                } else {
+                    TakeProfitSectionView(modifier = Modifier, state = state)
+                }
 
-                StopLossSectionView(
-                    modifier = Modifier,
-                    state = state,
-                )
+                if (state.hasMultipleSL) {
+                    MultipleOrderFoundView(modifier = Modifier, state = state)
+                } else {
+                    StopLossSectionView(modifier = Modifier, state = state)
+                }
 
                 AdvancedDividerView(
                     modifier = Modifier,
@@ -182,7 +191,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun HeaderView(modifier: Modifier, state: ViewState) {
+    private fun HeaderView(modifier: Modifier = Modifier, state: ViewState) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -218,7 +227,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun TakeProfitSectionView(modifier: Modifier, state: ViewState) {
+    private fun TakeProfitSectionView(modifier: Modifier = Modifier, state: ViewState) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -272,7 +281,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun StopLossSectionView(modifier: Modifier, state: ViewState) {
+    private fun StopLossSectionView(modifier: Modifier = Modifier, state: ViewState) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -326,7 +335,7 @@ object DydxTriggerOrderInputView : DydxComponent {
     }
 
     @Composable
-    private fun AdvancedDividerView(modifier: Modifier, state: ViewState) {
+    private fun AdvancedDividerView(modifier: Modifier = Modifier, state: ViewState) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -343,6 +352,40 @@ object DydxTriggerOrderInputView : DydxComponent {
             )
             PlatformDivider(
                 modifier = Modifier.weight(1f),
+            )
+        }
+    }
+
+    @Composable
+    private fun MultipleOrderFoundView(modifier: Modifier = Modifier, state: ViewState) {
+        Row(
+            modifier = modifier
+                .padding(horizontal = ThemeShapes.HorizontalPadding)
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = ThemeColor.SemanticColor.border_default.color,
+                    shape = RoundedCornerShape(8.dp),
+                )
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = state.localizer.localize("APP.TRIGGERS_MODAL.MULTIPLE_ORDERS_FOUND"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.base)
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
+                modifier = Modifier.weight(1f),
+            )
+
+            Text(
+                text = state.localizer.localize("APP.GENERAL.VIEW_ALL"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.base)
+                    .themeColor(ThemeColor.SemanticColor.color_purple),
+                modifier = Modifier
+                    .clickable { state.showOrderListAction?.invoke() },
             )
         }
     }

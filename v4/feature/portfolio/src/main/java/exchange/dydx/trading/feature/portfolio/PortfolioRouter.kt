@@ -7,6 +7,7 @@ import androidx.navigation.navArgument
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
+import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
 import exchange.dydx.trading.feature.portfolio.orderdetails.DydxOrderDetailsView
 import timber.log.Timber
 
@@ -34,5 +35,13 @@ fun NavGraphBuilder.portfolioGraph(
             return@dydxComposable
         }
         DydxOrderDetailsView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = PortfolioRoutes.orders,
+        deepLinks = appRouter.deeplinks(PortfolioRoutes.orders),
+    ) { navBackStackEntry ->
+        DydxPortfolioOrdersView.Content(Modifier, isFullScreen = true)
     }
 }
