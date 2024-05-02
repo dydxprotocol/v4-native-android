@@ -77,6 +77,7 @@ object DydxTriggerOrderInputView : DydxComponent {
         val hasMultipleTP: Boolean = false,
         val hasMultipleSL: Boolean = false,
         val showOrderListAction: (() -> Unit)? = null,
+        val showLimitPrice: Boolean = true,
     ) {
         companion object {
             val preview = ViewState(
@@ -163,11 +164,13 @@ object DydxTriggerOrderInputView : DydxComponent {
                     )
                 }
 
-                DydxTriggerOrderLimitPriceSectionView.Content(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = ThemeShapes.HorizontalPadding),
-                )
+                if (state.showLimitPrice) {
+                    DydxTriggerOrderLimitPriceSectionView.Content(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = ThemeShapes.HorizontalPadding),
+                    )
+                }
 
                 DydxAnimation.AnimateExpandInOut(
                     visible = state.validationErrorSection == ValidationErrorSection.LimitPrice,

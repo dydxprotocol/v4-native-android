@@ -9,6 +9,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -33,12 +34,14 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
     private val marketIdFlow = marketInfoStream.marketAndAsset
         .mapNotNull { it?.market?.id }
 
+    private val includeLimitOrders = abacusStateManager.environment?.featureFlags?.isSlTpLimitOrdersEnabled == true || BuildConfig.DEBUG
+
     val state: Flow<DydxMarketPositionButtonsView.ViewState?> =
         combine(
             marketIdFlow,
             marketIdFlow.flatMapLatest { abacusStateManager.state.selectedSubaccountPositionOfMarket(it) },
-            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it) },
-            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.takeProfitOrders(it, includeLimitOrders) },
+            marketIdFlow.flatMapLatest { abacusStateManager.state.stopLossOrders(it, includeLimitOrders) },
             abacusStateManager.state.configsAndAssetMap,
         ) { marketId, position, takeProfitOrders, stopLossOrders, configsAndAssetMap ->
             createViewState(marketId, position, takeProfitOrders, stopLossOrders, configsAndAssetMap?.get(marketId))
