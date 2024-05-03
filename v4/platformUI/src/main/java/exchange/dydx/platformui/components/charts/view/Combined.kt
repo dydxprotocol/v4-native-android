@@ -2,7 +2,6 @@ package exchange.dydx.platformui.components.charts.view
 
 import com.github.mikephil.charting.charts.BarLineChartBase
 import com.github.mikephil.charting.charts.CombinedChart
-import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData
@@ -102,7 +101,6 @@ fun CombinedChart.update(
     candles: CandleChartDataSet?,
     bars: BarDataSet?,
     line: LineChartDataSet?,
-    limits: List<LimitLine>,
     config: ICombinedChartConfig,
     lineColor: Int? = null,
     updateRange: (lastX: Float) -> Unit = {}
@@ -150,10 +148,6 @@ fun CombinedChart.update(
         bars?.values?.lastOrNull()?.x?.let {
             updateRange(it)
         }
-    }
-
-    limits.forEach {
-        this.axisLeft.addLimitLine(it)
     }
 
     notifyDataSetChanged()

@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.market.marketinfo.components.prices
 
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
-import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleDataSet
@@ -120,7 +119,7 @@ class DydxMarketPricesViewModel @Inject constructor(
             val prices = allPrices?.candles?.get(candlesPeriod)
             val orderData = ordersForMarket?.run {
                 filter { it.status in listOf(OrderStatus.open, OrderStatus.untriggered, OrderStatus.partiallyFilled) }
-                    .map { OrderData(it.price, it.side) }
+                    .map { OrderData(it.price, it.side, it.remainingSize ?: it.size) }
             }.orEmpty()
             createViewState(
                 prices = prices,
@@ -219,16 +218,7 @@ class DydxMarketPricesViewModel @Inject constructor(
             candles = CandleDataSet(candles, "candles"),
             volumes = BarDataSet(volumes, "volumes"),
             prices = LineChartDataSet(lines, "lines"),
-            orderLines = orderData.map { (price, side) ->
-                LimitLine(price.toFloat())
-                    .apply {
-                        lineColor = when (side) {
-                            OrderSide.buy -> SemanticColor.positiveColor.color.toArgb()
-                            OrderSide.sell -> SemanticColor.negativeColor.color.toArgb()
-                        }
-                        enableDashedLine(20f, 10f, 0f)
-                    }
-            },
+            orderLines = orderData,
             typeOptions = SelectionOptions(
                 typeTitles,
                 typeIndex,
@@ -368,7 +358,8 @@ class DydxMarketPricesViewModel @Inject constructor(
     }
 }
 
-private data class OrderData(
+data class OrderData(
     val price: Double,
-    val side: OrderSide
+    val side: OrderSide,
+    val size: Double,
 )
