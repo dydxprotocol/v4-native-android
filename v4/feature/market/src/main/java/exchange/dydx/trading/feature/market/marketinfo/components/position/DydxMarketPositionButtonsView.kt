@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -143,7 +144,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
                             TriggerViewContent(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .onSizeChanged { size = it },
+                                    .onSizeChanged {  if (size.height < it.height) size = it },
                                 state = it,
                                 localizer = state.localizer,
                                 action = state.addTriggerAction ?: {},
@@ -162,7 +163,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
                             TriggerViewContent(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .onSizeChanged { size = it },
+                                    .onSizeChanged { if (size.height < it.height) size = it  },
                                 state = it,
                                 localizer = state.localizer,
                                 action = state.addTriggerAction ?: {},

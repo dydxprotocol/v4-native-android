@@ -56,7 +56,7 @@ open class DydxTriggerOrderGainLossViewModel(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    val inputType: DydxTriggerOrderInputType,
+    private val inputType: DydxTriggerOrderInputType,
     private val triggerOrderStream: MutableTriggerOrderStreaming,
 ) : ViewModel(), DydxViewModel {
 
@@ -67,32 +67,27 @@ open class DydxTriggerOrderGainLossViewModel(
                 DydxTriggerOrderInputType.StopLoss -> triggerOrderStream.stopLossGainLossDisplayType
             },
             abacusStateManager.state.triggerOrdersInput,
-            abacusStateManager.state.configsAndAssetMap,
             abacusStateManager.state.validationErrors,
-        ) { displayType, triggerOrdersInput, configsAndAssetMap, validationErrors ->
-            val marketId = triggerOrdersInput?.marketId ?: return@combine null
-            createViewState(displayType, triggerOrdersInput, configsAndAssetMap?.get(marketId), validationErrors)
+        ) { displayType, triggerOrdersInput, validationErrors ->
+            createViewState(displayType, triggerOrdersInput, validationErrors)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         displayType: GainLossDisplayType,
         triggerOrdersInput: TriggerOrdersInput?,
-        configsAndAsset: MarketConfigsAndAsset?,
         validationErrors: List<ValidationError>?,
     ): DydxTriggerOrderGainLossView.ViewState {
-        val marketConfigs = configsAndAsset?.configs
-        val tickSize = marketConfigs?.displayTickSizeDecimals ?: 0
         val firstErrorOrWarning = validationErrors?.firstOrNull { it.type == ErrorType.error }
             ?: validationErrors?.firstOrNull { it.type == ErrorType.warning }
 
         fun formatOrder(orderPrice: TriggerPrice) =
             when (displayType) {
-                GainLossDisplayType.Amount -> formatter.raw(orderPrice.usdcDiff, tickSize)
+                GainLossDisplayType.Amount -> formatter.raw(orderPrice.usdcDiff, 2)
                 GainLossDisplayType.Percent -> orderPrice.percentDiff?.let {
                     formatter.percent(
-                        it / 100.0,
-                        2,
+                        number = it / 100.0,
+                        digits = 2,
                     )
                 }
             }
@@ -147,7 +142,7 @@ open class DydxTriggerOrderGainLossViewModel(
                             PlatformInputAlertState.None
                         }
                 },
-                placeholder = formatter.raw(0.0, tickSize),
+                placeholder = formatter.raw(0.0, 2),
                 onValueChanged = { value ->
                     abacusStateManager.triggerOrders(value, inputField)
                 },

@@ -130,9 +130,9 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         DydxTriggerOrderInputView.ValidationErrorSection.LimitPrice
 
                     else ->
-                        DydxTriggerOrderInputView.ValidationErrorSection.None
+                        DydxTriggerOrderInputView.ValidationErrorSection.Last
                 }
-            } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
+            } ?: DydxTriggerOrderInputView.ValidationErrorSection.Last,
             hasMultipleTP = (takeProfitOrders?.size ?: 0) > 1,
             hasMultipleSL = (stopLossOrders?.size ?: 0) > 1,
             showOrderListAction = {

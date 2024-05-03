@@ -82,14 +82,14 @@ class DydxTradeStatusPositionViewModel @Inject constructor(
                 localizer = localizer,
                 formatter = formatter,
                 amount = position?.valueTotal?.current ?: 0.0,
-                tickSize = configsAndAsset.configs?.tickSizeDecimals,
+                tickSize = null,
             ),
             valueAfter = if (!hidePostOrderValues) {
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
                     amount = position?.valueTotal?.postOrder ?: 0.0,
-                    tickSize = configsAndAsset.configs?.tickSizeDecimals,
+                    tickSize = null,
                 )
             } else {
                 null
