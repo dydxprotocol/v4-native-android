@@ -44,7 +44,7 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
             ?: if (isNewTriggerOrder) {
                 localizer.localize("APP.TRADE.ADD_TRIGGERS")
             } else {
-                localizer.localize("APP.TRADE.EDIT_TRIGGERS")
+                localizer.localize("APP.TRADE.UPDATE_TRIGGERS")
             }
         return DydxTriggerOrderCtaButtonView.ViewState(
             localizer = localizer,

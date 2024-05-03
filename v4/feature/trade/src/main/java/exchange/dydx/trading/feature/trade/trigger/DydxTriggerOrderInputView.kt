@@ -66,6 +66,7 @@ object DydxTriggerOrderInputView : DydxComponent {
         StopLoss,
         Size,
         LimitPrice,
+        Last,
         None,
     }
 
@@ -174,6 +175,14 @@ object DydxTriggerOrderInputView : DydxComponent {
 
                 DydxAnimation.AnimateExpandInOut(
                     visible = state.validationErrorSection == ValidationErrorSection.LimitPrice,
+                ) {
+                    DydxValidationView.Content(
+                        modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                    )
+                }
+
+                DydxAnimation.AnimateExpandInOut(
+                    visible = state.validationErrorSection == ValidationErrorSection.Last,
                 ) {
                     DydxValidationView.Content(
                         modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
