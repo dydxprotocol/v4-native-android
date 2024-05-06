@@ -12,7 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,11 +23,11 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
+import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsViewModel
-import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView
+import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView.transferListContent
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersViewModel
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.SelectionBar
@@ -71,7 +70,6 @@ object DydxHistoryView : DydxComponent {
         }
 
         val listState = rememberLazyListState()
-        val scope = rememberCoroutineScope()
 
         val fillsViewModel: DydxPortfolioFillsViewModel = hiltViewModel()
         val fillsViewState = fillsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
@@ -111,9 +109,9 @@ object DydxHistoryView : DydxComponent {
                 state = listState,
             ) {
                 if (state.selectionBarViewState.currentSelection == 0) {
-                    DydxPortfolioFillsView.ListContent(this, modifier, fillsViewState)
+                    fillsListContent(fillsViewState)
                 } else if (state.selectionBarViewState.currentSelection == 1) {
-                    DydxPortfolioTransfersView.ListContent(this, modifier, transfersViewState)
+                    transferListContent(transfersViewState)
                 } else if (state.selectionBarViewState.currentSelection == 2) {
                     DydxPortfolioFundingsView.ListContent(this, modifier, fundingsVewState)
                 }

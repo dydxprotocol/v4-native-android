@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.portfolio.components.fills
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,8 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
+import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
 import exchange.dydx.trading.feature.shared.viewstate.SharedFillViewState
 
@@ -39,9 +42,7 @@ import exchange.dydx.trading.feature.shared.viewstate.SharedFillViewState
 fun Preview_DydxPortfolioFillsView() {
     DydxThemedPreviewSurface {
         LazyColumn {
-            DydxPortfolioFillsView.ListContent(
-                this,
-                Modifier,
+            fillsListContent(
                 DydxPortfolioFillsView.ViewState.preview,
             )
         }
@@ -67,32 +68,64 @@ object DydxPortfolioFillsView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
+        Content(modifier, isFullScreen = false)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, isFullScreen: Boolean) {
         val viewModel: DydxPortfolioFillsViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        LazyColumn {
-            ListContent(this, modifier, state)
+        if (isFullScreen) {
+            Column(
+                modifier = modifier.fillMaxWidth(),
+            ) {
+                DydxPortfolioSelectorView.Content(
+                    modifier = Modifier
+                        .height(72.dp)
+                        .padding(horizontal = ThemeShapes.HorizontalPadding)
+                        .fillMaxWidth(),
+                )
+
+                PlatformDivider()
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    fillsListContent(state)
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier,
+            ) {
+                fillsListContent(state)
+            }
         }
     }
 
-    fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
+    fun LazyListScope.fillsListContent(state: ViewState?) {
         if (state == null) return
 
         if (state.fills.isEmpty()) {
-            scope.item(key = "placeholder") {
-                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 0.dp))
+            item(key = "placeholder") {
+                DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
             }
         } else {
-            scope.item(key = "header") {
-                CreateHeader(modifier, state)
+            item(key = "header") {
+                CreateHeader(Modifier, state)
             }
 
-            scope.items(items = state.fills, key = { it.id }) { fill ->
+            items(items = state.fills, key = { it.id }) { fill ->
                 if (fill === state.fills.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 DydxPortfolioFillItemView.Content(
-                    modifier = modifier
+                    modifier = Modifier
                         .clickable { state.onFillTappedAction(fill.id) },
                     state = fill,
                 )

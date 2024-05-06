@@ -31,6 +31,8 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
+import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView.ordersListContent
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.viewstate.SharedOrderViewState
@@ -40,9 +42,7 @@ import exchange.dydx.trading.feature.shared.viewstate.SharedOrderViewState
 fun Preview_DydxPortfolioOrdersView() {
     DydxThemedPreviewSurface {
         LazyColumn {
-            DydxPortfolioOrdersView.ListContent(
-                this,
-                Modifier,
+            this.ordersListContent(
                 DydxPortfolioOrdersView.ViewState.preview,
             )
         }
@@ -69,11 +69,11 @@ object DydxPortfolioOrdersView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        Content(modifier, isFullScreen = false)
+        Content(modifier, isFullScreen = false, showPortfolioSelector = false)
     }
 
     @Composable
-    fun Content(modifier: Modifier, isFullScreen: Boolean) {
+    fun Content(modifier: Modifier, isFullScreen: Boolean, showPortfolioSelector: Boolean) {
         val viewModel: DydxPortfolioOrdersViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
@@ -81,11 +81,20 @@ object DydxPortfolioOrdersView : DydxComponent {
             Column(
                 modifier = modifier.fillMaxWidth(),
             ) {
-                HeaderView(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = state?.localizer?.localize("APP.GENERAL.ORDERS") ?: "",
-                    backAction = state?.onBackTappedAction,
-                )
+                if (showPortfolioSelector) {
+                    DydxPortfolioSelectorView.Content(
+                        modifier = Modifier
+                            .height(72.dp)
+                            .padding(horizontal = ThemeShapes.HorizontalPadding)
+                            .fillMaxWidth(),
+                    )
+                } else {
+                    HeaderView(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = state?.localizer?.localize("APP.GENERAL.ORDERS") ?: "",
+                        backAction = state?.onBackTappedAction,
+                    )
+                }
 
                 PlatformDivider()
 
@@ -96,36 +105,36 @@ object DydxPortfolioOrdersView : DydxComponent {
                         .fillMaxWidth()
                         .weight(1f),
                 ) {
-                    ListContent(this, Modifier, state)
+                    ordersListContent(state)
                 }
             }
         } else {
             LazyColumn(
                 modifier = modifier,
             ) {
-                ListContent(this, Modifier, state)
+                ordersListContent(state)
             }
         }
     }
 
-    fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
+    fun LazyListScope.ordersListContent(state: ViewState?) {
         if (state == null) return
 
         if (state.orders.isEmpty()) {
-            scope.item(key = "placeholder") {
-                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 0.dp))
+            item(key = "placeholder") {
+                DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
             }
         } else {
-            scope.item(key = "header") {
-                CreateHeader(modifier, state)
+            item(key = "header") {
+                CreateHeader(Modifier, state)
             }
 
-            scope.items(items = state.orders, key = { it.id }) { order ->
+            items(items = state.orders, key = { it.id }) { order ->
                 if (order === state.orders.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 DydxPortfolioOrderItemView.Content(
-                    modifier = modifier
+                    modifier = Modifier
                         .clickable { state.onOrderTappedAction(order.id) },
                     state = order,
                 )
