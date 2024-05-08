@@ -37,9 +37,9 @@ import exchange.dydx.trading.feature.market.marketinfo.components.stats.DydxMark
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketAccountTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketStatsTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tiles.DydxMarketTilesView
-import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
+import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
-import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
+import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView.ordersListContent
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersViewModel
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
 import kotlinx.coroutines.launch
@@ -140,10 +140,10 @@ object DydxMarketInfoView : DydxComponent {
                                 }
                             }
                             DydxMarketAccountTabView.Selection.Orders -> {
-                                DydxPortfolioOrdersView.ListContent(this, Modifier, ordersViewState)
+                                ordersListContent(ordersViewState)
                             }
                             DydxMarketAccountTabView.Selection.Trades -> {
-                                DydxPortfolioFillsView.ListContent(this, Modifier, fillsViewState)
+                                fillsListContent(fillsViewState)
                             }
                             else -> {}
                         }
