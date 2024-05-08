@@ -2,10 +2,10 @@ package exchange.dydx.trading.feature.market.marketinfo.components.prices
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +37,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.data.Entry
 import exchange.dydx.abacus.output.input.OrderSide
+import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.charts.config.CombinedChartConfig
@@ -54,6 +55,8 @@ import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.negativeColor
 import exchange.dydx.platformui.designSystem.theme.positiveColor
+import exchange.dydx.platformui.designSystem.theme.textOnNegativeColor
+import exchange.dydx.platformui.designSystem.theme.textOnPositiveColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
@@ -127,7 +130,7 @@ object DydxMarketPricesView : DydxComponent {
                     "funding",
                 ),
                 listOf(
-                    OrderData(1.0, OrderSide.buy, 1.0),
+                    OrderData(1.0, OrderSide.buy, 1.0, "$1.0", OrderType.limit),
                 ),
                 typeOptions = SelectionOptions(
                     titles = listOf("Candles", "Lines"),
@@ -362,7 +365,7 @@ object DydxMarketPricesView : DydxComponent {
         ) {
             AndroidView(
                 factory = { context ->
-                    CombinedChartWithOrderLines(context).apply {
+                    CombinedChartWithOrderLines(context, state.localizer).apply {
                         config(state.config)
                     }
                 },
@@ -394,10 +397,20 @@ object DydxMarketPricesView : DydxComponent {
     }
 }
 
-internal class CombinedChartWithOrderLines(context: Context) : CombinedChart(context) {
+internal class CombinedChartWithOrderLines(
+    context: Context,
+    private val localizer: LocalizerProtocol,
+) : CombinedChart(context) {
+
+    // Compose AndroidView by default does not clip children, let's turn it on.
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        (parent as ViewGroup).clipChildren = true
+    }
 
     var orderLines: List<OrderData> = emptyList()
         set(value) {
+            if (field == value) return
             field = value
             axisLeft.removeAllLimitLines()
             value.forEach { (price, side) ->
@@ -430,24 +443,24 @@ internal class CombinedChartWithOrderLines(context: Context) : CombinedChart(con
         return drawTextView(
             xPos = 0f,
             yPos = yPos,
-            text = "\$${orderLine.price}",
+            text = orderLine.formattedPrice,
             backgroundColor = orderLine.side.orderLineColor,
             textColor = orderLine.side.orderLineTextColor,
         )
     }
 
     private fun Canvas.drawOrderLabelAndSize(xPos: Float, yPos: Float, orderLine: OrderData) {
-        val orderLabelRight = drawOrderLabel(xPos, yPos)
+        val orderLabelRight = drawOrderLabel(xPos, yPos, orderLine)
         drawOrderSize(orderLabelRight, yPos, orderLine)
     }
 
-    private fun Canvas.drawOrderLabel(xPos: Float, yPos: Float): Float {
+    private fun Canvas.drawOrderLabel(xPos: Float, yPos: Float, orderLine: OrderData): Float {
         return drawTextView(
             xPos = xPos,
             yPos = yPos,
-            text = "Limit Order",
-            backgroundColor = Color.parseColor("#18181B"),
-            textColor = Color.parseColor("#807E98"),
+            text = localizer.localize(orderLine.orderType.labelKey),
+            backgroundColor = ThemeColor.SemanticColor.layer_1.color.toArgb(),
+            textColor = ThemeColor.SemanticColor.text_tertiary.color.toArgb(),
         )
     }
 
@@ -509,6 +522,16 @@ private val OrderSide.orderLineColor: Int
 
 private val OrderSide.orderLineTextColor: Int
     get() = when (this) {
-        OrderSide.buy -> ThemeColor.SemanticColor.color_black.color.toArgb()
-        OrderSide.sell -> ThemeColor.SemanticColor.color_white.color.toArgb()
+        OrderSide.buy -> ThemeColor.SemanticColor.textOnPositiveColor.color.toArgb()
+        OrderSide.sell -> ThemeColor.SemanticColor.textOnNegativeColor.color.toArgb()
+    }
+
+private val OrderType.labelKey: String
+    get() = when (this) {
+        OrderType.takeProfitMarket -> "APP.TRADE.TAKE_PROFIT_MARKET"
+        OrderType.takeProfitLimit -> "APP.TRADE.TAKE_PROFIT_LIMIT"
+        OrderType.limit -> "APP.TRADE.LIMIT_ORDER"
+        OrderType.stopLimit -> "APP.TRADE.STOP_LIMIT"
+        OrderType.stopMarket -> "APP.TRADE.STOP_MARKET"
+        else -> error("$this is not supported by orderlines")
     }
