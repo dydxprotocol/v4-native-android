@@ -75,3 +75,12 @@ class DydxUserTrackingWorker(
         }
     }
 }
+
+enum class TestEnum {
+    ADD,
+    REMOVE,
+}
+
+fun testValueOf() {
+    val s = TestEnum.valueOf("ADD")
+}
