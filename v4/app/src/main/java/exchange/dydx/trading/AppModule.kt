@@ -14,6 +14,7 @@ import exchange.dydx.abacus.protocols.DYDXChainTransactionsProtocol
 import exchange.dydx.abacus.protocols.FileSystemProtocol
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.protocols.ThreadingProtocol
 import exchange.dydx.abacus.protocols.TimerProtocol
@@ -33,6 +34,7 @@ import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManager
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusChainImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusFileSystemImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusLocalizerImp
+import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusPresentationImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusRestImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusThreadingImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusTimerImp
@@ -111,6 +113,7 @@ interface AppModule {
         fun provideLanguageKey(): String = PreferenceKeys.Language
 
         @Provides
+        @Singleton
         fun providePlatformInfo(
             @CoroutineScopes.App appScope: CoroutineScope,
         ): PlatformInfo =
@@ -165,6 +168,8 @@ interface AppModule {
     @Binds fun bindChainProtocol(abacusChainImp: AbacusChainImp): DYDXChainTransactionsProtocol
 
     @Binds fun bindTrackingProtocol(abacusTrackingImp: AbacusTrackingImp): TrackingProtocol
+
+    @Binds fun bindPresentationProtocol(abacusPresentationImp: AbacusPresentationImp): PresentationProtocol
 
     @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
 

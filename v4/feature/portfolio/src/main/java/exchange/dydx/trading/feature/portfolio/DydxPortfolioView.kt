@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,14 +27,14 @@ import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioHeaderView
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
-import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
+import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
-import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
+import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView.ordersListContent
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersViewModel
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioChartView
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioDetailsView
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioSectionsView
-import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
+import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.positionsListContent
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsViewModel
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
 
@@ -93,7 +92,6 @@ object DydxPortfolioView : DydxComponent {
         }
 
         val listState = rememberLazyListState()
-        val scope = rememberCoroutineScope()
 
         val positionsViewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
         val positionsViewState = positionsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
@@ -132,15 +130,15 @@ object DydxPortfolioView : DydxComponent {
 
                 when (state.tabSelection) {
                     DydxPortfolioSectionsView.Selection.Positions -> {
-                        DydxPortfolioPositionsView.ListContent(this, Modifier, positionsViewState)
+                        positionsListContent(positionsViewState)
                     }
 
                     DydxPortfolioSectionsView.Selection.Orders -> {
-                        DydxPortfolioOrdersView.ListContent(this, Modifier, ordersViewState)
+                        ordersListContent(ordersViewState)
                     }
 
                     DydxPortfolioSectionsView.Selection.Trades -> {
-                        DydxPortfolioFillsView.ListContent(this, Modifier, fillsViewState)
+                        fillsListContent(fillsViewState)
                     }
 
                     else -> {
@@ -161,7 +159,7 @@ object DydxPortfolioView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
-            DydxPortfolioSelectorView.Content(modifier)
+            DydxPortfolioSelectorView.Content(Modifier)
 
             Spacer(modifier = Modifier.weight(1f))
 

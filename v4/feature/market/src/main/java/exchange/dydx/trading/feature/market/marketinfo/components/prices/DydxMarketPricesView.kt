@@ -1,5 +1,12 @@
 package exchange.dydx.trading.feature.market.marketinfo.components.prices
 
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
+import androidx.annotation.ColorInt
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,17 +24,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.mikephil.charting.charts.CombinedChart
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.data.Entry
+import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.charts.config.CombinedChartConfig
@@ -41,7 +50,10 @@ import exchange.dydx.platformui.components.tabgroups.PlatformPillTextGroup
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.designSystem.theme.negativeColor
+import exchange.dydx.platformui.designSystem.theme.positiveColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
@@ -80,6 +92,7 @@ object DydxMarketPricesView : DydxComponent {
         val candles: CandleChartDataSet?,
         val volumes: BarDataSet?,
         val prices: LineChartDataSet?,
+        val orderLines: List<OrderData>,
         val typeOptions: SelectionOptions,
         val resolutionOptions: SelectionOptions,
         val highlight: PriceHighlight? = null,
@@ -113,6 +126,9 @@ object DydxMarketPricesView : DydxComponent {
                     ),
                     "funding",
                 ),
+                listOf(
+                    OrderData(1.0, OrderSide.buy, 1.0),
+                ),
                 typeOptions = SelectionOptions(
                     titles = listOf("Candles", "Lines"),
                     index = 0,
@@ -125,13 +141,11 @@ object DydxMarketPricesView : DydxComponent {
         }
     }
 
-    private var market: String? = null
-
     @Composable
     override fun Content(modifier: Modifier) {
         val viewModel: DydxMarketPricesViewModel = hiltViewModel()
 
-        val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        val state = viewModel.state.collectAsStateWithLifecycle().value
         Content(modifier, state)
     }
 
@@ -341,48 +355,160 @@ object DydxMarketPricesView : DydxComponent {
 
     @Composable
     private fun ChartContent(modifier: Modifier, state: ViewState) {
-        val context = LocalContext.current
-        // Create a reference to the regular Android View
-
-        val chart = remember {
-            CombinedChart(context).apply {
-                config(state.config)
-            }
-        }
-
-        chart.update(
-            if (state.typeOptions.index == 0) state.candles else null,
-            state.volumes,
-            if (state.typeOptions.index == 0) null else state.prices,
-            state.config,
-            null,
-        ) {
-            if (market != state.market) {
-                // Show 40 items
-                chart.data.barData.dataSets.firstOrNull()?.xMax?.let {
-                    chart.setVisibleXRange(40f, 40f)
-                    chart.moveViewToX(it)
-                    // The minXRange has a higher number than maxXRange
-                    // because the minXRange is the range for minXScale
-                    // and the maxXRange is the range for maxXScale
-                    // and range and scale are inverse
-                    chart.setVisibleXRange(160f, 40f)
-                }
-                market = state.market
-            }
-        }
-
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
         ) {
             AndroidView(
-                factory = { chart },
+                factory = { context ->
+                    CombinedChartWithOrderLines(context).apply {
+                        config(state.config)
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
+                update = { chart ->
+                    chart.orderLines = state.orderLines
+                    chart.update(
+                        candles = if (state.typeOptions.index == 0) state.candles else null,
+                        bars = state.volumes,
+                        line = if (state.typeOptions.index == 0) null else state.prices,
+                        config = state.config,
+                        lineColor = null,
+                    ) { lastX ->
+                        // Show 40 items
+                        chart.setVisibleXRange(40f, 40f)
+                        chart.moveViewToX(lastX)
+                        //        chart.moveViewToAnimated(lastX, 0f, YAxis.AxisDependency.RIGHT, 500)
+                        // The minXRange has a higher number than maxXRange
+                        // because the minXRange is the range for minXScale
+                        // and the maxXRange is the range for maxXScale
+                        // and range and scale are inverse
+                        chart.setVisibleXRange(160f, 40f)
+                    }
+                },
             )
         }
     }
 }
+
+internal class CombinedChartWithOrderLines(context: Context) : CombinedChart(context) {
+
+    var orderLines: List<OrderData> = emptyList()
+        set(value) {
+            field = value
+            axisLeft.removeAllLimitLines()
+            value.forEach { (price, side) ->
+                LimitLine(price.toFloat())
+                    .apply {
+                        lineColor = side.orderLineColor
+                        textColor = side.orderLineTextColor
+                        enableDashedLine(20f, 10f, 0f)
+                    }
+                    .also { axisLeft.addLimitLine(it) }
+            }
+        }
+    override fun draw(canvas: Canvas) {
+        super.draw(canvas)
+
+        orderLines.forEach { orderLine ->
+            // calculate y pixel value for the orderline
+            val orderPixelY = run {
+                val floatArray = floatArrayOf(0f, orderLine.price.toFloat())
+                mLeftAxisTransformer.pointValuesToPixel(floatArray)
+                floatArray[1]
+            }
+
+            val tagRightX = canvas.drawOrderPriceTag(orderPixelY, orderLine)
+            canvas.drawOrderLabelAndSize(tagRightX + 48f, orderPixelY, orderLine)
+        }
+    }
+
+    private fun Canvas.drawOrderPriceTag(yPos: Float, orderLine: OrderData): Float {
+        return drawTextView(
+            xPos = 0f,
+            yPos = yPos,
+            text = "\$${orderLine.price}",
+            backgroundColor = orderLine.side.orderLineColor,
+            textColor = orderLine.side.orderLineTextColor,
+        )
+    }
+
+    private fun Canvas.drawOrderLabelAndSize(xPos: Float, yPos: Float, orderLine: OrderData) {
+        val orderLabelRight = drawOrderLabel(xPos, yPos)
+        drawOrderSize(orderLabelRight, yPos, orderLine)
+    }
+
+    private fun Canvas.drawOrderLabel(xPos: Float, yPos: Float): Float {
+        return drawTextView(
+            xPos = xPos,
+            yPos = yPos,
+            text = "Limit Order",
+            backgroundColor = Color.parseColor("#18181B"),
+            textColor = Color.parseColor("#807E98"),
+        )
+    }
+
+    private fun Canvas.drawOrderSize(xPos: Float, yPos: Float, orderLine: OrderData) {
+        drawTextView(
+            xPos = xPos,
+            yPos = yPos,
+            text = "${orderLine.size}",
+            backgroundColor = orderLine.side.orderLineColor,
+            textColor = orderLine.side.orderLineTextColor,
+            horizontalPadding = 12f,
+        )
+    }
+
+    private fun Canvas.drawTextView(
+        xPos: Float,
+        yPos: Float,
+        text: String,
+        @ColorInt backgroundColor: Int,
+        @ColorInt textColor: Int,
+        verticalPadding: Float = 12f,
+        horizontalPadding: Float = 24f,
+    ): Float {
+        val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = backgroundColor
+        }
+
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = textColor
+            textSize = 30f
+            textAlign = Paint.Align.LEFT
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+        val textWidth = textPaint.measureText(text)
+        val textHeight = textPaint.descent() - textPaint.ascent()
+
+        val top = yPos - (textHeight / 2) - verticalPadding
+        val right = xPos + textWidth + (horizontalPadding * 2)
+        val bottom = yPos + (textHeight / 2) + verticalPadding
+
+        drawRect(Rect(xPos.toInt(), top.toInt(), right.toInt(), bottom.toInt()), backgroundPaint)
+        drawText(
+            text,
+            xPos + horizontalPadding,
+            yPos + textHeight / 2 + textPaint.descent() / 2 - verticalPadding,
+            textPaint,
+        )
+
+        return right
+    }
+}
+
+private val OrderSide.orderLineColor: Int
+    get() = when (this) {
+        OrderSide.buy -> ThemeColor.SemanticColor.positiveColor.color.toArgb()
+        OrderSide.sell -> ThemeColor.SemanticColor.negativeColor.color.toArgb()
+    }
+
+private val OrderSide.orderLineTextColor: Int
+    get() = when (this) {
+        OrderSide.buy -> ThemeColor.SemanticColor.color_black.color.toArgb()
+        OrderSide.sell -> ThemeColor.SemanticColor.color_white.color.toArgb()
+    }

@@ -12,6 +12,11 @@ object OnboardingRoutes {
 object PortfolioRoutes {
     const val main = "portfolio"
     const val order_details = "orders"
+    const val orders = "portfolio/orders"
+    const val positions = "portfolio/positions"
+    const val transfers = "portfolio/transfers"
+    const val trades = "portfolio/trades"
+    const val fees = "portfolio/fees"
 }
 
 object ProfileRoutes {

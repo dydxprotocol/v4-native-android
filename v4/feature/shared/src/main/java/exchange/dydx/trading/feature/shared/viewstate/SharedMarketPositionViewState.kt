@@ -133,7 +133,7 @@ data class SharedMarketPositionViewState(
                 entryPrice = formatter.dollar(position.entryPrice?.current, configs.displayTickSizeDecimals ?: 0),
                 exitPrice = formatter.dollar(position.exitPrice, configs.displayTickSizeDecimals ?: 0),
                 liquidationPrice = formatter.dollar(position.liquidationPrice?.current, configs.displayTickSizeDecimals ?: 0),
-                amount = formatter.dollar(position.valueTotal?.current, configs.displayTickSizeDecimals ?: 0),
+                amount = formatter.dollar(position.valueTotal?.current),
                 funding = SignedAmountView.ViewState(
                     text = formatter.dollar(netFunding.absoluteValue),
                     sign = netFundingSign,

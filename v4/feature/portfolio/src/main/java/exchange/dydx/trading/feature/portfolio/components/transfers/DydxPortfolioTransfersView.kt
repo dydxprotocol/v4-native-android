@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.portfolio.components.transfers
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,16 +31,16 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
+import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView.transferListContent
 
 @Preview
 @Composable
 fun Preview_DydxPortfolioTransfersView() {
     DydxThemedPreviewSurface {
         LazyColumn {
-            DydxPortfolioTransfersView.ListContent(
-                this,
-                Modifier,
+            transferListContent(
                 DydxPortfolioTransfersView.ViewState.preview,
             )
         }
@@ -65,32 +66,64 @@ object DydxPortfolioTransfersView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
+        Content(modifier, isFullScreen = false)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, isFullScreen: Boolean) {
         val viewModel: DydxPortfolioTransfersViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        LazyColumn {
-            ListContent(this, modifier, state)
+        if (isFullScreen) {
+            Column(
+                modifier = modifier.fillMaxWidth(),
+            ) {
+                DydxPortfolioSelectorView.Content(
+                    modifier = Modifier
+                        .height(72.dp)
+                        .padding(horizontal = ThemeShapes.HorizontalPadding)
+                        .fillMaxWidth(),
+                )
+
+                PlatformDivider()
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    transferListContent(state)
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier,
+            ) {
+                transferListContent(state)
+            }
         }
     }
 
-    fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
+    fun LazyListScope.transferListContent(state: ViewState?) {
         if (state == null) return
 
-        scope.item(key = "header") {
-            CreateHeader(modifier, state)
+        item(key = "header") {
+            CreateHeader(Modifier, state)
         }
 
         if (state.transfers.isEmpty()) {
-            scope.item(key = "placeholder") {
-                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 32.dp))
+            item(key = "placeholder") {
+                DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 32.dp))
             }
         } else {
-            scope.items(items = state.transfers, key = { it.id }) { transfer ->
+            items(items = state.transfers, key = { it.id }) { transfer ->
                 if (transfer === state.transfers.first()) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 DydxPortfolioTransfersItemView.Content(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth(),
                     state = transfer,
                 )

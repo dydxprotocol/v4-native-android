@@ -207,7 +207,7 @@ class CosmosV4ClientWebview @Inject constructor(
                 function = functionName,
                 params = jsParams,
             ) { result ->
-                Log.d(TAG, "callNativeClient $functionName result: $result")
+                Log.d(TAG, "callNativeClient $functionName, params: $params, result: $result")
                 completion(result?.response)
             }
         }
