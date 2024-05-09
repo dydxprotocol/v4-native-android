@@ -49,6 +49,7 @@ object DydxPortfolioPositionsView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val positions: List<SharedMarketPositionViewState> = listOf(),
+        val unopenedIsolatedPositions: List<DydxPortfolioUnopenedIsolatedPositionItemView.ViewState> = listOf(),
         val isIsolatedMarketEnabled: Boolean,
         val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
         val onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
