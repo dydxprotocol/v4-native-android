@@ -22,7 +22,7 @@ import exchange.dydx.trading.common.theme.MockLocalizer
 @Composable
 fun Preview_LeverageView() {
     DydxThemedPreviewSurface {
-        LeverageView.Content(Modifier, LeverageView.ViewState.preview, DydxFormatter())
+        LeverageView.Content(Modifier, LeverageView.ViewState.preview)
     }
 }
 
@@ -34,12 +34,14 @@ object LeverageView {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val formatter: DydxFormatter,
         val leverage: Double = 3.0,
         val margin: Double? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                formatter = DydxFormatter(),
             )
         }
     }
@@ -48,12 +50,11 @@ object LeverageView {
     fun Content(
         modifier: Modifier = Modifier,
         state: ViewState?,
-        formatter: DydxFormatter,
         textStyle: TextStyle = TextStyle.dydxDefault,
     ) {
         if (state == null) return
 
-        val leverageText = formatter.leverage(state.leverage)
+        val leverageText = state.formatter.leverage(state.leverage)
         val leverageIcon = if (state.margin != null) {
             LeverageRiskView.ViewState(
                 localizer = state.localizer,

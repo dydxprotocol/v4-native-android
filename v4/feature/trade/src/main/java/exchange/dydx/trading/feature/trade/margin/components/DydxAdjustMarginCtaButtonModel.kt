@@ -23,7 +23,6 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
     private val theme: DydxTheme,
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
     val state: Flow<DydxAdjustMarginCtaButton.ViewState?> =
         combine(
