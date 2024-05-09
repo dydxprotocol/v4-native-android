@@ -79,7 +79,6 @@ object DydxReceiptIsolatedPositionLeverageView : DydxComponent {
                 before = if (state.before != null) { {
                     LeverageView.Content(
                         state = state.before,
-                        formatter = state.formatter,
                         textStyle = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
                             .themeColor(ThemeColor.SemanticColor.text_tertiary),
@@ -91,7 +90,6 @@ object DydxReceiptIsolatedPositionLeverageView : DydxComponent {
                 if (state.after != null) { {
                     LeverageView.Content(
                         state = state.after,
-                        formatter = state.formatter,
                         textStyle = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
                             .themeColor(ThemeColor.SemanticColor.text_primary),

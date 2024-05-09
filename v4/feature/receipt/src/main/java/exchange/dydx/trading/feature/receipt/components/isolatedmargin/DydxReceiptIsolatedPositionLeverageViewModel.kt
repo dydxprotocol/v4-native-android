@@ -43,6 +43,7 @@ class DydxReceiptIsolatedPositionLeverageViewModel @Inject constructor(
             before = if (leverage?.current != null) {
                 LeverageView.ViewState(
                     localizer = localizer,
+                    formatter = formatter,
                     leverage = leverage.current ?: 0.0,
                     margin = margin?.current,
                 )
@@ -52,6 +53,7 @@ class DydxReceiptIsolatedPositionLeverageViewModel @Inject constructor(
             after = if (leverage?.postOrder != null) {
                 LeverageView.ViewState(
                     localizer = localizer,
+                    formatter = formatter,
                     leverage = leverage.postOrder ?: 0.0,
                     margin = margin?.postOrder,
                 )
