@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -24,6 +25,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptBuyingPowerView
+import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptFreeCollateralView
 import exchange.dydx.trading.feature.receipt.components.equity.DydxReceiptEquityView
 import exchange.dydx.trading.feature.receipt.components.exchangerate.DydxReceiptExchangeRateView
 import exchange.dydx.trading.feature.receipt.components.exchangereceived.DydxReceiptExchangeReceivedView
@@ -31,6 +33,8 @@ import exchange.dydx.trading.feature.receipt.components.expectedprice.DydxReceip
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptBridgeFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptGasFeeView
+import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionLeverageView
+import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.marginusage.DydxReceiptMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.rewards.DydxReceiptRewardsView
 import exchange.dydx.trading.feature.receipt.components.slippage.DydxReceiptSlippageView
@@ -46,8 +50,11 @@ fun Preview_DydxReceiptView() {
 
 object DydxReceiptView : DydxComponent {
     enum class ReceiptLineType {
+        FreeCollateral,
         BuyingPower,
         MarginUsage,
+        IsolatedPositionLeverage,
+        IsolatedPositionMarginUsage,
         Fee,
         GasFee,
         BridgeFee,
@@ -62,6 +69,8 @@ object DydxReceiptView : DydxComponent {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val height: Dp? = null,
+        val padding: Dp? = null,
         val lineTypes: List<ReceiptLineType> = emptyList(),
     ) {
         companion object {
@@ -93,9 +102,9 @@ object DydxReceiptView : DydxComponent {
 
         Box(
             modifier = modifier
-                .height(210.dp)
+                .height(state.height ?: 210.dp)
                 .fillMaxWidth()
-                .padding(horizontal = ThemeShapes.HorizontalPadding)
+                .padding(horizontal = state.padding ?: ThemeShapes.HorizontalPadding)
                 .background(
                     color = ThemeColor.SemanticColor.layer_1.color,
                     shape = RoundedCornerShape(10.dp),
@@ -110,12 +119,24 @@ object DydxReceiptView : DydxComponent {
             ) {
                 items(state.lineTypes, key = { it }) { lineType ->
                     when (lineType) {
+                        ReceiptLineType.FreeCollateral -> {
+                            DydxReceiptFreeCollateralView.Content(Modifier.animateItemPlacement())
+                        }
+
                         ReceiptLineType.BuyingPower -> {
                             DydxReceiptBuyingPowerView.Content(Modifier.animateItemPlacement())
                         }
 
                         ReceiptLineType.MarginUsage -> {
                             DydxReceiptMarginUsageView.Content(Modifier.animateItemPlacement())
+                        }
+
+                        ReceiptLineType.IsolatedPositionLeverage -> {
+                            DydxReceiptIsolatedPositionLeverageView.Content(Modifier.animateItemPlacement())
+                        }
+
+                        ReceiptLineType.IsolatedPositionMarginUsage -> {
+                            DydxReceiptIsolatedPositionMarginUsageView.Content(Modifier.animateItemPlacement())
                         }
 
                         ReceiptLineType.Fee -> {
