@@ -2,19 +2,16 @@ package exchange.dydx.trading.feature.receipt.components.buyingpower
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.changes.PlatformAmountChange
 import exchange.dydx.platformui.components.changes.PlatformDirection
-import exchange.dydx.platformui.components.changes.PlatformDirectionArrow
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
@@ -32,7 +29,7 @@ fun Preview_DydxReceiptFreeCollateralView() {
     DydxThemedPreviewSurface {
         DydxReceiptFreeCollateralView.Content(
             Modifier,
-            DydxReceiptFreeCollateralView.ViewState.preview
+            DydxReceiptFreeCollateralView.ViewState.preview,
         )
     }
 }
@@ -43,7 +40,7 @@ object DydxReceiptFreeCollateralView : DydxComponent {
         val before: AmountText.ViewState? = null,
         val after: AmountText.ViewState? = null,
 
-        ) {
+    ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
@@ -87,7 +84,7 @@ object DydxReceiptFreeCollateralView : DydxComponent {
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
                                     fontType = ThemeFont.FontType.number,
-                                    fontSize = ThemeFont.FontSize.small
+                                    fontSize = ThemeFont.FontSize.small,
                                 )
                                 .themeColor(ThemeColor.SemanticColor.text_tertiary),
                         )
@@ -102,7 +99,7 @@ object DydxReceiptFreeCollateralView : DydxComponent {
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
                                     fontType = ThemeFont.FontType.number,
-                                    fontSize = ThemeFont.FontSize.small
+                                    fontSize = ThemeFont.FontSize.small,
                                 )
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )

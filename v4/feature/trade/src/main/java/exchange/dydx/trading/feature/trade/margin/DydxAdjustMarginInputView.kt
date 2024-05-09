@@ -626,7 +626,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                 ) {
                     PlatformDirectionArrow(
                         direction = PlatformDirection.None,
-                        modifier = Modifier.size(12.dp)
+                        modifier = Modifier.size(12.dp),
                     )
                     AmountText.Content(
                         state = state.isolatedMarginReceipt.liquidationPrice.after,
