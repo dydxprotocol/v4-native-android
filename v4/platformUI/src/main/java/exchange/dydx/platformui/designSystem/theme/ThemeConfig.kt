@@ -11,10 +11,16 @@ import kotlinx.serialization.Serializable
 
 class ThemeSettings(
     private val context: Context,
-    val sharedPreferences: SharedPreferencesStore?,
+    private val sharedPreferences: SharedPreferencesStore?,
     val themeConfig: MutableStateFlow<ThemeConfig?> = MutableStateFlow(ThemeConfig.sampleThemeConfig(context)),
     val styleConfig: MutableStateFlow<StyleConfig?> = MutableStateFlow(StyleConfig.sampleStyleConfig(context)),
 ) {
+
+    val greenIsUp: Boolean
+        get() = (
+            sharedPreferences?.read("direction_color_preference")
+                ?: "green_is_up"
+            ) == "green_is_up"
     companion object {
         lateinit var shared: ThemeSettings
 
