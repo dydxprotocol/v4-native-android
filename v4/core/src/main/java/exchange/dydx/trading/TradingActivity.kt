@@ -33,7 +33,6 @@ import exchange.dydx.trading.core.biometric.DydxBiometricView
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 private const val TAG = "TradingActivity"
@@ -57,7 +56,7 @@ class TradingActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Timber.tag(TAG).i("TradingActivity#onCreate")
+        viewModel.logger.d(TAG, "TradingActivity#onCreate")
 
         CarteraSetup.run(this)
         AnalyticsSetup.run(viewModel.compositeTracking, this)
@@ -141,6 +140,7 @@ class TradingActivity : FragmentActivity() {
                 DydxNavGraph(
                     appRouter = viewModel.router,
                     modifier = it,
+                    logger = viewModel.logger,
                 )
             }
         }
@@ -158,11 +158,11 @@ class TradingActivity : FragmentActivity() {
 
         when (requestCode) {
             DydxLogger.DATABASE_EXPORT_CODE -> {
-                viewModel.logger.shareDb(this, data)
+                viewModel.loggerDeprecated.shareDb(this, data)
             }
 
             else ->
-                Timber.tag(TAG).w("onActivityResult: unknown request code: %d", requestCode)
+                viewModel.logger.e(TAG, "onActivityResult: unknown request code: $requestCode")
         }
     }
 

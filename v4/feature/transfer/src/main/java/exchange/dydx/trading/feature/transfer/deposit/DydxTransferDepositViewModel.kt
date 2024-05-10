@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -41,6 +42,7 @@ class DydxTransferDepositViewModel @Inject constructor(
     private val parser: ParserProtocol,
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
+    private val logger: LoggingProtocol,
 ) : ViewModel(), DydxViewModel {
 
     private val TAG = "DydxTransferDepositViewModel"
@@ -120,7 +122,7 @@ class DydxTransferDepositViewModel @Inject constructor(
                     val tokenAmount = balance.toDouble() / Math.pow(10.0, tokenDecimals.toDouble())
                     tokenAmountFLow.value = tokenAmount
                 } else {
-                    Log.e(TAG, "Failed to fetch token amount (ethGetBalance) $error")
+                    logger.e(TAG, "Failed to fetch token amount (ethGetBalance) $error")
                 }
             }
         } else {
@@ -132,7 +134,7 @@ class DydxTransferDepositViewModel @Inject constructor(
                     val tokenAmount = balance.toDouble() / Math.pow(10.0, tokenDecimals.toDouble())
                     tokenAmountFLow.value = tokenAmount
                 } else {
-                    Log.e(TAG, "Failed to fetch token amount (erc20TokenGetBalance) $error")
+                    logger.e(TAG, "Failed to fetch token amount (erc20TokenGetBalance) $error")
                 }
             }
         }

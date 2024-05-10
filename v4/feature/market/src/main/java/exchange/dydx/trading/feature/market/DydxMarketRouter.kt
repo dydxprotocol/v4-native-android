@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.platformui.components.PlatformBottomSheet
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
@@ -22,6 +23,7 @@ private const val TAG = "MarketRouter"
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.marketGraph(
     appRouter: DydxRouter,
+    logger: LoggingProtocol,
 ) {
     dydxComposable(
         router = appRouter,
@@ -39,7 +41,7 @@ fun NavGraphBuilder.marketGraph(
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
-            Timber.w("No identifier passed")
+            logger.e(TAG,"No identifier passed")
             appRouter.navigateTo(MarketRoutes.marketList)
             return@dydxComposable
         }

@@ -9,12 +9,15 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import javax.inject.Inject
 
-object FileUtils {
+private const val TAG = "FileUtils"
 
-    private const val TAG = "FileUtils"
 
-    fun loadFromAssets(context: Context, fileName: String): String? {
+class FileUtils @Inject constructor(
+  private val logger: Logging
+) {
+      fun loadFromAssets(context: Context, fileName: String): String? {
         return try {
             val manager = context.assets
             val inputStream = manager.open(fileName)
@@ -24,7 +27,7 @@ object FileUtils {
             inputStream.close()
             String(buffer)
         } catch (e: Exception) {
-            Log.e(TAG, "error: $e")
+            logger.e(TAG, "error: $e")
             e.printStackTrace()
             null
         }
@@ -52,7 +55,7 @@ object FileUtils {
             fileInputStream.close()
             return true
         } catch (e: IOException) {
-            Log.e(TAG, "Error compressing file: $e")
+            logger.e(TAG, "Error compressing file: $e")
             e.printStackTrace()
             return false
         }

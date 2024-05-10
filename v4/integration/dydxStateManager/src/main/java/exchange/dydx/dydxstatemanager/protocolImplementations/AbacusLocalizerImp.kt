@@ -3,6 +3,7 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 import android.util.Log
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.app.helper.DynamicLocalizer
 import exchange.dydx.abacus.utils.IOImplementations
@@ -21,6 +22,7 @@ class AbacusLocalizerImp @Inject constructor(
     private val sharedPreferencesStore: SharedPreferencesStore,
     @LanguageKey private val preferenceKey: String,
     private val ioImplementations: IOImplementations,
+    private val logger: LoggingProtocol,
 ) : AbacusLocalizerProtocol {
 
     private val TAG = "AbacusLocalizerImp"
@@ -30,9 +32,9 @@ class AbacusLocalizerImp @Inject constructor(
         UIImplementationsExtensions.reset(language = language, ioImplementations)
         setLanguage(language = language) { successful, error ->
             if (successful) {
-                Log.d(TAG, "Successfully set language to $language")
+                logger.d(TAG, "Successfully set language to $language")
             } else {
-                Log.e(TAG, "Failed to set language to $language")
+                logger.e(TAG, "Failed to set language to $language: $error")
             }
         }
     }

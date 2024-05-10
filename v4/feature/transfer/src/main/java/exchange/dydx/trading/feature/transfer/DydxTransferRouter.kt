@@ -4,6 +4,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
@@ -15,6 +16,7 @@ private const val TAG = "DydxTransferRouter"
 
 fun NavGraphBuilder.transferGraph(
     appRouter: DydxRouter,
+    logger: LoggingProtocol,
 ) {
     dydxComposable(
         router = appRouter,
@@ -40,7 +42,7 @@ fun NavGraphBuilder.transferGraph(
     ) { navBackStackEntry ->
         val hash = navBackStackEntry.arguments?.getString("hash")
         if (hash == null) {
-            Timber.w("No hash passed")
+            logger.e(TAG,"No hash passed")
             appRouter.navigateTo(TransferRoutes.transfer)
             return@dydxComposable
         }

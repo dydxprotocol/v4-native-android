@@ -4,6 +4,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.feature.onboarding.connect.DydxOnboardConnectView
 import exchange.dydx.feature.onboarding.debugscan.DydxDebugScanView
 import exchange.dydx.feature.onboarding.desktopscan.DydxDesktopScanView
@@ -18,6 +19,7 @@ private const val TAG: String = "LoginRoute"
 
 fun NavGraphBuilder.loginGraph(
     appRouter: DydxRouter,
+    logger: LoggingProtocol,
 ) {
     dydxComposable(
         router = appRouter,

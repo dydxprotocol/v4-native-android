@@ -10,6 +10,8 @@ import javax.inject.Inject
 
 class CachedFileLoader @Inject constructor(
     private val application: Application,
+    private val logger: Logging,
+    private val fileUtils: FileUtils
 ) {
     fun loadString(filePath: String, url: String?, completion: (String?) -> Unit) {
         loadData(filePath, url) { data ->
@@ -24,7 +26,7 @@ class CachedFileLoader @Inject constructor(
         if (cachedFile?.exists() == true) {
             completion(cachedFile.readBytes())
         } else {
-            FileUtils.loadFromAssets(application, filePath)?.let { string ->
+            fileUtils.loadFromAssets(application, filePath)?.let { string ->
                 completion(string.toByteArray())
             }
         }
@@ -48,7 +50,7 @@ class CachedFileLoader @Inject constructor(
                         completion(data)
                     }
                 } catch (e: Exception) {
-                    Log.e("CachedFileLoader", "error: $e")
+                    logger.e("CachedFileLoader", "error: $e")
                     Handler(Looper.getMainLooper()).post {
                         completion(null)
                     }

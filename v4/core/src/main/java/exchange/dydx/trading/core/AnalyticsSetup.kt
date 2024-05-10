@@ -7,9 +7,9 @@ import com.amplitude.android.DefaultTrackingOptions
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import exchange.dydx.trading.common.R
-import exchange.dydx.trading.integration.analytics.AmplitudeTracker
-import exchange.dydx.trading.integration.analytics.CompositeTracking
-import exchange.dydx.trading.integration.analytics.FirebaseTracker
+import exchange.dydx.trading.integration.analytics.tracking.AmplitudeTracker
+import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
+import exchange.dydx.trading.integration.analytics.tracking.FirebaseTracker
 import timber.log.Timber
 
 object AnalyticsSetup {

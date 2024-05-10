@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
 import android.util.Log
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -8,7 +9,7 @@ import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.usdcTokenDecimal
 import exchange.dydx.dydxstatemanager.usdcTokenDenom
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
@@ -25,6 +26,7 @@ class DydxTransferSubaccountWorker(
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
+    private val logger: LoggingProtocol,
 ) : WorkerProtocol {
 
     companion object {
@@ -94,7 +96,7 @@ class DydxTransferSubaccountWorker(
                         event = "SubaccountDeposit_Failed",
                         data = trackingData.also { it["error"] = response },
                     )
-                    Log.e("DydxTransferSubaccountWorker", "depositToSubaccount: $error")
+                    logger.e("DydxTransferSubaccountWorker", "depositToSubaccount: $error")
                 }
             },
         )

@@ -36,18 +36,18 @@ class DydxReceiptViewModel @Inject constructor(
 
 private fun ReceiptLine.toType(): DydxReceiptView.ReceiptLineType? {
     return when (this) {
-        ReceiptLine.buyingPower -> DydxReceiptView.ReceiptLineType.BuyingPower
-        ReceiptLine.marginUsage -> DydxReceiptView.ReceiptLineType.MarginUsage
-        ReceiptLine.fee -> DydxReceiptView.ReceiptLineType.Fee
-        ReceiptLine.expectedPrice -> DydxReceiptView.ReceiptLineType.ExpectedPrice
-        ReceiptLine.reward -> DydxReceiptView.ReceiptLineType.Rewards
-        ReceiptLine.equity -> DydxReceiptView.ReceiptLineType.Equity
-        ReceiptLine.exchangeRate -> DydxReceiptView.ReceiptLineType.ExchangeRate
-        ReceiptLine.exchangeReceived -> DydxReceiptView.ReceiptLineType.ExchangeReceived
-        ReceiptLine.transferRouteEstimatedDuration -> DydxReceiptView.ReceiptLineType.TransferDuration
-        ReceiptLine.slippage -> DydxReceiptView.ReceiptLineType.Slippage
-        ReceiptLine.bridgeFee -> DydxReceiptView.ReceiptLineType.BridgeFee
-        ReceiptLine.gasFee -> DydxReceiptView.ReceiptLineType.GasFee
+        ReceiptLine.BuyingPower -> DydxReceiptView.ReceiptLineType.BuyingPower
+        ReceiptLine.MarginUsage -> DydxReceiptView.ReceiptLineType.MarginUsage
+        ReceiptLine.Fee -> DydxReceiptView.ReceiptLineType.Fee
+        ReceiptLine.ExpectedPrice -> DydxReceiptView.ReceiptLineType.ExpectedPrice
+        ReceiptLine.Reward -> DydxReceiptView.ReceiptLineType.Rewards
+        ReceiptLine.Equity -> DydxReceiptView.ReceiptLineType.Equity
+        ReceiptLine.ExchangeRate -> DydxReceiptView.ReceiptLineType.ExchangeRate
+        ReceiptLine.ExchangeReceived -> DydxReceiptView.ReceiptLineType.ExchangeReceived
+        ReceiptLine.TransferRouteEstimatedDuration -> DydxReceiptView.ReceiptLineType.TransferDuration
+        ReceiptLine.Slippage -> DydxReceiptView.ReceiptLineType.Slippage
+        ReceiptLine.BridgeFee -> DydxReceiptView.ReceiptLineType.BridgeFee
+        ReceiptLine.GasFee -> DydxReceiptView.ReceiptLineType.GasFee
         else -> null
     }
 }

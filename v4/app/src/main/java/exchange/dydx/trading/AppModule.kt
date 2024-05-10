@@ -13,6 +13,7 @@ import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.DYDXChainTransactionsProtocol
 import exchange.dydx.abacus.protocols.FileSystemProtocol
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.RestProtocol
@@ -52,13 +53,15 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.theme.DydxTheme
 import exchange.dydx.trading.common.theme.DydxThemeImpl
 import exchange.dydx.trading.feature.shared.PreferenceKeys
-import exchange.dydx.trading.integration.analytics.CompositeTracker
-import exchange.dydx.trading.integration.analytics.CompositeTracking
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogger
+import exchange.dydx.trading.integration.analytics.tracking.CompositeTracker
+import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientWebview
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.JsonUtils
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -103,8 +106,9 @@ interface AppModule {
             threading: ThreadingProtocol?,
             timer: TimerProtocol?,
             fileSystem: FileSystemProtocol?,
+            logging: LoggingProtocol?
         ): IOImplementations =
-            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem)
+            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem, logging)
 
         @EnvKey @Provides
         fun provideEnvKey(): String = PreferenceKeys.Env
@@ -172,6 +176,10 @@ interface AppModule {
     @Binds fun bindPresentationProtocol(abacusPresentationImp: AbacusPresentationImp): PresentationProtocol
 
     @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
+
+    @Binds fun bindLogger(compositeLogger: CompositeLogger): Logging
+
+    @Binds fun bindLoggingProtocol(compositeLogger: CompositeLogger): LoggingProtocol
 
     @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
 

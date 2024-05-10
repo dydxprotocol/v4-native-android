@@ -2,6 +2,7 @@ package exchange.dydx.trading.integration.cosmos
 
 import android.app.Application
 import android.util.Log
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -20,11 +21,12 @@ private const val TAG = "CosmosV4ClientWebview"
 class CosmosV4ClientWebview @Inject constructor(
     application: Application,
     @CoroutineScopes.App appScope: CoroutineScope,
+    logger: LoggingProtocol,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,
         description = WEBVIEW_FILENAME,
-        runner = JavascriptRunnerV4.runnerFromFile(appScope, application, WEBVIEW_FILENAME)
+        runner = JavascriptRunnerV4.runnerFromFile(appScope, application, WEBVIEW_FILENAME, logger)
             ?: throw IOException("Fatal, unable to load runner from: $WEBVIEW_FILENAME"),
     ) {
 

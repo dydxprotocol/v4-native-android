@@ -1,4 +1,4 @@
-package exchange.dydx.trading.integration.analytics
+package exchange.dydx.trading.integration.analytics.tracking
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
@@ -7,6 +7,7 @@ import exchange.dydx.utilities.utils.jsonStringToMap
 class FirebaseTracker(
     private val firebaseAnalytics: FirebaseAnalytics
 ) : Tracking {
+
     override fun setUserId(userId: String?) {
         firebaseAnalytics.setUserId(userId)
     }

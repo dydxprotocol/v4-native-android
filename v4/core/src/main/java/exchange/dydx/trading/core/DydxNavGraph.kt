@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.feature.onboarding.loginGraph
 import exchange.dydx.newsalerts.newsAlertsGraph
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -35,6 +36,7 @@ private const val DEFAULT_START_DESTINATION = PortfolioRoutes.main
 fun DydxNavGraph(
     appRouter: DydxRouter,
     modifier: Modifier = Modifier,
+    logger: LoggingProtocol,
 ) {
     val navController: NavHostController = rememberNavController()
     appRouter.initialize(navController)
@@ -48,30 +50,37 @@ fun DydxNavGraph(
     ) {
         loginGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         marketGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         tradeGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         profileGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         newsAlertsGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         portfolioGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         transferGraph(
             appRouter = appRouter,
+            logger = logger,
         )
     }
 }
@@ -84,7 +93,7 @@ private fun InitializeManagers(
     // increment restartCount to cancel all downstream coroutines and
     // manually reconnect
     LaunchedEffect(coreViewModel.restartCount) {
-        Timber.tag(TAG).i("Intializing core services")
+        coreViewModel.logger.d(TAG, "Intializing core services")
         coreViewModel.start()
     }
 }

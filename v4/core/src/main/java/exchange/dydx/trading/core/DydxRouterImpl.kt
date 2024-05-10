@@ -15,7 +15,7 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import javax.inject.Inject

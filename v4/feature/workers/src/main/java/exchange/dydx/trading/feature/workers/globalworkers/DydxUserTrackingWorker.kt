@@ -4,7 +4,7 @@ import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.shared.analytics.UserProperty
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged

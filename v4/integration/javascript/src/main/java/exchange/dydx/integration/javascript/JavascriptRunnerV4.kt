@@ -6,6 +6,7 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.AppConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class JavascriptRunnerV4 constructor(
     private val scriptDescription: String,
     private val scriptInitializationCode: String,
     private val scope: CoroutineScope,
+    private val logger: LoggingProtocol,
 ) : JavascriptRunner {
 
     override val initialized = MutableStateFlow(false)
@@ -32,10 +34,11 @@ class JavascriptRunnerV4 constructor(
             scope: CoroutineScope,
             context: Context,
             file: String,
+            logger: LoggingProtocol,
         ): JavascriptRunnerV4? {
             val script = JavascriptUtils.loadAsset(context, file)
             if (script != null) {
-                return JavascriptRunnerV4(file, script, scope)
+                return JavascriptRunnerV4(file, script, scope, logger)
             }
             return null
         }
@@ -126,7 +129,7 @@ class JavascriptRunnerV4 constructor(
             webappInterface.callback = callback
             val localWebview = webview
             if (localWebview == null) {
-                Timber.e("Unable to run function, no webview present, $script")
+                logger.e(TAG, "Unable to run function, no webview present, $script")
                 return@launch
             }
             try {
@@ -151,7 +154,7 @@ class JavascriptRunnerV4 constructor(
                     )
                 }
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "Error executing script: $script")
+                logger.e(TAG, "Error executing script: $script")
             }
         }
     }
