@@ -91,10 +91,6 @@ object DydxTradeInputOrderTypeView : DydxComponent {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            PlatformRoundImage(
-                                icon = state.tokenLogoUrl,
-                                size = 18.dp,
-                            )
                             Text(
                                 text = it,
                                 modifier = Modifier,
