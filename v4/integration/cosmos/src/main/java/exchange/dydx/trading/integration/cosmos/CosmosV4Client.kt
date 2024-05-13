@@ -1,8 +1,8 @@
 package exchange.dydx.trading.integration.cosmos
 
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.integration.javascript.JavascriptApi
 import exchange.dydx.trading.common.DydxException
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
 
@@ -111,7 +111,7 @@ typealias JavascriptCompletion = (result: String?) -> Unit
 
 abstract class CosmosV4ClientResponseHandler(
     val json: Json,
-    val logger: LoggingProtocol,
+    val logger: Logging,
 ) {
     fun completion(): JavascriptCompletion {
         return { result: String? ->

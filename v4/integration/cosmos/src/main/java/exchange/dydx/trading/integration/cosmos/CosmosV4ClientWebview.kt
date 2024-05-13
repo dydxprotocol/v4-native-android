@@ -1,10 +1,10 @@
 package exchange.dydx.trading.integration.cosmos
 
 import android.app.Application
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
@@ -20,7 +20,7 @@ private const val TAG = "CosmosV4ClientWebview"
 class CosmosV4ClientWebview @Inject constructor(
     application: Application,
     @CoroutineScopes.App appScope: CoroutineScope,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,

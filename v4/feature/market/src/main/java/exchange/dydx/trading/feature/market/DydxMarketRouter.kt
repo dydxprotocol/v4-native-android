@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.platformui.components.PlatformBottomSheet
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
@@ -16,13 +15,14 @@ import exchange.dydx.trading.feature.market.marketinfo.DydxMarketInfoView
 import exchange.dydx.trading.feature.market.marketlist.DydxMarketAssetListView
 import exchange.dydx.trading.feature.market.search.DydxMarketSearchView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "MarketRouter"
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.marketGraph(
     appRouter: DydxRouter,
-    logger: LoggingProtocol,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,

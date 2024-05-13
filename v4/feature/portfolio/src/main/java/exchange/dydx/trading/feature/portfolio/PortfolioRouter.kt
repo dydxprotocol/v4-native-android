@@ -4,7 +4,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
@@ -13,12 +12,13 @@ import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOr
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView
 import exchange.dydx.trading.feature.portfolio.orderdetails.DydxOrderDetailsView
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "PortfolioRouter"
 
 fun NavGraphBuilder.portfolioGraph(
     appRouter: DydxRouter,
-    logger: LoggingProtocol,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,

@@ -6,10 +6,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.utilities.utils.Logging
 
 object DydxBiometricPrompt {
 
@@ -28,7 +28,7 @@ object DydxBiometricPrompt {
     @Composable
     fun Content(
         activity: FragmentActivity,
-        logger: LoggingProtocol,
+        logger: Logging,
         processSuccess: (Boolean, String?) -> Unit,
     ) {
         val viewModel: DydxBiometricPromptModel = hiltViewModel()

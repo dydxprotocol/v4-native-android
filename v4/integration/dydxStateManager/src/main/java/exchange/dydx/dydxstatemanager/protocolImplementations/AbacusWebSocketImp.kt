@@ -1,6 +1,6 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
-import exchange.dydx.abacus.protocols.LoggingProtocol
+import exchange.dydx.utilities.utils.Logging
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AbacusWebSocketImp @Inject constructor(
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : exchange.dydx.abacus.protocols.WebSocketProtocol {
 
     private val TAG = "AbacusRestImp"

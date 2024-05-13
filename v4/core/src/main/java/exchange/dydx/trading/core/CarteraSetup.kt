@@ -2,11 +2,11 @@ package exchange.dydx.trading.core
 
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
+import exchange.dydx.utilities.utils.Logging
 
 object CarteraSetup {
 
@@ -14,7 +14,7 @@ object CarteraSetup {
 
     fun run(
         activity: FragmentActivity,
-        logger: LoggingProtocol,
+        logger: Logging,
     ) {
         try {
             setUpCartera(activity)

@@ -11,12 +11,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.navDeepLink
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class DydxRouterImpl @Inject constructor(
     private val application: Application,
     private val tracker: Tracking,
     appConfig: AppConfig,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : DydxRouter {
 
     private lateinit var navHostController: NavHostController

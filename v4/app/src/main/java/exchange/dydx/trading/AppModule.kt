@@ -13,7 +13,6 @@ import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.DYDXChainTransactionsProtocol
 import exchange.dydx.abacus.protocols.FileSystemProtocol
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.RestProtocol
@@ -108,9 +107,9 @@ interface AppModule {
             threading: ThreadingProtocol?,
             timer: TimerProtocol?,
             fileSystem: FileSystemProtocol?,
-            logging: LoggingProtocol?
+            logger: CompositeLogging?
         ): IOImplementations =
-            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem, logging)
+            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem, logger)
 
         @EnvKey @Provides
         fun provideEnvKey(): String = PreferenceKeys.Env
@@ -180,8 +179,6 @@ interface AppModule {
     @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
 
     @Binds fun bindLogger(compositeLogger: CompositeLogger): Logging
-
-    @Binds fun bindLoggingProtocol(compositeLogger: CompositeLogger): LoggingProtocol
 
     @Binds fun bindCompositeLogging(compositeLogger: CompositeLogger): CompositeLogging
 

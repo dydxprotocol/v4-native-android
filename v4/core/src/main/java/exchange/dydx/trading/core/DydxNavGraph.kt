@@ -7,7 +7,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.feature.onboarding.loginGraph
 import exchange.dydx.newsalerts.newsAlertsGraph
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -17,6 +16,7 @@ import exchange.dydx.trading.feature.portfolio.portfolioGraph
 import exchange.dydx.trading.feature.profile.profileGraph
 import exchange.dydx.trading.feature.trade.tradeGraph
 import exchange.dydx.trading.feature.transfer.transferGraph
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxNavGraph"
 
@@ -35,7 +35,7 @@ private const val DEFAULT_START_DESTINATION = PortfolioRoutes.main
 fun DydxNavGraph(
     appRouter: DydxRouter,
     modifier: Modifier = Modifier,
-    logger: LoggingProtocol,
+    logger: Logging,
 ) {
     val navController: NavHostController = rememberNavController()
     appRouter.initialize(navController)

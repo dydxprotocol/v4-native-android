@@ -4,7 +4,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.common.navigation.TradeRoutes
@@ -15,12 +14,13 @@ import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputMarginModeVi
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputTargetLeverageView
 import exchange.dydx.trading.feature.trade.tradestatus.DydxTradeStatusView
 import exchange.dydx.trading.feature.trade.trigger.DydxTriggerOrderInputView
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxTradeRouter"
 
 fun NavGraphBuilder.tradeGraph(
     appRouter: DydxRouter,
-    logger: LoggingProtocol,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,

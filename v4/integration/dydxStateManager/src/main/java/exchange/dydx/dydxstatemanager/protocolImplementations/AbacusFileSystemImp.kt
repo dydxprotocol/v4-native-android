@@ -3,7 +3,7 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 import android.app.Application
 import exchange.dydx.abacus.protocols.FileLocation
 import exchange.dydx.abacus.protocols.FileSystemProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
+import exchange.dydx.utilities.utils.Logging
 import okio.use
 import java.io.File
 import java.io.FileOutputStream
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class AbacusFileSystemImp @Inject constructor(
     private val application: Application,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : FileSystemProtocol {
     private val TAG = "AbacusFileSystemImp"
 

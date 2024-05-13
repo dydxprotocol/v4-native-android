@@ -68,6 +68,7 @@ dependencies {
 
     //Lifecycle
     api "androidx.lifecycle:lifecycle-viewmodel:$archLifecycleVersion"
+    implementation project(':v4:utilities')
     debugImplementation "androidx.lifecycle:lifecycle-common:$archLifecycleVersion"
 
     //Logging

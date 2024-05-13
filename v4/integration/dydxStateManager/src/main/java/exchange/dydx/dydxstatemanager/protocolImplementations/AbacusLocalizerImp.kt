@@ -2,10 +2,10 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.app.helper.DynamicLocalizer
 import exchange.dydx.abacus.utils.IOImplementations
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -21,7 +21,7 @@ class AbacusLocalizerImp @Inject constructor(
     private val sharedPreferencesStore: SharedPreferencesStore,
     @LanguageKey private val preferenceKey: String,
     private val ioImplementations: IOImplementations,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : AbacusLocalizerProtocol {
 
     private val TAG = "AbacusLocalizerImp"

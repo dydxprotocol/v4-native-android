@@ -6,8 +6,8 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.AppConfig
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -22,7 +22,7 @@ class JavascriptRunnerV4 constructor(
     private val scriptDescription: String,
     private val scriptInitializationCode: String,
     private val scope: CoroutineScope,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : JavascriptRunner {
 
     override val initialized = MutableStateFlow(false)
@@ -34,7 +34,7 @@ class JavascriptRunnerV4 constructor(
             scope: CoroutineScope,
             context: Context,
             file: String,
-            logger: LoggingProtocol,
+            logger: Logging,
         ): JavascriptRunnerV4? {
             val script = JavascriptUtils.loadAsset(context, file)
             if (script != null) {

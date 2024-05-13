@@ -61,6 +61,7 @@ dependencies {
 //    implementation "androidx.lifecycle:lifecycle-common:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
     implementation project(path: ':v4:platformUI')
+    implementation project(':v4:utilities')
 
 
     // Add non-standard deps above. Deps added below this line may be periodically overwritten

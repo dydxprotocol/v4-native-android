@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.workers
 
 import android.content.Context
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
@@ -15,6 +14,7 @@ import exchange.dydx.trading.feature.workers.globalworkers.DydxRestrictionsWorke
 import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferSubaccountWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUpdateWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUserTrackingWorker
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
@@ -34,7 +34,7 @@ class DydxGlobalWorkers(
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
-    private val logger: LoggingProtocol,
+    private val logger: CompositeLogging,
     private val preferencesStore: SharedPreferencesStore,
 ) : WorkerProtocol {
 

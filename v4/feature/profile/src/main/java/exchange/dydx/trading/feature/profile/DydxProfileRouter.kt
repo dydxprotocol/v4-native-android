@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.profile
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.ProfileRoutes
 import exchange.dydx.trading.common.navigation.ProfileRoutes.debug_enable
@@ -25,10 +24,11 @@ import exchange.dydx.trading.feature.profile.theme.DydxThemeView
 import exchange.dydx.trading.feature.profile.tradingnetwork.DydxTradingNetworkView
 import exchange.dydx.trading.feature.profile.update.DydxUpdateView
 import exchange.dydx.trading.feature.profile.userwallets.DydxUserWalletsView
+import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.profileGraph(
     appRouter: DydxRouter,
-    logger: LoggingProtocol,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,

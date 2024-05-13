@@ -17,7 +17,6 @@ import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.config.AxisConfig
 import exchange.dydx.platformui.components.charts.config.AxisTextPosition
@@ -36,6 +35,7 @@ import exchange.dydx.platformui.designSystem.theme.positiveColor
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,7 +57,7 @@ class DydxMarketPricesViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
     /*
     The library works well with x range up to 1000

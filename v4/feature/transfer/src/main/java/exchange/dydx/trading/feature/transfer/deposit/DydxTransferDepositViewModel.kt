@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -21,6 +20,7 @@ import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
 import exchange.dydx.trading.feature.transfer.components.TransferAmountBox
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchParam
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.web3.EthereumInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +41,7 @@ class DydxTransferDepositViewModel @Inject constructor(
     private val parser: ParserProtocol,
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : ViewModel(), DydxViewModel {
 
     private val TAG = "DydxTransferDepositViewModel"

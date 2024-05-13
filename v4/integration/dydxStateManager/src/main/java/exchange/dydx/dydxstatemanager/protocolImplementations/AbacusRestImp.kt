@@ -1,11 +1,11 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import android.os.AsyncTask
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.utils.IMap
 import exchange.dydx.abacus.utils.toJson
+import exchange.dydx.utilities.utils.Logging
 import okhttp3.CacheControl
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AbacusRestImp @Inject constructor(
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : RestProtocol {
 
     private val TAG = "AbacusRestImp"

@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -10,6 +9,7 @@ import exchange.dydx.dydxstatemanager.usdcTokenDenom
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +25,7 @@ class DydxTransferSubaccountWorker(
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
-    private val logger: LoggingProtocol,
+    private val logger: Logging,
 ) : WorkerProtocol {
 
     companion object {

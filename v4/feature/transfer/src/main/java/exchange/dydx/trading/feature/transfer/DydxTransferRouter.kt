@@ -4,18 +4,18 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchView
 import exchange.dydx.trading.feature.transfer.status.DydxTransferStatusView
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxTransferRouter"
 
 fun NavGraphBuilder.transferGraph(
     appRouter: DydxRouter,
-    logger: LoggingProtocol,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,
