@@ -15,6 +15,7 @@ import exchange.dydx.abacus.output.MarketCandle
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.OrderStatus
+import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.config.AxisConfig
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import timber.log.Timber
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -110,21 +112,41 @@ class DydxMarketPricesViewModel @Inject constructor(
             typeIndex,
             resolutionIndex,
         ) { market, allPrices, ordersForMarket, selectedPrice, typeIndex, resolutionIndex ->
-            val candlesPeriod = candlesPeriods[resolutionIndex]
-            val prices = allPrices?.candles?.get(candlesPeriod)
-            val orderData = ordersForMarket?.run {
-                filter { it.status in listOf(OrderStatus.open, OrderStatus.untriggered, OrderStatus.partiallyFilled) }
-                    .map { OrderData(it.price, it.side, it.remainingSize ?: it.size) }
-            }.orEmpty()
-            createViewState(
-                prices = prices,
-                market = market,
-                orderData = orderData,
-                candlesPeriod = candlesPeriod,
-                selectedPrice = selectedPrice,
-                typeIndex = typeIndex,
-                resolutionIndex = resolutionIndex,
-            )
+            market.configs?.let { configs ->
+                val candlesPeriod = candlesPeriods[resolutionIndex]
+                val prices = allPrices.candles?.get(candlesPeriod)
+                val orderData = ordersForMarket?.let { orders ->
+                    orders
+                        .filter {
+                            it.status in setOf(OrderStatus.open, OrderStatus.untriggered, OrderStatus.partiallyFilled) &&
+                                it.type in setOf(OrderType.limit, OrderType.stopLimit, OrderType.stopMarket, OrderType.takeProfitLimit, OrderType.takeProfitMarket)
+                        }
+                        .map {
+                            OrderData(
+                                price = it.price,
+                                side = it.side,
+                                size = it.remainingSize ?: it.size,
+                                formattedPrice = formatter.dollar(it.price, configs.tickSizeDecimals)
+                                    ?: run {
+                                        Timber.tag("DydxMarketPricesViewModel")
+                                            .e("Failed to format orderline price.")
+                                        ""
+                                    },
+                                orderType = it.type,
+                            )
+                        }
+                }.orEmpty()
+
+                createViewState(
+                    prices = prices,
+                    market = market,
+                    orderData = orderData,
+                    candlesPeriod = candlesPeriod,
+                    selectedPrice = selectedPrice,
+                    typeIndex = typeIndex,
+                    resolutionIndex = resolutionIndex,
+                )
+            }
         }
             .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Lazily, null)
@@ -209,6 +231,44 @@ class DydxMarketPricesViewModel @Inject constructor(
                 null
             }
         }
+
+        val orderData = listOf(
+            OrderData(
+                price = 3100.0,
+                side = OrderSide.sell,
+                formattedPrice = "$3100.00",
+                orderType = OrderType.takeProfitLimit,
+                size = 10.0,
+            ),
+            OrderData(
+                price = 3300.0,
+                side = OrderSide.sell,
+                formattedPrice = "$3300.00",
+                orderType = OrderType.takeProfitMarket,
+                size = 10.0,
+            ),
+            OrderData(
+                price = 3500.0,
+                side = OrderSide.sell,
+                formattedPrice = "$3500.00",
+                orderType = OrderType.limit,
+                size = 10.0,
+            ),
+            OrderData(
+                price = 2900.0,
+                side = OrderSide.buy,
+                formattedPrice = "$2900.00",
+                orderType = OrderType.stopMarket,
+                size = 10.0,
+            ),
+            OrderData(
+                price = 2700.0,
+                side = OrderSide.buy,
+                formattedPrice = "$2700.00",
+                orderType = OrderType.stopLimit,
+                size = 10.0,
+            ),
+        )
 
         return DydxMarketPricesView.ViewState(
             localizer = localizer,
@@ -368,4 +428,6 @@ data class OrderData(
     val price: Double,
     val side: OrderSide,
     val size: Double,
+    val formattedPrice: String,
+    val orderType: OrderType,
 )
