@@ -78,13 +78,14 @@ interface AppModule {
         fun provideThemeSettings(
             @ApplicationContext appContext: Context,
             preferenceStore: SharedPreferencesStore,
+            logger: Logging,
         ): ThemeSettings {
             var theme = preferenceStore.read(PreferenceKeys.Theme)
             if (theme.isNullOrEmpty()) {
                 theme = "dark"
             }
             val themeConfigValue =
-                ThemeConfig.createFromPreference(appContext, theme) ?: ThemeConfig.dark(appContext)
+                ThemeConfig.createFromPreference(appContext, theme, logger) ?: ThemeConfig.dark(appContext)
             val themeConfig = MutableStateFlow<ThemeConfig?>(themeConfigValue)
             val styleConfig =
                 MutableStateFlow<StyleConfig?>(JsonUtils.loadFromAssets(appContext, "dydxStyle.json"))

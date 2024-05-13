@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
-import android.util.Log
 import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson

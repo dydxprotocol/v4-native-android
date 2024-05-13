@@ -1,6 +1,5 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
-import android.util.Log
 import exchange.dydx.abacus.protocols.LoggingProtocol
 import okhttp3.OkHttpClient
 import okhttp3.Request

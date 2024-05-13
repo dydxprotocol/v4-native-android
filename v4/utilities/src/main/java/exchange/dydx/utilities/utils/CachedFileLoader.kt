@@ -3,7 +3,6 @@ package exchange.dydx.utilities.utils
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import java.io.File
 import java.net.URL
 import javax.inject.Inject

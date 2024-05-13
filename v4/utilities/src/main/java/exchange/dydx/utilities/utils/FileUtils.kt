@@ -1,7 +1,6 @@
 package exchange.dydx.utilities.utils
 
 import android.content.Context
-import android.util.Log
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -13,11 +12,10 @@ import javax.inject.Inject
 
 private const val TAG = "FileUtils"
 
-
 class FileUtils @Inject constructor(
-  private val logger: Logging
+    private val logger: Logging
 ) {
-      fun loadFromAssets(context: Context, fileName: String): String? {
+    fun loadFromAssets(context: Context, fileName: String): String? {
         return try {
             val manager = context.assets
             val inputStream = manager.open(fileName)

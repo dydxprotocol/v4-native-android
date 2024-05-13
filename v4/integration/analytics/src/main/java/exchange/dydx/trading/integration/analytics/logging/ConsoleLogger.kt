@@ -3,7 +3,7 @@ package exchange.dydx.trading.integration.analytics.logging
 import exchange.dydx.abacus.protocols.LoggingProtocol
 import javax.inject.Inject
 
-class ConsoleLogger @Inject constructor(): LoggingProtocol {
+class ConsoleLogger @Inject constructor() : LoggingProtocol {
     override fun d(tag: String, message: String) {
         println("$tag: $message")
     }

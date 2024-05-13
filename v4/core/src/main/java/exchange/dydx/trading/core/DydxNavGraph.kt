@@ -17,7 +17,6 @@ import exchange.dydx.trading.feature.portfolio.portfolioGraph
 import exchange.dydx.trading.feature.profile.profileGraph
 import exchange.dydx.trading.feature.trade.tradeGraph
 import exchange.dydx.trading.feature.transfer.transferGraph
-import timber.log.Timber
 
 private const val TAG = "DydxNavGraph"
 

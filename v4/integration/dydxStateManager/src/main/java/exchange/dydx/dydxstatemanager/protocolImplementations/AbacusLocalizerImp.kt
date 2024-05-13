@@ -1,6 +1,5 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
-import android.util.Log
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.LoggingProtocol

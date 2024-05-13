@@ -1,8 +1,9 @@
 package exchange.dydx.trading.integration.analytics.logging
-import com.google.android.datatransport.runtime.logging.Logging
+
 import exchange.dydx.abacus.protocols.LoggingProtocol
 import javax.inject.Inject
 
+interface CompositeLogging : exchange.dydx.utilities.utils.Logging, LoggingProtocol
 class CompositeLogger @Inject constructor(
     private val consoleLogger: ConsoleLogger,
     private val crashlyticsLogger: CrashlyticsLogger

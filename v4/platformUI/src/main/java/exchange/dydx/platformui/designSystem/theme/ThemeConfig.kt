@@ -3,18 +3,24 @@ package exchange.dydx.platformui.designSystem.theme
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.util.Log
 import exchange.dydx.utilities.utils.JsonUtils
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 
 class ThemeSettings(
     private val context: Context,
-    val sharedPreferences: SharedPreferencesStore?,
+    private val sharedPreferences: SharedPreferencesStore?,
     val themeConfig: MutableStateFlow<ThemeConfig?> = MutableStateFlow(ThemeConfig.sampleThemeConfig(context)),
     val styleConfig: MutableStateFlow<StyleConfig?> = MutableStateFlow(StyleConfig.sampleStyleConfig(context)),
 ) {
+
+    val greenIsUp: Boolean
+        get() = (
+            sharedPreferences?.read("direction_color_preference")
+                ?: "green_is_up"
+            ) == "green_is_up"
     companion object {
         lateinit var shared: ThemeSettings
 
@@ -44,7 +50,11 @@ data class ThemeConfig(
         fun light(context: Context): ThemeConfig? = JsonUtils.loadFromAssets(context, "ThemeLight.json")
         fun classicDark(context: Context): ThemeConfig? = JsonUtils.loadFromAssets(context, "ThemeClassicDark.json")
 
-        fun createFromPreference(context: Context, preference: String): ThemeConfig? {
+        fun createFromPreference(
+            context: Context,
+            preference: String,
+            logger: Logging
+        ): ThemeConfig? {
             val config = when (preference) {
                 "dark" -> dark(context)
                 "light" -> light(context)
@@ -54,7 +64,7 @@ data class ThemeConfig(
             }
 
             return if (config == null) {
-                Log.e(TAG, "config is null")
+                logger.e(TAG, "config is null")
                 sampleThemeConfig(context)
             } else {
                 config

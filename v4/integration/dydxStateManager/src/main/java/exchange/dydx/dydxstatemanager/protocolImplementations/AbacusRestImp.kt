@@ -1,7 +1,6 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import android.os.AsyncTask
-import android.util.Log
 import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
