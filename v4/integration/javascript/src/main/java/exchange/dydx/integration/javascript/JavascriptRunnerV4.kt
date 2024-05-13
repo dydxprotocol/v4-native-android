@@ -48,7 +48,7 @@ class JavascriptRunnerV4 constructor(
     fun onJsAsyncResult(key: String, result: String?) {
         val callback = callBackMap[key]
         if (callback == null) {
-            logger.e(TAG, "No callback found for key: $key")
+            logger.d(TAG, "No callback found for key: $key")
             return
         }
         callBackMap.remove(key)
