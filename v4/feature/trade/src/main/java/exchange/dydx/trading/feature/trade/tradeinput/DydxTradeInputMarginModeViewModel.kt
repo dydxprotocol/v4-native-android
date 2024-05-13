@@ -42,6 +42,7 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
                 marginMode == MarginMode.cross,
             ) {
                 abacusStateManager.trade("CROSS", TradeInputField.marginMode)
+                router.navigateBack()
             },
             isolatedMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 localizer.localize("APP.GENERAL.ISOLATED_MARGIN"),
@@ -49,6 +50,7 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
                 marginMode == MarginMode.isolated,
             ) {
                 abacusStateManager.trade("ISOLATED", TradeInputField.marginMode)
+                router.navigateBack()
             },
             errorText = null,
             closeAction = {

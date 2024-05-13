@@ -193,11 +193,11 @@ object DydxTradeInputMarginModeView : DydxComponent {
                     shape = shape,
                 )
                 .clip(shape)
+                .clickable { marginModeState.action() }
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = 16.dp,
-                )
-                .clickable { marginModeState.action() },
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
