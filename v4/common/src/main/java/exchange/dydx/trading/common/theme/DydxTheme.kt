@@ -25,7 +25,6 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.PreviewAppConfig
 import exchange.dydx.utilities.utils.JsonUtils
-import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonNull.content
 
