@@ -36,8 +36,6 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.data.Entry
-import exchange.dydx.abacus.output.input.OrderSide
-import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.charts.config.CombinedChartConfig
@@ -53,10 +51,6 @@ import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
-import exchange.dydx.platformui.designSystem.theme.negativeColor
-import exchange.dydx.platformui.designSystem.theme.positiveColor
-import exchange.dydx.platformui.designSystem.theme.textOnNegativeColor
-import exchange.dydx.platformui.designSystem.theme.textOnPositiveColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.component.DydxComponent
@@ -95,7 +89,7 @@ object DydxMarketPricesView : DydxComponent {
         val candles: CandleChartDataSet?,
         val volumes: BarDataSet?,
         val prices: LineChartDataSet?,
-        val orderLines: List<OrderData>,
+        val orderLines: List<OrderLineData>,
         val typeOptions: SelectionOptions,
         val resolutionOptions: SelectionOptions,
         val highlight: PriceHighlight? = null,
@@ -130,7 +124,7 @@ object DydxMarketPricesView : DydxComponent {
                     "funding",
                 ),
                 listOf(
-                    OrderData(1.0, OrderSide.buy, 1.0, "$1.0", OrderType.limit),
+                    OrderLineData(1.0, ThemeColor.SemanticColor.color_green.color.toArgb(), ThemeColor.SemanticColor.color_white.color.toArgb(), 1.0, "$1.0", "Limit"),
                 ),
                 typeOptions = SelectionOptions(
                     titles = listOf("Candles", "Lines"),
@@ -205,7 +199,7 @@ object DydxMarketPricesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
                 Text(
-                    text = highlight.datetimeText ?: "",
+                    text = highlight.datetimeText,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.tiny)
                         .themeColor(ThemeColor.SemanticColor.text_secondary),
@@ -223,7 +217,7 @@ object DydxMarketPricesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
                 Text(
-                    text = highlight.openText ?: "",
+                    text = highlight.openText,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.tiny)
                         .themeColor(ThemeColor.SemanticColor.text_secondary),
@@ -238,7 +232,7 @@ object DydxMarketPricesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
                 Text(
-                    text = highlight.highText ?: "",
+                    text = highlight.highText,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.tiny)
                         .themeColor(ThemeColor.SemanticColor.text_secondary),
@@ -252,7 +246,7 @@ object DydxMarketPricesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
                 Text(
-                    text = highlight.lowText ?: "",
+                    text = highlight.lowText,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.tiny)
                         .themeColor(ThemeColor.SemanticColor.text_secondary),
@@ -266,7 +260,7 @@ object DydxMarketPricesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
                 Text(
-                    text = highlight.closeText ?: "",
+                    text = highlight.closeText,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.tiny)
                         .themeColor(ThemeColor.SemanticColor.text_secondary),
@@ -280,7 +274,7 @@ object DydxMarketPricesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
                 Text(
-                    text = highlight.volumeText ?: "",
+                    text = highlight.volumeText,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.tiny)
                         .themeColor(ThemeColor.SemanticColor.text_secondary),
@@ -408,16 +402,16 @@ internal class CombinedChartWithOrderLines(
         (parent as ViewGroup).clipChildren = true
     }
 
-    var orderLines: List<OrderData> = emptyList()
+    var orderLines: List<OrderLineData> = emptyList()
         set(value) {
             if (field == value) return
             field = value
             axisLeft.removeAllLimitLines()
-            value.forEach { (price, side) ->
+            value.forEach { (price, lineColor, textColor) ->
                 LimitLine(price.toFloat())
                     .apply {
-                        lineColor = side.orderLineColor
-                        textColor = side.orderLineTextColor
+                        this.lineColor = lineColor
+                        this.textColor = textColor
                         enableDashedLine(20f, 10f, 0f)
                     }
                     .also { axisLeft.addLimitLine(it) }
@@ -439,38 +433,38 @@ internal class CombinedChartWithOrderLines(
         }
     }
 
-    private fun Canvas.drawOrderPriceTag(yPos: Float, orderLine: OrderData): Float {
+    private fun Canvas.drawOrderPriceTag(yPos: Float, orderLine: OrderLineData): Float {
         return drawTextView(
             xPos = 0f,
             yPos = yPos,
             text = orderLine.formattedPrice,
-            backgroundColor = orderLine.side.orderLineColor,
-            textColor = orderLine.side.orderLineTextColor,
+            backgroundColor = orderLine.lineColor,
+            textColor = orderLine.textColor,
         )
     }
 
-    private fun Canvas.drawOrderLabelAndSize(xPos: Float, yPos: Float, orderLine: OrderData) {
+    private fun Canvas.drawOrderLabelAndSize(xPos: Float, yPos: Float, orderLine: OrderLineData) {
         val orderLabelRight = drawOrderLabel(xPos, yPos, orderLine)
         drawOrderSize(orderLabelRight, yPos, orderLine)
     }
 
-    private fun Canvas.drawOrderLabel(xPos: Float, yPos: Float, orderLine: OrderData): Float {
+    private fun Canvas.drawOrderLabel(xPos: Float, yPos: Float, orderLine: OrderLineData): Float {
         return drawTextView(
             xPos = xPos,
             yPos = yPos,
-            text = localizer.localize(orderLine.orderType.labelKey),
+            text = localizer.localize(orderLine.labelKey),
             backgroundColor = ThemeColor.SemanticColor.layer_1.color.toArgb(),
             textColor = ThemeColor.SemanticColor.text_tertiary.color.toArgb(),
         )
     }
 
-    private fun Canvas.drawOrderSize(xPos: Float, yPos: Float, orderLine: OrderData) {
+    private fun Canvas.drawOrderSize(xPos: Float, yPos: Float, orderLine: OrderLineData) {
         drawTextView(
             xPos = xPos,
             yPos = yPos,
             text = "${orderLine.size}",
-            backgroundColor = orderLine.side.orderLineColor,
-            textColor = orderLine.side.orderLineTextColor,
+            backgroundColor = orderLine.lineColor,
+            textColor = orderLine.textColor,
             horizontalPadding = 12f,
         )
     }
@@ -513,25 +507,3 @@ internal class CombinedChartWithOrderLines(
         return right
     }
 }
-
-private val OrderSide.orderLineColor: Int
-    get() = when (this) {
-        OrderSide.buy -> ThemeColor.SemanticColor.positiveColor.color.toArgb()
-        OrderSide.sell -> ThemeColor.SemanticColor.negativeColor.color.toArgb()
-    }
-
-private val OrderSide.orderLineTextColor: Int
-    get() = when (this) {
-        OrderSide.buy -> ThemeColor.SemanticColor.textOnPositiveColor.color.toArgb()
-        OrderSide.sell -> ThemeColor.SemanticColor.textOnNegativeColor.color.toArgb()
-    }
-
-private val OrderType.labelKey: String
-    get() = when (this) {
-        OrderType.takeProfitMarket -> "APP.TRADE.TAKE_PROFIT_MARKET"
-        OrderType.takeProfitLimit -> "APP.TRADE.TAKE_PROFIT_LIMIT"
-        OrderType.limit -> "APP.TRADE.LIMIT_ORDER"
-        OrderType.stopLimit -> "APP.TRADE.STOP_LIMIT"
-        OrderType.stopMarket -> "APP.TRADE.STOP_MARKET"
-        else -> error("$this is not supported by orderlines")
-    }
