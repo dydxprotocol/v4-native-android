@@ -111,6 +111,8 @@ object DydxTradeInputView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val isIsolatedMarketEnabled: Boolean = false,
+        val isIsolatedMarketSelected: Boolean = false,
+        val isolatedMarketTargetLeverageText: String?,
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
@@ -121,6 +123,7 @@ object DydxTradeInputView : DydxComponent {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                isolatedMarketTargetLeverageText = "2x",
                 inputFields = listOf(
                     InputField.Size,
                     InputField.Leverage,
@@ -198,16 +201,23 @@ object DydxTradeInputView : DydxComponent {
                                 PlatformButton(
                                     modifier = Modifier.height(52.dp),
                                     state = PlatformButtonState.Secondary,
-                                    text = "Isolated",
+                                    text = state.localizer.localize(
+                                        if (state.isIsolatedMarketEnabled)
+                                            "APP.GENERAL.CROSS"
+                                        else
+                                            "APP.GENERAL.ISOLATED",
+                                    ),
                                 ) {
                                     state.onMarketType()
                                 }
-                                PlatformButton(
-                                    modifier = Modifier.height(52.dp),
-                                    state = PlatformButtonState.Secondary,
-                                    text = "2x",
-                                ) {
-                                    state.onTargetLeverage()
+                                if (state.isIsolatedMarketEnabled && state.isIsolatedMarketSelected) {
+                                    PlatformButton(
+                                        modifier = Modifier.height(52.dp),
+                                        state = PlatformButtonState.Secondary,
+                                        text = state.isolatedMarketTargetLeverageText,
+                                    ) {
+                                        state.onTargetLeverage()
+                                    }
                                 }
                             }
                         }
