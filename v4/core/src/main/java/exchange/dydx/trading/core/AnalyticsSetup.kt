@@ -6,11 +6,11 @@ import com.amplitude.android.Configuration
 import com.amplitude.android.DefaultTrackingOptions
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.integration.analytics.tracking.AmplitudeTracker
 import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
 import exchange.dydx.trading.integration.analytics.tracking.FirebaseTracker
-import timber.log.Timber
 
 object AnalyticsSetup {
 
@@ -19,6 +19,7 @@ object AnalyticsSetup {
     fun run(
         compositeTracking: CompositeTracking,
         activity: FragmentActivity,
+        logger: LoggingProtocol,
     ) {
         try {
             val firebaseAnalytics = Firebase.analytics
@@ -33,7 +34,7 @@ object AnalyticsSetup {
             )
             compositeTracking.addTracker(AmplitudeTracker(amplitude))
         } catch (e: Exception) {
-            Timber.tag(TAG).e(e, "Failed to set up Analytics")
+            logger.e(TAG, "Failed to set up Analytics")
         }
     }
 }

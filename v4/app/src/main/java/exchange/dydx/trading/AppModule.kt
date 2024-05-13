@@ -54,6 +54,7 @@ import exchange.dydx.trading.common.theme.DydxTheme
 import exchange.dydx.trading.common.theme.DydxThemeImpl
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.integration.analytics.logging.CompositeLogger
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
 import exchange.dydx.trading.integration.analytics.tracking.CompositeTracker
 import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
@@ -181,6 +182,8 @@ interface AppModule {
     @Binds fun bindLogger(compositeLogger: CompositeLogger): Logging
 
     @Binds fun bindLoggingProtocol(compositeLogger: CompositeLogger): LoggingProtocol
+
+    @Binds fun bindCompositeLogging(compositeLogger: CompositeLogger): CompositeLogging
 
     @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
 

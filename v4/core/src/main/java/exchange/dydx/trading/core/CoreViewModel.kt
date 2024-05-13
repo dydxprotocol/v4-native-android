@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
-import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
@@ -14,6 +13,7 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.logger.DydxLogger
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.workers.DydxGlobalWorkers
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
 import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
@@ -38,7 +38,7 @@ class CoreViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
-    val logger: LoggingProtocol,
+    val logger: CompositeLogging,
     val compositeTracking: CompositeTracking,
     private val preferencesStore: SharedPreferencesStore,
 ) : ViewModel() {

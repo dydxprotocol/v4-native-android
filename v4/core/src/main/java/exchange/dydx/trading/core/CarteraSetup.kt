@@ -2,21 +2,24 @@ package exchange.dydx.trading.core
 
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
-import timber.log.Timber
 
 object CarteraSetup {
 
     private const val TAG = "CarteraSetup"
 
-    fun run(activity: FragmentActivity) {
+    fun run(
+        activity: FragmentActivity,
+        logger: LoggingProtocol,
+    ) {
         try {
             setUpCartera(activity)
         } catch (e: Exception) {
-            Timber.tag(TAG).e(e, "Failed to set up cartera")
+            logger.e(TAG, "Failed to set up cartera")
         }
     }
 

@@ -17,6 +17,7 @@ import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.config.AxisConfig
 import exchange.dydx.platformui.components.charts.config.AxisTextPosition
@@ -40,16 +41,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import timber.log.Timber
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+
+private const val TAG = "DydxMarketPricesViewModel"
 
 @HiltViewModel
 class DydxMarketPricesViewModel @Inject constructor(
@@ -57,6 +57,7 @@ class DydxMarketPricesViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
+    private val logger: LoggingProtocol,
 ) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
     /*
     The library works well with x range up to 1000
@@ -128,8 +129,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                                 size = it.remainingSize ?: it.size,
                                 formattedPrice = formatter.dollar(it.price, configs.tickSizeDecimals)
                                     ?: run {
-                                        Timber.tag("DydxMarketPricesViewModel")
-                                            .e("Failed to format orderline price.")
+                                        logger.e(TAG, "Failed to format orderline price.")
                                         ""
                                     },
                                 orderType = it.type,

@@ -58,8 +58,8 @@ class TradingActivity : FragmentActivity() {
 
         viewModel.logger.d(TAG, "TradingActivity#onCreate")
 
-        CarteraSetup.run(this)
-        AnalyticsSetup.run(viewModel.compositeTracking, this)
+        CarteraSetup.run(this, viewModel.logger)
+        AnalyticsSetup.run(viewModel.compositeTracking, this, viewModel.logger)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -95,6 +95,7 @@ class TradingActivity : FragmentActivity() {
                     modifier = Modifier,
                     isVisible = false,
                     javascriptRunner = it.runner,
+                    logger = viewModel.logger,
                 )
             }
             content()
@@ -105,6 +106,7 @@ class TradingActivity : FragmentActivity() {
     private fun BiometricPrompt() {
         DydxBiometricPrompt.Content(
             activity = this,
+            logger = viewModel.logger,
             processSuccess = { result, error ->
                 setContentWithJS {
                     if (result) {

@@ -9,11 +9,11 @@ import exchange.dydx.integration.starkex.StarkexLib
 import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -25,7 +25,6 @@ import javax.inject.Inject
 class DydxDesktopScanViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
     private val router: DydxRouter,
     private val parser: ParserProtocol,
     val platformDialog: PlatformDialog,
@@ -33,6 +32,7 @@ class DydxDesktopScanViewModel @Inject constructor(
     val starkexLib: StarkexLib,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
+    private val logger: Logging,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxDesktopScanView.ViewState?> = MutableStateFlow(createViewState())
@@ -55,6 +55,7 @@ class DydxDesktopScanViewModel @Inject constructor(
                     },
                 )
             },
+            logger = logger,
         )
     }
 

@@ -3,14 +3,15 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 import android.app.Application
 import exchange.dydx.abacus.protocols.FileLocation
 import exchange.dydx.abacus.protocols.FileSystemProtocol
+import exchange.dydx.abacus.protocols.LoggingProtocol
 import okio.use
-import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
 class AbacusFileSystemImp @Inject constructor(
     private val application: Application,
+    private val logger: LoggingProtocol,
 ) : FileSystemProtocol {
     private val TAG = "AbacusFileSystemImp"
 
@@ -24,7 +25,7 @@ class AbacusFileSystemImp @Inject constructor(
                     }
                     string
                 } catch (e: Exception) {
-                    Timber.tag(TAG).e(e.stackTraceToString())
+                    logger.e(TAG, "Failed to read file: $path, error: ${e.stackTraceToString()}")
                     null
                 }
             }
@@ -35,7 +36,7 @@ class AbacusFileSystemImp @Inject constructor(
                 return if (file.exists()) {
                     file.readText()
                 } else {
-                    Timber.tag(TAG).e("File does not exist: %s", absoluteFilePath)
+                    logger.e(TAG, "File does not exist: $absoluteFilePath")
                     null
                 }
             }

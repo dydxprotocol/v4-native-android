@@ -1,7 +1,6 @@
 package exchange.dydx.trading.integration.cosmos
 
 import android.app.Application
-import android.util.Log
 import exchange.dydx.abacus.protocols.LoggingProtocol
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
@@ -21,7 +20,7 @@ private const val TAG = "CosmosV4ClientWebview"
 class CosmosV4ClientWebview @Inject constructor(
     application: Application,
     @CoroutineScopes.App appScope: CoroutineScope,
-    logger: LoggingProtocol,
+    private val logger: LoggingProtocol,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,
@@ -209,7 +208,7 @@ class CosmosV4ClientWebview @Inject constructor(
                 function = functionName,
                 params = jsParams,
             ) { result ->
-                Log.d(TAG, "callNativeClient $functionName, params: $params, result: $result")
+                logger.d(TAG, "callNativeClient $functionName, params: $params, result: $result")
                 completion(result?.response)
             }
         }

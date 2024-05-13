@@ -53,7 +53,7 @@ data class ThemeConfig(
         fun createFromPreference(
             context: Context,
             preference: String,
-            logger: Logging
+            logger: Logging,
         ): ThemeConfig? {
             val config = when (preference) {
                 "dark" -> dark(context)
