@@ -93,13 +93,3 @@ class MockLocalizer : LocalizerProtocol {
         return path
     }
 }
-
-class MockLogger : Logging {
-    override fun d(tag: String, message: String) {
-        println("D: $tag: $message")
-    }
-
-    override fun e(tag: String, message: String) {
-        println("E: $tag: $message")
-    }
-}

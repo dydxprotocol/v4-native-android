@@ -19,8 +19,8 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
-import exchange.dydx.trading.common.theme.MockLogger
 import exchange.dydx.trading.feature.shared.views.HeaderView
+import exchange.dydx.trading.integration.analytics.logging.ConsoleLogger
 import exchange.dydx.utilities.utils.Logging
 
 @Preview
@@ -41,7 +41,7 @@ object DydxDesktopScanView : DydxComponent {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                logger = MockLogger(),
+                logger = ConsoleLogger(),
             )
         }
     }
