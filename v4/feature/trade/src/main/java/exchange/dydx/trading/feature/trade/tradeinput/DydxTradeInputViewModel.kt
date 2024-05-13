@@ -74,7 +74,7 @@ class DydxTradeInputViewModel @Inject constructor(
             isolatedMarketTargetLeverageText = tradeInput?.targetLeverage?.let {
                 formatter.leverage(
                     it,
-                    2
+                    2,
                 )
             } ?: "2x",
             orderbookToggleState = orderbookToggleState,

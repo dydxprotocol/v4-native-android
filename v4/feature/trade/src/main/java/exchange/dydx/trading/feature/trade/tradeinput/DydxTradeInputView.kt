@@ -202,21 +202,23 @@ object DydxTradeInputView : DydxComponent {
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 PlatformButton(
-                                    modifier = if (state.isIsolatedMarketSelected)
+                                    modifier = if (state.isIsolatedMarketSelected) {
                                         Modifier
                                             .padding(start = 8.dp)
                                             .height(52.dp)
-                                    else
+                                    } else {
                                         Modifier
                                             .padding(start = 8.dp)
                                             .fillMaxWidth()
-                                            .height(52.dp),
+                                            .height(52.dp)
+                                    },
                                     state = PlatformButtonState.Secondary,
                                     text = state.localizer.localize(
-                                        if (state.isIsolatedMarketSelected)
+                                        if (state.isIsolatedMarketSelected) {
                                             "APP.GENERAL.ISOLATED"
-                                        else
-                                            "APP.GENERAL.CROSS",
+                                        } else {
+                                            "APP.GENERAL.CROSS"
+                                        },
                                     ),
                                 ) {
                                     state.onMarketType()

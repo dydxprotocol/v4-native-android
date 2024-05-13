@@ -109,11 +109,11 @@ object DydxTradeInputMarginModeView : DydxComponent {
                 state = state,
             )
             PlatformDivider()
+            Spacer(modifier = Modifier.height(8.dp))
             Selection(
                 modifier = Modifier,
                 marginModeState = state.crossMargin,
             )
-            Spacer(modifier = Modifier.height(8.dp))
             Selection(
                 modifier = Modifier,
                 marginModeState = state.isolatedMargin,
