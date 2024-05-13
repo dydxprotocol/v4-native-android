@@ -47,6 +47,7 @@ dependencies {
     implementation project(path: ':v4:integration:dydxStateManager')
     implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:feature:shared')
+    implementation project(':v4:utilities')
 
     /* Local Dependencies */
 
@@ -64,7 +65,7 @@ dependencies {
     /* Standard Dependencies */
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
-    implementation project(':v4:utilities')
+
 
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
     kapt "com.google.dagger:dagger-compiler:$hiltVersion"

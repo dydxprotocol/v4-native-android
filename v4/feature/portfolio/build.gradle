@@ -47,6 +47,7 @@ dependencies {
     implementation project(path: ':v4:integration:dydxStateManager')
     implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:feature:shared')
+    implementation project(':v4:utilities')
 
     /* Local Dependencies */
 
@@ -60,8 +61,6 @@ dependencies {
     implementation "androidx.compose.ui:ui-graphics:$composeVersion"
 //    implementation "androidx.lifecycle:lifecycle-common:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
-    implementation project(path: ':v4:platformUI')
-    implementation project(':v4:utilities')
 
 
     // Add non-standard deps above. Deps added below this line may be periodically overwritten

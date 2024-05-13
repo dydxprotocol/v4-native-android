@@ -43,6 +43,7 @@ dependencies {
 
     /* Module Dependencies */
     implementation project(':v4:common')
+    implementation project(':v4:utilities')
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
 
@@ -57,7 +58,6 @@ dependencies {
 
     // Compose Tooling
     implementation "androidx.compose.ui:ui-tooling-preview:$composeVersion"
-    implementation project(':v4:utilities')
     debugImplementation "androidx.compose.ui:ui-tooling:$composeVersion"
     debugRuntimeOnly "androidx.compose.ui:ui-test-manifest:$composeVersion"
     debugImplementation "androidx.customview:customview:$customviewVersion"
