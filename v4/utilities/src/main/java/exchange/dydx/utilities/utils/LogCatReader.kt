@@ -1,15 +1,16 @@
 package exchange.dydx.utilities.utils
 
-import android.util.Log
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import javax.inject.Inject
 
-object LogCatReader {
+private const val TAG = "LogCatReader"
 
-    private const val TAG = "LogCatReader"
-
+class LogCatReader @Inject constructor(
+    private val logging: Logging
+) {
     /**
      * Reads the logcat and stores the log in a file.
      */
@@ -31,7 +32,7 @@ object LogCatReader {
             process.destroy()
             return true
         } catch (e: IOException) {
-            Log.e(TAG, "saveLogCatToFile: $e")
+            logging.e(TAG, "saveLogCatToFile: $e")
             return false
         }
     }

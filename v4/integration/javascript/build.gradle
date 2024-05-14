@@ -43,6 +43,7 @@ dependencies {
 
     /* Module Dependencies */
     implementation project(':v4:common')
+    implementation project(':v4:utilities')
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
 

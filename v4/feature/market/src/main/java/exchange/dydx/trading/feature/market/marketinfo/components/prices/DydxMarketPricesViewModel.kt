@@ -37,6 +37,7 @@ import exchange.dydx.platformui.designSystem.theme.textOnPositiveColor
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,10 +47,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import timber.log.Timber
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+
+private const val TAG = "DydxMarketPricesViewModel"
 
 @HiltViewModel
 class DydxMarketPricesViewModel @Inject constructor(
@@ -57,6 +59,7 @@ class DydxMarketPricesViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
+    private val logger: Logging,
 ) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
     /*
     The library works well with x range up to 1000
@@ -138,8 +141,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                                 size = it.remainingSize ?: it.size,
                                 formattedPrice = formatter.dollar(price, configs.tickSizeDecimals)
                                     ?: run {
-                                        Timber.tag("DydxMarketPricesViewModel")
-                                            .e("Failed to format orderline price.")
+                                        logger.e(TAG, "Failed to format orderline price.")
                                         ""
                                     },
                                 labelKey = it.type.labelKey,

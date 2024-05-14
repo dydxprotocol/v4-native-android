@@ -1,10 +1,10 @@
 package exchange.dydx.trading.integration.cosmos
 
 import android.app.Application
-import android.util.Log
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
@@ -20,11 +20,12 @@ private const val TAG = "CosmosV4ClientWebview"
 class CosmosV4ClientWebview @Inject constructor(
     application: Application,
     @CoroutineScopes.App appScope: CoroutineScope,
+    private val logger: Logging,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,
         description = WEBVIEW_FILENAME,
-        runner = JavascriptRunnerV4.runnerFromFile(appScope, application, WEBVIEW_FILENAME)
+        runner = JavascriptRunnerV4.runnerFromFile(appScope, application, WEBVIEW_FILENAME, logger)
             ?: throw IOException("Fatal, unable to load runner from: $WEBVIEW_FILENAME"),
     ) {
 
@@ -207,7 +208,7 @@ class CosmosV4ClientWebview @Inject constructor(
                 function = functionName,
                 params = jsParams,
             ) { result ->
-                Log.d(TAG, "callNativeClient $functionName, params: $params, result: $result")
+                logger.d(TAG, "callNativeClient $functionName, params: $params, result: $result")
                 completion(result?.response)
             }
         }

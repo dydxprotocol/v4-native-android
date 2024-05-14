@@ -7,6 +7,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import exchange.dydx.trading.common.AppConfig
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ class JavascriptRunnerV4 constructor(
     private val scriptDescription: String,
     private val scriptInitializationCode: String,
     private val scope: CoroutineScope,
+    private val logger: Logging,
 ) : JavascriptRunner {
 
     override val initialized = MutableStateFlow(false)
@@ -32,10 +34,11 @@ class JavascriptRunnerV4 constructor(
             scope: CoroutineScope,
             context: Context,
             file: String,
+            logger: Logging,
         ): JavascriptRunnerV4? {
             val script = JavascriptUtils.loadAsset(context, file)
             if (script != null) {
-                return JavascriptRunnerV4(file, script, scope)
+                return JavascriptRunnerV4(file, script, scope, logger)
             }
             return null
         }
@@ -45,7 +48,7 @@ class JavascriptRunnerV4 constructor(
     fun onJsAsyncResult(key: String, result: String?) {
         val callback = callBackMap[key]
         if (callback == null) {
-            LOGGER?.e("No callback found for key: $key")
+            logger.d(TAG, "No callback found for key: $key")
             return
         }
         callBackMap.remove(key)
@@ -54,18 +57,18 @@ class JavascriptRunnerV4 constructor(
 
     override var webview: WebView? = null
         set(value) {
-            LOGGER?.d("Setting Webview")
+            logger.d(TAG, "Setting Webview")
             if (field == value) {
-                LOGGER?.d("Noop update")
+                logger.e(TAG, "Noop update")
                 return
             }
             if (field != null) {
-                Timber.tag(TAG).w("Updating webview in runner")
+                logger.e(TAG, "Updating webview in runner")
             }
             initialized.value = false
             if (value != null) {
 //                value.settings.javaScriptEnabled = true
-                LOGGER?.d("Loading base url")
+                logger.d(TAG, "Loading base url")
             }
 
             value?.addJavascriptInterface(this, "bridge")
@@ -79,11 +82,11 @@ class JavascriptRunnerV4 constructor(
                 request: WebResourceRequest?,
                 error: WebResourceError?,
             ) {
-                Timber.tag(TAG).w("Error in webview client: %s", error)
+                logger.d(TAG, "Error in webview client: $error")
             }
             override fun onPageFinished(view: WebView, weburl: String) {
                 initializeJavascriptEnvironment() {
-                    LOGGER?.i("Initialized javascript environment: $it")
+                    logger.d(TAG, "Initialized javascript environment: $it")
                     initialized.value = true
                 }
             }
@@ -126,18 +129,18 @@ class JavascriptRunnerV4 constructor(
             webappInterface.callback = callback
             val localWebview = webview
             if (localWebview == null) {
-                Timber.e("Unable to run function, no webview present, $script")
+                logger.e(TAG, "Unable to run function, no webview present, $script")
                 return@launch
             }
             try {
-                LOGGER?.i("Running script: ${script.take(1024)}")
+                logger.d(TAG, "Running script: ${script.take(1024)}")
                 localWebview.evaluateJavascript(
                     script,
                 ) {
-                    LOGGER?.i("Script completed: $it")
+                    logger.d(TAG, "Script completed: $it")
                     val result = it.removeSurrounding("\"")
                     if (result != it) {
-                        LOGGER?.d("Stripped surrounding quotes")
+                        logger.d(TAG, "Stripped surrounding quotes")
                     }
                     callback.invoke(
                         JavascriptRunnerResult(
@@ -151,7 +154,7 @@ class JavascriptRunnerV4 constructor(
                     )
                 }
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "Error executing script: $script")
+                logger.e(TAG, "Error executing script: $script")
             }
         }
     }

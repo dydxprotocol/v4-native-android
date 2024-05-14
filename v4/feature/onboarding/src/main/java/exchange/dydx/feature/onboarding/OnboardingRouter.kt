@@ -13,11 +13,13 @@ import exchange.dydx.feature.onboarding.welcome.DydxOnboardWelcomeView
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG: String = "LoginRoute"
 
 fun NavGraphBuilder.loginGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,

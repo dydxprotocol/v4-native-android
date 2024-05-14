@@ -2,10 +2,9 @@ package exchange.dydx.trading.integration.cosmos
 
 import exchange.dydx.integration.javascript.JavascriptApi
 import exchange.dydx.trading.common.DydxException
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 
 private const val TAG = "CosmosV4Client"
 
@@ -110,7 +109,10 @@ class CosmosV4ClientException(s: String, cause: Throwable? = null) : DydxExcepti
 
 typealias JavascriptCompletion = (result: String?) -> Unit
 
-abstract class CosmosV4ClientResponseHandler(val json: Json) {
+abstract class CosmosV4ClientResponseHandler(
+    val json: Json,
+    val logger: Logging,
+) {
     fun completion(): JavascriptCompletion {
         return { result: String? ->
             if (result == null) {
@@ -121,7 +123,7 @@ abstract class CosmosV4ClientResponseHandler(val json: Json) {
                     "SUCCESS" -> onSuccess(response.result)
                     "ERROR" -> onError(response.error)
                     else -> {
-                        Timber.tag(TAG).e("Unknown response status: %s", response.status)
+                        logger.e(TAG, "Unknown response status: ${response.status}")
                         onError(response.error)
                     }
                 }

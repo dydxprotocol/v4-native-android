@@ -20,6 +20,8 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.HeaderView
+import exchange.dydx.trading.integration.analytics.logging.ConsoleLogger
+import exchange.dydx.utilities.utils.Logging
 
 @Preview
 @Composable
@@ -32,12 +34,14 @@ fun Preview_dydxDesktopScanView() {
 object DydxDesktopScanView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val logger: Logging,
         val closeButtonHandler: () -> Unit = {},
         val qrCodeScannedHandler: (String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                logger = ConsoleLogger(),
             )
         }
     }
@@ -55,6 +59,7 @@ object DydxDesktopScanView : DydxComponent {
             modifier = Modifier,
             isVisible = false,
             javascriptRunner = viewModel.starkexLib.runner,
+            logger = state?.logger,
         )
     }
 

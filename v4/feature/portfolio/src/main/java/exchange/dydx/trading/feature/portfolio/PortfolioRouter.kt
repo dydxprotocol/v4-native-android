@@ -12,10 +12,13 @@ import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOr
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView
 import exchange.dydx.trading.feature.portfolio.orderdetails.DydxOrderDetailsView
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
+
+private const val TAG = "PortfolioRouter"
 
 fun NavGraphBuilder.portfolioGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,
@@ -37,7 +40,7 @@ fun NavGraphBuilder.portfolioGraph(
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("id")
         if (id == null) {
-            Timber.w("No identifier passed")
+            logger.e(TAG, "No identifier passed")
             appRouter.navigateTo(PortfolioRoutes.order_details)
             return@dydxComposable
         }

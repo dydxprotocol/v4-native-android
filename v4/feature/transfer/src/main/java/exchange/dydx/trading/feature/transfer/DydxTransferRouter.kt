@@ -9,12 +9,13 @@ import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchView
 import exchange.dydx.trading.feature.transfer.status.DydxTransferStatusView
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxTransferRouter"
 
 fun NavGraphBuilder.transferGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,
@@ -40,7 +41,7 @@ fun NavGraphBuilder.transferGraph(
     ) { navBackStackEntry ->
         val hash = navBackStackEntry.arguments?.getString("hash")
         if (hash == null) {
-            Timber.w("No hash passed")
+            logger.e(TAG, "No hash passed")
             appRouter.navigateTo(TransferRoutes.transfer)
             return@dydxComposable
         }
