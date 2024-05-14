@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
-import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -91,10 +90,6 @@ object DydxTradeInputOrderTypeView : DydxComponent {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            PlatformRoundImage(
-                                icon = state.tokenLogoUrl,
-                                size = 18.dp,
-                            )
                             Text(
                                 text = it,
                                 modifier = Modifier,

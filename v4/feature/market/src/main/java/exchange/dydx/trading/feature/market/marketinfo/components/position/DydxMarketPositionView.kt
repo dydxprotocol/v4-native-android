@@ -368,7 +368,7 @@ object DydxMarketPositionView : DydxComponent {
             }
 
             Text(
-                text = state.sharedMarketPositionViewState?.amount ?: "-",
+                text = state.sharedMarketPositionViewState?.margin ?: "-",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

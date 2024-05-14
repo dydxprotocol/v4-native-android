@@ -2,12 +2,14 @@ package exchange.dydx.trading.feature.trade.tradeinput
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.feature.receipt.ReceiptType
@@ -24,6 +26,7 @@ class DydxTradeInputViewModel @Inject constructor(
     private val router: DydxRouter,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val featureFlags: DydxFeatureFlags,
+    private val formatter: DydxFormatter,
     val receiptTypeFlow: MutableStateFlow<@JvmSuppressWildcards ReceiptType?>,
     val orderbookToggleStateFlow: Flow<@JvmSuppressWildcards DydxTradeInputView.OrderbookToggleState>,
     val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
@@ -67,6 +70,13 @@ class DydxTradeInputViewModel @Inject constructor(
                 if (tradeInput?.options?.needsReduceOnly == true) DydxTradeInputView.InputField.ReduceOnly else null,
             ),
             isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
+            isIsolatedMarketSelected = tradeInput?.marginMode == MarginMode.isolated,
+            isolatedMarketTargetLeverageText = tradeInput?.targetLeverage?.let {
+                formatter.leverage(
+                    it,
+                    2,
+                )
+            } ?: "2x",
             orderbookToggleState = orderbookToggleState,
             requestedBottomSheetState = buttomSheetState,
             onMarketType = {

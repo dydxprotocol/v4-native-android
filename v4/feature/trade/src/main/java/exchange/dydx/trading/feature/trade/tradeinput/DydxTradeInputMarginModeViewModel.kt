@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
@@ -23,7 +24,6 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     val platformInfo: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
-
     val state: Flow<DydxTradeInputMarginModeView.ViewState?> =
         abacusStateManager.state.tradeInput
             .map {
@@ -32,20 +32,25 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
             .distinctUntilChanged()
 
     private fun createViewState(tradeInput: TradeInput?): DydxTradeInputMarginModeView.ViewState {
+        val marginMode = tradeInput?.marginMode ?: MarginMode.cross
         return DydxTradeInputMarginModeView.ViewState(
             title = localizer.localize("APP.GENERAL.MARGIN_MODE"),
             asset = tradeInput?.marketId ?: "",
             crossMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 localizer.localize("APP.GENERAL.CROSS_MARGIN"),
                 localizer.localize("APP.GENERAL.CROSS_MARGIN_DESCRIPTION"),
-                tradeInput?.marginMode == MarginMode.cross,
+                marginMode == MarginMode.cross,
             ) {
+                abacusStateManager.trade("CROSS", TradeInputField.marginMode)
+                router.navigateBack()
             },
             isolatedMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 localizer.localize("APP.GENERAL.ISOLATED_MARGIN"),
                 localizer.localize("APP.GENERAL.ISOLATED_MARGIN_DESCRIPTION"),
-                tradeInput?.marginMode == MarginMode.isolated,
+                marginMode == MarginMode.isolated,
             ) {
+                abacusStateManager.trade("ISOLATED", TradeInputField.marginMode)
+                router.navigateBack()
             },
             errorText = null,
             closeAction = {
