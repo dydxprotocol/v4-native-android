@@ -188,7 +188,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                         value = state?.leverageText ?: "",
                         onValueChanged = {
                             state?.selectAction?.invoke(
-                                it
+                                it,
                             )
                         },
                     ),
@@ -259,7 +259,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 } ?: listOf(),
                 equalWeight = false,
                 currentSelection = state?.leverageOptions?.indexOfFirst {
-                    it.text == state.leverageText
+                    it.value.toDouble() == state.leverageText?.toDouble()
                 },
                 onSelectionChanged = { it ->
                     state?.leverageOptions?.get(it)?.value?.let { value ->

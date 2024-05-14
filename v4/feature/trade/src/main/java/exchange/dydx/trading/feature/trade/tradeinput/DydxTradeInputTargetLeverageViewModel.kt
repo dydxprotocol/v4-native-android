@@ -44,9 +44,10 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
         return DydxTradeInputTargetLeverageView.ViewState(
             localizer = localizer,
             leverageText = targetLeverage ?: (
-                    tradeInput?.targetLeverage?.let {
-                        "$it"
-                    }) ?: "2.0",
+                tradeInput?.targetLeverage?.let {
+                    "$it"
+                }
+                ) ?: "2.0",
             leverageOptions = leverages,
             selectAction = { leverage ->
                 this.targetLeverage.value = leverage
@@ -61,20 +62,26 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     }
 
     private fun leverageOptions(max: Double): List<LeverageTextAndValue> {
+        val steps = listOf(1.0, 2.0, 5.0, 10.0)
         val leverages = mutableListOf<LeverageTextAndValue>()
-        if (max > 1.0) {
-            leverages.add(LeverageTextAndValue("1.0", "1"))
+        for (step in steps) {
+            if (max > step) {
+                leverages.add(leverageTextAndValue(step))
+            }
         }
-        if (max > 2.0) {
-            leverages.add(LeverageTextAndValue("2.0", "2"))
-        }
-        if (max > 5.0) {
-            leverages.add(LeverageTextAndValue("5.0", "5"))
-        }
-        if (max > 10.0) {
-            leverages.add(LeverageTextAndValue("10.0", "10"))
-        }
-        leverages.add(LeverageTextAndValue(localizer.localize("APP.GENERAL.MAX"), "$max"))
+        leverages.add(
+            LeverageTextAndValue(
+                localizer.localize("APP.GENERAL.MAX"),
+                formatter.raw(max) ?: "",
+            ),
+        )
         return leverages
+    }
+
+    private fun leverageTextAndValue(value: Double): LeverageTextAndValue {
+        return LeverageTextAndValue(
+            formatter.leverage(value, 1) ?: "",
+            formatter.raw(value) ?: "",
+        )
     }
 }
