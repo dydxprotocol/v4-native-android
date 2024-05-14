@@ -46,14 +46,16 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
             } else {
                 localizer.localize("APP.TRADE.UPDATE_TRIGGERS")
             }
+        val inputSize = triggerOrdersInput?.size ?: 0.0
+        val tpSize = triggerOrdersInput?.takeProfitOrder?.size ?: 0.0
+        val slSize = triggerOrdersInput?.stopLossOrder?.size ?: 0.0
+        val hasSize = inputSize != 0.0 || tpSize != 0.0 || slSize != 0.0
         return DydxTriggerOrderCtaButtonView.ViewState(
             localizer = localizer,
             ctaButtonState = if (
-                (
-                    triggerOrdersInput?.takeProfitOrder?.price?.triggerPrice != null || triggerOrdersInput?.takeProfitOrder?.orderId != null ||
-                        triggerOrdersInput?.stopLossOrder?.price?.triggerPrice != null || triggerOrdersInput?.stopLossOrder?.orderId != null
-                    ) &&
-                (triggerOrdersInput?.size ?: 0.0) != 0.0 &&
+                (triggerOrdersInput?.takeProfitOrder?.price?.triggerPrice != null || triggerOrdersInput?.takeProfitOrder?.orderId != null ||
+                        triggerOrdersInput?.stopLossOrder?.price?.triggerPrice != null || triggerOrdersInput?.stopLossOrder?.orderId != null) &&
+                hasSize &&
                 firstBlockingError == null
             ) {
                 DydxTriggerOrderCtaButtonView.State.Enabled(buttonTitle)

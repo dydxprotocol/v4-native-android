@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import timber.log.Timber
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -156,8 +157,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                             size = positionSize ?: 0.0,
                             formattedPrice = formatter.dollar(it, configs.tickSizeDecimals)
                                 ?: run {
-                                    Timber.tag("DydxMarketPricesViewModel")
-                                        .e("Failed to format orderline price.")
+                                    logger.e(TAG, "Failed to format orderline price.")
                                     ""
                                 },
                             labelKey = "APP.TRADE.ENTRY_PRICE_SHORT",
@@ -171,8 +171,7 @@ class DydxMarketPricesViewModel @Inject constructor(
                             size = positionSize ?: 0.0,
                             formattedPrice = formatter.dollar(it, configs.tickSizeDecimals)
                                 ?: run {
-                                    Timber.tag("DydxMarketPricesViewModel")
-                                        .e("Failed to format orderline price.")
+                                    logger.e(TAG, "Failed to format orderline price.")
                                     ""
                                 },
                             labelKey = "APP.TRADE.LIQUIDATION",
