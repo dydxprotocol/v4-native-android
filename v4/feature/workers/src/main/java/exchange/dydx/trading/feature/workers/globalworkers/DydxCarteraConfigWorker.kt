@@ -8,14 +8,19 @@ import exchange.dydx.cartera.WalletSegueConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.utilities.utils.CachedFileLoader
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.filterNotNull
+
+private const val TAG = "DydxCarteraConfigWorker"
 
 class DydxCarteraConfigWorker(
     override val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val cachedFileLoader: CachedFileLoader,
     private val context: android.content.Context,
+    private val logger: Logging,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -28,11 +33,15 @@ class DydxCarteraConfigWorker(
             cachedFileLoader.loadString(filePath, url) { jsonString ->
                 jsonString?.let {
                     CarteraConfig.shared?.registerWallets(context, jsonString)
+                } ?: run {
+                    logger.e(TAG, "Failed to load wallets.json")
                 }
             }
 
             abacusStateManager.environment?.let {
                 configureCartera(it)
+            } ?: run {
+                logger.e(TAG, "Environment is null")
             }
         }
     }
