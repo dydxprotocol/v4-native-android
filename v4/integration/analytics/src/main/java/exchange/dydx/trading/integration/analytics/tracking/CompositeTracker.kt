@@ -1,4 +1,4 @@
-package exchange.dydx.trading.integration.analytics
+package exchange.dydx.trading.integration.analytics.tracking
 
 import javax.inject.Inject
 import javax.inject.Singleton

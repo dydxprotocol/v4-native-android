@@ -13,8 +13,9 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.logger.DydxLogger
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.workers.DydxGlobalWorkers
-import exchange.dydx.trading.integration.analytics.CompositeTracking
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
+import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.CachedFileLoader
 import exchange.dydx.utilities.utils.SharedPreferencesStore
@@ -27,7 +28,7 @@ private const val TAG = "CoreViewModel"
 @HiltViewModel
 class CoreViewModel @Inject constructor(
     val router: DydxRouter,
-    val logger: DydxLogger,
+    val loggerDeprecated: DydxLogger,
     val cosmosClient: CosmosV4WebviewClientProtocol,
     val platformInfo: PlatformInfo,
     private val abacusStateManager: AbacusStateManagerProtocol,
@@ -37,6 +38,7 @@ class CoreViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
     private val tracker: Tracking,
+    val logger: CompositeLogging,
     val compositeTracking: CompositeTracking,
     private val preferencesStore: SharedPreferencesStore,
 ) : ViewModel() {
@@ -55,6 +57,7 @@ class CoreViewModel @Inject constructor(
             formatter = formatter,
             parser = parser,
             tracker = tracker,
+            logger = logger,
             preferencesStore = preferencesStore,
         )
     }

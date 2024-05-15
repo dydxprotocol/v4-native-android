@@ -33,6 +33,8 @@ class DydxReportIssueViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     @CoroutineDispatchers.IO private val ioDispatcher: CoroutineDispatcher,
     val platformInfo: PlatformInfo,
+    private val logCatReader: LogCatReader,
+    private val fileUtils: FileUtils,
 ) : ViewModel(), DydxViewModel {
 
     private val textFlow = MutableStateFlow("")
@@ -82,7 +84,7 @@ class DydxReportIssueViewModel @Inject constructor(
     private fun createLog(): Uri? {
         val file =
             File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "dydx_app.log")
-        if (!LogCatReader.saveLogCatToFile(file)) {
+        if (!logCatReader.saveLogCatToFile(file)) {
             return null
         }
         val zipFile = createZipFile(context, file)
@@ -99,7 +101,7 @@ class DydxReportIssueViewModel @Inject constructor(
         val zipFileName = "$fileName.zip"
         val zipFilePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), zipFileName)
-        return if (FileUtils.compressFile(context, file.absolutePath, zipFilePath.absolutePath)) {
+        return if (fileUtils.compressFile(context, file.absolutePath, zipFilePath.absolutePath)) {
             zipFilePath
         } else {
             null

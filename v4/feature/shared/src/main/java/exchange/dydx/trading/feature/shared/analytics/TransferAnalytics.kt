@@ -4,7 +4,7 @@ import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.TransferInputChainResource
 import exchange.dydx.abacus.output.input.TransferInputTokenResource
 import exchange.dydx.abacus.utils.filterNotNull
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import javax.inject.Inject
 import javax.inject.Singleton
 

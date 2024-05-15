@@ -1,4 +1,4 @@
-package exchange.dydx.trading.integration.analytics
+package exchange.dydx.trading.integration.analytics.tracking
 
 import com.amplitude.android.Amplitude
 import com.amplitude.android.events.Identify

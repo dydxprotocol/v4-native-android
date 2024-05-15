@@ -1,6 +1,6 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
-import android.util.Log
+import exchange.dydx.utilities.utils.Logging
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -12,7 +12,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AbacusWebSocketImp @Inject constructor() : exchange.dydx.abacus.protocols.WebSocketProtocol {
+class AbacusWebSocketImp @Inject constructor(
+    private val logger: Logging,
+) : exchange.dydx.abacus.protocols.WebSocketProtocol {
 
     private val TAG = "AbacusRestImp"
 
@@ -52,7 +54,7 @@ class AbacusWebSocketImp @Inject constructor() : exchange.dydx.abacus.protocols.
                 request = Request.Builder().url(url).build()
             } catch (e: Exception) {
                 connected?.invoke(false)
-                Log.e(TAG, "AbacusWebSocketImp Invalid URL $url, ${e.message}")
+                logger.e(TAG, "AbacusWebSocketImp Invalid URL $url, ${e.message}")
                 return
             }
 

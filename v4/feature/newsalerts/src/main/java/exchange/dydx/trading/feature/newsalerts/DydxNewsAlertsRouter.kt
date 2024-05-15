@@ -6,9 +6,11 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.NewsAlertsRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
+import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.newsAlertsGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,

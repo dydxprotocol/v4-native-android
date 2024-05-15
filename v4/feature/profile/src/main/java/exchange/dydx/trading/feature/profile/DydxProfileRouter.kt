@@ -24,9 +24,11 @@ import exchange.dydx.trading.feature.profile.theme.DydxThemeView
 import exchange.dydx.trading.feature.profile.tradingnetwork.DydxTradingNetworkView
 import exchange.dydx.trading.feature.profile.update.DydxUpdateView
 import exchange.dydx.trading.feature.profile.userwallets.DydxUserWalletsView
+import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.profileGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,
