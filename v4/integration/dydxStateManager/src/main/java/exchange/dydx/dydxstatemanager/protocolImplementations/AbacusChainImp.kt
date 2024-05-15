@@ -30,6 +30,8 @@ class AbacusChainImp @Inject constructor(
         paramsInJson: String?,
         callback: (response: String?) -> Unit,
     ) {
-        cosmosClient.call(type.rawValue, paramsInJson, callback)
+        cosmosClient.call(type.rawValue, paramsInJson) { response ->
+            callback(response)
+        }
     }
 }
