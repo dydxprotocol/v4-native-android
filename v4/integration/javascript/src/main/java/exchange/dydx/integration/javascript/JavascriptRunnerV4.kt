@@ -7,6 +7,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import exchange.dydx.trading.common.AppConfig
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -133,7 +134,9 @@ class JavascriptRunnerV4 constructor(
                 return@launch
             }
             try {
-                logger.d(TAG, "Running script: ${script.take(1024)}")
+                // for production, only log the first 32 characters to avoid logging sensitive data
+                val length = if (BuildConfig.DEBUG) 1024 else 32
+                logger.d(TAG, "Running script: ${script.take(length)}")
                 localWebview.evaluateJavascript(
                     script,
                 ) {
