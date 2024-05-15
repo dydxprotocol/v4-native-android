@@ -71,12 +71,10 @@ class DydxTradeInputViewModel @Inject constructor(
             ),
             isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
             isIsolatedMarketSelected = tradeInput?.marginMode == MarginMode.isolated,
-            isolatedMarketTargetLeverageText = tradeInput?.targetLeverage?.let {
-                formatter.leverage(
-                    it,
-                    2,
-                )
-            } ?: "2x",
+            isolatedMarketTargetLeverageText = formatter.leverage(
+                (tradeInput?.targetLeverage ?: 2.0),
+                1,
+            ),
             orderbookToggleState = orderbookToggleState,
             requestedBottomSheetState = buttomSheetState,
             onMarketType = {
