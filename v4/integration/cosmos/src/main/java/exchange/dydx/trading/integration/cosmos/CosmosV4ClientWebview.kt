@@ -3,6 +3,7 @@ package exchange.dydx.trading.integration.cosmos
 import android.app.Application
 import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
@@ -208,7 +209,9 @@ class CosmosV4ClientWebview @Inject constructor(
                 function = functionName,
                 params = jsParams,
             ) { result ->
-                logger.d(TAG, "callNativeClient $functionName, params: $params, result: $result")
+                // for debug builds, log the full params, otherwise redact them
+                val paramsString = if (BuildConfig.DEBUG) "$params" else "[REDUCTED]"
+                logger.d(TAG, "callNativeClient $functionName, params: $paramsString, result: $result")
                 completion(result?.response)
             }
         }
