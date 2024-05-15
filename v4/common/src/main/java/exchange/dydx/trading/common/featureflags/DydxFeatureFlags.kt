@@ -14,12 +14,12 @@ enum class DydxFeatureFlag {
 class DydxFeatureFlags @Inject constructor(
     private val sharedPreferences: SharedPreferencesStore
 ) {
-    fun isFeatureEnabled(featureFlag: DydxFeatureFlag): Boolean {
+    fun isFeatureEnabled(featureFlag: DydxFeatureFlag, default: Boolean = false): Boolean {
         val value = sharedPreferences.read(featureFlag.name)
         if (value != null) {
             return value.toBoolean() || value == "1"
         }
-        return false
+        return default
     }
 
     fun valueForFeature(featureFlag: DydxFeatureFlag): String? {

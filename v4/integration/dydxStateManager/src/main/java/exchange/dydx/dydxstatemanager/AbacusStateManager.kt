@@ -180,7 +180,7 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
-        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2)) {
+        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2, default = BuildConfig.DEBUG)) {
             AsyncAbacusStateManagerV2(
                 deploymentUri = deploymentUri,
                 deployment = deployment,
