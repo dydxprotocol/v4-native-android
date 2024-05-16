@@ -43,7 +43,7 @@ class DydxGlobalWorkers(
         DydxAlertsWorker(scope, abacusStateManager, localizer, router, platformInfo, preferencesStore),
         DydxApiStatusWorker(scope, abacusStateManager, localizer, platformInfo),
         DydxRestrictionsWorker(scope, abacusStateManager, localizer, platformInfo),
-        DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context),
+        DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context, logger),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
         DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
     )

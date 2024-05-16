@@ -74,7 +74,7 @@ object DydxDebugScanView : DydxComponent {
     @Composable
     fun Content(modifier: Modifier, state: ViewState) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .themeColor(background = ThemeColor.SemanticColor.layer_2)
                 .fillMaxSize()
                 .padding(
