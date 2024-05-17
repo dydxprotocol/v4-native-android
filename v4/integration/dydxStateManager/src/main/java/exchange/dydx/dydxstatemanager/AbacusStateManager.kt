@@ -44,6 +44,7 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateMan
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
 import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsExtensions
+import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
@@ -135,6 +136,7 @@ interface AbacusStateManagerProtocol {
 @Singleton
 class AbacusStateManager @Inject constructor(
     private val application: Application,
+    private val appConfig: AppConfig,
     private val ioImplementations: IOImplementations,
     private val walletStateManager: DydxWalletStateManagerProtocol,
     private val transferStateManager: DydxTransferStateManagerProtocol,
@@ -167,7 +169,7 @@ class AbacusStateManager @Inject constructor(
         } else {
             val appDeployment = application.getString(R.string.app_deployment)
             deployment = if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
-                // Force to TESTNET if user enabled debug mode, so that both MAINNET and TESTNET can be
+                // Force to TESTNET if user has enabled debug mode, so that both MAINNET and TESTNET can be
                 // switched from Settings
                 "TESTNET"
             } else {
@@ -231,10 +233,10 @@ class AbacusStateManager @Inject constructor(
     override val deploymentUri: String
         get() {
             val urlOverride = featureFlags.valueForFeature(DydxFeatureFlag.deployment_url)
-            if (!urlOverride.isNullOrEmpty()) {
-                return urlOverride
+            return if (!urlOverride.isNullOrEmpty()) {
+                urlOverride
             } else {
-                return "https://" + application.getString(R.string.app_web_host)
+                "https://" + appConfig.appWebHost
             }
         }
 

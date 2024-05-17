@@ -5,6 +5,9 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalInspectionMode
+import exchange.dydx.utilities.utils.DebugEnabled
+import exchange.dydx.utilities.utils.Logging
+import exchange.dydx.utilities.utils.SharedPreferencesStore
 
 interface AppConfig {
     val appContext: Context?
@@ -17,7 +20,6 @@ interface AppConfig {
     val appSchemeHost: String?
         get() = appContext?.getString(R.string.app_scheme_host)
     val appWebHost: String?
-        get() = appContext?.getString(R.string.app_web_host)
 
     companion object {
         const val ANDROID_LOGGING = Log.INFO
@@ -31,6 +33,7 @@ interface AppConfig {
             appVersionCode = "0",
             debug = BuildConfig.DEBUG,
             activityClass = null,
+            preferencesStore = null,
         )
     }
 }
@@ -41,7 +44,26 @@ data class AppConfigImpl(
     override val appVersionCode: String,
     override val debug: Boolean,
     override val activityClass: Class<*>?,
-) : AppConfig
+    private val preferencesStore: SharedPreferencesStore?,
+    private val logger: Logging? = null,
+) : AppConfig {
+    override val appWebHost: String?
+        get() {
+            if (appContext == null || preferencesStore == null) {
+                logger?.e("AppConfigImpl", "appContext or preferencesStore is null")
+                return null
+            }
+
+            val appDeployment = appContext.getString(R.string.app_deployment)
+            return if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
+                // Force to public testnet url if user has enabled debug mode, otherwise US test
+                // users will be blocked
+                "https://v4.testnet.dydx.exchange/"
+            } else {
+                appContext.getString(R.string.app_web_host)
+            }
+        }
+}
 
 @Composable
 fun PreviewAppConfig(): AppConfig {
