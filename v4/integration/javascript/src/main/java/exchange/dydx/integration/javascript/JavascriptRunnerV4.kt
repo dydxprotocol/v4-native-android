@@ -12,12 +12,9 @@ import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.regex.Pattern
 
 private const val TAG: String = "JavascriptRunner(V4)"
 private const val DO_LOG: Boolean = AppConfig.VERBOSE_LOGGING
-val LOGGER = if (DO_LOG) Timber.tag(TAG) else null
 
 class JavascriptRunnerV4 constructor(
     private val scriptDescription: String,
@@ -28,7 +25,7 @@ class JavascriptRunnerV4 constructor(
 
     override val initialized = MutableStateFlow(false)
 
-    var callBackMap: MutableMap<String, ResultCallback> = mutableMapOf()
+    private var callbackMap: MutableMap<String, ResultCallback> = mutableMapOf()
 
     companion object {
         fun runnerFromFile(
@@ -47,13 +44,17 @@ class JavascriptRunnerV4 constructor(
 
     @JavascriptInterface
     fun onJsAsyncResult(key: String, result: String?) {
-        val callback = callBackMap[key]
-        if (callback == null) {
-            logger.d(TAG, "No callback found for key: $key")
-            return
+        val callback: ResultCallback?
+        synchronized(callbackMap) {
+            callback = callbackMap[key]
+
+            if (callback == null) {
+                logger.e(TAG, "No callback found for key: $key")
+                return
+            }
+            callbackMap.remove(key)
         }
-        callBackMap.remove(key)
-        callback.invoke(JavascriptRunnerResult(response = result))
+        callback?.invoke(JavascriptRunnerResult(response = result))
     }
 
     override var webview: WebView? = null
@@ -68,7 +69,7 @@ class JavascriptRunnerV4 constructor(
             }
             initialized.value = false
             if (value != null) {
-//                value.settings.javaScriptEnabled = true
+                //    value.settings.javaScriptEnabled = true
                 logger.d(TAG, "Loading base url")
             }
 
@@ -85,6 +86,7 @@ class JavascriptRunnerV4 constructor(
             ) {
                 logger.d(TAG, "Error in webview client: $error")
             }
+
             override fun onPageFinished(view: WebView, weburl: String) {
                 initializeJavascriptEnvironment() {
                     logger.d(TAG, "Initialized javascript environment: $it")
@@ -96,27 +98,33 @@ class JavascriptRunnerV4 constructor(
 
     override val webappInterface: WebAppInterface = WebAppInterface()
 
-    override suspend fun runJs(function: String, params: List<String>, callback: ResultCallback) {
+    override fun runJs(function: String, params: List<String>, callback: ResultCallback) {
         val tranformedParams: MutableList<String> = params.toMutableList()
         val paramsText = tranformedParams.joinToString(",")
 
         val key = "key" + System.currentTimeMillis().toString()
-        callBackMap[key] = callback
+        synchronized(callbackMap) {
+            callbackMap[key] = callback
+        }
 
         val script = """
             function bridgeFunction() {
-               $function($paramsText).then(function(result) {
-                  bridge.onJsAsyncResult("$key", result);
-               });
+               try {
+                   $function($paramsText).then(function(result) {
+                      bridge.onJsAsyncResult("$key", result);
+                   });
+               } catch (e) {
+                   bridge.onJsAsyncResult("$key", e.toString());
+               }
             };
 
             bridgeFunction();
         """.trimIndent()
 
-        runJs(script) { }
+        launchJs(script, callback = null) // no callback, since we let onJsAsyncResult() handle it
     }
 
-    override suspend fun runJs(script: String, callback: ResultCallback) {
+    override fun runJs(script: String, callback: ResultCallback) {
         launchJs(script, callback)
     }
 
@@ -124,40 +132,47 @@ class JavascriptRunnerV4 constructor(
         launchJs(scriptInitializationCode, callback)
     }
 
-    val pattern = Pattern.compile("""^"(.*)"\$""")
-    private fun launchJs(script: String, callback: ResultCallback) {
+    private fun launchJs(script: String, callback: ResultCallback?) {
+        val length = if (BuildConfig.DEBUG) 1024 else 32
+        val localWebview = webview
+        if (localWebview == null) {
+            logger.e(
+                TAG,
+                "Unable to run function, no webview present, ${script.take(length)}",
+            )
+            return
+        }
+        logger.d(TAG, "Running script: ${script.take(length)}")
+
         scope.launch {
-            webappInterface.callback = callback
-            val localWebview = webview
-            if (localWebview == null) {
-                logger.e(TAG, "Unable to run function, no webview present, $script")
-                return@launch
-            }
             try {
                 // for production, only log the first 32 characters to avoid logging sensitive data
-                val length = if (BuildConfig.DEBUG) 1024 else 32
-                logger.d(TAG, "Running script: ${script.take(length)}")
                 localWebview.evaluateJavascript(
                     script,
-                ) {
-                    logger.d(TAG, "Script completed: $it")
-                    val result = it.removeSurrounding("\"")
-                    if (result != it) {
-                        logger.d(TAG, "Stripped surrounding quotes")
+                ) { evalResult ->
+                    if (callback != null) {
+                        logger.d(
+                            TAG,
+                            "Script completed: result = $evalResult from  ${script.take(32)}",
+                        )
+                        val result = evalResult.removeSurrounding("\"")
+                        if (result != evalResult) {
+                            logger.d(TAG, "Stripped surrounding quotes")
+                        }
+                        callback.invoke(
+                            JavascriptRunnerResult(
+                                response =
+                                if ("null".equals(result, ignoreCase = true)) {
+                                    null
+                                } else {
+                                    result
+                                },
+                            ),
+                        )
                     }
-                    callback.invoke(
-                        JavascriptRunnerResult(
-                            response =
-                            if ("null".equals(result, ignoreCase = true)) {
-                                null
-                            } else {
-                                result
-                            },
-                        ),
-                    )
                 }
             } catch (e: Exception) {
-                logger.e(TAG, "Error executing script: $script")
+                logger.e(TAG, "Error executing script:  ${script.take(32)}, error: $e")
             }
         }
     }
