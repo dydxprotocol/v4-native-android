@@ -49,6 +49,7 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
+import exchange.dydx.utilities.utils.DebugEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -164,7 +165,14 @@ class AbacusStateManager @Inject constructor(
             appConfigs = AppConfigs.forApp
             appConfigsV2 = AppConfigsV2.forApp
         } else {
-            deployment = application.getString(R.string.app_deployment)
+            val appDeployment = application.getString(R.string.app_deployment)
+            deployment = if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
+                // Force to TESTNET if user enabled debug mode, so that both MAINNET and TESTNET can be
+                // switched from Settings
+                "TESTNET"
+            } else {
+                appDeployment
+            }
             appConfigs =
                 if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
             appConfigsV2 =
