@@ -58,7 +58,7 @@ data class AppConfigImpl(
             return if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
                 // Force to public testnet url if user has enabled debug mode, otherwise US test
                 // users will be blocked
-                "https://v4.testnet.dydx.exchange/"
+                "v4.testnet.dydx.exchange"
             } else {
                 appContext.getString(R.string.app_web_host)
             }
