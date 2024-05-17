@@ -72,7 +72,7 @@ enum class DydxScreenResult {
                     title = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_SUBTITLE"),
                     type = PlatformInfo.InfoType.Error,
-                    buttonTitle =  null, // localizer.localize("APP.GENERAL.OK"),
+                    buttonTitle = null, // localizer.localize("APP.GENERAL.OK"),
                     buttonAction = {
                         buttonAction?.invoke()
                         // exit app
