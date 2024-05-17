@@ -56,8 +56,9 @@ data class AppConfigImpl(
 
             val appDeployment = appContext.getString(R.string.app_deployment)
             return if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
-                // Force to public testnet url if user has enabled debug mode, otherwise US test
-                // users will be blocked
+                // Force to public testnet host if user has enabled debug mode, otherwise US test
+                // users will be blocked from accessing the asset images/descriptions, which are fetched
+                // based on app_web_host.
                 "v4.testnet.dydx.exchange"
             } else {
                 appContext.getString(R.string.app_web_host)
