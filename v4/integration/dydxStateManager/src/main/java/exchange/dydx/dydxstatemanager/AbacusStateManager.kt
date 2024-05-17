@@ -79,7 +79,7 @@ interface AbacusStateManagerProtocol {
 
     fun setEnvironmentId(environment: String?)
 
-    fun setV4(ethereumAddress: String, walletId: String?, cosmosAddress: String, mnemonic: String)
+    fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String)
 
     fun logOut()
     fun replaceCurrentWallet()
@@ -273,7 +273,7 @@ class AbacusStateManager @Inject constructor(
         }
     }
 
-    override fun setV4(ethereumAddress: String, walletId: String?, cosmosAddress: String, mnemonic: String) {
+    override fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String) {
         cosmosClient.connectWallet(mnemonic) {
             val wallet = DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
             walletStateManager.setCurrentWallet(wallet)

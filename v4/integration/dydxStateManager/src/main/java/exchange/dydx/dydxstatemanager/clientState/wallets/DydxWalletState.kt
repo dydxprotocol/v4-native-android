@@ -88,7 +88,7 @@ data class DydxWalletState(
 
 @Serializable
 data class DydxWalletInstance(
-    var ethereumAddress: String,
+    var ethereumAddress: String? = null,
     var walletId: String? = null,
     var cosmoAddress: String? = null,
     var mnemonic: String? = null,
@@ -99,7 +99,7 @@ data class DydxWalletInstance(
 ) {
     companion object {
         fun v4(
-            ethereumAddress: String,
+            ethereumAddress: String?,
             walletId: String?,
             cosmoAddress: String,
             mnemonic: String,
