@@ -76,7 +76,7 @@ enum class DydxScreenResult {
                     buttonAction = {
                         buttonAction?.invoke()
                         // exit app
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        // android.os.Process.killProcess(android.os.Process.myPid());
                     },
                     duration = SnackbarDuration.Indefinite,
                 )
