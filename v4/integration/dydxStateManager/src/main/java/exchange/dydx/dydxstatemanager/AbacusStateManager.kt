@@ -169,9 +169,9 @@ class AbacusStateManager @Inject constructor(
         } else {
             val appDeployment = application.getString(R.string.app_deployment)
             deployment = if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
-                // Force to TESTNET if user has enabled debug mode, so that both MAINNET and TESTNET can be
+                // Force to TESTFLIGHT if user has enabled debug mode, so that both MAINNET and TESTNET can be
                 // switched from Settings
-                "TESTNET"
+                "TESTFLIGHT"
             } else {
                 appDeployment
             }
