@@ -14,6 +14,7 @@ import exchange.dydx.abacus.protocols.DYDXChainTransactionsProtocol
 import exchange.dydx.abacus.protocols.FileSystemProtocol
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.protocols.ThreadingProtocol
 import exchange.dydx.abacus.protocols.TimerProtocol
@@ -33,6 +34,7 @@ import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManager
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusChainImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusFileSystemImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusLocalizerImp
+import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusPresentationImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusRestImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusThreadingImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusTimerImp
@@ -50,13 +52,16 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.theme.DydxTheme
 import exchange.dydx.trading.common.theme.DydxThemeImpl
 import exchange.dydx.trading.feature.shared.PreferenceKeys
-import exchange.dydx.trading.integration.analytics.CompositeTracker
-import exchange.dydx.trading.integration.analytics.CompositeTracking
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogger
+import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
+import exchange.dydx.trading.integration.analytics.tracking.CompositeTracker
+import exchange.dydx.trading.integration.analytics.tracking.CompositeTracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientWebview
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.JsonUtils
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,13 +78,14 @@ interface AppModule {
         fun provideThemeSettings(
             @ApplicationContext appContext: Context,
             preferenceStore: SharedPreferencesStore,
+            logger: Logging,
         ): ThemeSettings {
             var theme = preferenceStore.read(PreferenceKeys.Theme)
             if (theme.isNullOrEmpty()) {
                 theme = "dark"
             }
             val themeConfigValue =
-                ThemeConfig.createFromPreference(appContext, theme) ?: ThemeConfig.dark(appContext)
+                ThemeConfig.createFromPreference(appContext, theme, logger) ?: ThemeConfig.dark(appContext)
             val themeConfig = MutableStateFlow<ThemeConfig?>(themeConfigValue)
             val styleConfig =
                 MutableStateFlow<StyleConfig?>(JsonUtils.loadFromAssets(appContext, "dydxStyle.json"))
@@ -101,8 +107,9 @@ interface AppModule {
             threading: ThreadingProtocol?,
             timer: TimerProtocol?,
             fileSystem: FileSystemProtocol?,
+            logger: CompositeLogging?
         ): IOImplementations =
-            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem)
+            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem, logger)
 
         @EnvKey @Provides
         fun provideEnvKey(): String = PreferenceKeys.Env
@@ -111,6 +118,7 @@ interface AppModule {
         fun provideLanguageKey(): String = PreferenceKeys.Language
 
         @Provides
+        @Singleton
         fun providePlatformInfo(
             @CoroutineScopes.App appScope: CoroutineScope,
         ): PlatformInfo =
@@ -132,12 +140,16 @@ interface AppModule {
         @Provides
         fun provideAppConfig(
             application: Application,
+            preferenceStore: SharedPreferencesStore,
+            logger: Logging,
         ): AppConfig = AppConfigImpl(
             appContext = application,
             appVersionName = BuildConfig.VERSION_NAME,
             appVersionCode = BuildConfig.VERSION_CODE.toString(),
             debug = BuildConfig.DEBUG,
             activityClass = TradingActivity::class.java,
+            preferencesStore = preferenceStore,
+            logger = logger,
         )
 
         @Provides
@@ -166,7 +178,13 @@ interface AppModule {
 
     @Binds fun bindTrackingProtocol(abacusTrackingImp: AbacusTrackingImp): TrackingProtocol
 
+    @Binds fun bindPresentationProtocol(abacusPresentationImp: AbacusPresentationImp): PresentationProtocol
+
     @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
+
+    @Binds fun bindLogger(compositeLogger: CompositeLogger): Logging
+
+    @Binds fun bindCompositeLogging(compositeLogger: CompositeLogger): CompositeLogging
 
     @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
 

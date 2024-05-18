@@ -15,13 +15,14 @@ import exchange.dydx.trading.feature.market.marketinfo.DydxMarketInfoView
 import exchange.dydx.trading.feature.market.marketlist.DydxMarketAssetListView
 import exchange.dydx.trading.feature.market.search.DydxMarketSearchView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "MarketRouter"
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.marketGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,
@@ -39,7 +40,7 @@ fun NavGraphBuilder.marketGraph(
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
-            Timber.w("No identifier passed")
+            logger.e(TAG, "No identifier passed")
             appRouter.navigateTo(MarketRoutes.marketList)
             return@dydxComposable
         }

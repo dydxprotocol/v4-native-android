@@ -321,20 +321,23 @@ object DydxPortfolioPositionItemView {
 
             Text(
                 /*
-                TODO: Get margin from Abacus
+                TODO: Still need to verify what the margin means here
                 text = position.margin ?: "",
                  */
-                text = "$100.00",
+                text = position.margin ?: "",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_primary),
             )
 
             Text(
-                /*
-                TODO: Get margin type from Abacus
-                 */
-                text = localizer.localize("APP.GENERAL.ISOLATED"),
+                text = localizer.localize(
+                    if (position.childSubaccountNumber != null) {
+                        "APP.GENERAL.ISOLATED"
+                    } else {
+                        "APP.GENERAL.CROSS"
+                    },
+                ),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.mini)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

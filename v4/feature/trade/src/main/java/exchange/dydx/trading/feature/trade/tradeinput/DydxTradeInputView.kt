@@ -111,6 +111,8 @@ object DydxTradeInputView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val isIsolatedMarketEnabled: Boolean = false,
+        val isIsolatedMarketSelected: Boolean = false,
+        val isolatedMarketTargetLeverageText: String?,
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
@@ -121,6 +123,7 @@ object DydxTradeInputView : DydxComponent {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                isolatedMarketTargetLeverageText = "2x",
                 inputFields = listOf(
                     InputField.Size,
                     InputField.Leverage,
@@ -174,6 +177,8 @@ object DydxTradeInputView : DydxComponent {
                 },
         ) {
             Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 if (sheetState.value?.targetValue == SheetValue.PartiallyExpanded) {
@@ -185,36 +190,56 @@ object DydxTradeInputView : DydxComponent {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(44.dp)
-                            .padding(horizontal = ThemeShapes.HorizontalPadding),
-                        horizontalArrangement = Arrangement.spacedBy(0.dp),
+                            .height(44.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 PlatformButton(
-                                    modifier = Modifier.height(52.dp),
+                                    modifier = if (state.isIsolatedMarketSelected) {
+                                        Modifier
+                                            .padding(start = 8.dp)
+                                            .height(52.dp)
+                                    } else {
+                                        Modifier
+                                            .padding(start = 8.dp)
+                                            .fillMaxWidth()
+                                            .height(52.dp)
+                                    },
                                     state = PlatformButtonState.Secondary,
-                                    text = "Isolated",
+                                    text = state.localizer.localize(
+                                        if (state.isIsolatedMarketSelected) {
+                                            "APP.GENERAL.ISOLATED"
+                                        } else {
+                                            "APP.GENERAL.CROSS"
+                                        },
+                                    ),
                                 ) {
                                     state.onMarketType()
                                 }
-                                PlatformButton(
-                                    modifier = Modifier.height(52.dp),
-                                    state = PlatformButtonState.Secondary,
-                                    text = "2x",
-                                ) {
-                                    state.onTargetLeverage()
+                                if (state.isIsolatedMarketSelected) {
+                                    PlatformButton(
+                                        modifier = Modifier
+                                            .height(52.dp)
+                                            .fillMaxWidth(),
+                                        state = PlatformButtonState.Secondary,
+                                        text = state.isolatedMarketTargetLeverageText,
+                                    ) {
+                                        state.onTargetLeverage()
+                                    }
                                 }
                             }
                         }
 
                         Column(
-                            modifier = Modifier,
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             DydxTradeInputSideView.Content(Modifier)
                         }

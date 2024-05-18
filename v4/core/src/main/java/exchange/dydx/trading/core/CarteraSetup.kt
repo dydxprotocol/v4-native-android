@@ -6,17 +6,20 @@ import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
 
 object CarteraSetup {
 
     private const val TAG = "CarteraSetup"
 
-    fun run(activity: FragmentActivity) {
+    fun run(
+        activity: FragmentActivity,
+        logger: Logging,
+    ) {
         try {
             setUpCartera(activity)
         } catch (e: Exception) {
-            Timber.tag(TAG).e(e, "Failed to set up cartera")
+            logger.e(TAG, "Failed to set up cartera")
         }
     }
 

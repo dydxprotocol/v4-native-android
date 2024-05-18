@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
@@ -38,7 +37,7 @@ import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput
 
-data class LeverageTextAndValue(val text: String, val value: Double)
+data class LeverageTextAndValue(val text: String, val value: String)
 
 @Preview
 @Composable
@@ -56,6 +55,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         val localizer: LocalizerProtocol,
         val leverageText: String?,
         val leverageOptions: List<LeverageTextAndValue>?,
+        val selectAction: ((String) -> Unit)? = null,
         val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
@@ -72,9 +72,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         val viewModel: DydxTradeInputTargetLeverageViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(it, state)
-        }
+        Content(modifier, state)
     }
 
     @Composable
@@ -188,7 +186,11 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                         localizer = MockLocalizer(),
                         label = state?.localizer?.localize("APP.TRADE.TARGET_LEVERAGE"),
                         value = state?.leverageText ?: "",
-                        onValueChanged = {},
+                        onValueChanged = {
+                            state?.selectAction?.invoke(
+                                it,
+                            )
+                        },
                     ),
                 )
             }
@@ -201,7 +203,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         state: ViewState?
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = 8.dp,
@@ -216,7 +218,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 items = state?.leverageOptions?.map {
                     { modifier ->
                         PlatformPillItem(
-                            modifier = Modifier
+                            modifier = modifier
                                 .padding(
                                     vertical = 4.dp,
                                     horizontal = 8.dp,
@@ -237,7 +239,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 selectedItems = state?.leverageOptions?.map {
                     { modifier ->
                         PlatformPillItem(
-                            modifier = Modifier
+                            modifier = modifier
                                 .padding(
                                     vertical = 4.dp,
                                     horizontal = 8.dp,
@@ -257,9 +259,13 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 } ?: listOf(),
                 equalWeight = false,
                 currentSelection = state?.leverageOptions?.indexOfFirst {
-                    it.text == state.leverageText
+                    it.value.toDouble() == state.leverageText?.toDouble()
                 },
-                onSelectionChanged = {},
+                onSelectionChanged = { it ->
+                    state?.leverageOptions?.get(it)?.value?.let { value ->
+                        state.selectAction?.invoke(value)
+                    }
+                },
             )
         }
     }
@@ -279,6 +285,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             text = state?.localizer?.localize("APP.TRADE.CONFIRM_LEVERAGE"),
             state = PlatformButtonState.Primary,
         ) {
+            state?.closeAction?.invoke()
         }
     }
 }

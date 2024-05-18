@@ -14,6 +14,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.views.SettingsView
+import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ class DydxThemeViewModel @Inject constructor(
     @ApplicationContext val appContext: Context,
     private val preferencesStore: SharedPreferencesStore,
     private val router: DydxRouter,
+    private val logger: Logging,
 ) : ViewModel(), DydxViewModel {
 
     private val mutableState = MutableStateFlow(createViewState())
@@ -45,7 +47,7 @@ class DydxThemeViewModel @Inject constructor(
             },
             itemAction = { value ->
                 preferencesStore.save(value, PreferenceKeys.Theme)
-                ThemeSettings.shared.themeConfig.value = ThemeConfig.createFromPreference(appContext, value)
+                ThemeSettings.shared.themeConfig.value = ThemeConfig.createFromPreference(appContext, value, logger)
                 ThemeSettings.shared.colorMap = mapOf()
                 mutableState.value = createViewState()
 

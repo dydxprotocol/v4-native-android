@@ -15,19 +15,22 @@ import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.stopLossOrders
 import exchange.dydx.dydxstatemanager.takeProfitOrders
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,27 +40,32 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
     private val router: DydxRouter,
     private val formatter: DydxFormatter,
     savedStateHandle: SavedStateHandle,
-    val platformInfo: PlatformInfo,
     private val triggerOrderStream: MutableTriggerOrderStreaming,
     @CoroutineScopes.ViewModel private val viewModelScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
 
-    private val marketId: String?
+    private val marketIdFlow: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val marketId: String? = savedStateHandle["marketId"]
+
+    private val includeLimitOrders = abacusStateManager.environment?.featureFlags?.isSlTpLimitOrdersEnabled == true || BuildConfig.DEBUG
 
     val state: Flow<DydxTriggerOrderInputView.ViewState?> =
-        abacusStateManager.state.validationErrors
-            .map { validationErrors ->
-                createViewState(validationErrors)
-            }
+        combine(
+            abacusStateManager.state.validationErrors,
+            marketIdFlow.filterNotNull().flatMapLatest { abacusStateManager.state.takeProfitOrders(it, includeLimitOrders) },
+            marketIdFlow.filterNotNull().flatMapLatest { abacusStateManager.state.stopLossOrders(it, includeLimitOrders) },
+        ) { validationErrors, takeProfitOrders, stopLossOrders ->
+            createViewState(validationErrors, takeProfitOrders, stopLossOrders)
+        }
             .distinctUntilChanged()
 
     init {
-        marketId = savedStateHandle["marketId"]
-
         if (marketId == null) {
             router.navigateBack()
         } else {
+            marketIdFlow.value = marketId
             abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.resetTriggerOrders()
             abacusStateManager.triggerOrders(
                 input = marketId,
                 type = TriggerOrdersInputField.marketId,
@@ -65,9 +73,11 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
 
             combine(
                 abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
-                abacusStateManager.state.takeProfitOrders(marketId),
-                abacusStateManager.state.stopLossOrders(marketId),
-                abacusStateManager.state.triggerOrdersInput,
+                abacusStateManager.state.takeProfitOrders(marketId, includeLimitOrders),
+                abacusStateManager.state.stopLossOrders(marketId, includeLimitOrders),
+                abacusStateManager.state.triggerOrdersInput
+                    .filter { it?.marketId == marketId }
+                    .distinctUntilChanged(),
             ) { position, takeProfitOrders, stopLossOrders, triggerOrdersInput ->
                 updateAbacusTriggerOrder(
                     position,
@@ -78,12 +88,12 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
             }
                 .launchIn(viewModelScope)
         }
-
-        subscribeToStatus()
     }
 
     private fun createViewState(
-        errors: List<ValidationError>?
+        errors: List<ValidationError>?,
+        takeProfitOrders: List<SubaccountOrder>?,
+        stopLossOrders: List<SubaccountOrder>?,
     ): DydxTriggerOrderInputView.ViewState {
         val firstError = errors?.firstOrNull { it.type == ErrorType.error }
         val firstWarning = errors?.firstOrNull { it.type == ErrorType.warning }
@@ -120,9 +130,18 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         DydxTriggerOrderInputView.ValidationErrorSection.LimitPrice
 
                     else ->
-                        DydxTriggerOrderInputView.ValidationErrorSection.None
+                        DydxTriggerOrderInputView.ValidationErrorSection.Last
                 }
-            } ?: DydxTriggerOrderInputView.ValidationErrorSection.None,
+            } ?: DydxTriggerOrderInputView.ValidationErrorSection.Last,
+            hasMultipleTP = (takeProfitOrders?.size ?: 0) > 1,
+            hasMultipleSL = (stopLossOrders?.size ?: 0) > 1,
+            showOrderListAction = {
+                router.navigateTo(
+                    route = PortfolioRoutes.orders,
+                    presentation = DydxRouter.Presentation.Push,
+                )
+            },
+            showLimitPrice = includeLimitOrders,
         )
     }
 
@@ -153,10 +172,12 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         formatter.decimalLocaleAgnostic(order.triggerPrice),
                         TriggerOrdersInputField.takeProfitPrice,
                     )
-                    abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(order.price),
-                        TriggerOrdersInputField.takeProfitLimitPrice,
-                    )
+                    if (triggerOrdersInput?.takeProfitOrder?.type == OrderType.takeProfitLimit) {
+                        abacusStateManager.triggerOrders(
+                            formatter.decimalLocaleAgnostic(order.price),
+                            TriggerOrdersInputField.takeProfitLimitPrice,
+                        )
+                    }
                 }
             }
         } else {
@@ -189,10 +210,12 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         formatter.decimalLocaleAgnostic(order.triggerPrice),
                         TriggerOrdersInputField.stopLossPrice,
                     )
-                    abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(order.price),
-                        TriggerOrdersInputField.stopLossLimitPrice,
-                    )
+                    if (triggerOrdersInput?.stopLossOrder?.type == OrderType.stopLimit) {
+                        abacusStateManager.triggerOrders(
+                            formatter.decimalLocaleAgnostic(order.price),
+                            TriggerOrdersInputField.stopLossLimitPrice,
+                        )
+                    }
                 }
             }
         } else {
@@ -229,34 +252,5 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun subscribeToStatus() {
-        triggerOrderStream.submissionStatus
-            .filterNotNull()
-            .map { status ->
-                when (status) {
-                    is AbacusStateManagerProtocol.SubmissionStatus.Success ->
-                        platformInfo.show(
-                            title = localizer.localize("trade.trigger.order.submission.success.title"),
-                            message = localizer.localize("trade.trigger.order.submission.success.message"),
-                            buttonTitle = localizer.localize("APP.GENERAL.BACK"),
-                            buttonAction = {
-                                router.navigateBack()
-                            },
-                        )
-
-                    is AbacusStateManagerProtocol.SubmissionStatus.Failed ->
-                        platformInfo.show(
-                            title = localizer.localize("trade.trigger.order.submission.failed.title"),
-                            message = localizer.localize("trade.trigger.order.submission.failed.message"),
-                            type = PlatformInfo.InfoType.Error,
-                        )
-
-                    else -> null
-                }
-            }
-            .distinctUntilChanged()
-            .launchIn(viewModelScope)
     }
 }

@@ -1,4 +1,4 @@
-package exchange.dydx.trading.integration.analytics
+package exchange.dydx.trading.integration.analytics.tracking
 
 import exchange.dydx.abacus.protocols.TrackingProtocol
 import exchange.dydx.abacus.utils.toJson

@@ -9,7 +9,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.MockLocalizer
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
 
 object DydxBiometricPrompt {
 
@@ -28,6 +28,7 @@ object DydxBiometricPrompt {
     @Composable
     fun Content(
         activity: FragmentActivity,
+        logger: Logging,
         processSuccess: (Boolean, String?) -> Unit,
     ) {
         val viewModel: DydxBiometricPromptModel = hiltViewModel()
@@ -58,7 +59,7 @@ object DydxBiometricPrompt {
 
             override fun onAuthenticationError(errCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errCode, errString)
-                Timber.tag(TAG).d("errCode is $errCode and errString is: $errString")
+                logger.d(TAG, "errCode is $errCode and errString is: $errString")
                 val error = localizer.localizeWithParams(
                     path = "ERRORS.GENERAL.SOMETHING_WENT_WRONG_WITH_MESSAGE",
                     params = mapOf("ERROR_MESSAGE" to errString.toString()),
@@ -68,13 +69,13 @@ object DydxBiometricPrompt {
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
-                Timber.tag(TAG).d("User biometric rejected.")
+                logger.d(TAG, "User biometric rejected.")
                 processSuccess(false, localizer.localize("APP.GENERAL.AUTHENTICATE_TO_PROCEED"))
             }
 
             override fun onAuthenticationSucceeded(result: androidx.biometric.BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                Timber.d(TAG, "Authentication was successful")
+                logger.d(TAG, "Authentication was successful")
                 processSuccess(true, null)
             }
         }

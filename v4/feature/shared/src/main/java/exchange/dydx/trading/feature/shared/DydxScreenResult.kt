@@ -72,11 +72,11 @@ enum class DydxScreenResult {
                     title = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_SUBTITLE"),
                     type = PlatformInfo.InfoType.Error,
-                    buttonTitle = localizer.localize("APP.GENERAL.OK"),
+                    buttonTitle = null, // localizer.localize("APP.GENERAL.OK"),
                     buttonAction = {
                         buttonAction?.invoke()
                         // exit app
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        // android.os.Process.killProcess(android.os.Process.myPid());
                     },
                     duration = SnackbarDuration.Indefinite,
                 )

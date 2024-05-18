@@ -90,11 +90,11 @@ class JavascriptRunnerV3 constructor(
         }
     }
 
-    override suspend fun runJs(function: String, params: List<String>, callback: ResultCallback) {
+    override fun runJs(function: String, params: List<String>, callback: ResultCallback) {
         throw JavascriptApiException("Not supported")
     }
 
-    override suspend fun runJs(script: String, callback: ResultCallback) {
+    override fun runJs(script: String, callback: ResultCallback) {
         val webview = this.webview
         if (webview == null) {
             Timber.tag(TAG).w("Unable to run script, assign a webview first.\n%s", script)

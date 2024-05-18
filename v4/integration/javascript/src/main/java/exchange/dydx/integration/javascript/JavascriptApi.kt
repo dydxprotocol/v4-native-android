@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.isVisible
 import exchange.dydx.trading.common.DydxException
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 
@@ -63,6 +64,7 @@ fun JavascriptRunnerWebview(
     ),
     isVisible: Boolean = false,
     javascriptRunner: JavascriptRunner,
+    logger: Logging?,
 ) {
     val webappInterface = javascriptRunner.webappInterface
     AndroidView(
@@ -78,10 +80,10 @@ fun JavascriptRunnerWebview(
         },
         update = {
             if (javascriptRunner.webview == it) {
-                Timber.tag(TAG).d("Webview not updated")
+                logger?.d(TAG, "Webview not updated")
                 return@AndroidView
             }
-            Timber.tag(TAG).i("Webview updated: %s", it.toString())
+            logger?.d(TAG, "Webview updated: $it")
             javascriptRunner.webview = it
             it.loadUrl(indexFile)
         },

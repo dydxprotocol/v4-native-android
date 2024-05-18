@@ -16,7 +16,7 @@ import exchange.dydx.trading.feature.portfolio.portfolioGraph
 import exchange.dydx.trading.feature.profile.profileGraph
 import exchange.dydx.trading.feature.trade.tradeGraph
 import exchange.dydx.trading.feature.transfer.transferGraph
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxNavGraph"
 
@@ -35,6 +35,7 @@ private const val DEFAULT_START_DESTINATION = PortfolioRoutes.main
 fun DydxNavGraph(
     appRouter: DydxRouter,
     modifier: Modifier = Modifier,
+    logger: Logging,
 ) {
     val navController: NavHostController = rememberNavController()
     appRouter.initialize(navController)
@@ -48,30 +49,37 @@ fun DydxNavGraph(
     ) {
         loginGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         marketGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         tradeGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         profileGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         newsAlertsGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         portfolioGraph(
             appRouter = appRouter,
+            logger = logger,
         )
 
         transferGraph(
             appRouter = appRouter,
+            logger = logger,
         )
     }
 }
@@ -84,7 +92,7 @@ private fun InitializeManagers(
     // increment restartCount to cancel all downstream coroutines and
     // manually reconnect
     LaunchedEffect(coreViewModel.restartCount) {
-        Timber.tag(TAG).i("Intializing core services")
+        coreViewModel.logger.d(TAG, "Intializing core services")
         coreViewModel.start()
     }
 }

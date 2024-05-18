@@ -1,7 +1,10 @@
 package exchange.dydx.trading.feature.trade.margin
 
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.Subaccount
+import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -9,9 +12,15 @@ import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.feature.receipt.DydxReceiptView
+import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptFreeCollateralView
+import exchange.dydx.trading.feature.receipt.components.liquidationprice.DydxReceiptLiquidationPriceView
+import exchange.dydx.trading.feature.receipt.components.marginusage.DydxReceiptMarginUsageView
+import exchange.dydx.trading.feature.shared.views.AmountText
+import exchange.dydx.trading.feature.shared.views.MarginUsageView
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,13 +32,23 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     val platformInfo: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxAdjustMarginInputView.ViewState?> = abacusStateManager.state.tradeInput
-        .map {
-            createViewState(it)
+    val state: Flow<DydxAdjustMarginInputView.ViewState?> =
+        combine(
+            abacusStateManager.state.tradeInput,
+            abacusStateManager.state.selectedSubaccount,
+            abacusStateManager.state.selectedSubaccountPositions,
+        ) { tradeInput, subaccount, positions ->
+            createViewState(tradeInput, subaccount, positions)
         }
-        .distinctUntilChanged()
+            .distinctUntilChanged()
 
-    private fun createViewState(tradeInput: TradeInput?): DydxAdjustMarginInputView.ViewState {
+    private fun createViewState(
+        tradeInput: TradeInput?,
+        subaccount: Subaccount?,
+        positions: List<SubaccountPosition>?,
+    ): DydxAdjustMarginInputView.ViewState {
+        val isolatedMargin = positions?.firstOrNull()
+
         /*
         Abacus not implemented for adjust margin yet. This is a placeholder.
          */
@@ -45,14 +64,62 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                 DydxAdjustMarginInputView.PercentageOption("50%", 0.5),
             ),
             amountText = "500",
-            subaccountReceipt = DydxAdjustMarginInputView.SubaccountReceipt(
-                freeCollateral = listOf("1000.00", "500.00"),
-                marginUsage = listOf("19.34", "38.45"),
+            crossMarginReceipt = DydxAdjustMarginInputView.CrossMarginReceipt(
+                freeCollateral = DydxReceiptFreeCollateralView.ViewState(
+                    localizer = localizer,
+                    before = AmountText.ViewState(
+                        localizer = localizer,
+                        formatter = formatter,
+                        amount = subaccount?.freeCollateral?.current,
+                        tickSize = 2,
+                    ),
+                    after = AmountText.ViewState(
+                        localizer = localizer,
+                        formatter = formatter,
+                        amount = subaccount?.freeCollateral?.postOrder,
+                        tickSize = 2,
+                    ),
+                ),
+                marginUsage = DydxReceiptMarginUsageView.ViewState(
+                    localizer = localizer,
+                    formatter = formatter,
+                    before = MarginUsageView.ViewState(
+                        localizer = localizer,
+                        displayOption = MarginUsageView.DisplayOption.IconAndValue,
+                        percent = subaccount?.marginUsage?.current ?: 0.5,
+                    ),
+                    after = MarginUsageView.ViewState(
+                        localizer = localizer,
+                        displayOption = MarginUsageView.DisplayOption.IconAndValue,
+                        percent = subaccount?.marginUsage?.current ?: 0.5,
+                    ),
+                ),
             ),
-            positionReceipt = DydxAdjustMarginInputView.PositionReceipt(
-                freeCollateral = listOf("1000.00", "1500.00"),
-                leverage = listOf("3.1", "2.4"),
-                liquidationPrice = listOf("1200.00", "1000.00"),
+            isolatedMarginReceipt = DydxAdjustMarginInputView.IsolatedMarginReceipt(
+                liquidationPrice = DydxReceiptLiquidationPriceView.ViewState(
+                    localizer = localizer,
+                    before = AmountText.ViewState(
+                        localizer = localizer,
+                        formatter = formatter,
+                        amount = isolatedMargin?.liquidationPrice?.current,
+                        tickSize = 2,
+                    ),
+                    after = AmountText.ViewState(
+                        localizer = localizer,
+                        formatter = formatter,
+                        amount = isolatedMargin?.liquidationPrice?.postOrder,
+                        tickSize = 2,
+                    ),
+                ),
+                receipts = DydxReceiptView.ViewState(
+                    localizer = localizer,
+                    height = 128.dp,
+                    padding = 0.dp,
+                    lineTypes = listOf(
+                        DydxReceiptView.ReceiptLineType.IsolatedPositionMarginUsage,
+                        DydxReceiptView.ReceiptLineType.IsolatedPositionLeverage,
+                    ),
+                ),
             ),
             error = null,
             marginDirectionAction = { },

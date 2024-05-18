@@ -1,11 +1,11 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import android.os.AsyncTask
-import android.util.Log
 import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.utils.IMap
 import exchange.dydx.abacus.utils.toJson
+import exchange.dydx.utilities.utils.Logging
 import okhttp3.CacheControl
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -19,7 +19,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AbacusRestImp @Inject constructor() : RestProtocol {
+class AbacusRestImp @Inject constructor(
+    private val logger: Logging,
+) : RestProtocol {
 
     private val TAG = "AbacusRestImp"
 
@@ -76,7 +78,7 @@ class AbacusRestImp @Inject constructor() : RestProtocol {
         try {
             requestBuilder.url(url)
         } catch (e: Exception) {
-            Log.e(TAG, "AbacusRestImp Invalid URL $url, ${e.message}")
+            logger.e(TAG, "AbacusRestImp Invalid URL $url, ${e.message}")
             callback(null, 0, null)
             return
         }
@@ -104,7 +106,7 @@ class AbacusRestImp @Inject constructor() : RestProtocol {
         // Log.d(TAG, "AbacusRestImp Requesting ${request.url}")
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Log.e(TAG, "AbacusRestImp Request Failed ${request.url}, ${e.message}")
+                logger.e(TAG, "AbacusRestImp Request Failed ${request.url}, ${e.message}")
                 endBackgroundTask()
                 callback(null, 0, null)
             }

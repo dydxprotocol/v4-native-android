@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,9 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.changes.PlatformAmountChange
+import exchange.dydx.platformui.components.changes.PlatformDirection
+import exchange.dydx.platformui.components.changes.PlatformDirectionArrow
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
@@ -43,9 +45,15 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.receipt.DydxReceiptView
+import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptFreeCollateralView
+import exchange.dydx.trading.feature.receipt.components.liquidationprice.DydxReceiptLiquidationPriceView
+import exchange.dydx.trading.feature.receipt.components.marginusage.DydxReceiptMarginUsageView
 import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
+import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
-import exchange.dydx.trading.feature.shared.views.SizeTextView
+import exchange.dydx.trading.feature.shared.views.MarginUsageView
+import exchange.dydx.trading.feature.trade.margin.components.DydxAdjustMarginCtaButton
 
 @Preview
 @Composable
@@ -66,15 +74,14 @@ object DydxAdjustMarginInputView : DydxComponent {
         val percentage: Double,
     )
 
-    data class SubaccountReceipt(
-        val freeCollateral: List<String>,
-        val marginUsage: List<String>,
+    data class CrossMarginReceipt(
+        val freeCollateral: DydxReceiptFreeCollateralView.ViewState,
+        val marginUsage: DydxReceiptMarginUsageView.ViewState,
     )
 
-    data class PositionReceipt(
-        val freeCollateral: List<String>,
-        val leverage: List<String>,
-        val liquidationPrice: List<String>,
+    data class IsolatedMarginReceipt(
+        val liquidationPrice: DydxReceiptLiquidationPriceView.ViewState,
+        val receipts: DydxReceiptView.ViewState,
     )
 
     data class ViewState(
@@ -84,8 +91,8 @@ object DydxAdjustMarginInputView : DydxComponent {
         val percentage: Double?,
         val percentageOptions: List<PercentageOption>,
         val amountText: String?,
-        val subaccountReceipt: SubaccountReceipt,
-        val positionReceipt: PositionReceipt,
+        val crossMarginReceipt: CrossMarginReceipt,
+        val isolatedMarginReceipt: IsolatedMarginReceipt,
         val error: String?,
         val marginDirectionAction: ((direction: MarginDirection) -> Unit) = {},
         val percentageAction: (() -> Unit) = {},
@@ -106,14 +113,19 @@ object DydxAdjustMarginInputView : DydxComponent {
                     PercentageOption("50%", 0.5),
                 ),
                 amountText = "500",
-                subaccountReceipt = SubaccountReceipt(
-                    freeCollateral = listOf("1000.00", "500.00"),
-                    marginUsage = listOf("19.34", "38.45"),
+                crossMarginReceipt = CrossMarginReceipt(
+                    freeCollateral = DydxReceiptFreeCollateralView.ViewState.preview,
+                    marginUsage = DydxReceiptMarginUsageView.ViewState.preview,
                 ),
-                positionReceipt = PositionReceipt(
-                    freeCollateral = listOf("1000.00", "1500.00"),
-                    leverage = listOf("3.1", "2.4"),
-                    liquidationPrice = listOf("1200.00", "1000.00"),
+                isolatedMarginReceipt = IsolatedMarginReceipt(
+                    liquidationPrice = DydxReceiptLiquidationPriceView.ViewState.preview,
+                    receipts = DydxReceiptView.ViewState(
+                        localizer = MockLocalizer(),
+                        lineTypes = listOf(
+                            DydxReceiptView.ReceiptLineType.FreeCollateral,
+                            DydxReceiptView.ReceiptLineType.MarginUsage,
+                        ),
+                    ),
                 ),
                 error = null,
             )
@@ -125,9 +137,7 @@ object DydxAdjustMarginInputView : DydxComponent {
         val viewModel: DydxAdjustMarginInputViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        PlatformInfoScaffold(modifier = modifier, platformInfo = viewModel.platformInfo) {
-            Content(modifier, state)
-        }
+        Content(modifier, state)
     }
 
     @Composable
@@ -164,22 +174,22 @@ object DydxAdjustMarginInputView : DydxComponent {
                 state = state,
             )
             Spacer(modifier = Modifier.weight(1f))
-//            if (state.error == null) {
-//                LiquidationPrice(
-//                    modifier = Modifier,
-//                    state = state,
-//                )
-//            } else {
-//                Error(
-//                    modifier = Modifier,
-//                    error = state.error,
-//                )
-//            }
-//            Spacer(modifier = Modifier.height(8.dp))
-//            PositionReceiptAndButton(
-//                modifier = Modifier,
-//                state = state,
-//            )
+            if (state.error == null) {
+                LiquidationPrice(
+                    modifier = Modifier,
+                    state = state,
+                )
+            } else {
+                Error(
+                    modifier = Modifier,
+                    error = state.error,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            PositionReceiptAndButton(
+                modifier = Modifier,
+                state = state,
+            )
         }
     }
 
@@ -213,7 +223,10 @@ object DydxAdjustMarginInputView : DydxComponent {
         }
     }
 
-    private fun marginDirectionText(direction: MarginDirection, localizer: LocalizerProtocol): String {
+    private fun marginDirectionText(
+        direction: MarginDirection,
+        localizer: LocalizerProtocol
+    ): String {
         return when (direction) {
             MarginDirection.Add -> localizer.localize("APP.TRADE.ADD_MARGIN")
             MarginDirection.Remove -> localizer.localize("APP.TRADE.REMOVE_MARGIN")
@@ -292,7 +305,7 @@ object DydxAdjustMarginInputView : DydxComponent {
         state: ViewState,
     ) {
         PlatformTabGroup(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             scrollingEnabled = false,
             items = state.percentageOptions.map {
                 { modifier ->
@@ -438,28 +451,44 @@ object DydxAdjustMarginInputView : DydxComponent {
             modifier = modifier,
         ) {
             PlatformAmountChange(
-                before = {
-                    SizeTextView.Content(
-                        modifier = Modifier,
-                        state = SizeTextView.ViewState(
-                            localizer = state.localizer,
-                            formatter = state.formatter,
-                            size = state.subaccountReceipt.freeCollateral.firstOrNull()?.toDoubleOrNull(),
-                            stepSize = 2,
-                        ),
-                    )
+                modifier = Modifier.weight(1f),
+                before = if (state.crossMarginReceipt.freeCollateral.before != null) {
+                    {
+                        AmountText.Content(
+                            state = state.crossMarginReceipt.freeCollateral.before,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontType = ThemeFont.FontType.number,
+                                    fontSize = ThemeFont.FontSize.small,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                        )
+                    }
+                } else {
+                    null
                 },
-                after = {
-                    SizeTextView.Content(
-                        modifier = Modifier,
-                        state = SizeTextView.ViewState(
-                            localizer = state.localizer,
-                            formatter = state.formatter,
-                            size = state.subaccountReceipt.freeCollateral.lastOrNull()?.toDoubleOrNull(),
-                            stepSize = 2,
-                        ),
-                    )
+                after = if (state.crossMarginReceipt.freeCollateral.after != null) {
+                    {
+                        AmountText.Content(
+                            state = state.crossMarginReceipt.freeCollateral.after,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontType = ThemeFont.FontType.number,
+                                    fontSize = ThemeFont.FontSize.small,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
+                } else {
+                    null
                 },
+                direction = PlatformDirection.from(
+                    state.crossMarginReceipt.freeCollateral.before?.amount,
+                    state.crossMarginReceipt.freeCollateral.after?.amount,
+                ),
+                textStyle = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
         }
     }
@@ -495,28 +524,148 @@ object DydxAdjustMarginInputView : DydxComponent {
             modifier = modifier,
         ) {
             PlatformAmountChange(
-                before = {
-                    SizeTextView.Content(
-                        modifier = Modifier,
-                        state = SizeTextView.ViewState(
-                            localizer = state.localizer,
+                modifier = Modifier.weight(1f),
+                before = if (state.crossMarginReceipt.marginUsage.before != null) {
+                    {
+                        MarginUsageView.Content(
+                            state = state.crossMarginReceipt.marginUsage.before,
                             formatter = state.formatter,
-                            size = state.subaccountReceipt.marginUsage.firstOrNull()?.toDoubleOrNull(),
-                            stepSize = 2,
-                        ),
-                    )
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.small,
+                                    fontType = ThemeFont.FontType.number,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                        )
+                    }
+                } else {
+                    null
                 },
-                after = {
-                    SizeTextView.Content(
-                        modifier = Modifier,
-                        state = SizeTextView.ViewState(
-                            localizer = state.localizer,
+                after =
+                if (state.crossMarginReceipt.marginUsage.after != null) {
+                    {
+                        MarginUsageView.Content(
+                            state = state.crossMarginReceipt.marginUsage.after,
                             formatter = state.formatter,
-                            size = state.subaccountReceipt.marginUsage.lastOrNull()?.toDoubleOrNull(),
-                            stepSize = 2,
-                        ),
-                    )
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.small,
+                                    fontType = ThemeFont.FontType.number,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
+                } else {
+                    null
                 },
+                direction = PlatformDirection.from(
+                    state.crossMarginReceipt.marginUsage.after?.percent,
+                    state.crossMarginReceipt.marginUsage.before?.percent,
+                ),
+                textStyle = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+        }
+    }
+
+    @Composable
+    private fun LiquidationPrice(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        val shape = RoundedCornerShape(8.dp)
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .background(color = ThemeColor.SemanticColor.layer_5.color, shape = shape)
+                .padding(horizontal = ThemeShapes.HorizontalPadding)
+                .padding(vertical = ThemeShapes.VerticalPadding),
+        ) {
+            Column(
+                modifier = Modifier,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.ESTIMATED"),
+                    style = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+                Text(
+                    text = state.localizer.localize("APP.TRADE.LIQUIDATION_PRICE"),
+                    style = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_secondary)
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            Column(
+                modifier = Modifier,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                horizontalAlignment = Alignment.End,
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                if (state.isolatedMarginReceipt.liquidationPrice.before != null) {
+                    AmountText.Content(
+                        state = state.isolatedMarginReceipt.liquidationPrice.before,
+                        textStyle = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    )
+                }
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    PlatformDirectionArrow(
+                        direction = PlatformDirection.None,
+                        modifier = Modifier.size(12.dp),
+                    )
+                    AmountText.Content(
+                        state = state.isolatedMarginReceipt.liquidationPrice.after,
+                        textStyle = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number)
+                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+
+    @Composable
+    private fun Error(
+        modifier: Modifier,
+        error: String,
+    ) {
+        // TODO, implement this
+    }
+
+    @Composable
+    private fun PositionReceiptAndButton(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth(),
+        ) {
+            DydxReceiptView.Content(
+                modifier = Modifier
+                    .offset(y = ThemeShapes.VerticalPadding),
+                state = state.isolatedMarginReceipt.receipts,
+            )
+            DydxAdjustMarginCtaButton.Content(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = ThemeShapes.VerticalPadding * 2),
             )
         }
     }

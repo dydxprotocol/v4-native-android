@@ -63,6 +63,9 @@ class DydxPortfolioOrdersViewModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },
+            onBackTappedAction = {
+                router.navigateBack()
+            },
         )
     }
 }

@@ -58,7 +58,7 @@ object AmountText {
 
         Text(
             modifier = modifier,
-            text = state.formatter.dollar(amount, state.tickSize ?: 2) ?: "0",
+            text = state.formatter.dollar(amount, state.tickSize ?: 2) ?: "",
             style = textStyle,
         )
     }

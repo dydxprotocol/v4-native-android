@@ -1,8 +1,10 @@
 package exchange.dydx.trading.feature.portfolio.components.positions
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -27,8 +30,9 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
-import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.ListContent
+import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.positionsListContent
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketPositionViewState
 
 @Preview
@@ -36,7 +40,7 @@ import exchange.dydx.trading.feature.shared.viewstate.SharedMarketPositionViewSt
 fun Preview_DydxPortfolioPositionsView() {
     DydxThemedPreviewSurface {
         LazyColumn {
-            ListContent(this, Modifier, DydxPortfolioPositionsView.ViewState.preview)
+            positionsListContent(DydxPortfolioPositionsView.ViewState.preview)
         }
     }
 }
@@ -56,38 +60,68 @@ object DydxPortfolioPositionsView : DydxComponent {
                     SharedMarketPositionViewState.preview,
                     SharedMarketPositionViewState.preview,
                 ),
-                false,
+                isIsolatedMarketEnabled = false,
             )
         }
     }
 
     @Composable
     override fun Content(modifier: Modifier) {
+        Content(modifier, isFullScreen = false)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, isFullScreen: Boolean) {
         val viewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        LazyColumn(
-            modifier = modifier,
-        ) {
-            ListContent(this, Modifier, state)
+        if (isFullScreen) {
+            Column(
+                modifier = modifier.fillMaxWidth(),
+            ) {
+                DydxPortfolioSelectorView.Content(
+                    modifier = Modifier
+                        .height(72.dp)
+                        .padding(horizontal = ThemeShapes.HorizontalPadding)
+                        .fillMaxWidth(),
+                )
+
+                PlatformDivider()
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    this.positionsListContent(state)
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier,
+            ) {
+                positionsListContent(state)
+            }
         }
     }
 
-    fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
+    fun LazyListScope.positionsListContent(state: ViewState?) {
         if (state == null) return
 
         if (state.positions.isEmpty()) {
-            scope.item(key = "placeholder") {
+            item(key = "placeholder") {
                 DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
             }
         } else {
             if (!state.isIsolatedMarketEnabled) {
-                scope.item(key = "header") {
+                item(key = "header") {
                     CreateHeader(Modifier, state)
                 }
             }
 
-            scope.items(items = state.positions, key = { it.id }) { position ->
+            items(items = state.positions, key = { it.id }) { position ->
 //                if (!state.isIsolatedMarketEnabled && position === state.positions.first()) {
 //                    Spacer(modifier = Modifier.height(16.dp))
 //                }

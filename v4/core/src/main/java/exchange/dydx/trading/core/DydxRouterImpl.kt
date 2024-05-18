@@ -15,9 +15,9 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
-import timber.log.Timber
 import javax.inject.Inject
 
 private const val TAG = "DydxRouterImpl"
@@ -34,6 +34,7 @@ class DydxRouterImpl @Inject constructor(
     private val application: Application,
     private val tracker: Tracking,
     appConfig: AppConfig,
+    private val logger: Logging,
 ) : DydxRouter {
 
     private lateinit var navHostController: NavHostController
@@ -79,7 +80,7 @@ class DydxRouterImpl @Inject constructor(
             val dest = Destination(controller, destination, arguments)
             val success = destinationFlow.tryEmit(dest)
             if (!success) {
-                Timber.tag(TAG).w("Failed to emit: %s", dest.toString())
+                logger.e(TAG, "Failed to emit: $dest")
             }
 
             val destinationRoute = destination.route
@@ -106,12 +107,12 @@ class DydxRouterImpl @Inject constructor(
                     pendingPresentation = null
                 }
             } else {
-                Timber.tag(TAG).w("Destination route is null")
+                logger.e(TAG, "Destination route is null")
             }
         }
 
     override fun initialize(navHostController: NavHostController) {
-        Timber.tag(TAG).d("DydxRouter initialized")
+        logger.d(TAG, "DydxRouter initialized")
         this.navHostController = navHostController
         navHostController.addOnDestinationChangedListener(destinationChangedListener)
     }
@@ -137,7 +138,7 @@ class DydxRouterImpl @Inject constructor(
                     restoreState = false
                 }
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "Failed to navigate to route: %s", routePath)
+                logger.e(TAG, "Failed to navigate to route: $routePath")
             }
         }
     }
