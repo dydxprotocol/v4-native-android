@@ -74,7 +74,7 @@ class DydxDesktopScanViewModel @Inject constructor(
                     onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
                     walletAnalytics.logConnected(null)
                     abacusStateManager.setV4(
-                        ethereumAddress = "",
+                        ethereumAddress = null,
                         mnemonic = mnemonic,
                         cosmosAddress = cosmosAddress,
                         walletId = null,

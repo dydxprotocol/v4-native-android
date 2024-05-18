@@ -140,12 +140,16 @@ interface AppModule {
         @Provides
         fun provideAppConfig(
             application: Application,
+            preferenceStore: SharedPreferencesStore,
+            logger: Logging,
         ): AppConfig = AppConfigImpl(
             appContext = application,
             appVersionName = BuildConfig.VERSION_NAME,
             appVersionCode = BuildConfig.VERSION_CODE.toString(),
             debug = BuildConfig.DEBUG,
             activityClass = TradingActivity::class.java,
+            preferencesStore = preferenceStore,
+            logger = logger,
         )
 
         @Provides
