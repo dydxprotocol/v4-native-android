@@ -18,6 +18,7 @@ import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 private const val TAG = "DydxRouterImpl"
@@ -115,7 +116,11 @@ class DydxRouterImpl @Inject constructor(
         logger.d(TAG, "DydxRouter initialized")
         this.navHostController = navHostController
         navHostController.addOnDestinationChangedListener(destinationChangedListener)
+        _initialized.value = true
     }
+
+    private val _initialized = MutableStateFlow(false)
+    override val initialized: StateFlow<Boolean> = _initialized
 
     override val destinationFlow: MutableStateFlow<Destination?> = MutableStateFlow(null)
 
@@ -166,7 +171,15 @@ class DydxRouterImpl @Inject constructor(
 
     override fun navigateBack() {
         routeQueue.removeLast()
-        navHostController?.popBackStack()
+        navHostController.popBackStack()
+    }
+
+    override fun navigateToRoot(excludeRoot: Boolean) {
+        routeQueue.clear()
+        navHostController.popBackStack(
+            destinationId = navHostController.graph.findStartDestination().id,
+            inclusive = excludeRoot,
+        )
     }
 
     override fun requireNavController(): NavHostController {

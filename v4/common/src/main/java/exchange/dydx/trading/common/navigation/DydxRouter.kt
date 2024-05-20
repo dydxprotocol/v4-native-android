@@ -23,6 +23,8 @@ interface DydxRouter {
         Default,
     }
 
+    val initialized: StateFlow<Boolean>
+
     fun presentation(route: String): Presentation
     fun isParentChild(parent: String, child: String): Boolean
 
@@ -31,6 +33,7 @@ interface DydxRouter {
     fun tabTo(route: String, restoreState: Boolean = true)
 
     fun navigateBack()
+    fun navigateToRoot(excludeRoot: Boolean)
     fun requireNavController(): NavHostController
     fun initialize(navHostController: NavHostController)
 
