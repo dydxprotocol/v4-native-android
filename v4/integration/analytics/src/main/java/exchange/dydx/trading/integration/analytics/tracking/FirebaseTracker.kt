@@ -17,16 +17,6 @@ class FirebaseTracker(
         }
     }
 
-    override fun setUserId(userId: String?) {
-        firebaseAnalytics.setUserId(userId)
-    }
-
-    override fun setUserProperties(properties: Map<String, String?>) {
-        properties.forEach { (key, value) ->
-            firebaseAnalytics.setUserProperty(key, value)
-        }
-    }
-
     override fun log(event: String, data: String?) {
         firebaseAnalytics.logEvent(event) {
             val jsonMap = data?.jsonStringToMap()
