@@ -15,6 +15,7 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
+import exchange.dydx.trading.feature.shared.analytics.RoutingAnalytics
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class DydxRouterImpl @Inject constructor(
     private val tracker: Tracking,
     appConfig: AppConfig,
     private val logger: Logging,
+    private val routingAnalytics: RoutingAnalytics,
 ) : DydxRouter {
 
     private lateinit var navHostController: NavHostController
@@ -85,7 +87,7 @@ class DydxRouterImpl @Inject constructor(
 
             val destinationRoute = destination.route
             if (destinationRoute != null) {
-                trackRoute(destinationRoute, destination, arguments)
+                routingAnalytics.logRoute(destinationRoute, arguments)
 
                 if (tabRoutes.contains(destinationRoute)) {
                     routeQueue.clear()
@@ -219,25 +221,5 @@ class DydxRouterImpl @Inject constructor(
             }
         }
         return route
-    }
-
-    private fun trackRoute(destinationRoute: String, destination: NavDestination, arguments: Bundle?) {
-        val trackingData: MutableMap<String, String> = mutableMapOf()
-        destination.arguments.keys.forEach { key ->
-            trackingData[key] = arguments?.getString(key) ?: ""
-        }
-        // Remove query parameters from the route and remove the last component if it's a dynamic route
-        var sanitizedRoute = destinationRoute.split("?").first()
-        val components = sanitizedRoute.split("/")
-        val lastComponent = components.last()
-        if (lastComponent.startsWith("{") && lastComponent.endsWith("}")) {
-            sanitizedRoute = components.dropLast(1).joinToString("_")
-        } else {
-            sanitizedRoute = components.joinToString("_")
-        }
-        tracker.log(
-            event = sanitizedRoute,
-            data = trackingData,
-        )
     }
 }
