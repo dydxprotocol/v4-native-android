@@ -8,6 +8,7 @@ import exchange.dydx.cartera.typeddata.WalletTypedData
 import exchange.dydx.cartera.walletprovider.WalletRequest
 import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
@@ -16,7 +17,8 @@ class DydxV4WalletSetup @Inject constructor(
     context: Context,
     val cosmosV4Client: CosmosV4ClientProtocol,
     val parser: ParserProtocol,
-) : DydxWalletSetup(context) {
+    override val logger: Logging,
+) : DydxWalletSetup(context, logger) {
 
     override fun sign(wallet: Wallet?, address: String, ethereumChainId: Int, signTypedDataAction: String, signTypedDataDomainName: String) {
         val request = WalletRequest(wallet, address, ethereumChainId.toString(), context)

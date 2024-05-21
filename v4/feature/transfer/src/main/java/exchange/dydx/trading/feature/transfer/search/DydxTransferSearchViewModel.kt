@@ -69,7 +69,7 @@ class DydxTransferSearchViewModel @Inject constructor(
             } ?: emptyList(),
             itemSelected = { id ->
                 param?.selectedCallback?.invoke(
-                    param.options?.first { it.type == id }
+                    param.options?.firstOrNull { it.type == id }
                         ?: return@ViewState,
                 )
                 router.navigateBack()

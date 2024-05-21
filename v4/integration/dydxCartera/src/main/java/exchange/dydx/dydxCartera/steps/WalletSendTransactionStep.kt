@@ -24,7 +24,7 @@ class WalletSendTransactionStep(
     private val eventFlow: MutableStateFlow<AsyncEvent<Unit, String>> = MutableStateFlow(AsyncEvent.Progress(Unit))
 
     override fun run(): Flow<AsyncEvent<Unit, String>> {
-        val wallet = CarteraConfig.shared?.wallets?.first { it.id == walletId } ?: CarteraConfig.shared?.wallets?.first() ?: return flowOf(invalidInputEvent)
+        val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId } ?: CarteraConfig.shared?.wallets?.firstOrNull() ?: return flowOf(invalidInputEvent)
         val walletRequest = WalletRequest(
             wallet = wallet,
             address = walletAddress,

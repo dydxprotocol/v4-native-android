@@ -57,7 +57,7 @@ class DydxThemeViewModel @Inject constructor(
 
         val theme = preferencesStore.read(key = PreferenceKeys.Theme, defaultValue = defaultTheme)
 
-        viewState.sections.first().items.forEach { item ->
+        viewState.sections.firstOrNull()?.items?.forEach { item ->
             item.selected = (item.value == theme)
         }
         return viewState
@@ -77,7 +77,7 @@ class DydxThemeViewModel @Inject constructor(
                 localizer = localizer,
                 header = localizer.localize("APP.V4.SELECT_A_THEME"),
             )
-            return viewState.sections.first().items.first { it.value == theme }.let {
+            return viewState.sections.firstOrNull()?.items?.first { it.value == theme }?.let {
                 it.title?.let { title ->
                     return localizer.localize(title)
                 }

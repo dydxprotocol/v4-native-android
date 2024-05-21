@@ -29,7 +29,7 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
             abacusStateManager.state.configsAndAssetMap,
         ) { tradeInput, positions, configsAndAssetMap ->
             val marketId = tradeInput?.marketId ?: return@combine null
-            val position = positions?.first { it.id == marketId }
+            val position = positions?.firstOrNull { it.id == marketId }
             createViewState(tradeInput, configsAndAssetMap?.get(marketId), position?.leverage?.current)
         }
             .distinctUntilChanged()
