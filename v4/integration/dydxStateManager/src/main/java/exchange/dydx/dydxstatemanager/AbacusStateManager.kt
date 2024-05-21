@@ -464,7 +464,7 @@ class AbacusStateManager @Inject constructor(
         ) {
             stored
         } else {
-            asyncStateManager.environment?.id
+            asyncStateManager.environmentId
         }
         setEnvironmentId(currentEnvironmentId)
     }

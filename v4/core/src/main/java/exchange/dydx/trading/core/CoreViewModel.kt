@@ -79,7 +79,7 @@ class CoreViewModel @Inject constructor(
     }
 
     private fun resetEnv() {
-        val envId = abacusStateManager.environment?.id
+        val envId = abacusStateManager.currentEnvironmentId.value
         abacusStateManager.setEnvironmentId(null)
         abacusStateManager.setEnvironmentId(envId)
     }
