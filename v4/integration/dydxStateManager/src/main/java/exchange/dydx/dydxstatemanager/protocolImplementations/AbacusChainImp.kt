@@ -3,7 +3,6 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 import exchange.dydx.abacus.protocols.DYDXChainTransactionsProtocol
 import exchange.dydx.abacus.protocols.QueryType
 import exchange.dydx.abacus.protocols.TransactionType
-import exchange.dydx.abacus.utils.Logger
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import javax.inject.Inject
 
@@ -26,7 +25,6 @@ class AbacusChainImp @Inject constructor(
         callback: (response: String?) -> Unit,
     ) {
         cosmosClient.call(type.rawValue, paramsInJson) { response ->
-            Logger.d { "get $type $paramsInJson response $response" }
             callback(response)
         }
     }
