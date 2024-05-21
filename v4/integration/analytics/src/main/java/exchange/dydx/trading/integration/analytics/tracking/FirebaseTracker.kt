@@ -1,4 +1,4 @@
-package exchange.dydx.trading.integration.analytics
+package exchange.dydx.trading.integration.analytics.tracking
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent

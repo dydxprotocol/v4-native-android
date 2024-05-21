@@ -17,6 +17,7 @@ import exchange.dydx.abacus.output.Restriction
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.StateNotificationProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.changes.StateChanges
@@ -43,11 +44,13 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateMan
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
 import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsExtensions
+import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
+import exchange.dydx.utilities.utils.DebugEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +79,7 @@ interface AbacusStateManagerProtocol {
 
     fun setEnvironmentId(environment: String?)
 
-    fun setV4(ethereumAddress: String, walletId: String?, cosmosAddress: String, mnemonic: String)
+    fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String)
 
     fun logOut()
     fun replaceCurrentWallet()
@@ -133,6 +136,7 @@ interface AbacusStateManagerProtocol {
 @Singleton
 class AbacusStateManager @Inject constructor(
     private val application: Application,
+    private val appConfig: AppConfig,
     private val ioImplementations: IOImplementations,
     private val walletStateManager: DydxWalletStateManagerProtocol,
     private val transferStateManager: DydxTransferStateManagerProtocol,
@@ -142,6 +146,7 @@ class AbacusStateManager @Inject constructor(
     private val featureFlags: DydxFeatureFlags,
     @CoroutineScopes.App private val appScope: CoroutineScope,
     parser: ParserProtocol,
+    private val presentationProtocol: PresentationProtocol,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -162,7 +167,14 @@ class AbacusStateManager @Inject constructor(
             appConfigs = AppConfigs.forApp
             appConfigsV2 = AppConfigsV2.forApp
         } else {
-            deployment = application.getString(R.string.app_deployment)
+            val appDeployment = application.getString(R.string.app_deployment)
+            deployment = if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
+                // Force to TESTFLIGHT if user has enabled debug mode, so that both MAINNET and TESTNET can be
+                // switched from Settings
+                "TESTFLIGHT"
+            } else {
+                appDeployment
+            }
             appConfigs =
                 if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
             appConfigsV2 =
@@ -178,7 +190,7 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
-        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2)) {
+        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2, default = BuildConfig.DEBUG)) {
             AsyncAbacusStateManagerV2(
                 deploymentUri = deploymentUri,
                 deployment = deployment,
@@ -187,6 +199,7 @@ class AbacusStateManager @Inject constructor(
                 uiImplementations = UIImplementationsExtensions.shared!!,
                 stateNotification = this,
                 dataNotification = null,
+                presentationProtocol = presentationProtocol,
             )
         } else {
             AsyncAbacusStateManager(
@@ -220,10 +233,10 @@ class AbacusStateManager @Inject constructor(
     override val deploymentUri: String
         get() {
             val urlOverride = featureFlags.valueForFeature(DydxFeatureFlag.deployment_url)
-            if (!urlOverride.isNullOrEmpty()) {
-                return urlOverride
+            return if (!urlOverride.isNullOrEmpty()) {
+                urlOverride
             } else {
-                return "https://" + application.getString(R.string.app_web_host)
+                "https://" + appConfig.appWebHost
             }
         }
 
@@ -260,7 +273,7 @@ class AbacusStateManager @Inject constructor(
         }
     }
 
-    override fun setV4(ethereumAddress: String, walletId: String?, cosmosAddress: String, mnemonic: String) {
+    override fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String) {
         cosmosClient.connectWallet(mnemonic) {
             val wallet = DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
             walletStateManager.setCurrentWallet(wallet)

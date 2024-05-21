@@ -20,9 +20,11 @@ import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
+import kotlin.math.abs
 
 @HiltViewModel
 class DydxTriggerOrderSizeViewModel @Inject constructor(
@@ -41,7 +43,8 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 .mapNotNull { it?.marketId }
                 .flatMapLatest {
                     abacusStateManager.state.selectedSubaccountPositionOfMarket(it)
-                },
+                }
+                .filterNotNull(),
             triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
@@ -54,7 +57,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
 
     private fun createViewState(
         sizeEnabled: Boolean,
-        position: SubaccountPosition?,
+        position: SubaccountPosition,
         isNewTriggerOrder: Boolean,
         triggerOrdersInput: TriggerOrdersInput?,
         configsAndAsset: MarketConfigsAndAsset?,
@@ -62,9 +65,9 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
     ): DydxTriggerOrderSizeView.ViewState {
         val marketConfigs = configsAndAsset?.configs
         val stepSize = marketConfigs?.stepSize
-        val size = triggerOrdersInput?.size ?: 0.0
-        val positionSize = position?.size?.current ?: 0.0
-        val percentage = if (positionSize > 0.0) {
+        val size = abs(triggerOrdersInput?.size ?: 0.0)
+        val positionSize = abs(position.size?.current ?: 0.0)
+        val percentage = if (positionSize != 0.0) {
             size / positionSize
         } else {
             0.0
@@ -79,7 +82,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 enabledFlow.value = enabled
                 if (!enabled) {
                     abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(position?.size?.current, size = stepSize),
+                        formatter.decimalLocaleAgnostic(abs(position?.size?.current ?: 0.0), size = stepSize),
                         TriggerOrdersInputField.size,
                     )
                 }

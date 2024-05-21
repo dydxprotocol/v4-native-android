@@ -1,6 +1,8 @@
 package exchange.dydx.trading.feature.portfolio.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.icons.PlatformRoundIcon
 import exchange.dydx.platformui.components.menus.PlatformDropdownMenu
 import exchange.dydx.platformui.components.menus.PlatformMenuItem
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -26,6 +29,7 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.portfolio.DydxPortfolioView
+import exchange.dydx.trading.feature.shared.R
 
 @Preview
 @Composable
@@ -42,9 +46,10 @@ object DydxPortfolioSelectorView : DydxComponent {
             DydxPortfolioView.DisplayContent.Overview,
             DydxPortfolioView.DisplayContent.Positions,
             DydxPortfolioView.DisplayContent.Orders,
-            DydxPortfolioView.DisplayContent.Fees,
+            // DydxPortfolioView.DisplayContent.Fees,
+            DydxPortfolioView.DisplayContent.Trades,
             DydxPortfolioView.DisplayContent.Transfers,
-            DydxPortfolioView.DisplayContent.Payments,
+            // DydxPortfolioView.DisplayContent.Payments,
         ),
         val onSelectionChanged: (DydxPortfolioView.DisplayContent) -> Unit = {},
         val currentContent: DydxPortfolioView.DisplayContent = DydxPortfolioView.DisplayContent.Overview,
@@ -72,43 +77,48 @@ object DydxPortfolioSelectorView : DydxComponent {
             mutableStateOf(false)
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Box(
             modifier = modifier,
-//                .clickable { expanded.value = !expanded.value },
+            contentAlignment = Alignment.CenterStart,
         ) {
-            Text(
-                text = state.localizer.localize(state.currentContent.stringKey),
-                style = TextStyle.dydxDefault
-                    .themeFont(
-                        fontSize = ThemeFont.FontSize.extra,
-                        fontType = ThemeFont.FontType.plus,
-                    )
-                    .themeColor(ThemeColor.SemanticColor.text_primary),
-            )
-
-//            PlatformRoundIcon(
-//                icon = R.drawable.icon_arrow_down,
-//                size = 28.dp,
-//                iconSize = 15.dp,
-//                iconTint = ThemeColor.SemanticColor.text_tertiary,
-//                borderColor = ThemeColor.SemanticColor.layer_6,
-//            )
-        }
-
-        PlatformDropdownMenu(
-            expanded = expanded,
-            items = state.contents.mapIndexed() { index, content ->
-                PlatformMenuItem(
-                    text = state.localizer.localize(content.stringKey),
-                    onClick = {
-                        state.onSelectionChanged(content)
-                        expanded.value = false
-                    },
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .clickable { expanded.value = !expanded.value },
+            ) {
+                Text(
+                    text = state.localizer.localize(state.currentContent.stringKey),
+                    style = TextStyle.dydxDefault
+                        .themeFont(
+                            fontSize = ThemeFont.FontSize.extra,
+                            fontType = ThemeFont.FontType.plus,
+                        )
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
                 )
-            },
-            selectedIndex = state.contents.indexOf(state.currentContent),
-        )
+
+                PlatformRoundIcon(
+                    icon = R.drawable.icon_arrow_down,
+                    size = 28.dp,
+                    iconSize = 15.dp,
+                    iconTint = ThemeColor.SemanticColor.text_tertiary,
+                    borderColor = ThemeColor.SemanticColor.layer_6,
+                )
+            }
+
+            PlatformDropdownMenu(
+                expanded = expanded,
+                items = state.contents.mapIndexed() { index, content ->
+                    PlatformMenuItem(
+                        text = state.localizer.localize(content.stringKey),
+                        onClick = {
+                            expanded.value = false
+                            state.onSelectionChanged(content)
+                        },
+                    )
+                },
+                selectedIndex = state.contents.indexOf(state.currentContent),
+            )
+        }
     }
 }

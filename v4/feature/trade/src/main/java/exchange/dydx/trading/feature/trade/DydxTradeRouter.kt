@@ -14,12 +14,13 @@ import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputMarginModeVi
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputTargetLeverageView
 import exchange.dydx.trading.feature.trade.tradestatus.DydxTradeStatusView
 import exchange.dydx.trading.feature.trade.trigger.DydxTriggerOrderInputView
-import timber.log.Timber
+import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxTradeRouter"
 
 fun NavGraphBuilder.tradeGraph(
     appRouter: DydxRouter,
+    logger: Logging,
 ) {
     dydxComposable(
         router = appRouter,
@@ -38,7 +39,7 @@ fun NavGraphBuilder.tradeGraph(
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
-            Timber.w("No marketId passed")
+            logger.e(TAG, "No marketId passed")
             appRouter.navigateTo(MarketRoutes.marketList)
             return@dydxComposable
         }
@@ -53,7 +54,7 @@ fun NavGraphBuilder.tradeGraph(
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
-            Timber.w("No marketId passed")
+            logger.e(TAG, "No marketId passed")
             appRouter.navigateTo(MarketRoutes.marketList)
             return@dydxComposable
         }
@@ -84,7 +85,7 @@ fun NavGraphBuilder.tradeGraph(
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
-            Timber.w("No marketId passed")
+            logger.e(TAG, "No marketId passed")
             appRouter.navigateTo(MarketRoutes.marketList)
             return@dydxComposable
         }

@@ -3,7 +3,7 @@ package exchange.dydx.trading.feature.shared.analytics
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineDispatchers
 import exchange.dydx.trading.common.di.CoroutineScopes
-import exchange.dydx.trading.integration.analytics.Tracking
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn

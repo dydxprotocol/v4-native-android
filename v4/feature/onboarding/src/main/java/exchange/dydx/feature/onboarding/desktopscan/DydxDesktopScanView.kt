@@ -10,7 +10,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.PlatformDialogScaffold
-import exchange.dydx.platformui.components.PlatformInfoScaffold
 import exchange.dydx.platformui.components.camera.PlatformQrScanner
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -21,6 +20,8 @@ import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.HeaderView
+import exchange.dydx.trading.integration.analytics.logging.ConsoleLogger
+import exchange.dydx.utilities.utils.Logging
 
 @Preview
 @Composable
@@ -33,12 +34,14 @@ fun Preview_dydxDesktopScanView() {
 object DydxDesktopScanView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val logger: Logging,
         val closeButtonHandler: () -> Unit = {},
         val qrCodeScannedHandler: (String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                logger = ConsoleLogger(),
             )
         }
     }
@@ -48,12 +51,7 @@ object DydxDesktopScanView : DydxComponent {
         val viewModel: DydxDesktopScanViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        PlatformInfoScaffold(
-            modifier = modifier,
-            platformInfo = viewModel.platformInfo,
-        ) {
-            Content(it, state)
-        }
+        Content(modifier, state)
 
         PlatformDialogScaffold(dialog = viewModel.platformDialog)
 
@@ -61,6 +59,7 @@ object DydxDesktopScanView : DydxComponent {
             modifier = Modifier,
             isVisible = false,
             javascriptRunner = viewModel.starkexLib.runner,
+            logger = state?.logger,
         )
     }
 

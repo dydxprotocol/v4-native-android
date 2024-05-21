@@ -13,10 +13,10 @@ import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 data class SharedMarketPositionViewState(
     val id: String,
+    val childSubaccountNumber: Int? = null, // null if it is cross margin in parent subaccount
     val unrealizedPNLAmount: SignedAmountView.ViewState? = null,
     val unrealizedPNLPercent: SignedAmountView.ViewState? = null,
     val realizedPNLAmount: SignedAmountView.ViewState? = null,
@@ -25,7 +25,7 @@ data class SharedMarketPositionViewState(
     val liquidationPrice: String? = null,
     val side: SideTextView.ViewState? = null,
     val size: String? = null,
-    val amount: String? = null,
+    val margin: String? = null,
     val token: TokenTextView.ViewState? = null,
     val logoUrl: String? = null,
     val gradientType: GradientType = GradientType.NONE,
@@ -46,7 +46,7 @@ data class SharedMarketPositionViewState(
             liquidationPrice = "$12.00",
             side = SideTextView.ViewState.preview,
             size = "0.0012",
-            amount = "$120.00",
+            margin = "$120.00",
             token = TokenTextView.ViewState.preview,
             logoUrl = "https://media.dydx.exchange/currencies/eth.png",
             gradientType = GradientType.PLUS,
@@ -91,10 +91,21 @@ data class SharedMarketPositionViewState(
 
             val leverage = position.leverage?.current ?: 0.0
             val maxLeverage = position.maxLeverage?.current ?: 0.0
-            val riskLevel = if (leverage > 0 && maxLeverage > 0) LeverageRiskView.Level.createFromMarginUsage(leverage / maxLeverage) else null
+            val riskLevel =
+                if (leverage > 0 && maxLeverage > 0) {
+                    LeverageRiskView.Level.createFromMarginUsage(
+                        leverage / maxLeverage,
+                    )
+                } else {
+                    null
+                }
             return SharedMarketPositionViewState(
                 id = position.id,
-                size = formatter.localFormatted(positionSize.absoluteValue, configs.displayStepSizeDecimals ?: 1),
+                childSubaccountNumber = position.childSubaccountNumber,
+                size = formatter.localFormatted(
+                    positionSize.absoluteValue,
+                    configs.displayStepSizeDecimals ?: 1,
+                ),
                 token = TokenTextView.ViewState(
                     symbol = asset?.id ?: market.assetId,
                 ),
@@ -129,11 +140,25 @@ data class SharedMarketPositionViewState(
                     coloringOption = SignedAmountView.ColoringOption.SignOnly,
                 ),
                 logoUrl = asset?.resources?.imageUrl,
-                oraclePrice = formatter.dollar(market.oraclePrice, configs.displayTickSizeDecimals ?: 0),
-                entryPrice = formatter.dollar(position.entryPrice?.current, configs.displayTickSizeDecimals ?: 0),
-                exitPrice = formatter.dollar(position.exitPrice, configs.displayTickSizeDecimals ?: 0),
-                liquidationPrice = formatter.dollar(position.liquidationPrice?.current, configs.displayTickSizeDecimals ?: 0),
-                amount = formatter.dollar(position.valueTotal?.current, configs.displayTickSizeDecimals ?: 0),
+                oraclePrice = formatter.dollar(
+                    market.oraclePrice,
+                    configs.displayTickSizeDecimals ?: 0,
+                ),
+                entryPrice = formatter.dollar(
+                    position.entryPrice?.current,
+                    configs.displayTickSizeDecimals ?: 0,
+                ),
+                exitPrice = formatter.dollar(
+                    position.exitPrice,
+                    configs.displayTickSizeDecimals ?: 0,
+                ),
+                liquidationPrice = formatter.dollar(
+                    position.liquidationPrice?.current,
+                    configs.displayTickSizeDecimals ?: 0,
+                ),
+                margin = position.equity?.let {
+                    formatter.dollar(it.current)
+                } ?: formatter.dollar(position.notionalTotal?.current),
                 funding = SignedAmountView.ViewState(
                     text = formatter.dollar(netFunding.absoluteValue),
                     sign = netFundingSign,
