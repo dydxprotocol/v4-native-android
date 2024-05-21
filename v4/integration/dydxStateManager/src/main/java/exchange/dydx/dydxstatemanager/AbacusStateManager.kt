@@ -105,7 +105,13 @@ interface AbacusStateManagerProtocol {
 
     fun addTransferInstance(transfer: DydxTransferInstance)
     fun removeTransferInstance(transfer: DydxTransferInstance)
-    fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean, requestId: String?)
+    fun transferStatus(
+        hash: String,
+        fromChainId: String?,
+        toChainId: String?,
+        isCctp: Boolean,
+        requestId: String?
+    )
 
     fun screen(address: String, callback: ((Restriction) -> Unit))
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
@@ -131,7 +137,8 @@ interface AbacusStateManagerProtocol {
 }
 
 // Temporary location, should probably make a separate dagger-qualifiers module.
-@Qualifier annotation class EnvKey
+@Qualifier
+annotation class EnvKey
 
 @Singleton
 class AbacusStateManager @Inject constructor(
@@ -178,7 +185,7 @@ class AbacusStateManager @Inject constructor(
             appConfigs =
                 if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
             appConfigsV2 =
-                if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigsV2.forAppDebug else AppConfigsV2.forApp
+                if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigsV2.forAppWithIsolatedMargins else AppConfigsV2.forApp
         }
 
         appConfigs.squidVersion = AppConfigs.SquidVersion.V2
@@ -190,7 +197,11 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
-        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_abacus_v2, default = BuildConfig.DEBUG)) {
+        if (featureFlags.isFeatureEnabled(
+                DydxFeatureFlag.enable_abacus_v2,
+                default = BuildConfig.DEBUG,
+            )
+        ) {
             AsyncAbacusStateManagerV2(
                 deploymentUri = deploymentUri,
                 deployment = deployment,
@@ -273,7 +284,12 @@ class AbacusStateManager @Inject constructor(
         }
     }
 
-    override fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String) {
+    override fun setV4(
+        ethereumAddress: String?,
+        walletId: String?,
+        cosmosAddress: String,
+        mnemonic: String
+    ) {
         cosmosClient.connectWallet(mnemonic) {
             val wallet = DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
             walletStateManager.setCurrentWallet(wallet)
@@ -346,7 +362,10 @@ class AbacusStateManager @Inject constructor(
         asyncStateManager.transfer(input, type)
     }
 
-    override fun faucet(amount: Int, statusCallback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+    override fun faucet(
+        amount: Int,
+        statusCallback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit
+    ) {
         asyncStateManager.faucet(amount.toDouble()) { successful, error, _ ->
             if (successful) {
                 statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Success)
@@ -380,7 +399,10 @@ class AbacusStateManager @Inject constructor(
         }
     }
 
-    override fun cancelOrder(orderId: String, statusCallback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+    override fun cancelOrder(
+        orderId: String,
+        statusCallback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit
+    ) {
         asyncStateManager.cancelOrder(orderId) { successful: Boolean, error: ParsingError?, data: Any? ->
             if (successful) {
                 statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Success)
@@ -398,7 +420,13 @@ class AbacusStateManager @Inject constructor(
         transferStateManager.remove(transfer)
     }
 
-    override fun transferStatus(hash: String, fromChainId: String?, toChainId: String?, isCctp: Boolean, requestId: String?) {
+    override fun transferStatus(
+        hash: String,
+        fromChainId: String?,
+        toChainId: String?,
+        isCctp: Boolean,
+        requestId: String?
+    ) {
         asyncStateManager.transferStatus(hash, fromChainId, toChainId, isCctp, requestId)
     }
 
@@ -493,7 +521,8 @@ class AbacusStateManager @Inject constructor(
     */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun monitorConnectivity(context: Context) {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = NetworkRequest.Builder()
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
