@@ -97,7 +97,7 @@ class AbacusState(
             .map { it?.transfers }
             .map {
                 val subaccountNumber = subaccountNumber ?: return@map null
-                it?.get(subaccountNumber)?.toList()
+                it?.get("$subaccountNumber")?.toList()
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
@@ -155,9 +155,9 @@ class AbacusState(
     /**
      Subaccount
      **/
-    fun subaccount(subaccountNumber: String): StateFlow<Subaccount?> {
-        return account
-            .map { it?.subaccounts?.get(subaccountNumber) }
+    fun subaccount(subaccountNumber: Int): StateFlow<Subaccount?> {
+        return perpetualState
+            .map { it?.subaccount(subaccountNumber) }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 
@@ -165,7 +165,7 @@ class AbacusState(
         perpetualState
             .map {
                 if (subaccountNumber != null) {
-                    it?.account?.subaccounts?.get(subaccountNumber)
+                    it?.subaccount(subaccountNumber!!)
                 } else {
                     null
                 }
@@ -177,7 +177,7 @@ class AbacusState(
         perpetualState
             .map {
                 if (subaccountNumber != null) {
-                    it?.fills?.get(subaccountNumber)?.toList()
+                    it?.fills?.get("$subaccountNumber")?.toList()
                 } else {
                     null
                 }
@@ -189,7 +189,7 @@ class AbacusState(
         perpetualState
             .map {
                 if (subaccountNumber != null) {
-                    it?.fundingPayments?.get(subaccountNumber)?.toList()
+                    it?.fundingPayments?.get("$subaccountNumber")?.toList()
                 } else {
                     null
                 }
@@ -241,7 +241,7 @@ class AbacusState(
         perpetualState
             .map {
                 if (subaccountNumber != null) {
-                    it?.historicalPnl?.get(subaccountNumber)?.toList()
+                    it?.historicalPnl?.get("$subaccountNumber")?.toList()
                 } else {
                     null
                 }
@@ -543,8 +543,8 @@ class AbacusState(
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
-    private val subaccountNumber: String?
-        get() = parser.asString(abacusStateManager.subaccountNumber)
+    private val subaccountNumber: Int?
+        get() = parser.asInt(abacusStateManager.subaccountNumber)
 }
 
 data class MarketConfigsAndAsset(

@@ -14,7 +14,9 @@ class AbacusChainImp @Inject constructor(
         paramsInJson: String,
         callback: (response: String?) -> Unit,
     ) {
-        cosmosClient.connectNetwork(paramsInJson, callback)
+        cosmosClient.connectNetwork(paramsInJson) { response ->
+            callback(response)
+        }
     }
 
     override fun get(
@@ -22,7 +24,9 @@ class AbacusChainImp @Inject constructor(
         paramsInJson: String?,
         callback: (response: String?) -> Unit,
     ) {
-        cosmosClient.call(type.rawValue, paramsInJson, callback)
+        cosmosClient.call(type.rawValue, paramsInJson) { response ->
+            callback(response)
+        }
     }
 
     override fun transaction(
@@ -30,6 +34,8 @@ class AbacusChainImp @Inject constructor(
         paramsInJson: String?,
         callback: (response: String?) -> Unit,
     ) {
-        cosmosClient.call(type.rawValue, paramsInJson, callback)
+        cosmosClient.call(type.rawValue, paramsInJson) { response ->
+            callback(response)
+        }
     }
 }
