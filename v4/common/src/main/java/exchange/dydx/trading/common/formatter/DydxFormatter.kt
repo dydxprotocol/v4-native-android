@@ -235,7 +235,7 @@ class DydxFormatter @Inject constructor() {
                     minimumFractionDigits = digits
                     maximumFractionDigits = digits
                 }
-                percentFormatter.format(absoluteValue)?.plus("x")
+                percentFormatter.format(absoluteValue).plus("x")
             } else {
                 "—"
             }

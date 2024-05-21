@@ -11,3 +11,8 @@ fun timerFlow(period: Duration, initialDelay: Duration = Duration.ZERO) = flow {
         delay(period)
     }
 }
+
+fun delayFlow(duration: Duration) = flow {
+    delay(duration)
+    emit(Unit)
+}

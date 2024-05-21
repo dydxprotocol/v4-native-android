@@ -31,6 +31,7 @@ import exchange.dydx.trading.core.DydxNavGraph
 import exchange.dydx.trading.core.biometric.DydxBiometricPrompt
 import exchange.dydx.trading.core.biometric.DydxBiometricView
 import exchange.dydx.trading.feature.shared.PreferenceKeys
+import exchange.dydx.trading.feature.shared.analytics.AnalyticsEvent
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -60,6 +61,11 @@ class TradingActivity : FragmentActivity() {
 
         CarteraSetup.run(this, viewModel.logger)
         AnalyticsSetup.run(viewModel.compositeTracking, this, viewModel.logger)
+
+        viewModel.compositeTracking.log(
+            event = AnalyticsEvent.APP_START.rawValue,
+            data = null,
+        )
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 

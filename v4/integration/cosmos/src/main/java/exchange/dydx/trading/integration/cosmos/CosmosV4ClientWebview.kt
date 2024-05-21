@@ -7,7 +7,6 @@ import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
@@ -196,24 +195,22 @@ class CosmosV4ClientWebview @Inject constructor(
         params: List<Any>,
         completion: JavascriptCompletion,
     ) {
-        runBlocking {
-            val jsParams = params
-                .map {
-                    when (it) {
-                        is String -> "'$it'"
-                        is Double -> String.format(Locale.ROOT, "%.6f", it)
-                        else -> it.toString()
-                    }
+        val jsParams = params
+            .map {
+                when (it) {
+                    is String -> "'$it'"
+                    is Double -> String.format(Locale.ROOT, "%.6f", it)
+                    else -> it.toString()
                 }
-            runner.runJs(
-                function = functionName,
-                params = jsParams,
-            ) { result ->
-                // for debug builds, log the full params, otherwise redact them
-                val paramsString = if (BuildConfig.DEBUG) "$params" else "[REDUCTED]"
-                logger.d(TAG, "callNativeClient $functionName, params: $paramsString, result: $result")
-                completion(result?.response)
             }
+        runner.runJs(
+            function = functionName,
+            params = jsParams,
+        ) { result ->
+            // for debug builds, log the full params, otherwise redact them
+            val paramsString = if (BuildConfig.DEBUG) "$params" else "[REDUCTED]"
+            logger.d(TAG, "callNativeClient $functionName, params: $paramsString, result: $result")
+            completion(result?.response)
         }
     }
 

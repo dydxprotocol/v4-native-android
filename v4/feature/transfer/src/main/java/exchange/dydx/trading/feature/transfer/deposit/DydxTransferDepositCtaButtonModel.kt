@@ -135,6 +135,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         wallet: DydxWalletInstance?,
     ) {
         val wallet = wallet ?: return
+        val walletAddress = wallet.ethereumAddress ?: return
         val chain = transferInput.chain ?: return
         val token = transferInput.token ?: return
         val chainRpc = transferInput.resources?.chainResources?.get(chain)?.rpc ?: return
@@ -143,7 +144,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         DydxTransferDepositStep(
             transferInput = transferInput,
             provider = carteraProvider,
-            walletAddress = wallet.ethereumAddress,
+            walletAddress = walletAddress,
             walletId = wallet.walletId,
             chainRpc = chainRpc,
             tokenAddress = tokenAddress,
