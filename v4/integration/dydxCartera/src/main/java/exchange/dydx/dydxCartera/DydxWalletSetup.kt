@@ -59,7 +59,7 @@ open class DydxWalletSetup(
 
     private val _debugLink: MutableStateFlow<String?> = MutableStateFlow(null)
     val debugLink: Flow<String?> = _debugLink
-Ï
+
     val provider: CarteraProvider by lazy {
         val provider = CarteraProvider(context)
         provider.walletStatusDelegate = this
