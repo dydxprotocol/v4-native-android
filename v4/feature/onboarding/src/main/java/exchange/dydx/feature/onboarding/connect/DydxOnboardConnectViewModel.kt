@@ -20,12 +20,15 @@ import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+
+private const val TAG = "DydxOnboardConnectViewModel"
 
 @HiltViewModel
 class DydxOnboardConnectViewModel @Inject constructor(
@@ -38,6 +41,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
     private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
+    private val logger: Logging,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
@@ -52,7 +56,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
     fun updateContext(context: Context) {
         if (context != this.context) {
             this.context = context
-            val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser)
+            val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser, logger)
 
             walletSetup.status.onEach { walletStatus ->
                 when (walletStatus) {
@@ -110,7 +114,10 @@ class DydxOnboardConnectViewModel @Inject constructor(
     }
 
     private fun createViewState(): DydxOnboardConnectView.ViewState {
-        val wallet = CarteraConfig.shared?.wallets?.first { it.id == walletId }
+        val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId }
+        if (wallet == null) {
+            logger.e(TAG, "Wallet not found: $walletId")
+        }
         val folder = abacusStateManager.environment?.walletConnection?.images
         val walletIcon = wallet?.imageUrl(folder)
 

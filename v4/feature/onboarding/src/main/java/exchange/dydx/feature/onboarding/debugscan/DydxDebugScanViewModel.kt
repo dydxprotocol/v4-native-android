@@ -11,6 +11,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -23,6 +24,7 @@ class DydxDebugScanViewModel @Inject constructor(
     val router: DydxRouter,
     val cosmosV4Client: CosmosV4WebviewClientProtocol,
     val parser: ParserProtocol,
+    val logger: Logging,
     val abacusStateManager: AbacusStateManagerProtocol,
 ) : ViewModel(), DydxViewModel {
 
@@ -37,7 +39,7 @@ class DydxDebugScanViewModel @Inject constructor(
     fun updateContext(context: Context) {
         if (context != this.context) {
             this.context = context
-            val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser)
+            val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser, logger)
             _state.update { state ->
                 state.copy(
                     closeButtonHandler = {

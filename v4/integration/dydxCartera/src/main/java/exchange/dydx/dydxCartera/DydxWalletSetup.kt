@@ -10,11 +10,15 @@ import exchange.dydx.cartera.walletprovider.WalletError
 import exchange.dydx.cartera.walletprovider.WalletRequest
 import exchange.dydx.cartera.walletprovider.WalletStatusDelegate
 import exchange.dydx.cartera.walletprovider.WalletStatusProtocol
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
+private const val TAG = "DydxWalletSetup"
+
 open class DydxWalletSetup(
     open val context: Context,
+    open val logger: Logging,
 ) : WalletStatusDelegate {
 
     data class SetupResult(
@@ -69,6 +73,10 @@ open class DydxWalletSetup(
 
     fun start(walletId: String?, ethereumChainId: Int, signTypedDataAction: String, signTypedDataDomainName: String) {
         val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId }
+        if (wallet == null) {
+            logger.e(TAG, "Wallet not found: $walletId")
+        }
+
         _status.value = Status.Started
         val request = WalletRequest(wallet, null, ethereumChainId.toString(), context)
         provider.connect(request) { info, error ->
