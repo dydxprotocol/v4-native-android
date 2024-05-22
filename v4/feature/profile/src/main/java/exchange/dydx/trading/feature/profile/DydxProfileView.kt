@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -82,28 +83,28 @@ object DydxProfileView : DydxComponent {
                 item(key = "buttons") {
                     DydxProfileButtonsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                 }
-                item(key = "rewards") {
+                item(key = "balances") {
                     DydxProfileBalancesView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
-                }
-                item(key = "history") {
-                    DydxProfileHistoryView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                 }
                 item(key = "fees") {
                     Row(
-                        modifier
-                            .fillMaxSize()
+                        Modifier
+                            .fillMaxWidth()
                             .padding(
                                 horizontal = ThemeShapes.HorizontalPadding,
                             ),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        DydxProfileRewardsView.Content(modifier = Modifier.weight(1f))
-                        Spacer(modifier = Modifier.width(8.dp))
                         DydxProfileFeesView.Content(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.width(16.dp))
+                        DydxProfileRewardsView.Content(modifier = Modifier.weight(1f))
                     }
                 }
+                item(key = "history") {
+                    DydxProfileHistoryView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                }
                 item(key = "bottom") {
-                    Box(modifier = Modifier.height(1.dp)) {}
+                    Spacer(modifier = Modifier.height(64.dp))
                 }
             }
         }
