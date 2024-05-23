@@ -27,4 +27,8 @@ class AmplitudeTracker(
         val jsonMap = data?.jsonStringToMap()
         amplitude.track(event, jsonMap)
     }
+
+    override fun view(screenName: String, screenClass: String) {
+        // No op
+    }
 }

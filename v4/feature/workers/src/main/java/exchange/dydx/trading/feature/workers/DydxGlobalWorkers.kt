@@ -39,7 +39,7 @@ class DydxGlobalWorkers(
 ) : WorkerProtocol {
 
     private val workers = listOf(
-        DydxUpdateWorker(scope, abacusStateManager, router, context),
+        DydxUpdateWorker(scope, abacusStateManager, router, context, logger),
         DydxAlertsWorker(scope, abacusStateManager, localizer, router, platformInfo, preferencesStore),
         DydxApiStatusWorker(scope, abacusStateManager, localizer, platformInfo),
         DydxRestrictionsWorker(scope, abacusStateManager, localizer, platformInfo),
