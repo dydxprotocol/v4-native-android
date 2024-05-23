@@ -26,4 +26,8 @@ class CompositeTracker @Inject constructor() : CompositeTracking {
     override fun log(event: String, data: String?) {
         trackers.forEach { it.log(event, data) }
     }
+
+    override fun view(screenName: String, screenClass: String) {
+        trackers.forEach { it.view(screenName, screenClass) }
+    }
 }
