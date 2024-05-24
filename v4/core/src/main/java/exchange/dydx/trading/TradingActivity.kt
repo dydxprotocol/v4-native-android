@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -19,7 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
-import exchange.dydx.platformui.components.PlatformInfoScaffold
+import exchange.dydx.platformui.components.container.ToastContainer
 import exchange.dydx.platformui.designSystem.theme.ThemeConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.platformui.designSystem.theme.colorMap
@@ -141,15 +142,13 @@ class TradingActivity : FragmentActivity() {
     @Composable
     private fun MainContent() {
         key(themeChangedState) {
-            PlatformInfoScaffold(
-                modifier = Modifier,
-                platformInfo = viewModel.platformInfo,
-            ) {
+            Box {
                 DydxNavGraph(
                     appRouter = viewModel.router,
-                    modifier = it,
                     logger = viewModel.logger,
                 )
+
+                ToastContainer()
             }
         }
     }
