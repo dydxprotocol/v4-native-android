@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.portfolio.components.positions
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -113,6 +114,8 @@ object DydxPortfolioPositionsView : DydxComponent {
         if (state.positions.isEmpty()) {
             item(key = "placeholder") {
                 DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
+
+                CreateFooter(Modifier, state)
             }
         } else {
             if (!state.isIsolatedMarketEnabled) {
@@ -135,6 +138,29 @@ object DydxPortfolioPositionsView : DydxComponent {
                 )
 
 //              Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            item(key = "footer") {
+                CreateFooter(Modifier, state)
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateFooter(modifier: Modifier, state: ViewState) {
+        if (!state.isIsolatedMarketEnabled) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = modifier.fillMaxWidth()
+                    .padding(vertical = 24.dp),
+            ) {
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.ISOLATED_POSITIONS_COMING_SOON"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding * 2),
+                )
             }
         }
     }

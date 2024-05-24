@@ -8,6 +8,8 @@ import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
@@ -23,6 +25,7 @@ class DydxPortfolioOrdersViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
+    private var featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxPortfolioOrdersView.ViewState?> = combine(
@@ -66,6 +69,7 @@ class DydxPortfolioOrdersViewModel @Inject constructor(
             onBackTappedAction = {
                 router.navigateBack()
             },
+            isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
         )
     }
 }
