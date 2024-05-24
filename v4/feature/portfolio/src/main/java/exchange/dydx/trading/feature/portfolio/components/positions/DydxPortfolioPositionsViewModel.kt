@@ -33,12 +33,14 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
             abacusStateManager.state.selectedSubaccountPositions,
             abacusStateManager.state.marketMap,
             abacusStateManager.state.assetMap,
-        ) { positions, marketMap, assetMap ->
+            abacusStateManager.state.onboarded,
+        ) { positions, marketMap, assetMap, onboarded ->
             createViewState(
-                positions,
-                marketMap,
-                assetMap,
-                featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
+                position = positions,
+                marketMap = marketMap,
+                assetMap = assetMap,
+                isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
+                onboarded = onboarded,
             )
         }
             .distinctUntilChanged()
@@ -48,6 +50,7 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
         marketMap: Map<String, PerpetualMarket>?,
         assetMap: Map<String, Asset>?,
         isIsolatedMarketEnabled: Boolean,
+        onboarded: Boolean,
     ): DydxPortfolioPositionsView.ViewState {
         return DydxPortfolioPositionsView.ViewState(
             localizer = localizer,
@@ -82,6 +85,7 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Push,
                 )
             },
+            onboarded = onboarded,
         )
     }
 }

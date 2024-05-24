@@ -51,6 +51,7 @@ object DydxPortfolioPositionsView : DydxComponent {
         val localizer: LocalizerProtocol,
         val positions: List<SharedMarketPositionViewState> = listOf(),
         val isIsolatedMarketEnabled: Boolean,
+        val onboarded: Boolean,
         val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
         val onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
@@ -62,6 +63,7 @@ object DydxPortfolioPositionsView : DydxComponent {
                     SharedMarketPositionViewState.preview,
                 ),
                 isIsolatedMarketEnabled = false,
+                onboarded = true,
             )
         }
     }
@@ -115,7 +117,9 @@ object DydxPortfolioPositionsView : DydxComponent {
             item(key = "placeholder") {
                 DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
 
-                CreateFooter(Modifier, state)
+                if (state.onboarded) {
+                    CreateFooter(Modifier, state)
+                }
             }
         } else {
             if (!state.isIsolatedMarketEnabled) {

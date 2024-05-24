@@ -57,6 +57,7 @@ object DydxPortfolioOrdersView : DydxComponent {
         val onOrderTappedAction: (String) -> Unit = {},
         val onBackTappedAction: () -> Unit = {},
         val isIsolatedMarketEnabled: Boolean,
+        val onboarded: Boolean,
     ) {
         companion object {
             val preview = ViewState(
@@ -66,6 +67,7 @@ object DydxPortfolioOrdersView : DydxComponent {
                     SharedOrderViewState.preview,
                 ),
                 isIsolatedMarketEnabled = false,
+                onboarded = true,
             )
         }
     }
@@ -127,7 +129,9 @@ object DydxPortfolioOrdersView : DydxComponent {
             item(key = "placeholder") {
                 DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
 
-                CreateFooter(Modifier, state)
+                if (state.onboarded) {
+                    CreateFooter(Modifier, state)
+                }
             }
         } else {
             item(key = "header") {

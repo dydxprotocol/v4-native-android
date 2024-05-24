@@ -33,8 +33,9 @@ class DydxPortfolioOrdersViewModel @Inject constructor(
         abacusStateManager.state.selectedSubaccountOrders,
         abacusStateManager.state.marketMap,
         abacusStateManager.state.assetMap,
-    ) { marketId, orders, marketMap, assetMap ->
-        createViewState(marketId, orders, marketMap, assetMap)
+        abacusStateManager.state.onboarded,
+    ) { marketId, orders, marketMap, assetMap, onboarded ->
+        createViewState(marketId, orders, marketMap, assetMap, onboarded)
     }
         .distinctUntilChanged()
 
@@ -43,6 +44,7 @@ class DydxPortfolioOrdersViewModel @Inject constructor(
         orders: List<SubaccountOrder>?,
         marketMap: Map<String, PerpetualMarket>?,
         assetMap: Map<String, Asset>?,
+        onboarded: Boolean,
     ): DydxPortfolioOrdersView.ViewState {
         val filteredOrders = if (marketId != null) {
             orders?.filter { it.marketId == marketId }
@@ -70,6 +72,7 @@ class DydxPortfolioOrdersViewModel @Inject constructor(
                 router.navigateBack()
             },
             isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
+            onboarded = onboarded,
         )
     }
 }
