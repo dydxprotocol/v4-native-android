@@ -14,8 +14,8 @@ import exchange.dydx.platformui.components.slider.CustomSlider
 import exchange.dydx.platformui.components.slider.CustomSliderDefaults
 import exchange.dydx.platformui.components.slider.progress
 import exchange.dydx.platformui.designSystem.theme.color
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
-import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
+import exchange.dydx.platformui.theme.MockLocalizer
 import kotlin.math.abs
 
 @Preview

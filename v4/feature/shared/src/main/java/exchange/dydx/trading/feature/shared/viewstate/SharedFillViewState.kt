@@ -5,8 +5,8 @@ import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.SubaccountFill
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.IntervalText
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.TokenTextView

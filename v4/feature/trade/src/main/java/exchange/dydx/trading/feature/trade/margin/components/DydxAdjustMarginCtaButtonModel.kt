@@ -7,9 +7,9 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.theme.DydxTheme
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.theme.DydxTheme
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

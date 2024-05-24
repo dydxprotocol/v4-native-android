@@ -27,8 +27,8 @@ import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.positiveColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
-import exchange.dydx.trading.common.theme.MockLocalizer
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
+import exchange.dydx.platformui.theme.MockLocalizer
 
 @Preview
 @Composable

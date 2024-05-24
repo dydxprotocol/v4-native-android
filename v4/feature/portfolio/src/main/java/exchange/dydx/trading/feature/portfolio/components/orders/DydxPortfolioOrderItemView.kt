@@ -24,7 +24,7 @@ import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.feature.shared.views.IntervalText
 import exchange.dydx.trading.feature.shared.views.OrderStatusView
 import exchange.dydx.trading.feature.shared.views.SideTextView

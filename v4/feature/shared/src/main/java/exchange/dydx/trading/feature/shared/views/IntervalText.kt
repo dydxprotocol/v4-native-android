@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.Instant
 import java.time.temporal.ChronoUnit

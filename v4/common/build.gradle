@@ -42,7 +42,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:utilities')
 
     /* Module Dependencies */

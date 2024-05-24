@@ -1,32 +1,23 @@
-package exchange.dydx.trading.common.theme
+package exchange.dydx.platformui.theme
 
 import android.content.Context
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Shapes
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.designSystem.theme.StyleConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeConfig
-import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.platformui.designSystem.theme.color
-import exchange.dydx.platformui.designSystem.theme.dydxDefault
-import exchange.dydx.platformui.designSystem.theme.themeColor
-import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.PreviewAppConfig
 import exchange.dydx.utilities.utils.JsonUtils
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.json.JsonNull.content
 
 interface DydxTheme {
     companion object {
@@ -71,19 +62,6 @@ fun DydxThemedPreviewSurface(
         color = background.color,
     ) {
         content(appConfig)
-    }
-}
-
-@Preview
-@Composable
-private fun DarkPreview() {
-    DydxThemedPreviewSurface(darkTheme = true) {
-        Text(
-            text = "Hello",
-            style = TextStyle.dydxDefault
-                .themeFont(fontSize = ThemeFont.FontSize.medium)
-                .themeColor(ThemeColor.SemanticColor.text_secondary),
-        )
     }
 }
 

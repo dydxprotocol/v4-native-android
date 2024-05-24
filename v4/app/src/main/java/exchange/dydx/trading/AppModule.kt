@@ -46,11 +46,11 @@ import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.platformui.designSystem.theme.StyleConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
+import exchange.dydx.platformui.theme.DydxTheme
+import exchange.dydx.platformui.theme.DydxThemeImpl
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.AppConfigImpl
 import exchange.dydx.trading.common.di.CoroutineScopes
-import exchange.dydx.trading.common.theme.DydxTheme
-import exchange.dydx.trading.common.theme.DydxThemeImpl
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.integration.analytics.logging.CompositeLogger
 import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
