@@ -165,7 +165,7 @@ object DydxPortfolioOrdersView : DydxComponent {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = modifier.fillMaxWidth()
-                    .padding(vertical = 24.dp),
+                    .padding(vertical = 16.dp),
             ) {
                 Text(
                     text = state.localizer.localize("APP.GENERAL.ISOLATED_POSITION_ORDERS_COMING_SOON"),

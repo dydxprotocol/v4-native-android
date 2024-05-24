@@ -156,7 +156,7 @@ object DydxPortfolioPositionsView : DydxComponent {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = modifier.fillMaxWidth()
-                    .padding(vertical = 24.dp),
+                    .padding(vertical = 16.dp),
             ) {
                 Text(
                     text = state.localizer.localize("APP.GENERAL.ISOLATED_POSITIONS_COMING_SOON"),
