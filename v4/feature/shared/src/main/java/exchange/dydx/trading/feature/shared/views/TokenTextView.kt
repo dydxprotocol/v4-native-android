@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 
 @Preview
 @Composable

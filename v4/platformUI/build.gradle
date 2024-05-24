@@ -40,6 +40,7 @@ android {
 
 dependencies {
     implementation project(':v4:utilities')
+    implementation project(':v4:common')
 
     implementation "com.github.PhilJay:MPAndroidChart:$mpAndroidChartVersion"
 

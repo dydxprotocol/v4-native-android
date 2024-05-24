@@ -7,10 +7,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
+import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
-import exchange.dydx.trading.common.theme.MockLocalizer
 
 @Preview
 @Composable

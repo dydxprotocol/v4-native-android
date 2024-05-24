@@ -18,11 +18,11 @@ import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
+import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.navigation.DydxAnimation
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
-import exchange.dydx.trading.common.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.transfer.deposit.DydxTransferDepositView
 import exchange.dydx.trading.feature.transfer.faucet.DydxTransferFaucetView

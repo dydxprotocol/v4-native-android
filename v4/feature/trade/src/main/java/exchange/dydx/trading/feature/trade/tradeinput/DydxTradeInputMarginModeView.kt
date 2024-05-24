@@ -31,9 +31,9 @@ import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
+import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
-import exchange.dydx.trading.common.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 
 @Preview
