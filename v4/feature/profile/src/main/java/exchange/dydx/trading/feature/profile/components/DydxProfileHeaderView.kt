@@ -1,32 +1,37 @@
 package exchange.dydx.trading.feature.profile.components
 
 import android.R.attr.maxLines
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -49,12 +54,15 @@ object DydxProfileHeaderView : DydxComponent {
         val localizer: LocalizerProtocol,
         val dydxChainLogoUrl: String? = null,
         val dydxAddress: String? = null,
-        val onTapAction: (() -> Unit)? = null,
+        val sourceAddress: String? = null,
+        val copyAddressAction: (() -> Unit)? = null,
+        val blockExplorerAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                dydxAddress = "dydx11111111111111111111111",
+                dydxAddress = "dydx1111111111111111111111122233333",
+                sourceAddress = "0x111111111111111111111111222222222",
             )
         }
     }
@@ -73,82 +81,190 @@ object DydxProfileHeaderView : DydxComponent {
             return
         }
 
-        Row(
-            modifier
+        Column(
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = ThemeShapes.HorizontalPadding,
-                    vertical = ThemeShapes.VerticalPadding,
-                )
-                .padding(top = ThemeShapes.VerticalPadding),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+                .offset(y = (16).dp),
         ) {
-            Column(
-                modifier = Modifier.align(Alignment.CenterVertically),
-            ) {
-                PlatformImage(
-                    icon = if (state.dydxAddress != null) state.dydxChainLogoUrl else R.drawable.hedgie_placholder,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                )
-            }
+            TopContent(modifier = Modifier.zIndex(1f), state = state)
 
-            Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
-
+            val shape = RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp)
             Column(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .weight(1f),
+                    .offset(y = (-16).dp)
+                    .background(color = ThemeColor.SemanticColor.layer_1.color, shape = shape)
+                    .padding(horizontal = ThemeShapes.HorizontalPadding)
+                    .padding(vertical = ThemeShapes.HorizontalPadding)
+                    .padding(top = 16.dp),
             ) {
-                Text(
-                    text = state.localizer.localize("APP.V4.DYDX_ADDRESS"),
-                    style = TextStyle.dydxDefault
-                        .themeFont(
-                            fontSize = ThemeFont.FontSize.small,
-                        ),
-                )
-
-//                AndroidView(
-//                    factory = { context ->
-//                        TextView(context).apply {
-//                            maxLines = 1
-//                            ellipsize = TextUtils.TruncateAt.MIDDLE
-//                        }
-//                    },
-//                    update = {
-//                        it.text = state.dydxAddress ?: "-"
-//                        it.setTextColor(ThemeColor.SemanticColor.text_primary.color.toArgb())
-//                    }
-//                )
-
-                val address = state.dydxAddress ?: "-"
-                val chunked = if (address.length > 20) {
-                    address.take(12) + "..." + address.takeLast(8)
-                } else {
-                    address
-                }
-                Text(
-                    text = chunked,
-                    style = TextStyle.dydxDefault
-                        .themeColor(ThemeColor.SemanticColor.text_primary),
-                    modifier = Modifier,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                BottomContent(modifier = Modifier, state = state)
             }
+        }
+    }
 
-            if (state.dydxAddress != null) {
-                Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
+    @Composable
+    private fun TopContent(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(
+                    color = ThemeColor.SemanticColor.layer_3.color,
+                    shape = RoundedCornerShape(14.dp),
+                )
+                .padding(
+                    horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = ThemeShapes.HorizontalPadding,
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            PlatformImage(
+                icon = if (state.dydxAddress != null) state.dydxChainLogoUrl else R.drawable.hedgie_placholder,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape),
+            )
 
-                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.chevron_right),
-                        contentDescription = "",
-                        modifier = Modifier.size(24.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                CreateAddress(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1f),
+                    state = state,
+                )
+
+                if (state.dydxAddress != null) {
+                    Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
+
+                    CreateButtons(
+                        modifier = Modifier.align(Alignment.CenterVertically).width(92.dp),
+                        state = state,
                     )
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun BottomContent(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = state.localizer.localize("APP.V4.SOURCE_ADDRESS"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = truncateAddress(state.sourceAddress ?: "-"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_secondary),
+                modifier = Modifier,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+
+    @Composable
+    private fun CreateAddress(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                text = state.localizer.localize("APP.V4.DYDX_ADDRESS"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    .themeFont(
+                        fontSize = ThemeFont.FontSize.small,
+                    ),
+            )
+
+            Text(
+                text = truncateAddress(state.dydxAddress ?: "-"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_primary)
+                    .themeFont(fontSize = ThemeFont.FontSize.large),
+                modifier = Modifier,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+
+    private fun truncateAddress(address: String): String {
+        return if (address.length > 20) {
+            address.take(8) + "..." + address.takeLast(6)
+        } else {
+            address
+        }
+    }
+
+    @Composable
+    private fun CreateButtons(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            CreateButton(
+                modifier = Modifier.weight(1f),
+                icon = R.drawable.icon_copy,
+                action = state.copyAddressAction,
+            )
+
+            CreateButton(
+                modifier = Modifier.weight(1f),
+                icon = R.drawable.icon_external_link,
+                action = state.blockExplorerAction,
+            )
+        }
+    }
+
+    @Composable
+    private fun CreateButton(
+        modifier: Modifier,
+        icon: Any,
+        tint: ThemeColor.SemanticColor? = ThemeColor.SemanticColor.text_secondary,
+        action: (() -> Unit)?,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier,
+        ) {
+            PlatformIconButton(
+                size = 40.dp,
+                padding = 0.dp,
+                action = action ?: {},
+            ) {
+                PlatformImage(
+                    icon = icon,
+                    modifier = Modifier.size(18.dp),
+                    colorFilter = if (tint != null) ColorFilter.tint(tint.color) else null,
+                )
             }
         }
     }
