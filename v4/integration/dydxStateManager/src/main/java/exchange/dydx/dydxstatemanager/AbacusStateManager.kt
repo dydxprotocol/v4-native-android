@@ -524,5 +524,5 @@ class AbacusStateManager @Inject constructor(
 val V4Environment.usdcTokenInfo: TokenInfo?
     get() = tokens["usdc"]
 
-val V4Environment.dydxTokenInfo: TokenInfo?
+val V4Environment.nativeTokenInfo: TokenInfo?
     get() = tokens["chain"]

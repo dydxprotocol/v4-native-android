@@ -53,8 +53,8 @@ class DydxTransferOutViewModel @Inject constructor(
             abacusStateManager.state.accountBalance(abacusStateManager.nativeTokenDenom),
             selectedChainFlow,
             selectedTokenFlow,
-        ) { transferInput, freeCollateral, dydxTokenAmount, selectedChain, selectedToken ->
-            createViewState(transferInput, freeCollateral, dydxTokenAmount, selectedChain, selectedToken)
+        ) { transferInput, freeCollateral, nativeTokenAmount, selectedChain, selectedToken ->
+            createViewState(transferInput, freeCollateral, nativeTokenAmount, selectedChain, selectedToken)
         }
             .distinctUntilChanged()
 
@@ -79,7 +79,7 @@ class DydxTransferOutViewModel @Inject constructor(
     private fun createViewState(
         transferInput: TransferInput?,
         freeCollateral: Double?,
-        dydxTokenAmount: Double?,
+        nativeTokenAmount: Double?,
         chain: SelectionOption?,
         token: SelectionOption?,
     ): DydxTransferOutView.ViewState {
@@ -146,7 +146,7 @@ class DydxTransferOutViewModel @Inject constructor(
                 },
                 maxAmount = when (token?.type) {
                     abacusStateManager.usdcTokenKey -> freeCollateral ?: 0.0
-                    abacusStateManager.nativeTokenKey -> dydxTokenAmount ?: 0.0
+                    abacusStateManager.nativeTokenKey -> nativeTokenAmount ?: 0.0
                     else -> null
                 },
                 stepSize = when (token?.type) {
@@ -164,7 +164,7 @@ class DydxTransferOutViewModel @Inject constructor(
                             TransferInputField.usdcSize,
                         )
                     } else if (token?.type == abacusStateManager.nativeTokenKey) {
-                        raw = min(raw, dydxTokenAmount ?: 0.0)
+                        raw = min(raw, nativeTokenAmount ?: 0.0)
                         val rawString = if (raw > 0) formatter.raw(raw) else null
                         abacusStateManager.transfer(
                             rawString,
