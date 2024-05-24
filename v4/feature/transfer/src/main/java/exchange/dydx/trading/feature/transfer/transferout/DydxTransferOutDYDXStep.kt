@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class DydxTransferOutDYDXStep(
     private val transferInput: TransferInput,
-    private val dydxTokenAmount: Double?,
+    private val nativeTokenAmount: Double?,
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val parser: ParserProtocol,
     private val localizer: LocalizerProtocol
@@ -30,10 +30,10 @@ class DydxTransferOutDYDXStep(
             return flowOf(invalidInputEvent)
         }
         val gasFee = transferInput.summary?.gasFee ?: 0.0
-        val dydxBalanceInWallet = dydxTokenAmount ?: 0.0
+        val nativeTokenBalanceInWallet = nativeTokenAmount ?: 0.0
         val recipient = transferInput.address ?: return flowOf(invalidInputEvent)
 
-        if (amountDecimal + gasFee <= dydxBalanceInWallet) {
+        if (amountDecimal + gasFee <= nativeTokenBalanceInWallet) {
             val payload: Map<String, Any> = mapOf(
                 "amount" to amount,
                 "recipient" to recipient,

@@ -134,14 +134,14 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
             abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom),
             abacusStateManager.state.currentWallet.mapNotNull { it },
             abacusStateManager.state.selectedSubaccount.mapNotNull { it },
-        ) { dydxTokenAmount, usdcTokenAmount, wallet, selectedSubaccount ->
-            Tuple4(dydxTokenAmount, usdcTokenAmount, wallet, selectedSubaccount)
+        ) { nativeTokenAmount, usdcTokenAmount, wallet, selectedSubaccount ->
+            Tuple4(nativeTokenAmount, usdcTokenAmount, wallet, selectedSubaccount)
         }
             .take(1)
-            .onEach { (dydxTokenAmount, usdcTokenAmount, wallet, selectedSubaccount) ->
+            .onEach { (nativeTokenAmount, usdcTokenAmount, wallet, selectedSubaccount) ->
                 processTranferOut(
                     transferInput = transferInput,
-                    dydxTokenAmount = dydxTokenAmount,
+                    nativeTokenAmount = nativeTokenAmount,
                     usdcTokenAmount = usdcTokenAmount,
                     wallet = wallet,
                     selectedSubaccount = selectedSubaccount,
@@ -152,7 +152,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
 
     private fun processTranferOut(
         transferInput: TransferInput,
-        dydxTokenAmount: Double?,
+        nativeTokenAmount: Double?,
         usdcTokenAmount: Double?,
         wallet: DydxWalletInstance,
         selectedSubaccount: Subaccount,
@@ -188,7 +188,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
                             abacusStateManager.nativeTokenKey ->
                                 DydxTransferOutDYDXStep(
                                     transferInput = transferInput,
-                                    dydxTokenAmount = dydxTokenAmount,
+                                    nativeTokenAmount = nativeTokenAmount,
                                     cosmosClient = cosmosClient,
                                     parser = parser,
                                     localizer = localizer,
