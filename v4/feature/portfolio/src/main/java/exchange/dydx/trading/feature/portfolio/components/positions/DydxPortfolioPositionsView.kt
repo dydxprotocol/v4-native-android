@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.portfolio.components.positions
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +51,7 @@ object DydxPortfolioPositionsView : DydxComponent {
         val localizer: LocalizerProtocol,
         val positions: List<SharedMarketPositionViewState> = listOf(),
         val isIsolatedMarketEnabled: Boolean,
+        val onboarded: Boolean,
         val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
         val onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
@@ -61,6 +63,7 @@ object DydxPortfolioPositionsView : DydxComponent {
                     SharedMarketPositionViewState.preview,
                 ),
                 isIsolatedMarketEnabled = false,
+                onboarded = true,
             )
         }
     }
@@ -113,6 +116,10 @@ object DydxPortfolioPositionsView : DydxComponent {
         if (state.positions.isEmpty()) {
             item(key = "placeholder") {
                 DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
+
+                if (state.onboarded) {
+                    CreateFooter(Modifier, state)
+                }
             }
         } else {
             if (!state.isIsolatedMarketEnabled) {
@@ -135,6 +142,29 @@ object DydxPortfolioPositionsView : DydxComponent {
                 )
 
 //              Spacer(modifier = Modifier.height(10.dp))
+            }
+
+            item(key = "footer") {
+                CreateFooter(Modifier, state)
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateFooter(modifier: Modifier, state: ViewState) {
+        if (!state.isIsolatedMarketEnabled) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = modifier.fillMaxWidth()
+                    .padding(vertical = 12.dp),
+            ) {
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.ISOLATED_POSITIONS_COMING_SOON"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding * 2),
+                )
             }
         }
     }
