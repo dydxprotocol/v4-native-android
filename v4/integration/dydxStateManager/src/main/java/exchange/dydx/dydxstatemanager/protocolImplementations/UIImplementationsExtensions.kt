@@ -17,7 +17,7 @@ object UIImplementationsExtensions {
             ioImplementations = ioImplementations,
             systemLanguage = systemLanguage ?: "en",
             path = "/config",
-            endpoint = "https://dydx-shared-resources.vercel.app/config",
+            endpoint = "https://dydx-v4-shared-resources.vercel.app/config",
             loadLocalOnly = loadLocalOnly,
         )
 
