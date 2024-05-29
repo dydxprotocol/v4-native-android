@@ -149,7 +149,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
                                 action = state.addTriggerAction ?: {},
                             )
                         } ?: PlatformButton(
-                            text = state.localizer.localize("APP.TRADE.ADD_TP"),
+                            text = state.localizer.localize("APP.TRADE.ADD_TAKE_PROFIT"),
                             state = PlatformButtonState.Secondary,
                             modifier = Modifier
                                 .padding(vertical = ThemeShapes.VerticalPadding)
@@ -168,7 +168,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
                                 action = state.addTriggerAction ?: {},
                             )
                         } ?: PlatformButton(
-                            text = state.localizer.localize("APP.TRADE.ADD_SL"),
+                            text = state.localizer.localize("APP.TRADE.ADD_STOP_LOSS"),
                             state = PlatformButtonState.Secondary,
                             modifier = Modifier
                                 .padding(vertical = ThemeShapes.VerticalPadding)
