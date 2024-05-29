@@ -4,6 +4,8 @@ import com.hoc081098.flowext.ThrottleConfiguration
 import com.hoc081098.flowext.throttleTime
 import exchange.dydx.abacus.output.Account
 import exchange.dydx.abacus.output.Asset
+import exchange.dydx.abacus.output.Compliance
+import exchange.dydx.abacus.output.ComplianceStatus
 import exchange.dydx.abacus.output.Configs
 import exchange.dydx.abacus.output.Documentation
 import exchange.dydx.abacus.output.LaunchIncentive
@@ -530,6 +532,15 @@ class AbacusState(
         perpetualState
             .map { it?.restriction?.restriction ?: Restriction.NO_RESTRICTION }
             .stateIn(stateManagerScope, SharingStarted.Lazily, Restriction.NO_RESTRICTION)
+    }
+
+    /**
+     Compliance
+     */
+    val compliance: StateFlow<Compliance> by lazy {
+        perpetualState
+            .map { it?.compliance ?: Compliance(null, ComplianceStatus.UNKNOWN, null, null) }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, Compliance(null, ComplianceStatus.UNKNOWN, null, null))
     }
 
     /**
