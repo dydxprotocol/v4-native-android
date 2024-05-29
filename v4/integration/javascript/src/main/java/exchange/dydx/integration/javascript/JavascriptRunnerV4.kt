@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-
-
 private const val TAG: String = "JavascriptRunner(V4)"
 private const val DO_LOG: Boolean = AppConfig.VERBOSE_LOGGING
 
