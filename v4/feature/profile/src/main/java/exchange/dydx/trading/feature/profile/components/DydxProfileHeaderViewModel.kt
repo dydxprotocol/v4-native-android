@@ -9,7 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.Toaster
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -23,7 +23,7 @@ class DydxProfileHeaderViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val appConfig: AppConfig,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val platformInfo: PlatformInfo,
+    private val toaster: Toaster,
     private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
@@ -46,7 +46,7 @@ class DydxProfileHeaderViewModel @Inject constructor(
                 }
                 val clip = ClipData.newPlainText("text", walletState.currentWallet?.cosmoAddress)
                 clipboard.setPrimaryClip(clip)
-                platformInfo.show(message = localizer.localize("APP.V4.DYDX_ADDRESS_COPIED"))
+                toaster.showToast(message = localizer.localize("APP.V4.DYDX_ADDRESS_COPIED"))
             },
             blockExplorerAction = {
                 if (abacusStateManager.environment?.links?.mintscanBase == null && walletState?.currentWallet?.cosmoAddress == null) {

@@ -1,10 +1,10 @@
 package exchange.dydx.trading.feature.shared
 
-import androidx.compose.material.SnackbarDuration
 import exchange.dydx.abacus.output.Restriction
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.Toaster
 
 enum class DydxScreenResult {
     NoRestriction,
@@ -26,7 +26,7 @@ enum class DydxScreenResult {
     }
 
     fun showRestrictionAlert(
-        platformInfo: PlatformInfo,
+        toaster: Toaster,
         localizer: LocalizerProtocol,
         abacusStateManager: AbacusStateManagerProtocol,
         buttonAction: (() -> Unit)? = null,
@@ -35,60 +35,60 @@ enum class DydxScreenResult {
             DydxScreenResult.NoRestriction -> {
             }
             DydxScreenResult.UserRestriction -> {
-                platformInfo.show(
+                toaster.showToast(
                     title = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_SUBTITLE"),
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonTitle = localizer.localize("APP.GENERAL.OK"),
                     buttonAction = {
                         buttonAction?.invoke()
                         abacusStateManager.replaceCurrentWallet()
                     },
-                    duration = SnackbarDuration.Indefinite,
+                    duration = Toast.Duration.Indefinite,
                 )
             }
             DydxScreenResult.SourceRestriction -> {
-                platformInfo.show(
+                toaster.showToast(
                     title = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_WITHDRAWAL_TRANSFER_ORIGINATION_ERROR_MESSAGE"),
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonTitle = localizer.localize("APP.GENERAL.OK"),
                     buttonAction = buttonAction,
-                    duration = SnackbarDuration.Indefinite,
+                    duration = Toast.Duration.Indefinite,
                 )
             }
             DydxScreenResult.DestinationRestriction -> {
-                platformInfo.show(
+                toaster.showToast(
                     title = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_WITHDRAWAL_TRANSFER_DESTINATION_ERROR_MESSAGE"),
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonTitle = localizer.localize("APP.GENERAL.OK"),
                     buttonAction = buttonAction,
-                    duration = SnackbarDuration.Indefinite,
+                    duration = Toast.Duration.Indefinite,
                 )
             }
             DydxScreenResult.GeoRestriction -> {
-                platformInfo.show(
+                toaster.showToast(
                     title = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_SUBTITLE"),
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonTitle = null, // localizer.localize("APP.GENERAL.OK"),
                     buttonAction = {
                         buttonAction?.invoke()
                         // exit app
                         // android.os.Process.killProcess(android.os.Process.myPid());
                     },
-                    duration = SnackbarDuration.Indefinite,
+                    duration = Toast.Duration.Indefinite,
                 )
             }
             DydxScreenResult.UnknownRestriction -> {
-                platformInfo.show(
+                toaster.showToast(
                     title = localizer.localize("ERRORS.GENERAL.RATE_LIMIT_REACHED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.GENERAL.RATE_LIMIT_REACHED_ERROR_MESSAGE"),
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonTitle = localizer.localize("APP.GENERAL.OK"),
                     buttonAction = buttonAction,
-                    duration = SnackbarDuration.Indefinite,
+                    duration = Toast.Duration.Indefinite,
                 )
             }
         }

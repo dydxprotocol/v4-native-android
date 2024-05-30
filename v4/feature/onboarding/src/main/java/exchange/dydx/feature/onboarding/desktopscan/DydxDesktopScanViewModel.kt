@@ -7,7 +7,7 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.integration.starkex.StarkexLib
 import exchange.dydx.platformui.components.PlatformDialog
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.Toaster
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
@@ -28,7 +28,7 @@ class DydxDesktopScanViewModel @Inject constructor(
     private val router: DydxRouter,
     private val parser: ParserProtocol,
     val platformDialog: PlatformDialog,
-    val platformInfo: PlatformInfo,
+    val toaster: Toaster,
     val starkexLib: StarkexLib,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
@@ -62,7 +62,7 @@ class DydxDesktopScanViewModel @Inject constructor(
     private fun decryptQrPayload(encryptedString: String, encryptKey: String) {
         starkexLib.aesDecrypt(encryptedString, encryptKey) { decrypted, error ->
             if (error != null) {
-                platformInfo.show(
+                toaster.showToast(
                     message = localizer.localize("APP.ONBOARDING.SCAN_QR_CODE_ERROR"),
                 )
             } else if (decrypted != null) {
@@ -82,7 +82,7 @@ class DydxDesktopScanViewModel @Inject constructor(
                     router.navigateBack()
                     router.navigateTo(PortfolioRoutes.main)
                 } else {
-                    platformInfo.show(
+                    toaster.showToast(
                         message = localizer.localize("APP.ONBOARDING.SCAN_QR_CODE_ERROR"),
                     )
                 }

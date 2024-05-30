@@ -145,8 +145,17 @@ class Toaster @Inject constructor(
 
     private var currentJob: Job? = null
 
-    fun showToast(toast: Toast) {
-        toastQueue.add(toast)
+    fun showToast(
+        title: String? = null,
+        message: String,
+        buttonTitle: String? = null,
+        type: Toast.Type = Toast.Type.Info,
+        duration: Toast.Duration = Toast.Duration.Short,
+        buttonAction: (() -> Unit)? = null,
+    ) {
+        toastQueue.add(
+            Toast(title, message, buttonTitle, type, duration, buttonAction),
+        )
         if (currentJob == null || currentJob?.isCompleted == true) {
             displayNextToast()
         }

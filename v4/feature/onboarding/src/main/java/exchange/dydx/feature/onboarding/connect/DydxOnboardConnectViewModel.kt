@@ -12,7 +12,8 @@ import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxCartera.imageUrl
 import exchange.dydx.dydxCartera.v4.DydxV4WalletSetup
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.Toaster
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
@@ -37,7 +38,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
     private val cosmosV4Client: CosmosV4ClientProtocol,
     private val parser: ParserProtocol,
     val abacusStateManager: AbacusStateManagerProtocol,
-    val platformInfo: PlatformInfo,
+    val toaster: Toaster,
     private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
@@ -100,9 +101,9 @@ class DydxOnboardConnectViewModel @Inject constructor(
                     is DydxWalletSetup.Status.Error -> {
                         val error = walletStatus.error
                         val message = error.message ?: localizer.localize("APP.GENERAL.ERROR")
-                        platformInfo.show(
+                        toaster.showToast(
                             message = message,
-                            type = PlatformInfo.InfoType.Error,
+                            type = Toast.Type.Error,
                         )
                     }
                     else -> {}

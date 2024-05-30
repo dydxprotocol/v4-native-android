@@ -5,7 +5,8 @@ import exchange.dydx.abacus.state.manager.ApiState
 import exchange.dydx.abacus.state.manager.ApiStatus
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.Toaster
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -15,7 +16,7 @@ class DydxApiStatusWorker(
     override val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
-    private val platformInfo: PlatformInfo,
+    private val toaster: Toaster,
 ) : WorkerProtocol {
     private var lastState: ApiState? = null
 
@@ -50,48 +51,48 @@ class DydxApiStatusWorker(
         }
         when (status) {
             ApiStatus.INDEXER_DOWN -> {
-                platformInfo.show(
+                toaster.showToast(
                     message = localizer.localize("APP.V4.INDEXER_DOWN"),
                     buttonTitle = buttonTitle,
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonAction = buttonAction,
                 )
             }
             ApiStatus.INDEXER_HALTED -> {
-                platformInfo.show(
+                toaster.showToast(
                     message = localizer.localizeWithParams("APP.V4.INDEXER_HALTED", mapOf("HALTED_BLOCK" to (apiState.haltedBlock ?: 0).toString())) ?: "",
                     buttonTitle = buttonTitle,
-                    type = PlatformInfo.InfoType.Warning,
+                    type = Toast.Type.Warning,
                     buttonAction = buttonAction,
                 )
             }
             ApiStatus.INDEXER_TRAILING -> {
-                platformInfo.show(
+                toaster.showToast(
                     message = localizer.localizeWithParams("APP.V4.INDEXER_TRAILING", mapOf("TRAILING_BLOCKS" to (apiState.trailingBlocks ?: 0).toString())) ?: "",
                     buttonTitle = buttonTitle,
-                    type = PlatformInfo.InfoType.Warning,
+                    type = Toast.Type.Warning,
                     buttonAction = buttonAction,
                 )
             }
             ApiStatus.VALIDATOR_DOWN -> {
-                platformInfo.show(
+                toaster.showToast(
                     message = localizer.localize("APP.V4.VALIDATOR_DOWN"),
                     buttonTitle = buttonTitle,
-                    type = PlatformInfo.InfoType.Error,
+                    type = Toast.Type.Error,
                     buttonAction = buttonAction,
                 )
             }
             ApiStatus.VALIDATOR_HALTED -> {
-                platformInfo.show(
+                toaster.showToast(
                     message = localizer.localizeWithParams("APP.V4.VALIDATOR_HALTED", mapOf("HALTED_BLOCK" to (apiState.haltedBlock ?: 0).toString())) ?: "",
                     buttonTitle = buttonTitle,
-                    type = PlatformInfo.InfoType.Warning,
+                    type = Toast.Type.Warning,
                     buttonAction = buttonAction,
                 )
             }
             ApiStatus.NORMAL -> {
                 if (lastState != null) {
-                    platformInfo.show(
+                    toaster.showToast(
                         message = localizer.localize("APP.V4.NETWORK_RECOVERED"),
                     )
                 }
