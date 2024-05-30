@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.trade.trigger.components.inputfields.size
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.ErrorType
@@ -19,6 +18,7 @@ import exchange.dydx.trading.feature.trade.alertState
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -64,7 +64,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         val marketConfigs = configsAndAsset?.configs
         val stepSize = marketConfigs?.stepSize
         val size = abs(triggerOrdersInput?.size ?: 0.0)
-        val positionSize = abs(position.size?.current ?: 0.0)
+        val positionSize = abs(position.size.current ?: 0.0)
         val percentage = if (positionSize != 0.0) {
             size / positionSize
         } else {
@@ -80,7 +80,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                 enabledFlow.value = enabled
                 if (!enabled) {
                     abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(abs(position?.size?.current ?: 0.0), size = stepSize),
+                        formatter.decimalLocaleAgnostic(abs(position.size.current ?: 0.0), size = stepSize),
                         TriggerOrdersInputField.size,
                     )
                 }
