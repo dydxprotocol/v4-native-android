@@ -1,7 +1,7 @@
 package exchange.dydx.trading.feature.trade.trigger.components.inputfields.size
 
 import androidx.lifecycle.ViewModel
-import com.hoc081098.flowext.combine
+import kotlinx.coroutines.flow.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.ErrorType
@@ -45,20 +45,18 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                     abacusStateManager.state.selectedSubaccountPositionOfMarket(it)
                 }
                 .filterNotNull(),
-            triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
             abacusStateManager.state.validationErrors,
-        ) { sizeEnabled, position, isNewTriggerOrder, triggerOrdersInput, configsAndAssetMap, validationErrors ->
+        ) { sizeEnabled, position, triggerOrdersInput, configsAndAssetMap, validationErrors ->
             val marketId = triggerOrdersInput?.marketId ?: return@combine null
-            createViewState(sizeEnabled, position, isNewTriggerOrder, triggerOrdersInput, configsAndAssetMap?.get(marketId), validationErrors)
+            createViewState(sizeEnabled, position, triggerOrdersInput, configsAndAssetMap?.get(marketId), validationErrors)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         sizeEnabled: Boolean,
         position: SubaccountPosition,
-        isNewTriggerOrder: Boolean,
         triggerOrdersInput: TriggerOrdersInput?,
         configsAndAsset: MarketConfigsAndAsset?,
         validationErrors: List<ValidationError>?,
@@ -77,7 +75,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
 
         return DydxTriggerOrderSizeView.ViewState(
             localizer = localizer,
-            enabled = sizeEnabled && isNewTriggerOrder,
+            enabled = sizeEnabled,
             onEnabledChanged = { enabled ->
                 enabledFlow.value = enabled
                 if (!enabled) {
@@ -109,7 +107,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                     TriggerOrdersInputField.size,
                 )
             },
-            canEdit = isNewTriggerOrder,
+            canEdit = true,
         )
     }
 }
