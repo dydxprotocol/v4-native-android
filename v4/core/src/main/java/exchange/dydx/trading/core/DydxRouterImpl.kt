@@ -172,8 +172,9 @@ class DydxRouterImpl @Inject constructor(
     }
 
     override fun navigateBack() {
-        routeQueue.removeLast()
-        navHostController.popBackStack()
+        routeQueue.removeLastOrNull()?.also {
+            navHostController.popBackStack()
+        }
     }
 
     override fun navigateToRoot(excludeRoot: Boolean) {
