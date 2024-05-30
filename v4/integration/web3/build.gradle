@@ -43,7 +43,6 @@ dependencies {
 
     // Hilt
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
-    kapt "com.google.dagger:dagger-compiler:$hiltVersion"
     api "com.google.dagger:dagger:$hiltVersion"
     implementation "com.google.dagger:hilt-core:$hiltVersion"
     implementation "com.google.dagger:hilt-android:$hiltVersion"
