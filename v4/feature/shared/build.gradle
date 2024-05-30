@@ -54,10 +54,7 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
 
     // Hilt
-    annotationProcessor "com.google.dagger:dagger-compiler:$hiltVersion"
-
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
-    kapt "com.google.dagger:dagger-compiler:$hiltVersion"
 
     // Hilt
     api "com.google.dagger:dagger:$hiltVersion"

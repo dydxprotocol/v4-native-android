@@ -67,11 +67,7 @@ dependencies {
 
 //    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
 
-//    implementation "com.google.dagger:hilt-compiler:$hiltVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$hiltVersion"
-
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
-    kapt "com.google.dagger:dagger-compiler:$hiltVersion"
 
     // Hilt
     api "com.google.dagger:dagger:$hiltVersion"
