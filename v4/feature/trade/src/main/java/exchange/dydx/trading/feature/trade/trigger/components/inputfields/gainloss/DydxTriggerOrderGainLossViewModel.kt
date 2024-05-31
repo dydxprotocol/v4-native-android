@@ -84,10 +84,7 @@ open class DydxTriggerOrderGainLossViewModel(
             when (displayType) {
                 GainLossDisplayType.Amount -> formatter.raw(orderPrice.usdcDiff, 2)
                 GainLossDisplayType.Percent -> orderPrice.percentDiff?.let {
-                    formatter.percent(
-                        number = it / 100.0,
-                        digits = 2,
-                    )
+                    formatter.raw(it, 2)
                 }
             }
 

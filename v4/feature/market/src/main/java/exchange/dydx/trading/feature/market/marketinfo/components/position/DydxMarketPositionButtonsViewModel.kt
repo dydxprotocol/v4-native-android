@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountOrder
 import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
@@ -104,7 +105,7 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
         return DydxMarketPositionButtonsView.TriggerViewState(
             label = label,
             triggerPrice = order.triggerPrice?.let { formatter.dollar(it, tickSize) },
-            limitPrice = order.price.let { formatter.dollar(it, tickSize) },
+            limitPrice = if (order.type == OrderType.stopLimit || order.type == OrderType.takeProfitLimit) order.price.let { formatter.dollar(it, tickSize) } else null,
             sizePercent = formatter.percent(percentage, 2),
             hasMultipleOrders = orders.size > 1,
         )

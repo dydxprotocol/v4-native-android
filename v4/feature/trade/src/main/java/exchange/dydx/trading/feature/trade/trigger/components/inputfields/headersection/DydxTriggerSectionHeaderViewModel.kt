@@ -85,14 +85,14 @@ open class DydxTriggerSectionHeaderViewModel(
                 GainLossDisplayType.Percent -> orderPrice.usdcDiff?.let { diff ->
                     SignedAmountView.ViewState(
                         text = formatter.dollar(kotlin.math.abs(diff), tickSize),
-                        sign = if (diff > 0.0) PlatformUISign.Plus else PlatformUISign.Minus,
+                        sign = if (inputType == DydxTriggerOrderInputType.TakeProfit) PlatformUISign.Plus else PlatformUISign.Minus,
                         coloringOption = SignedAmountView.ColoringOption.SignOnly,
                     )
                 }
                 GainLossDisplayType.Amount -> orderPrice.percentDiff?.let { diff ->
                     SignedAmountView.ViewState(
                         text = formatter.percent(kotlin.math.abs(diff / 100.0), 2),
-                        sign = if (diff > 0.0) PlatformUISign.Plus else PlatformUISign.Minus,
+                        sign = if (inputType == DydxTriggerOrderInputType.TakeProfit) PlatformUISign.Plus else PlatformUISign.Minus,
                         coloringOption = SignedAmountView.ColoringOption.SignOnly,
                     )
                 }

@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.trade.trigger.components.inputfields.size
 
 import androidx.lifecycle.ViewModel
-import com.hoc081098.flowext.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.ErrorType
@@ -19,6 +18,7 @@ import exchange.dydx.trading.feature.trade.alertState
 import exchange.dydx.trading.feature.trade.streams.MutableTriggerOrderStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -45,20 +45,18 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                     abacusStateManager.state.selectedSubaccountPositionOfMarket(it)
                 }
                 .filterNotNull(),
-            triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.configsAndAssetMap,
             abacusStateManager.state.validationErrors,
-        ) { sizeEnabled, position, isNewTriggerOrder, triggerOrdersInput, configsAndAssetMap, validationErrors ->
+        ) { sizeEnabled, position, triggerOrdersInput, configsAndAssetMap, validationErrors ->
             val marketId = triggerOrdersInput?.marketId ?: return@combine null
-            createViewState(sizeEnabled, position, isNewTriggerOrder, triggerOrdersInput, configsAndAssetMap?.get(marketId), validationErrors)
+            createViewState(sizeEnabled, position, triggerOrdersInput, configsAndAssetMap?.get(marketId), validationErrors)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         sizeEnabled: Boolean,
         position: SubaccountPosition,
-        isNewTriggerOrder: Boolean,
         triggerOrdersInput: TriggerOrdersInput?,
         configsAndAsset: MarketConfigsAndAsset?,
         validationErrors: List<ValidationError>?,
@@ -66,7 +64,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
         val marketConfigs = configsAndAsset?.configs
         val stepSize = marketConfigs?.stepSize
         val size = abs(triggerOrdersInput?.size ?: 0.0)
-        val positionSize = abs(position.size?.current ?: 0.0)
+        val positionSize = abs(position.size.current ?: 0.0)
         val percentage = if (positionSize != 0.0) {
             size / positionSize
         } else {
@@ -77,12 +75,12 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
 
         return DydxTriggerOrderSizeView.ViewState(
             localizer = localizer,
-            enabled = sizeEnabled && isNewTriggerOrder,
+            enabled = sizeEnabled,
             onEnabledChanged = { enabled ->
                 enabledFlow.value = enabled
                 if (!enabled) {
                     abacusStateManager.triggerOrders(
-                        formatter.decimalLocaleAgnostic(abs(position?.size?.current ?: 0.0), size = stepSize),
+                        formatter.decimalLocaleAgnostic(abs(position.size.current ?: 0.0), size = stepSize),
                         TriggerOrdersInputField.size,
                     )
                 }
@@ -109,7 +107,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
                     TriggerOrdersInputField.size,
                 )
             },
-            canEdit = isNewTriggerOrder,
+            canEdit = true,
         )
     }
 }

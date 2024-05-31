@@ -244,22 +244,22 @@ object DydxMarketPositionButtonsView : DydxComponent {
                 if (!state.hasMultipleOrders && (state.limitPrice != null || state.sizePercent != null)) {
                     PlatformDivider()
 
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = ThemeShapes.HorizontalPadding),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = localizer.localize("APP.TRADE.LIMIT_ORDER_SHORT"),
-                            style = TextStyle.dydxDefault
-                                .themeFont(fontSize = ThemeFont.FontSize.tiny)
-                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                            maxLines = 1,
-                            modifier = Modifier.weight(1f),
-                        )
+                    if (state.limitPrice != null) {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = ThemeShapes.HorizontalPadding),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = localizer.localize("APP.TRADE.LIMIT_ORDER_SHORT"),
+                                style = TextStyle.dydxDefault
+                                    .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f),
+                            )
 
-                        if (state.limitPrice != null) {
                             Text(
                                 text = state.limitPrice,
                                 style = TextStyle.dydxDefault
@@ -267,8 +267,23 @@ object DydxMarketPositionButtonsView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_secondary),
                             )
                         }
+                    }
 
-                        if (state.sizePercent != null) {
+                    if (state.sizePercent != null) {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = ThemeShapes.HorizontalPadding),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = localizer.localize("APP.GENERAL.AMOUNT"),
+                                style = TextStyle.dydxDefault
+                                    .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f),
+                            )
                             Text(
                                 text = state.sizePercent,
                                 style = TextStyle.dydxDefault
