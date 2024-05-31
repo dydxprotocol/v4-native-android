@@ -12,7 +12,7 @@ import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.nativeTokenName
 import exchange.dydx.dydxstatemanager.usdcTokenName
-import exchange.dydx.platformui.components.container.Toaster
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -36,7 +36,7 @@ class DydxTransferStatusViewModel @Inject constructor(
     private val router: DydxRouter,
     private val parser: ParserProtocol,
     savedStateHandle: SavedStateHandle,
-    val toaster: Toaster,
+    val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     private val transactionHash: String?
@@ -111,7 +111,7 @@ class DydxTransferStatusViewModel @Inject constructor(
             abacusStateManager.removeTransferInstance(transfer)
         }
         status?.error?.let {
-            toaster.showToast(
+            toaster.show(
                 title = localizer.localize("ERRORS.API_STATUS.UNKNOWN_API_ERROR"),
                 message = it,
             )
@@ -204,7 +204,7 @@ class DydxTransferStatusViewModel @Inject constructor(
             abacusStateManager.removeTransferInstance(transfer)
         }
         status?.error?.let {
-            toaster.showToast(
+            toaster.show(
                 title = localizer.localize("ERRORS.API_STATUS.UNKNOWN_API_ERROR"),
                 message = it,
             )

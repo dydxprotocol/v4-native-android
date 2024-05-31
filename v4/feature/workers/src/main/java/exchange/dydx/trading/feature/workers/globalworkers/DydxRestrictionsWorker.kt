@@ -9,8 +9,8 @@ import exchange.dydx.abacus.output.ComplianceStatus.UNKNOWN
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.Toast
-import exchange.dydx.platformui.components.container.Toaster
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +21,7 @@ class DydxRestrictionsWorker(
     override val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
-    private val toaster: Toaster,
+    private val toaster: PlatformInfo,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -52,7 +52,7 @@ class DydxRestrictionsWorker(
                         }
                     }
 
-                    toaster.showToast(
+                    toaster.show(
                         title = title,
                         message = body.orEmpty(),
                         type = Toast.Type.Error,

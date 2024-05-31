@@ -3,8 +3,8 @@ package exchange.dydx.trading.feature.shared
 import exchange.dydx.abacus.output.Restriction
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.Toast
-import exchange.dydx.platformui.components.container.Toaster
 
 enum class DydxScreenResult {
     NoRestriction,
@@ -26,7 +26,7 @@ enum class DydxScreenResult {
     }
 
     fun showRestrictionAlert(
-        toaster: Toaster,
+        toaster: PlatformInfo,
         localizer: LocalizerProtocol,
         abacusStateManager: AbacusStateManagerProtocol,
         buttonAction: (() -> Unit)? = null,
@@ -35,7 +35,7 @@ enum class DydxScreenResult {
             DydxScreenResult.NoRestriction -> {
             }
             DydxScreenResult.UserRestriction -> {
-                toaster.showToast(
+                toaster.show(
                     title = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_SUBTITLE"),
                     type = Toast.Type.Error,
@@ -48,7 +48,7 @@ enum class DydxScreenResult {
                 )
             }
             DydxScreenResult.SourceRestriction -> {
-                toaster.showToast(
+                toaster.show(
                     title = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_WITHDRAWAL_TRANSFER_ORIGINATION_ERROR_MESSAGE"),
                     type = Toast.Type.Error,
@@ -58,7 +58,7 @@ enum class DydxScreenResult {
                 )
             }
             DydxScreenResult.DestinationRestriction -> {
-                toaster.showToast(
+                toaster.show(
                     title = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.WALLET_RESTRICTED_WITHDRAWAL_TRANSFER_DESTINATION_ERROR_MESSAGE"),
                     type = Toast.Type.Error,
@@ -68,7 +68,7 @@ enum class DydxScreenResult {
                 )
             }
             DydxScreenResult.GeoRestriction -> {
-                toaster.showToast(
+                toaster.show(
                     title = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_TITLE"),
                     message = localizer.localize("ERRORS.ONBOARDING.REGION_NOT_PERMITTED_SUBTITLE"),
                     type = Toast.Type.Error,
@@ -82,7 +82,7 @@ enum class DydxScreenResult {
                 )
             }
             DydxScreenResult.UnknownRestriction -> {
-                toaster.showToast(
+                toaster.show(
                     title = localizer.localize("ERRORS.GENERAL.RATE_LIMIT_REACHED_ERROR_TITLE"),
                     message = localizer.localize("ERRORS.GENERAL.RATE_LIMIT_REACHED_ERROR_MESSAGE"),
                     type = Toast.Type.Error,

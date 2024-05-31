@@ -20,7 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
-import exchange.dydx.platformui.components.container.ToastContainer
+import exchange.dydx.platformui.components.container.PlatformInfoContainer
 import exchange.dydx.platformui.designSystem.theme.ThemeConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.platformui.designSystem.theme.colorMap
@@ -148,7 +148,7 @@ class TradingActivity : FragmentActivity() {
                     logger = viewModel.logger,
                 )
 
-                ToastContainer()
+                PlatformInfoContainer()
             }
         }
     }

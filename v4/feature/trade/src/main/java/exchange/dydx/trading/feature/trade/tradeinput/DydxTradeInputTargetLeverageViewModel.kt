@@ -6,7 +6,7 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.container.Toaster
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -22,7 +22,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     private val router: DydxRouter,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    val toaster: Toaster,
+    val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
     var targetLeverage: MutableStateFlow<String?> = MutableStateFlow(null)
 

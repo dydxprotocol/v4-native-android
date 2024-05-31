@@ -8,7 +8,7 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.container.Toaster
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -29,7 +29,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
-    val toaster: Toaster,
+    val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxAdjustMarginInputView.ViewState?> =

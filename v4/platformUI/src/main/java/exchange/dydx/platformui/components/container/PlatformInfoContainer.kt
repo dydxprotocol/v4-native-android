@@ -43,7 +43,7 @@ import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
-fun ToastContainer(
+fun PlatformInfoContainer(
     modifier: Modifier = Modifier,
 ) {
     val toastsViewModel: ToastContainerViewModel = hiltViewModel()
@@ -135,7 +135,7 @@ data class Toast(
 }
 
 @Singleton
-class Toaster @Inject constructor(
+class PlatformInfo @Inject constructor(
     @CoroutineScopes.App val appScope: CoroutineScope,
 ) {
     private val _toasts = MutableStateFlow<Toast?>(null)
@@ -145,7 +145,7 @@ class Toaster @Inject constructor(
 
     private var currentJob: Job? = null
 
-    fun showToast(
+    fun show(
         title: String? = null,
         message: String,
         buttonTitle: String? = null,
@@ -182,5 +182,5 @@ class Toaster @Inject constructor(
 // Purely exists as a DI hook for Compose
 @HiltViewModel
 internal class ToastContainerViewModel @Inject constructor(
-    val toaster: Toaster,
+    val toaster: PlatformInfo,
 ) : ViewModel()

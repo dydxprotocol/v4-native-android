@@ -8,7 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.container.Toaster
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.logger.DydxLogger
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -30,7 +30,7 @@ class CoreViewModel @Inject constructor(
     val router: DydxRouter,
     val loggerDeprecated: DydxLogger,
     val cosmosClient: CosmosV4WebviewClientProtocol,
-    toaster: Toaster,
+    toaster: PlatformInfo,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     @ApplicationContext context: Context,

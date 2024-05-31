@@ -14,8 +14,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.canCancel
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.localizedString
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.Toast
-import exchange.dydx.platformui.components.container.Toaster
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -36,7 +36,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     savedStateHandle: SavedStateHandle,
-    val toaster: Toaster,
+    val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     private val orderOrFillId: String?
@@ -269,7 +269,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
         abacusStateManager.cancelOrder(order.id) { result ->
             when (result) {
                 is AbacusStateManagerProtocol.SubmissionStatus.Success -> {
-                    toaster.showToast(
+                    toaster.show(
                         message = localizer.localizeWithParams(
                             path = "APP.TRADE.CANCELING_ORDER_DESC",
                             params = mapOf(
@@ -287,7 +287,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
                     )
                 }
                 is AbacusStateManagerProtocol.SubmissionStatus.Failed -> {
-                    toaster.showToast(
+                    toaster.show(
                         message = result.error?.localizedString(localizer) ?: "",
                         type = Toast.Type.Error,
                     )

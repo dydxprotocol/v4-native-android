@@ -7,7 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
-import exchange.dydx.platformui.components.container.Toaster
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ class DydxKeyExportViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     @ApplicationContext private val context: Context,
-    val toaster: Toaster,
+    val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     private val exportStateFlow = MutableStateFlow(DydxKeyExportView.State.Warning)
@@ -59,7 +59,7 @@ class DydxKeyExportViewModel @Inject constructor(
                 }
             },
             copyAction = {
-                toaster.showToast(
+                toaster.show(
                     message = localizer.localize("APP.V4.DYDX_MNEMONIC_COPIED"),
                 )
             },

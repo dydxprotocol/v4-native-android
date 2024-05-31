@@ -3,16 +3,16 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.Toast
 import exchange.dydx.abacus.protocols.ToastType
-import exchange.dydx.platformui.components.container.Toaster
+import exchange.dydx.platformui.components.container.PlatformInfo
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AbacusPresentationImp @Inject constructor(
-    private val toaster: Toaster
+    private val toaster: PlatformInfo
 ) : PresentationProtocol {
     override fun showToast(toast: Toast) {
-        toaster.showToast(
+        toaster.show(
             title = toast.title,
             message = toast.text ?: "",
             type = when (toast.type) {
