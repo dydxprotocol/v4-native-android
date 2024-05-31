@@ -202,7 +202,7 @@ object DydxTradeInputLeverageView : DydxComponent {
         val focusManager = LocalFocusManager.current
 
         val leverage = state.leverage?.toFloat() ?: 0f
-        val maxLeverage = state.maxLeverage?.toFloat() ?: 10f
+        val maxLeverage = state.maxLeverage?.toFloat() ?: return
         val positionLeverage = state.positionLeverage?.toFloat() ?: 0f
 
         if (maxLeverage == 0f) {

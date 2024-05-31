@@ -7,7 +7,6 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import kotlinx.coroutines.flow.Flow
@@ -26,17 +25,15 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
         combine(
             abacusStateManager.state.tradeInput,
             abacusStateManager.state.selectedSubaccountPositions,
-            abacusStateManager.state.configsAndAssetMap,
-        ) { tradeInput, positions, configsAndAssetMap ->
+        ) { tradeInput, positions ->
             val marketId = tradeInput?.marketId ?: return@combine null
             val position = positions?.firstOrNull { it.id == marketId }
-            createViewState(tradeInput, configsAndAssetMap?.get(marketId), position?.leverage?.current)
+            createViewState(tradeInput, position?.leverage?.current)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         tradeInput: TradeInput?,
-        configsAndAsset: MarketConfigsAndAsset?,
         positionLeverage: Double?
     ): DydxTradeInputLeverageView.ViewState {
         return DydxTradeInputLeverageView.ViewState(
@@ -44,7 +41,7 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
             formatter = formatter,
             leverage = tradeInput?.size?.leverage ?: 0.0,
             positionLeverage = positionLeverage,
-            maxLeverage = tradeInput?.options?.maxLeverage ?: 10.0,
+            maxLeverage = tradeInput?.options?.maxLeverage,
             side = when (tradeInput?.side) {
                 OrderSide.buy -> DydxTradeInputLeverageView.OrderSide.Buy
                 OrderSide.sell -> DydxTradeInputLeverageView.OrderSide.Sell
