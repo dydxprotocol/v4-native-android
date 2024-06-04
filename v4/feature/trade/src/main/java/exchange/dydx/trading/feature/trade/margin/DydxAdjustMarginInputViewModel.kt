@@ -3,8 +3,6 @@ package exchange.dydx.trading.feature.trade.margin
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.Subaccount
-import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -14,9 +12,9 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,21 +43,15 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     }
 
     val state: Flow<DydxAdjustMarginInputView.ViewState?> =
-        combine(
-            abacusStateManager.state.adjustMarginInput.filterNotNull(),
-            abacusStateManager.state.selectedSubaccount,
-            abacusStateManager.state.selectedSubaccountPositions,
-        ) { adjustMarginInput, subaccount, positions ->
-            createViewState(adjustMarginInput, subaccount, positions)
-        }
+        abacusStateManager.state.adjustMarginInput.filterNotNull()
+            .map { adjustMarginInput ->
+                createViewState(adjustMarginInput)
+            }
             .distinctUntilChanged()
 
     private fun createViewState(
         adjustMarginInput: AdjustIsolatedMarginInput,
-        subaccount: Subaccount?,
-        positions: List<SubaccountPosition>?,
     ): DydxAdjustMarginInputView.ViewState {
-        val isolatedMargin = positions?.firstOrNull()
         return DydxAdjustMarginInputView.ViewState(
             localizer = localizer,
             formatter = formatter,
@@ -75,7 +67,6 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                     type = AdjustIsolatedMarginInputField.Amount,
                 )
             },
-            action = { },
         )
     }
 }

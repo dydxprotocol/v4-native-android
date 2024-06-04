@@ -121,6 +121,7 @@ interface AbacusStateManagerProtocol {
     fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit)
 
     fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?)
+    fun commitAdjustIsolatedMargin(statusCallback: (SubmissionStatus) -> Unit)
 
     // extensions
     fun resetTransferInputFields() {
@@ -457,6 +458,16 @@ class AbacusStateManager @Inject constructor(
 
     override fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?) {
         asyncStateManager.adjustIsolatedMargin(data, type)
+    }
+
+    override fun commitAdjustIsolatedMargin(statusCallback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
+        asyncStateManager.commitAdjustIsolatedMargin { successful: Boolean, error: ParsingError?, data: Any? ->
+            if (successful) {
+                statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Success)
+            } else {
+                statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
+            }
+        }
     }
 
     // MARK: StateNotificationProtocol

@@ -74,7 +74,6 @@ object DydxAdjustMarginInputView : DydxComponent {
         val direction: MarginDirection = MarginDirection.Add,
         val error: String?,
         val amountEditAction: ((String) -> Unit) = {},
-        val action: (() -> Unit) = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -206,7 +205,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                     value = state.amountText ?: "",
                     textStyle = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
-                        .themeFont(fontSize = ThemeFont.FontSize.medium),
+                        .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number),
                     placeHolder = state.formatter.raw(0.0, 2),
                     onValueChange = { state.amountEditAction.invoke(it) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
