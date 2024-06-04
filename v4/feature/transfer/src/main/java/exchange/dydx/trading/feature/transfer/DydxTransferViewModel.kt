@@ -7,7 +7,8 @@ import exchange.dydx.abacus.output.input.TransferType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.receipt.ReceiptType
@@ -31,7 +32,7 @@ class DydxTransferViewModel @Inject constructor(
     private val router: DydxRouter,
     private val selectionFlow: Flow<@JvmSuppressWildcards DydxTransferSectionsView.Selection>,
     val receiptTypeFlow: MutableStateFlow<@JvmSuppressWildcards ReceiptType?>,
-    val platformInfo: PlatformInfo,
+    val toaster: PlatformInfo,
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val screenResultFlow: MutableStateFlow<@JvmSuppressWildcards DydxScreenResult?>,
 ) : ViewModel(), DydxViewModel {
@@ -48,11 +49,11 @@ class DydxTransferViewModel @Inject constructor(
         errorFlow
             .onEach { error ->
                 if (error != null) {
-                    platformInfo.show(
+                    toaster.show(
                         title = error.title ?: localizer.localize("APP.GENERAL.ERROR"),
                         message = error.message ?: "",
                         buttonTitle = localizer.localize("APP.GENERAL.OK"),
-                        type = PlatformInfo.InfoType.Error,
+                        type = Toast.Type.Error,
                         buttonAction = {
                             errorFlow.value = null
                         },
@@ -64,7 +65,7 @@ class DydxTransferViewModel @Inject constructor(
         screenResultFlow
             .onEach { screenResult ->
                 screenResult?.showRestrictionAlert(
-                    platformInfo = platformInfo,
+                    toaster = toaster,
                     localizer = localizer,
                     abacusStateManager = abacusStateManager,
                     buttonAction = {
