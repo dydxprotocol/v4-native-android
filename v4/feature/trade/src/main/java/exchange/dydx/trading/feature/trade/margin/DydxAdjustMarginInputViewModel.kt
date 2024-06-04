@@ -61,7 +61,6 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
         positions: List<SubaccountPosition>?,
     ): DydxAdjustMarginInputView.ViewState {
         val isolatedMargin = positions?.firstOrNull()
-
         return DydxAdjustMarginInputView.ViewState(
             localizer = localizer,
             formatter = formatter,
@@ -78,9 +77,6 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
             error = null,
             editAction = { },
             action = { },
-            closeAction = {
-                router.navigateBack()
-            },
         )
     }
 }
