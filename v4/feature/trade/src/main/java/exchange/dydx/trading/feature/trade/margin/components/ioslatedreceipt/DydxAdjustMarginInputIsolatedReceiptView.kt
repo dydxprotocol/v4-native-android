@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.trade.margin.components.crossreceipt
+package exchange.dydx.trading.feature.trade.margin.components.ioslatedreceipt
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,40 +13,40 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptFreeCollateralView
-import exchange.dydx.trading.feature.receipt.components.marginusage.DydxReceiptMarginUsageView
+import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
+import exchange.dydx.trading.feature.receipt.components.leverage.DydxReceiptPositionLeverageView
 
 @Preview
 @Composable
-fun Preview_DydxAdjustMarginInputCrossReceiptView() {
+fun Preview_DydxAdjustMarginInputIsolatedReceiptView() {
     DydxThemedPreviewSurface {
-        DydxAdjustMarginInputCrossReceiptView.Content(
+        DydxAdjustMarginInputIsolatedReceiptView.Content(
             Modifier,
-            DydxAdjustMarginInputCrossReceiptView.ViewState.preview,
+            DydxAdjustMarginInputIsolatedReceiptView.ViewState.preview,
         )
     }
 }
 
-object DydxAdjustMarginInputCrossReceiptView : DydxComponent {
+object DydxAdjustMarginInputIsolatedReceiptView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val formatter: DydxFormatter,
-        val freeCollateral: DydxReceiptFreeCollateralView.ViewState,
-        val marginUsage: DydxReceiptMarginUsageView.ViewState,
+        val marginUsage: DydxReceiptIsolatedPositionMarginUsageView.ViewState,
+        val leverage: DydxReceiptPositionLeverageView.ViewState,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 formatter = DydxFormatter(),
-                freeCollateral = DydxReceiptFreeCollateralView.ViewState.preview,
-                marginUsage = DydxReceiptMarginUsageView.ViewState.preview,
+                marginUsage = DydxReceiptIsolatedPositionMarginUsageView.ViewState.preview,
+                leverage = DydxReceiptPositionLeverageView.ViewState.preview,
             )
         }
     }
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxAdjustMarginInputCrossReceiptViewModel = hiltViewModel()
+        val viewModel: DydxAdjustMarginInputIsolatedReceiptViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
@@ -62,14 +62,14 @@ object DydxAdjustMarginInputCrossReceiptView : DydxComponent {
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            DydxReceiptFreeCollateralView.Content(
-                modifier = Modifier,
-                state = state.freeCollateral,
-            )
-
-            DydxReceiptMarginUsageView.Content(
+            DydxReceiptIsolatedPositionMarginUsageView.Content(
                 modifier = Modifier,
                 state = state.marginUsage,
+            )
+
+            DydxReceiptPositionLeverageView.Content(
+                modifier = Modifier,
+                state = state.leverage,
             )
         }
     }

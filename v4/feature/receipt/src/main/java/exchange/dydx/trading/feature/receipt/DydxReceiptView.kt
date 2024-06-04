@@ -33,8 +33,8 @@ import exchange.dydx.trading.feature.receipt.components.expectedprice.DydxReceip
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptBridgeFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptGasFeeView
-import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionLeverageView
 import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
+import exchange.dydx.trading.feature.receipt.components.leverage.DydxReceiptPositionLeverageView
 import exchange.dydx.trading.feature.receipt.components.marginusage.DydxReceiptMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.rewards.DydxReceiptRewardsView
 import exchange.dydx.trading.feature.receipt.components.slippage.DydxReceiptSlippageView
@@ -53,7 +53,7 @@ object DydxReceiptView : DydxComponent {
         FreeCollateral,
         BuyingPower,
         MarginUsage,
-        IsolatedPositionLeverage,
+        PositionLeverage,
         IsolatedPositionMarginUsage,
         Fee,
         GasFee,
@@ -131,8 +131,8 @@ object DydxReceiptView : DydxComponent {
                             DydxReceiptMarginUsageView.Content(Modifier.animateItemPlacement())
                         }
 
-                        ReceiptLineType.IsolatedPositionLeverage -> {
-                            DydxReceiptIsolatedPositionLeverageView.Content(Modifier.animateItemPlacement())
+                        ReceiptLineType.PositionLeverage -> {
+                            DydxReceiptPositionLeverageView.Content(Modifier.animateItemPlacement())
                         }
 
                         ReceiptLineType.IsolatedPositionMarginUsage -> {

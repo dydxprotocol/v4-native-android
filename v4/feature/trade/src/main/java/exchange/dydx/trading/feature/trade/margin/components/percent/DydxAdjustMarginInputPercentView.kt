@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,6 +68,8 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
             return
         }
 
+        val focusManager = LocalFocusManager.current
+
         PlatformTabGroup(
             modifier = modifier.fillMaxWidth(),
             scrollingEnabled = true,
@@ -109,6 +112,7 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
                 it.percentage == state.percentage
             },
             onSelectionChanged = {
+                focusManager.clearFocus()
                 state.onPercentageChanged(state.percentageOptions[it].percentage)
             },
         )

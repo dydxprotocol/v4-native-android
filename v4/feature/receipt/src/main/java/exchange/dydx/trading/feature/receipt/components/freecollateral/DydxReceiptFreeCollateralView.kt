@@ -37,6 +37,7 @@ fun Preview_DydxReceiptFreeCollateralView() {
 object DydxReceiptFreeCollateralView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val label: String? = null,
         val before: AmountText.ViewState? = null,
         val after: AmountText.ViewState? = null,
 
@@ -67,7 +68,7 @@ object DydxReceiptFreeCollateralView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = state.localizer.localize("APP.GENERAL.FREE_COLLATERAL"),
+                text = state.label ?: state.localizer.localize("APP.GENERAL.FREE_COLLATERAL"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

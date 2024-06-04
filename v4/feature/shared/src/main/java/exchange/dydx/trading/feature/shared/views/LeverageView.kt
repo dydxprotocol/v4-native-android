@@ -35,7 +35,7 @@ object LeverageView {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val formatter: DydxFormatter,
-        val leverage: Double = 3.0,
+        val leverage: Double = 1.0,
         val margin: Double? = null,
     ) {
         companion object {
@@ -50,7 +50,8 @@ object LeverageView {
     fun Content(
         modifier: Modifier = Modifier,
         state: ViewState?,
-        textStyle: TextStyle = TextStyle.dydxDefault,
+        textStyle: TextStyle = TextStyle.dydxDefault
+            .themeColor(ThemeColor.SemanticColor.text_tertiary),
     ) {
         if (state == null) return
 
@@ -65,6 +66,7 @@ object LeverageView {
         }
 
         Row(
+            modifier = modifier,
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         ) {
             if (leverageIcon != null) {
@@ -77,7 +79,7 @@ object LeverageView {
                 )
                 Spacer(modifier = Modifier.width(6.dp))
             }
-            CreateValueText(Modifier, leverageText)
+            CreateValueText(Modifier, leverageText, textStyle)
         }
     }
 
@@ -85,11 +87,12 @@ object LeverageView {
     private fun CreateValueText(
         modifier: Modifier,
         value: String?,
+        textStyle: TextStyle,
     ) {
         Text(
+            modifier = modifier,
             text = value ?: "-",
-            style = TextStyle.dydxDefault
-                .themeColor(ThemeColor.SemanticColor.text_primary),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
