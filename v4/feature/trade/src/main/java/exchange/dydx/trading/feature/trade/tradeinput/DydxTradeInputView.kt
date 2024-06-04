@@ -28,7 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -159,8 +158,6 @@ object DydxTradeInputView : DydxComponent {
             return
         }
 
-        val scope = rememberCoroutineScope()
-
         val sheetState: MutableState<SheetState?> = remember { mutableStateOf(null) }
 
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -187,63 +184,7 @@ object DydxTradeInputView : DydxComponent {
                 }
 
                 if (state.isIsolatedMarketEnabled) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(0.5f),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                PlatformButton(
-                                    modifier = if (state.isIsolatedMarketSelected) {
-                                        Modifier
-                                            .padding(start = 8.dp)
-                                            .height(52.dp)
-                                    } else {
-                                        Modifier
-                                            .padding(start = 8.dp)
-                                            .fillMaxWidth()
-                                            .height(52.dp)
-                                    },
-                                    state = PlatformButtonState.Secondary,
-                                    text = state.localizer.localize(
-                                        if (state.isIsolatedMarketSelected) {
-                                            "APP.GENERAL.ISOLATED"
-                                        } else {
-                                            "APP.GENERAL.CROSS"
-                                        },
-                                    ),
-                                ) {
-                                    state.onMarketType()
-                                }
-                                if (state.isIsolatedMarketSelected) {
-                                    PlatformButton(
-                                        modifier = Modifier
-                                            .height(52.dp)
-                                            .fillMaxWidth(),
-                                        state = PlatformButtonState.Secondary,
-                                        text = state.isolatedMarketTargetLeverageText,
-                                    ) {
-                                        state.onTargetLeverage()
-                                    }
-                                }
-                            }
-                        }
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            DydxTradeInputSideView.Content(Modifier)
-                        }
-                    }
+                    IsolatedMarginButtons(Modifier, state)
                 } else {
                     DydxTradeInputOrderTypeView.Content(
                         Modifier,
@@ -350,6 +291,64 @@ object DydxTradeInputView : DydxComponent {
 //        LaunchedEffect(key1 = "expand") {
 //            sheetState.value?.expand()
 //        }
+    }
+
+    @Composable
+    private fun IsolatedMarginButtons(modifier: Modifier, state: ViewState) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(44.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    PlatformButton(
+                        modifier = if (state.isIsolatedMarketSelected) {
+                            Modifier
+                                .padding(start = 8.dp)
+                        } else {
+                            Modifier
+                                .padding(start = 8.dp)
+                                .fillMaxWidth()
+                        },
+                        state = PlatformButtonState.Secondary,
+                        text = state.localizer.localize(
+                            if (state.isIsolatedMarketSelected) {
+                                "APP.GENERAL.ISOLATED"
+                            } else {
+                                "APP.GENERAL.CROSS"
+                            },
+                        ),
+                    ) {
+                        state.onMarketType()
+                    }
+                    if (state.isIsolatedMarketSelected) {
+                        PlatformButton(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            state = PlatformButtonState.Secondary,
+                            text = state.isolatedMarketTargetLeverageText,
+                        ) {
+                            state.onTargetLeverage()
+                        }
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                DydxTradeInputSideView.Content(Modifier)
+            }
+        }
     }
 
     @OptIn(ExperimentalFoundationApi::class)

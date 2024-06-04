@@ -2,8 +2,11 @@ package exchange.dydx.trading.feature.market
 
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -46,10 +49,12 @@ fun NavGraphBuilder.marketGraph(
         }
 
         val scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-//                bottomSheetState = SheetState(
-//                    skipPartiallyExpanded = false,
-//                    initialValue = SheetValue.Hidden,
-//                ),
+            bottomSheetState = SheetState(
+                skipPartiallyExpanded = false,
+                density = LocalDensity.current,
+                initialValue = SheetValue.PartiallyExpanded,
+                skipHiddenState = true,
+            ),
         )
 
         PlatformBottomSheet(

@@ -24,10 +24,9 @@ class DydxClosePositionInputViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
-    private val marketId: String?
+    private val marketId: String? = savedStateHandle["marketId"]
 
     init {
-        marketId = savedStateHandle["marketId"]
 
         if (marketId == null) {
             router.navigateBack()

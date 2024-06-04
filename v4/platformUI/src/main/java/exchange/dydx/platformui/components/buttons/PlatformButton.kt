@@ -61,7 +61,7 @@ fun PlatformButton(
 ) {
     val borderColor = when (state) {
         PlatformButtonState.Primary -> ThemeColor.SemanticColor.color_purple.color
-        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.layer_5.color
+        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.layer_6.color
         PlatformButtonState.Disabled -> ThemeColor.SemanticColor.layer_6.color
         PlatformButtonState.Destructive -> ThemeColor.SemanticColor.color_faded_red.color
     }

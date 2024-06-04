@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.trade.margin.components
+package exchange.dydx.trading.feature.trade.margin.components.cta
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
