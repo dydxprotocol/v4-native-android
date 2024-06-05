@@ -80,7 +80,7 @@ class DydxAlertsWorker(
 
 private val exchange.dydx.abacus.output.NotificationType.infoType: Toast.Type
     get() = when (this) {
-        exchange.dydx.abacus.output.NotificationType.INFO -> Toast.Type.Info
+        exchange.dydx.abacus.output.NotificationType.INFO -> Toast.Type.Success
         exchange.dydx.abacus.output.NotificationType.WARNING -> Toast.Type.Warning
         exchange.dydx.abacus.output.NotificationType.ERROR -> Toast.Type.Error
     }
