@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -60,7 +61,6 @@ object DydxPortfolioPositionItemView {
         position: SharedMarketPositionViewState,
         isIsolatedMarketEnabled: Boolean,
         onTapAction: (SharedMarketPositionViewState) -> Unit = {},
-        onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         val shape = RoundedCornerShape(10.dp)
         Row(
@@ -137,6 +137,7 @@ object DydxPortfolioPositionItemView {
                             position,
                             true,
                         )
+
                         ComposeIsolatedMarketEditButton(
                             position,
                         )
@@ -164,7 +165,7 @@ object DydxPortfolioPositionItemView {
     }
 
     @Composable
-    fun ComposeAssetPosition(
+    private fun ComposeAssetPosition(
         position: SharedMarketPositionViewState,
     ) {
         PlatformRoundImage(
@@ -230,7 +231,7 @@ object DydxPortfolioPositionItemView {
     }
 
     @Composable
-    fun ComposePricing(
+    private fun ComposePricing(
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
         forIsolatedMarket: Boolean = false,
@@ -264,7 +265,7 @@ object DydxPortfolioPositionItemView {
     }
 
     @Composable
-    fun ComposePNL(
+    private fun ComposePNL(
         modifier: Modifier,
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
@@ -273,7 +274,7 @@ object DydxPortfolioPositionItemView {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
-            modifier = Modifier.width(80.dp),
+            modifier = modifier.width(80.dp),
         ) {
             if (forIsolatedMarket) {
                 Text(
@@ -285,14 +286,14 @@ object DydxPortfolioPositionItemView {
             }
 
             SignedAmountView.Content(
-                modifier = modifier,
+                modifier = Modifier,
                 state = position.unrealizedPNLPercent,
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small),
             )
 
             SignedAmountView.Content(
-                modifier = modifier,
+                modifier = Modifier,
                 state = position.unrealizedPNLAmount,
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.mini),
@@ -301,7 +302,7 @@ object DydxPortfolioPositionItemView {
     }
 
     @Composable
-    fun ComposeMargin(
+    private fun ComposeMargin(
         modifier: Modifier,
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
@@ -310,7 +311,7 @@ object DydxPortfolioPositionItemView {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
-            modifier = Modifier.width(80.dp),
+            modifier = modifier.width(80.dp),
         ) {
             Text(
                 text = localizer.localize("APP.GENERAL.MARGIN"),
@@ -346,7 +347,7 @@ object DydxPortfolioPositionItemView {
     }
 
     @Composable
-    fun ComposeIsolatedMarketEditButton(
+    private fun ComposeIsolatedMarketEditButton(
         position: SharedMarketPositionViewState,
     ) {
         Column(
@@ -355,27 +356,28 @@ object DydxPortfolioPositionItemView {
                 .padding(0.dp),
             verticalArrangement = Arrangement.Bottom,
         ) {
-            /*
-            TODO: Only render the button if it is an isolated margin position
-             */
             Spacer(modifier = Modifier.weight(1.0f))
-            PlatformIconButton(
-                modifier = Modifier
-                    .width(32.dp)
-                    .height(32.dp),
-                action = {
-                    position.onAdjustMarginAction?.invoke()
-                },
-                padding = 0.dp,
-                shape = RoundedCornerShape(4.dp),
-                backgroundColor = ThemeColor.SemanticColor.layer_6,
-                borderColor = ThemeColor.SemanticColor.layer_7,
-            ) {
-                Icon(
-                    painter = painterResource(id = exchange.dydx.trading.common.R.drawable.ic_edit),
-                    contentDescription = "",
-                    tint = ThemeColor.SemanticColor.text_primary.color,
-                )
+            if (position.childSubaccountNumber != null) {
+                PlatformIconButton(
+                    modifier = Modifier
+                        .width(32.dp)
+                        .height(32.dp),
+                    action = {
+                        position.onAdjustMarginAction?.invoke()
+                    },
+                    padding = 0.dp,
+                    shape = RoundedCornerShape(4.dp),
+                    backgroundColor = ThemeColor.SemanticColor.layer_6,
+                    borderColor = ThemeColor.SemanticColor.layer_7,
+                ) {
+                    Icon(
+                        painter = painterResource(id = exchange.dydx.trading.common.R.drawable.ic_edit),
+                        contentDescription = "",
+                        tint = ThemeColor.SemanticColor.text_primary.color,
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.size(32.dp))
             }
         }
     }

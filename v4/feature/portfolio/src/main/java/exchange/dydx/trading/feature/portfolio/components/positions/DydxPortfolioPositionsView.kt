@@ -53,7 +53,6 @@ object DydxPortfolioPositionsView : DydxComponent {
         val isIsolatedMarketEnabled: Boolean,
         val onboarded: Boolean,
         val onPositionTapAction: (SharedMarketPositionViewState) -> Unit = {},
-        val onModifyMarginAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -129,19 +128,13 @@ object DydxPortfolioPositionsView : DydxComponent {
             }
 
             items(items = state.positions, key = { it.id }) { position ->
-//                if (!state.isIsolatedMarketEnabled && position === state.positions.first()) {
-//                    Spacer(modifier = Modifier.height(16.dp))
-//                }
                 DydxPortfolioPositionItemView.Content(
                     modifier = Modifier,
                     localizer = state.localizer,
                     position = position,
                     isIsolatedMarketEnabled = state.isIsolatedMarketEnabled,
                     onTapAction = state.onPositionTapAction,
-                    onModifyMarginAction = state.onModifyMarginAction,
                 )
-
-//              Spacer(modifier = Modifier.height(10.dp))
             }
 
             item(key = "footer") {
