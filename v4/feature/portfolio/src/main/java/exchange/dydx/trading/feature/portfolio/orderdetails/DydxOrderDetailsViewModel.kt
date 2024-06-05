@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.portfolio.orderdetails
 
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,7 +14,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.canCancel
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.localizedString
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -36,7 +36,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     savedStateHandle: SavedStateHandle,
-    val platformInfo: PlatformInfo,
+    val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     private val orderOrFillId: String?
@@ -269,7 +269,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
         abacusStateManager.cancelOrder(order.id) { result ->
             when (result) {
                 is AbacusStateManagerProtocol.SubmissionStatus.Success -> {
-                    platformInfo.show(
+                    toaster.show(
                         message = localizer.localizeWithParams(
                             path = "APP.TRADE.CANCELING_ORDER_DESC",
                             params = mapOf(
@@ -278,18 +278,18 @@ class DydxOrderDetailsViewModel @Inject constructor(
                                 "MARKET" to order.marketId,
                             ),
                         ) ?: "",
-                        type = PlatformInfo.InfoType.Info,
+                        type = Toast.Type.Info,
                         buttonTitle = localizer.localize("APP.GENERAL.OK"),
                         buttonAction = {
                             router.navigateBack()
                         },
-                        duration = SnackbarDuration.Indefinite,
+                        duration = Toast.Duration.Indefinite,
                     )
                 }
                 is AbacusStateManagerProtocol.SubmissionStatus.Failed -> {
-                    platformInfo.show(
+                    toaster.show(
                         message = result.error?.localizedString(localizer) ?: "",
-                        type = PlatformInfo.InfoType.Error,
+                        type = Toast.Type.Error,
                     )
                 }
                 else -> {}
