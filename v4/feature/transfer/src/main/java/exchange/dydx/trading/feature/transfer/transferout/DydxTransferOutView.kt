@@ -25,6 +25,7 @@ import exchange.dydx.trading.feature.transfer.components.AddressInputBox
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
 import exchange.dydx.trading.feature.transfer.components.TransferAmountBox
+import exchange.dydx.trading.feature.transfer.components.TransferMemoBox
 
 @Preview
 @Composable
@@ -41,7 +42,9 @@ object DydxTransferOutView : DydxComponent {
         val chainsComboBox: ChainsComboBox.ViewState? = null,
         val tokensComboBox: TokensComboBox.ViewState? = null,
         val transferAmount: TransferAmountBox.ViewState? = null,
+        val transferMemo: TransferMemoBox.ViewState? = null,
     ) {
+
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
@@ -105,6 +108,13 @@ object DydxTransferOutView : DydxComponent {
                     TransferAmountBox.Content(
                         modifier = Modifier.animateItemPlacement(),
                         state = state.transferAmount,
+                    )
+                }
+
+                item {
+                    TransferMemoBox.Content(
+                        modifier = Modifier.animateItemPlacement(),
+                        state = state.transferMemo,
                     )
                 }
 

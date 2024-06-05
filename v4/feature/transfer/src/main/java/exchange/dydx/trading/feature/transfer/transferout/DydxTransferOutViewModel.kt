@@ -22,6 +22,7 @@ import exchange.dydx.trading.feature.transfer.components.AddressInputBox
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
 import exchange.dydx.trading.feature.transfer.components.TransferAmountBox
+import exchange.dydx.trading.feature.transfer.components.TransferMemoBox
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchParam
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -173,6 +174,17 @@ class DydxTransferOutViewModel @Inject constructor(
                     }
                 },
             ),
+            transferMemo = TransferMemoBox.ViewState(
+                localizer = localizer,
+                value = transferInput?.memo,
+                showCexWarning = transferInput?.token != USDC_TOKEN && (transferInput?.memo?.isEmpty() ?: true),
+                onEditAction = { memo ->
+                    abacusStateManager.transfer(
+                        input = memo,
+                        type = TransferInputField.MEMO,
+                    )
+                },
+            ),
             addressInput = AddressInputBox.ViewState(
                 localizer = localizer,
                 formatter = formatter,
@@ -189,3 +201,5 @@ class DydxTransferOutViewModel @Inject constructor(
         )
     }
 }
+
+private const val USDC_TOKEN = "usdc"
