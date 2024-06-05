@@ -36,7 +36,7 @@ class DydxTransferFaucetViewModel @Inject constructor(
                             toaster.show(
                                 title = "Faucet Request Failed",
                                 message = it.error?.message ?: "Unknown error",
-                                type = Toast.Type.Success,
+                                type = Toast.Type.Info,
                             )
                         }
                     }

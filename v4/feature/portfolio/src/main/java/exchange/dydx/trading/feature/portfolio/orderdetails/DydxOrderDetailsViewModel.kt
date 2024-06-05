@@ -278,7 +278,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
                                 "MARKET" to order.marketId,
                             ),
                         ) ?: "",
-                        type = Toast.Type.Success,
+                        type = Toast.Type.Info,
                         buttonTitle = localizer.localize("APP.GENERAL.OK"),
                         buttonAction = {
                             router.navigateBack()

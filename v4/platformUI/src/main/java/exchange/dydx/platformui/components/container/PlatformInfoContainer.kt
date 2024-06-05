@@ -146,14 +146,13 @@ data class Toast(
     val cancelAction: (() -> Unit)? = null,
 ) {
     enum class Type {
-        Error, Info, Warning, Success;
+        Error, Info, Warning;
 
         val backgroundColor: Color
             get() = when (this) {
                 Error -> ThemeColor.SemanticColor.color_red.color
                 Info -> ThemeColor.SemanticColor.layer_5.color
                 Warning -> ThemeColor.SemanticColor.color_yellow.color
-                Success -> ThemeColor.SemanticColor.color_purple.color
             }
 
         val foregroundColor: Color
@@ -161,7 +160,6 @@ data class Toast(
                 Error -> ThemeColor.SemanticColor.color_white.color
                 Info -> ThemeColor.SemanticColor.text_primary.color
                 Warning -> ThemeColor.SemanticColor.color_black.color
-                Success -> ThemeColor.SemanticColor.color_white.color
             }
 
         val buttonBackgroundColor: Color
@@ -169,7 +167,6 @@ data class Toast(
                 Error -> ThemeColor.SemanticColor.color_white.color
                 Info -> ThemeColor.SemanticColor.layer_6.color
                 Warning -> ThemeColor.SemanticColor.color_white.color
-                Success -> ThemeColor.SemanticColor.color_white.color
             }
 
         val buttonForegroundColor: Color
@@ -177,7 +174,6 @@ data class Toast(
                 Error -> ThemeColor.SemanticColor.color_red.color
                 Info -> ThemeColor.SemanticColor.text_primary.color
                 Warning -> ThemeColor.SemanticColor.color_black.color
-                Success -> ThemeColor.SemanticColor.color_purple.color
             }
 
         val buttonBorderColor: Color
@@ -185,7 +181,6 @@ data class Toast(
                 Error -> ThemeColor.SemanticColor.color_white.color
                 Info -> ThemeColor.SemanticColor.layer_7.color
                 Warning -> ThemeColor.SemanticColor.color_white.color
-                Success -> ThemeColor.SemanticColor.color_white.color
             }
     }
 
