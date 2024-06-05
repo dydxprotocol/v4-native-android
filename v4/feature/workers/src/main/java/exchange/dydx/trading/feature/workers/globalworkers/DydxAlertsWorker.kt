@@ -2,7 +2,8 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.NotificationEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
@@ -17,7 +18,7 @@ class DydxAlertsWorker(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
     private val router: DydxRouter,
-    private val platformInfo: PlatformInfo,
+    private val toaster: PlatformInfo,
     private val preferencesStore: SharedPreferencesStore,
 ) : WorkerProtocol {
     private val handledAlertHashes = mutableSetOf<String>()
@@ -57,7 +58,7 @@ class DydxAlertsWorker(
                 }
 
                 val link = alert.link
-                platformInfo.show(
+                toaster.show(
                     title = alert.title,
                     message = alertText,
                     buttonTitle = if (link != null) localizer.localize("APP.GENERAL.VIEW") else null,
@@ -77,9 +78,9 @@ class DydxAlertsWorker(
     }
 }
 
-private val exchange.dydx.abacus.output.NotificationType.infoType: PlatformInfo.InfoType
+private val exchange.dydx.abacus.output.NotificationType.infoType: Toast.Type
     get() = when (this) {
-        exchange.dydx.abacus.output.NotificationType.INFO -> PlatformInfo.InfoType.Info
-        exchange.dydx.abacus.output.NotificationType.WARNING -> PlatformInfo.InfoType.Warning
-        exchange.dydx.abacus.output.NotificationType.ERROR -> PlatformInfo.InfoType.Error
+        exchange.dydx.abacus.output.NotificationType.INFO -> Toast.Type.Info
+        exchange.dydx.abacus.output.NotificationType.WARNING -> Toast.Type.Warning
+        exchange.dydx.abacus.output.NotificationType.ERROR -> Toast.Type.Error
     }

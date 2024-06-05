@@ -4,7 +4,7 @@ import android.content.Context
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.workers.globalworkers.DydxAlertsWorker
@@ -27,7 +27,7 @@ class DydxGlobalWorkers(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     private val router: DydxRouter,
-    private val platformInfo: PlatformInfo,
+    private val toaster: PlatformInfo,
     private val context: Context,
     private val cachedFileLoader: CachedFileLoader,
     private val cosmosClient: CosmosV4WebviewClientProtocol,
@@ -40,9 +40,9 @@ class DydxGlobalWorkers(
 
     private val workers = listOf(
         DydxUpdateWorker(scope, abacusStateManager, router, context, logger),
-        DydxAlertsWorker(scope, abacusStateManager, localizer, router, platformInfo, preferencesStore),
-        DydxApiStatusWorker(scope, abacusStateManager, localizer, platformInfo),
-        DydxRestrictionsWorker(scope, abacusStateManager, localizer, platformInfo),
+        DydxAlertsWorker(scope, abacusStateManager, localizer, router, toaster, preferencesStore),
+        DydxApiStatusWorker(scope, abacusStateManager, localizer, toaster),
+        DydxRestrictionsWorker(scope, abacusStateManager, localizer, toaster),
         DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context, logger),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
         DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),

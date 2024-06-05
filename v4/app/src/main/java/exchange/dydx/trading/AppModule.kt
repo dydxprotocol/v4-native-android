@@ -2,7 +2,6 @@ package exchange.dydx.trading
 
 import android.app.Application
 import android.content.Context
-import androidx.compose.material.SnackbarHostState
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -42,7 +41,6 @@ import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusTrackingImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusWebSocketImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.LanguageKey
 import exchange.dydx.platformui.components.PlatformDialog
-import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.platformui.designSystem.theme.StyleConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeConfig
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
@@ -50,7 +48,6 @@ import exchange.dydx.platformui.theme.DydxTheme
 import exchange.dydx.platformui.theme.DydxThemeImpl
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.AppConfigImpl
-import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.integration.analytics.logging.CompositeLogger
 import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
@@ -63,7 +60,6 @@ import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.JsonUtils
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
@@ -116,17 +112,6 @@ interface AppModule {
 
         @LanguageKey @Provides
         fun provideLanguageKey(): String = PreferenceKeys.Language
-
-        @Provides
-        @Singleton
-        fun providePlatformInfo(
-            @CoroutineScopes.App appScope: CoroutineScope,
-        ): PlatformInfo =
-            PlatformInfo(
-                snackbarHostState = SnackbarHostState(),
-                infoType = MutableStateFlow(PlatformInfo.InfoType.Info),
-                appScope = appScope,
-            )
 
         @Provides
         fun providePlatformDialog(
