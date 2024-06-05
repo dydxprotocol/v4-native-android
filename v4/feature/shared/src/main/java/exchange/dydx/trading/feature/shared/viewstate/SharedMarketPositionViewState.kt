@@ -127,17 +127,17 @@ data class SharedMarketPositionViewState(
                 unrealizedPNLPercent = SignedAmountView.ViewState(
                     text = formatter.percent(unrealizedPnlPercent.absoluteValue, 2),
                     sign = unrealizedPnlSign,
-                    coloringOption = SignedAmountView.ColoringOption.AllText,
+                    coloringOption = SignedAmountView.ColoringOption.SignOnly,
                 ),
                 unrealizedPNLAmount = SignedAmountView.ViewState(
                     text = formatter.dollar(position.unrealizedPnl?.current?.absoluteValue ?: 0.0),
                     sign = unrealizedPnlSign,
-                    coloringOption = SignedAmountView.ColoringOption.SignOnly,
+                    coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
                 realizedPNLAmount = SignedAmountView.ViewState(
                     text = formatter.dollar(realizedPNLAmount.absoluteValue),
                     sign = realizedPNLSign,
-                    coloringOption = SignedAmountView.ColoringOption.SignOnly,
+                    coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
                 logoUrl = asset?.resources?.imageUrl,
                 oraclePrice = formatter.dollar(

@@ -287,14 +287,14 @@ object DydxPortfolioPositionItemView {
 
             SignedAmountView.Content(
                 modifier = Modifier,
-                state = position.unrealizedPNLPercent,
+                state = position.unrealizedPNLAmount,
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small),
             )
 
             SignedAmountView.Content(
                 modifier = Modifier,
-                state = position.unrealizedPNLAmount,
+                state = position.unrealizedPNLPercent,
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.mini),
             )
