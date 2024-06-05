@@ -5,7 +5,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.Toast
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.components.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
@@ -30,6 +32,7 @@ class DydxTradeInputViewModel @Inject constructor(
     val receiptTypeFlow: MutableStateFlow<@JvmSuppressWildcards ReceiptType?>,
     val orderbookToggleStateFlow: Flow<@JvmSuppressWildcards DydxTradeInputView.OrderbookToggleState>,
     val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
+    private val platformInfo: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     init {
@@ -77,11 +80,18 @@ class DydxTradeInputViewModel @Inject constructor(
             ),
             orderbookToggleState = orderbookToggleState,
             requestedBottomSheetState = buttomSheetState,
-            onMarketType = {
-                router.navigateTo(
-                    route = TradeRoutes.margin_type,
-                    presentation = DydxRouter.Presentation.Modal,
-                )
+            onMarginType = {
+                if (tradeInput?.options?.needsMarginMode == null) {
+//                    platformInfo.show(
+//                        message = localizer.localize("WARNINGS.TRADE_BOX.UNABLE_TO_CHANGE_MARGIN_MODE"),
+//                        type = Toast.
+//                    )
+                } else {
+                    router.navigateTo(
+                        route = TradeRoutes.margin_type,
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                }
             },
             onTargetLeverage = {
                 router.navigateTo(

@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.trade.tradeinput
+package exchange.dydx.trading.feature.trade.marginmode
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +10,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

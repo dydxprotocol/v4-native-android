@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.trade.tradeinput
+package exchange.dydx.trading.feature.trade.marginmode
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background

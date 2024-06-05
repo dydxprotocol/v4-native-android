@@ -115,7 +115,7 @@ object DydxTradeInputView : DydxComponent {
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
-        val onMarketType: () -> Unit = {},
+        val onMarginType: () -> Unit = {},
         val onTargetLeverage: () -> Unit = {},
         val onRequestedBottomSheetStateCompleted: () -> Unit = {},
     ) {
@@ -327,7 +327,7 @@ object DydxTradeInputView : DydxComponent {
                             },
                         ),
                     ) {
-                        state.onMarketType()
+                        state.onMarginType()
                     }
                     if (state.isIsolatedMarketSelected) {
                         PlatformButton(
