@@ -76,6 +76,9 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
             logoUrl = assetMap[assetId]?.resources?.imageUrl,
             selectAction = { leverage ->
                 this.targetLeverage.value = leverage
+//                abacusStateManager.adjustIsolatedMargin(
+//                    leverage.toDouble(),
+//                    AdjustIsolatedMarginInputField.
             },
             closeAction = {
                 targetLeverage.let {

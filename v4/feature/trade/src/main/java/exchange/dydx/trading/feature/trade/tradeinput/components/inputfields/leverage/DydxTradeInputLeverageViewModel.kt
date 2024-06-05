@@ -55,7 +55,7 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
                 abacusStateManager.trade(orderSide.rawValue, TradeInputField.side)
             },
             leverageUpdateAction = { value ->
-                abacusStateManager.trade(value.toString(), TradeInputField.leverage)
+                abacusStateManager.trade(value, TradeInputField.leverage)
             },
         )
     }

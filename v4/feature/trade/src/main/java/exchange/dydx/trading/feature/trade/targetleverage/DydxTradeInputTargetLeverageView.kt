@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
-import exchange.dydx.platformui.components.buttons.PlatformPillItem
+import exchange.dydx.platformui.components.buttons.PlatformSelectionButton
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
@@ -63,7 +64,12 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 leverageText = "1.0",
-                leverageOptions = listOf(),
+                leverageOptions = listOf(
+                    LeverageTextAndValue("1.0", "1.0"),
+                    LeverageTextAndValue("2.0", "2.0"),
+                    LeverageTextAndValue("5.0", "5.0"),
+                    LeverageTextAndValue("10.0", "10.0"),
+                ),
             )
         }
     }
@@ -211,7 +217,6 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         Row(
             modifier = modifier
                 .padding(
-                    horizontal = ThemeShapes.HorizontalPadding,
                     vertical = 8.dp,
                 )
                 .fillMaxWidth(),
@@ -220,16 +225,12 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         ) {
             PlatformTabGroup(
                 modifier = Modifier.fillMaxWidth(),
-                scrollingEnabled = false,
+                scrollingEnabled = true,
                 items = state?.leverageOptions?.map {
                     { modifier ->
-                        PlatformPillItem(
-                            modifier = modifier
-                                .padding(
-                                    vertical = 4.dp,
-                                    horizontal = 8.dp,
-                                ),
-                            backgroundColor = ThemeColor.SemanticColor.layer_5,
+                        PlatformSelectionButton(
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
+                            selected = false,
                         ) {
                             Text(
                                 text = it.text,
@@ -244,13 +245,10 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 } ?: listOf(),
                 selectedItems = state?.leverageOptions?.map {
                     { modifier ->
-                        PlatformPillItem(
-                            modifier = modifier
-                                .padding(
-                                    vertical = 4.dp,
-                                    horizontal = 8.dp,
-                                ),
-                            backgroundColor = ThemeColor.SemanticColor.layer_2,
+
+                        PlatformSelectionButton(
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
+                            selected = true,
                         ) {
                             Text(
                                 text = it.text,
