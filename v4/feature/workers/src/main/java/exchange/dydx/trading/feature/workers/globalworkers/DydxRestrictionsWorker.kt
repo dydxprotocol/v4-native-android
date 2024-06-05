@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
-import androidx.compose.material.SnackbarDuration
 import exchange.dydx.abacus.output.ComplianceStatus.BLOCKED
 import exchange.dydx.abacus.output.ComplianceStatus.CLOSE_ONLY
 import exchange.dydx.abacus.output.ComplianceStatus.COMPLIANT
@@ -10,7 +9,8 @@ import exchange.dydx.abacus.output.ComplianceStatus.UNKNOWN
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +21,7 @@ class DydxRestrictionsWorker(
     override val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
-    private val platformInfo: PlatformInfo,
+    private val toaster: PlatformInfo,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -32,7 +32,7 @@ class DydxRestrictionsWorker(
             abacusStateManager.state.restriction
                 .onEach { restriction ->
                     val screenResult = DydxScreenResult.from(restriction)
-                    screenResult.showRestrictionAlert(platformInfo, localizer, abacusStateManager)
+                    screenResult.showRestrictionAlert(toaster, localizer, abacusStateManager)
                 }
                 .launchIn(scope)
 
@@ -52,11 +52,11 @@ class DydxRestrictionsWorker(
                         }
                     }
 
-                    platformInfo.show(
+                    toaster.show(
                         title = title,
                         message = body.orEmpty(),
-                        type = PlatformInfo.InfoType.Error,
-                        duration = SnackbarDuration.Indefinite,
+                        type = Toast.Type.Error,
+                        duration = Toast.Duration.Indefinite,
                     )
                     abacusStateManager.replaceCurrentWallet()
                 }

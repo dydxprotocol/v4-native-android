@@ -43,6 +43,15 @@ android {
         lint {
             baseline = file("lint-baseline.xml")
         }
+
+        packagingOptions {
+            jniLibs {
+                // Running into UnsatisfiedLinkError on some devices when linking libsqlcipher.so (used by WalletConnect)
+                // https://github.com/sqlcipher/android-database-sqlcipher/issues/635#issuecomment-1782914589
+                useLegacyPackaging = true
+            }
+        }
+
     }
 
     buildTypes {
