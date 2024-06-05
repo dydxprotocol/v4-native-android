@@ -5,9 +5,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.Toast
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformInfo
+import exchange.dydx.dydxstatemanager.localizeWithParams
+import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
@@ -81,11 +82,17 @@ class DydxTradeInputViewModel @Inject constructor(
             orderbookToggleState = orderbookToggleState,
             requestedBottomSheetState = buttomSheetState,
             onMarginType = {
-                if (tradeInput?.options?.needsMarginMode == null) {
-//                    platformInfo.show(
-//                        message = localizer.localize("WARNINGS.TRADE_BOX.UNABLE_TO_CHANGE_MARGIN_MODE"),
-//                        type = Toast.
-//                    )
+                if (tradeInput?.options?.needsMarginMode == false) {
+                    val market = tradeInput.marketId ?: ""
+                    platformInfo.show(
+                        message = localizer.localizeWithParams(
+                            path = "WARNINGS.TRADE_BOX.UNABLE_TO_CHANGE_MARGIN_MODE",
+                            params = mapOf(
+                                "MARKET" to market,
+                            ),
+                        ),
+                        type = Toast.Type.Warning,
+                    )
                 } else {
                     router.navigateTo(
                         route = TradeRoutes.margin_type,

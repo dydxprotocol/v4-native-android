@@ -50,10 +50,10 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
         return DydxTradeInputTargetLeverageView.ViewState(
             localizer = localizer,
             leverageText = targetLeverage ?: (
-                    tradeInput?.targetLeverage?.let {
-                        "$it"
-                    }
-                    ) ?: "2.0",
+                tradeInput?.targetLeverage?.let {
+                    "$it"
+                }
+                ) ?: "2.0",
             leverageOptions = leverages,
             selectAction = { leverage ->
                 this.targetLeverage.value = leverage
