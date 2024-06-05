@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -61,6 +62,7 @@ object DydxTradeInputMarginModeView : DydxComponent {
         val crossMargin: MarginTypeSelection,
         val isolatedMargin: MarginTypeSelection,
         val errorText: String?,
+        val logoUrl: String? = null,
         val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
@@ -122,18 +124,22 @@ object DydxTradeInputMarginModeView : DydxComponent {
     }
 
     @Composable
-    fun NavigationHeader(
+    private fun NavigationHeader(
         modifier: Modifier,
         state: ViewState,
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
         ) {
-            Spacer(modifier = Modifier.width(16.dp))
+            PlatformRoundImage(
+                modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                icon = state.logoUrl,
+                size = 40.dp,
+            )
+
             Text(
                 modifier = Modifier.padding(horizontal = 0.dp),
                 style = TextStyle.dydxDefault
@@ -163,13 +169,13 @@ object DydxTradeInputMarginModeView : DydxComponent {
     }
 
     @Composable
-    fun Selection(
+    private fun Selection(
         modifier: Modifier,
         marginModeState: MarginTypeSelection
     ) {
         val shape = RoundedCornerShape(10.dp)
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = ThemeShapes.VerticalPadding,

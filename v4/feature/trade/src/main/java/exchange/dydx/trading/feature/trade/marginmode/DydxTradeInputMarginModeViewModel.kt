@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.trade.marginmode
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -15,8 +16,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -29,14 +33,31 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
     private val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
     @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
-    val state: Flow<DydxTradeInputMarginModeView.ViewState?> =
+
+    private val marketAssetId: Flow<String> =
         abacusStateManager.state.tradeInput
-            .map {
-                createViewState(it)
+            .mapNotNull { it?.marketId }
+            .flatMapLatest { marketId ->
+                abacusStateManager.state.market(marketId)
             }
+            .mapNotNull { it?.assetId }
             .distinctUntilChanged()
 
-    private fun createViewState(tradeInput: TradeInput?): DydxTradeInputMarginModeView.ViewState {
+    val state: Flow<DydxTradeInputMarginModeView.ViewState?> =
+        combine(
+            abacusStateManager.state.tradeInput,
+            marketAssetId,
+            abacusStateManager.state.assetMap.filterNotNull(),
+        ) { tradeInput, assetId, assetMap ->
+            createViewState(tradeInput, assetId, assetMap)
+        }
+            .distinctUntilChanged()
+
+    private fun createViewState(
+        tradeInput: TradeInput?,
+        assetId: String,
+        assetMap: Map<String, Asset>,
+    ): DydxTradeInputMarginModeView.ViewState {
         val marginMode = tradeInput?.marginMode ?: MarginMode.cross
         return DydxTradeInputMarginModeView.ViewState(
             title = localizer.localize("APP.GENERAL.MARGIN_MODE"),
@@ -58,6 +79,7 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
                 closeView()
             },
             errorText = null,
+            logoUrl = assetMap[assetId]?.resources?.imageUrl,
             closeAction = {
                 closeView()
             },

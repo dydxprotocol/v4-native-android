@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,6 +21,7 @@ import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -55,6 +55,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         val localizer: LocalizerProtocol,
         val leverageText: String?,
         val leverageOptions: List<LeverageTextAndValue>?,
+        val logoUrl: String? = null,
         val selectAction: ((String) -> Unit)? = null,
         val closeAction: (() -> Unit)? = null,
     ) {
@@ -86,6 +87,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 .animateContentSize()
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_3),
+            verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
         ) {
             NavigationHeader(
                 modifier = Modifier,
@@ -113,7 +115,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun NavigationHeader(
+    private fun NavigationHeader(
         modifier: Modifier,
         state: ViewState,
     ) {
@@ -122,9 +124,12 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
         ) {
-            Spacer(modifier = Modifier.width(16.dp))
+            PlatformRoundImage(
+                modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                icon = state.logoUrl,
+                size = 40.dp,
+            )
             Text(
                 modifier = Modifier.padding(horizontal = 0.dp),
                 style = TextStyle.dydxDefault
@@ -143,20 +148,21 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun Description(
+    private fun Description(
         modifier: Modifier,
         state: ViewState,
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(
+                    vertical = ThemeShapes.VerticalPadding,
+                    horizontal = ThemeShapes.HorizontalPadding,
+                ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
         ) {
-            Spacer(modifier = Modifier.width(16.dp))
             Text(
-                modifier = Modifier.padding(horizontal = 0.dp),
+                modifier = Modifier,
                 text = state.localizer.localize("APP.TRADE.ADJUST_TARGET_LEVERAGE_DESCRIPTION"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small),
@@ -165,12 +171,12 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun LeverageEditField(
+    private fun LeverageEditField(
         modifier: Modifier,
         state: ViewState?
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
                     vertical = 8.dp,
@@ -179,7 +185,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            InputFieldScaffold(modifier) {
+            InputFieldScaffold(Modifier) {
                 LabeledTextInput.Content(
                     modifier = Modifier,
                     state = LabeledTextInput.ViewState(
@@ -198,7 +204,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun LeverageOptions(
+    private fun LeverageOptions(
         modifier: Modifier,
         state: ViewState?
     ) {
@@ -271,15 +277,15 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
     }
 
     @Composable
-    fun ActionButton(
+    private fun ActionButton(
         modifier: Modifier,
         state: ViewState?
     ) {
         PlatformButton(
-            modifier = Modifier
+            modifier = modifier
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
-                    vertical = ThemeShapes.VerticalPadding,
+                    vertical = 16.dp,
                 )
                 .fillMaxWidth(),
             text = state?.localizer?.localize("APP.TRADE.CONFIRM_LEVERAGE"),
