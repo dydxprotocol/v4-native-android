@@ -45,7 +45,9 @@ class DydxProfileHeaderViewModel @Inject constructor(
                 }
                 val clip = ClipData.newPlainText("text", walletState.currentWallet?.cosmoAddress)
                 clipboard.setPrimaryClip(clip)
-                toaster.show(message = localizer.localize("APP.V4.DYDX_ADDRESS_COPIED"))
+                toaster.show(
+                    message = localizer.localize("APP.V4.DYDX_ADDRESS_COPIED"),
+                )
             },
             blockExplorerAction = {
                 if (abacusStateManager.environment?.links?.mintscanBase == null && walletState?.currentWallet?.cosmoAddress == null) {

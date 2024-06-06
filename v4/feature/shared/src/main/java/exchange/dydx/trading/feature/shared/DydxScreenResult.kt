@@ -79,6 +79,7 @@ enum class DydxScreenResult {
                         // android.os.Process.killProcess(android.os.Process.myPid());
                     },
                     duration = Toast.Duration.Indefinite,
+                    cancellable = false,
                 )
             }
             DydxScreenResult.UnknownRestriction -> {

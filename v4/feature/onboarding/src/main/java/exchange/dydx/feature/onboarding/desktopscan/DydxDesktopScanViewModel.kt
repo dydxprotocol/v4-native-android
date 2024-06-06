@@ -8,6 +8,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.integration.starkex.StarkexLib
 import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
@@ -63,6 +64,7 @@ class DydxDesktopScanViewModel @Inject constructor(
             if (error != null) {
                 toaster.show(
                     message = localizer.localize("APP.ONBOARDING.SCAN_QR_CODE_ERROR"),
+                    type = Toast.Type.Error,
                 )
             } else if (decrypted != null) {
                 val json = Json.parseToJsonElement(decrypted)
@@ -83,6 +85,7 @@ class DydxDesktopScanViewModel @Inject constructor(
                 } else {
                     toaster.show(
                         message = localizer.localize("APP.ONBOARDING.SCAN_QR_CODE_ERROR"),
+                        type = Toast.Type.Error,
                     )
                 }
             }
