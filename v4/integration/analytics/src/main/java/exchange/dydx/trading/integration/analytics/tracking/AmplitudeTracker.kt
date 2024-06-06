@@ -2,7 +2,7 @@ package exchange.dydx.trading.integration.analytics.tracking
 
 import com.amplitude.android.Amplitude
 import com.amplitude.android.events.Identify
-import exchange.dydx.utilities.utils.jsonStringToMap
+import exchange.dydx.utilities.utils.jsonStringToRawStringMap
 
 class AmplitudeTracker(
     private val amplitude: Amplitude
@@ -24,7 +24,7 @@ class AmplitudeTracker(
     }
 
     override fun log(event: String, data: String?) {
-        val jsonMap = data?.jsonStringToMap()
+        val jsonMap = data?.jsonStringToRawStringMap()
         amplitude.track(event, jsonMap)
     }
 
