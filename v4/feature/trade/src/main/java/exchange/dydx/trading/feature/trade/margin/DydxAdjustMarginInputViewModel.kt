@@ -44,7 +44,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
             }?.let {
                 abacusStateManager.adjustIsolatedMargin(
                     data = parser.asString(it.childSubaccountNumber),
-                    type = AdjustIsolatedMarginInputField.ChildSubaccountNumber
+                    type = AdjustIsolatedMarginInputField.ChildSubaccountNumber,
                 )
             }
         }
