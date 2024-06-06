@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'org.jetbrains.kotlin.kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -60,7 +61,13 @@ dependencies {
     implementation "androidx.compose.ui:ui-unit:$composeVersion"
     api "androidx.compose.material:material:$composeVersion"
     implementation "androidx.compose.material3:material3:$material3Version"
+
+    // Hilt
+    api "com.google.dagger:dagger:$hiltVersion"
+    api "com.google.dagger:hilt-core:$hiltVersion"
+    api "com.google.dagger:hilt-android:$hiltVersion"
     implementation "androidx.hilt:hilt-navigation-compose:$hiltAndroidXVersion"
+
 
     implementation "com.google.code.gson:gson:$gsonVersion"
 

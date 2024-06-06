@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.DydxViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -14,7 +15,7 @@ import javax.inject.Inject
 class DydxTransferFaucetViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    val toaster: PlatformInfo,
+    private val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTransferFaucetView.ViewState?> = flowOf(createViewState())
@@ -35,6 +36,7 @@ class DydxTransferFaucetViewModel @Inject constructor(
                             toaster.show(
                                 title = "Faucet Request Failed",
                                 message = it.error?.message ?: "Unknown error",
+                                type = Toast.Type.Info,
                             )
                         }
                     }
