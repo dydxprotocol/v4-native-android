@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
@@ -24,6 +25,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     savedStateHandle: SavedStateHandle,
+    private val parser: ParserProtocol,
 ) : ViewModel(), DydxViewModel {
 
     private val marketId: String? = savedStateHandle["marketId"]
@@ -37,7 +39,10 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
             abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
                 it.id == marketId
             }?.let {
-                abacusStateManager.adjustIsolatedMargin(it.childSubaccountNumber?.toString(), AdjustIsolatedMarginInputField.ChildSubaccountNumber)
+                abacusStateManager.adjustIsolatedMargin(
+                    data = parser.asString(it.childSubaccountNumber),
+                    type = AdjustIsolatedMarginInputField.ChildSubaccountNumber,
+                )
             }
         }
     }
