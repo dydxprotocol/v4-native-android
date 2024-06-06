@@ -89,8 +89,8 @@ object TransferAmountBox {
             return
         }
 
-        Column {
-            InputFieldScaffold(modifier.zIndex(1f)) {
+        Column(modifier) {
+            InputFieldScaffold(Modifier.zIndex(1f)) {
                 TopContent(modifier, state)
             }
             val shape = RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp)

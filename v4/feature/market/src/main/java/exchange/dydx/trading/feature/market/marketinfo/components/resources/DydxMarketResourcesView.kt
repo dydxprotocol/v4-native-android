@@ -73,22 +73,24 @@ object DydxMarketResourcesView : DydxComponent {
         ) {
             HeaderView(state = state)
 
-            Spacer(modifier = Modifier.padding(ThemeShapes.VerticalPadding))
+            state.sharedMarketViewState?.primaryDescription?.let {
+                Spacer(modifier = Modifier.padding(ThemeShapes.VerticalPadding))
+                Text(
+                    text = it,
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.base),
+                )
+            }
 
-            Text(
-                text = state.sharedMarketViewState?.primaryDescription ?: "",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.base),
-            )
-
-            Spacer(modifier = Modifier.padding(ThemeShapes.VerticalPadding))
-
-            Text(
-                text = state.sharedMarketViewState?.secondaryDescription ?: "",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.base)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-            )
+            state.sharedMarketViewState?.secondaryDescription?.let {
+                Spacer(modifier = Modifier.padding(ThemeShapes.VerticalPadding))
+                Text(
+                    text = it,
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.base)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+            }
         }
     }
 
