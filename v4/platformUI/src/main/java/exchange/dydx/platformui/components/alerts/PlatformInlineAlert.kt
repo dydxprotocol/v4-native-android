@@ -57,7 +57,7 @@ fun PlatformInlineAlert(
     ) {
         Box(
             Modifier
-                .width(3.dp)
+                .width(6.dp)
                 .fillMaxHeight()
                 .background(level.color),
         )
