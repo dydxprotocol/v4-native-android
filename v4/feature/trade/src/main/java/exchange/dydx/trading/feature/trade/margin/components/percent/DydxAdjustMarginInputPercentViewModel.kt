@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class DydxAdjustMarginInputPercentViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
+    private val parser: ParserProtocol,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxAdjustMarginInputPercentView.ViewState?> =
@@ -42,7 +44,7 @@ class DydxAdjustMarginInputPercentViewModel @Inject constructor(
             ),
             onPercentageChanged = { percentage ->
                 abacusStateManager.adjustIsolatedMargin(
-                    data = percentage.toString(),
+                    data = parser.asString(percentage),
                     type = AdjustIsolatedMarginInputField.AmountPercent,
                 )
             },
