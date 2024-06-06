@@ -1,12 +1,10 @@
 package exchange.dydx.trading.feature.trade.margin
 
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.Subaccount
-import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
+import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
@@ -14,11 +12,10 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.feature.receipt.DydxReceiptView
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,40 +48,29 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     }
 
     val state: Flow<DydxAdjustMarginInputView.ViewState?> =
-        combine(
-            abacusStateManager.state.adjustMarginInput.filterNotNull(),
-            abacusStateManager.state.selectedSubaccount,
-            abacusStateManager.state.selectedSubaccountPositions,
-        ) { adjustMarginInput, subaccount, positions ->
-            createViewState(adjustMarginInput, subaccount, positions)
-        }
+        abacusStateManager.state.adjustMarginInput.filterNotNull()
+            .map { adjustMarginInput ->
+                createViewState(adjustMarginInput)
+            }
             .distinctUntilChanged()
 
     private fun createViewState(
         adjustMarginInput: AdjustIsolatedMarginInput,
-        subaccount: Subaccount?,
-        positions: List<SubaccountPosition>?,
     ): DydxAdjustMarginInputView.ViewState {
-        val isolatedMargin = positions?.firstOrNull()
-
         return DydxAdjustMarginInputView.ViewState(
             localizer = localizer,
             formatter = formatter,
             amountText = formatter.raw(adjustMarginInput.amount?.toDoubleOrNull(), 2),
-            isolatedMarginReceipt = DydxReceiptView.ViewState(
-                localizer = localizer,
-                height = 128.dp,
-                padding = 0.dp,
-                lineTypes = listOf(
-                    DydxReceiptView.ReceiptLineType.IsolatedPositionMarginUsage,
-                    DydxReceiptView.ReceiptLineType.IsolatedPositionLeverage,
-                ),
-            ),
+            direction = when (adjustMarginInput.type) {
+                IsolatedMarginAdjustmentType.Add -> DydxAdjustMarginInputView.MarginDirection.Add
+                IsolatedMarginAdjustmentType.Remove -> DydxAdjustMarginInputView.MarginDirection.Remove
+            },
             error = null,
-            editAction = { },
-            action = { },
-            closeAction = {
-                router.navigateBack()
+            amountEditAction = { amount ->
+                abacusStateManager.adjustIsolatedMargin(
+                    data = amount,
+                    type = AdjustIsolatedMarginInputField.Amount,
+                )
             },
         )
     }

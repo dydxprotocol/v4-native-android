@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.receipt.components.isolatedmargin
+package exchange.dydx.trading.feature.receipt.components.leverage
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,28 +21,25 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.LeverageView
 
 @Preview
 @Composable
 fun Preview_DydxReceiptLeverageView() {
     DydxThemedPreviewSurface {
-        DydxReceiptIsolatedPositionLeverageView.Content(Modifier, DydxReceiptIsolatedPositionLeverageView.ViewState.preview)
+        DydxReceiptPositionLeverageView.Content(Modifier, DydxReceiptPositionLeverageView.ViewState.preview)
     }
 }
 
-object DydxReceiptIsolatedPositionLeverageView : DydxComponent {
+object DydxReceiptPositionLeverageView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val formatter: DydxFormatter,
         val before: LeverageView.ViewState? = null,
         val after: LeverageView.ViewState? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                formatter = DydxFormatter(),
                 before = LeverageView.ViewState.preview,
                 after = LeverageView.ViewState.preview,
             )
@@ -51,7 +48,7 @@ object DydxReceiptIsolatedPositionLeverageView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxReceiptIsolatedPositionLeverageViewModel = hiltViewModel()
+        val viewModel: DydxReceiptPositionLeverageViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)

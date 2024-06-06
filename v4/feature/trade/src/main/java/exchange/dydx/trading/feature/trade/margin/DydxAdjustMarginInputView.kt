@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.trade.margin
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,13 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,12 +39,11 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.receipt.DydxReceiptView
-import exchange.dydx.trading.feature.receipt.components.liquidationprice.DydxReceiptLiquidationPriceView
 import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
-import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.trade.margin.components.crossreceipt.DydxAdjustMarginInputCrossReceiptView
 import exchange.dydx.trading.feature.trade.margin.components.cta.DydxAdjustMarginCtaButton
+import exchange.dydx.trading.feature.trade.margin.components.header.DydxAdjustMarginInputHeaderView
+import exchange.dydx.trading.feature.trade.margin.components.ioslatedreceipt.DydxAdjustMarginInputIsolatedReceiptView
 import exchange.dydx.trading.feature.trade.margin.components.liquidationprice.DydxAdjustMarginInputLiquidationPriceView
 import exchange.dydx.trading.feature.trade.margin.components.percent.DydxAdjustMarginInputPercentView
 import exchange.dydx.trading.feature.trade.margin.components.type.DydxAdjustMarginInputTypeView
@@ -57,38 +57,29 @@ fun Preview_DydxAdjustMarginInputView() {
 }
 
 object DydxAdjustMarginInputView : DydxComponent {
+    enum class MarginDirection {
+        Add,
+        Remove,
+    }
+
     data class PercentageOption(
         val text: String,
         val percentage: Double,
-    )
-
-    data class IsolatedMarginReceipt(
-        val liquidationPrice: DydxReceiptLiquidationPriceView.ViewState,
-        val receipts: DydxReceiptView.ViewState,
     )
 
     data class ViewState(
         val localizer: LocalizerProtocol,
         val formatter: DydxFormatter,
         val amountText: String?,
-        val isolatedMarginReceipt: DydxReceiptView.ViewState,
+        val direction: MarginDirection = MarginDirection.Add,
         val error: String?,
-        val editAction: ((String) -> Unit) = {},
-        val action: (() -> Unit) = {},
-        val closeAction: (() -> Unit) = {},
+        val amountEditAction: ((String) -> Unit) = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 formatter = DydxFormatter(),
                 amountText = "500",
-                isolatedMarginReceipt = DydxReceiptView.ViewState(
-                    localizer = MockLocalizer(),
-                    lineTypes = listOf(
-                        DydxReceiptView.ReceiptLineType.FreeCollateral,
-                        DydxReceiptView.ReceiptLineType.MarginUsage,
-                    ),
-                ),
                 error = null,
             )
         }
@@ -108,17 +99,23 @@ object DydxAdjustMarginInputView : DydxComponent {
             return
         }
 
+        val focusManager = LocalFocusManager.current
+
         Column(
             modifier = modifier
                 .animateContentSize()
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_3),
+                .themeColor(ThemeColor.SemanticColor.layer_3)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focusManager.clearFocus()
+                    })
+                },
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Column {
-                NavigationHeader(
-                    modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
-                    state = state,
+                DydxAdjustMarginInputHeaderView.Content(
+                    modifier = Modifier,
                 )
 
                 PlatformDivider()
@@ -158,36 +155,6 @@ object DydxAdjustMarginInputView : DydxComponent {
     }
 
     @Composable
-    fun NavigationHeader(
-        modifier: Modifier,
-        state: ViewState,
-    ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        ) {
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                modifier = Modifier.padding(horizontal = 0.dp),
-                style = TextStyle.dydxDefault
-                    .themeFont(
-                        fontSize = ThemeFont.FontSize.large,
-                        fontType = ThemeFont.FontType.plus,
-                    )
-                    .themeColor(ThemeColor.SemanticColor.text_primary),
-                text = state.localizer.localize("APP.TRADE.ADJUST_ISOLATED_MARGIN"),
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            HeaderViewCloseBotton(
-                closeAction = state.closeAction,
-            )
-        }
-    }
-
-    @Composable
     fun InputAndSubaccountReceipt(
         modifier: Modifier,
         state: ViewState,
@@ -197,7 +164,11 @@ object DydxAdjustMarginInputView : DydxComponent {
                 AmountBox(Modifier, state)
             }
             val shape = RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp)
-            DydxAdjustMarginInputCrossReceiptView.Content(
+            val component: DydxComponent = when (state.direction) {
+                MarginDirection.Add -> DydxAdjustMarginInputCrossReceiptView
+                MarginDirection.Remove -> DydxAdjustMarginInputIsolatedReceiptView
+            }
+            component.Content(
                 modifier = Modifier
                     .offset(y = (-8).dp)
                     .background(color = ThemeColor.SemanticColor.layer_1.color, shape = shape)
@@ -234,13 +205,9 @@ object DydxAdjustMarginInputView : DydxComponent {
                     value = state.amountText ?: "",
                     textStyle = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
-                        .themeFont(fontSize = ThemeFont.FontSize.medium),
-                    placeHolder = if (state.amountText == null) {
-                        state.formatter.raw(0.0, 2)
-                    } else {
-                        null
-                    },
-                    onValueChange = { state.editAction.invoke(it) },
+                        .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number),
+                    placeHolder = state.formatter.raw(0.0, 2),
+                    onValueChange = { state.amountEditAction.invoke(it) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
             }
@@ -264,11 +231,20 @@ object DydxAdjustMarginInputView : DydxComponent {
             modifier = modifier
                 .fillMaxWidth(),
         ) {
-            DydxReceiptView.Content(
+            val shape = RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp)
+            val component: DydxComponent = when (state.direction) {
+                MarginDirection.Add -> DydxAdjustMarginInputIsolatedReceiptView
+                MarginDirection.Remove -> DydxAdjustMarginInputCrossReceiptView
+            }
+            component.Content(
                 modifier = Modifier
-                    .offset(y = ThemeShapes.VerticalPadding),
-                state = state.isolatedMarginReceipt,
+                    .offset(y = 8.dp)
+                    .background(color = ThemeColor.SemanticColor.layer_1.color, shape = shape)
+                    .padding(horizontal = ThemeShapes.HorizontalPadding)
+                    .padding(vertical = 12.dp)
+                    .padding(bottom = 8.dp),
             )
+
             DydxAdjustMarginCtaButton.Content(
                 Modifier
                     .fillMaxWidth()

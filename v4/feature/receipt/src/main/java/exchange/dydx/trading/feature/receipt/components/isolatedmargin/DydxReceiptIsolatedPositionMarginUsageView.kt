@@ -22,7 +22,6 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.shared.views.MarginUsageView
 
 @Preview
 @Composable
@@ -36,15 +35,15 @@ object DydxReceiptIsolatedPositionMarginUsageView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val formatter: DydxFormatter,
-        val before: MarginUsageView.ViewState? = null,
-        val after: MarginUsageView.ViewState? = null,
+        val before: Double? = null,
+        val after: Double? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 formatter = DydxFormatter(),
-                before = MarginUsageView.ViewState.preview,
-                after = MarginUsageView.ViewState.preview,
+                before = 100.0,
+                after = 90.0,
             )
         }
     }
@@ -76,33 +75,30 @@ object DydxReceiptIsolatedPositionMarginUsageView : DydxComponent {
 
             PlatformAmountChange(
                 modifier = Modifier.weight(1f),
-                before = if (state.before != null) { {
-                    MarginUsageView.Content(
-                        state = state.before,
-                        formatter = state.formatter,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
-                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                    )
-                } } else {
-                    null
+                before = state.before?.let {
+                    {
+                        Text(
+                            text = state.formatter.dollar(it, 2) ?: "",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                        )
+                    }
                 },
-                after =
-                if (state.after != null) { {
-                    MarginUsageView.Content(
-                        state = state.after,
-                        formatter = state.formatter,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
-                } } else {
-                    null
+                after = state.after?.let {
+                    {
+                        Text(
+                            text = state.formatter.dollar(it, 2) ?: "",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
                 },
-                direction = PlatformDirection.from(state.after?.percent, state.before?.percent),
+                direction = PlatformDirection.from(state.after, state.before),
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    .themeColor(ThemeColor.SemanticColor.text_primary),
             )
         }
     }

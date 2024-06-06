@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,7 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
-
+import exchange.dydx.trading.feature.trade.margin.DydxAdjustMarginInputView.MarginDirection
 @Preview
 @Composable
 fun Preview_DydxAdjustMarginInputTypeView() {
@@ -38,12 +39,6 @@ fun Preview_DydxAdjustMarginInputTypeView() {
 }
 
 object DydxAdjustMarginInputTypeView : DydxComponent {
-
-    enum class MarginDirection {
-        Add,
-        Remove,
-    }
-
     data class ViewState(
         val localizer: LocalizerProtocol,
         val direction: MarginDirection = MarginDirection.Add,
@@ -69,6 +64,8 @@ object DydxAdjustMarginInputTypeView : DydxComponent {
         if (state == null) {
             return
         }
+
+        val focusManager = LocalFocusManager.current
 
         val directions = listOf(MarginDirection.Add, MarginDirection.Remove)
 
@@ -125,6 +122,7 @@ object DydxAdjustMarginInputTypeView : DydxComponent {
             },
             currentSelection = if (state.direction == MarginDirection.Add) 0 else 1,
             onSelectionChanged = { it ->
+                focusManager.clearFocus()
                 state.marginDirectionAction.invoke(directions[it])
             },
             horizontalArrangement = Arrangement.spacedBy(8.dp),

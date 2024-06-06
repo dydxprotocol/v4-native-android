@@ -36,6 +36,7 @@ object DydxReceiptMarginUsageView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val formatter: DydxFormatter,
+        val label: String? = null,
         val before: MarginUsageView.ViewState? = null,
         val after: MarginUsageView.ViewState? = null,
     ) {
@@ -66,7 +67,7 @@ object DydxReceiptMarginUsageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = state.localizer.localize("APP.GENERAL.MARGIN_USAGE"),
+                text = state.label ?: state.localizer.localize("APP.GENERAL.MARGIN_USAGE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
