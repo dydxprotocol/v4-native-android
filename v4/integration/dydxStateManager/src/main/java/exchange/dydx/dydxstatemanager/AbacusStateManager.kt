@@ -30,6 +30,7 @@ import exchange.dydx.abacus.state.manager.OrderbookGrouping
 import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.abacus.state.manager.TokenInfo
 import exchange.dydx.abacus.state.manager.V4Environment
+import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
 import exchange.dydx.abacus.state.model.ClosePositionInputField
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.abacus.state.model.TransferInputField
@@ -118,6 +119,8 @@ interface AbacusStateManagerProtocol {
 
     fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
     fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit)
+
+    fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?)
 
     // extensions
     fun resetTransferInputFields() {
@@ -450,6 +453,10 @@ class AbacusStateManager @Inject constructor(
                 callback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
             }
         }
+    }
+
+    override fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?) {
+        asyncStateManager.adjustIsolatedMargin(data, type)
     }
 
     // MARK: StateNotificationProtocol

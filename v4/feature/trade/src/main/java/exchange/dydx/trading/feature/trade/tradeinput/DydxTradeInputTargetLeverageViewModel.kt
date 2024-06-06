@@ -6,15 +6,19 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class DydxTradeInputTargetLeverageViewModel @Inject constructor(
@@ -22,7 +26,8 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     private val router: DydxRouter,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    val toaster: PlatformInfo,
+    private val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
     var targetLeverage: MutableStateFlow<String?> = MutableStateFlow(null)
 
@@ -56,7 +61,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
                 targetLeverage.let {
                     abacusStateManager.trade("$it", TradeInputField.targetLeverage)
                 }
-                router.navigateBack()
+                closeView()
             },
         )
     }
@@ -83,5 +88,13 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
             formatter.leverage(value, 1) ?: "",
             formatter.raw(value) ?: "",
         )
+    }
+
+    private fun closeView() {
+        router.navigateBack()
+        appScope.launch {
+            delay(1.seconds) // Delay to allow the back navigation to complete
+            buttomSheetStateFlow.value = DydxTradeInputView.BottomSheetState.Expanded
+        }
     }
 }

@@ -85,7 +85,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             modifier = modifier
                 .animateContentSize()
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_4),
+                .themeColor(ThemeColor.SemanticColor.layer_3),
         ) {
             NavigationHeader(
                 modifier = Modifier,

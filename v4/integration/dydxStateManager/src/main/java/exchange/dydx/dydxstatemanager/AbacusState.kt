@@ -30,6 +30,7 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.SubaccountTransfer
 import exchange.dydx.abacus.output.TransferStatus
 import exchange.dydx.abacus.output.User
+import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.output.input.ClosePositionInput
 import exchange.dydx.abacus.output.input.ReceiptLine
 import exchange.dydx.abacus.output.input.TradeInput
@@ -554,6 +555,17 @@ class AbacusState(
             .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
+
+    /**
+     * Adjust Margin input
+     */
+    val adjustMarginInput: StateFlow<AdjustIsolatedMarginInput?> by lazy {
+        perpetualState
+            .map { it?.input?.adjustIsolatedMargin }
+            .throttleTime(10, throttleConfiguration = ThrottleConfiguration.LEADING_AND_TRAILING)
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+    }
+
     private val subaccountNumber: Int?
         get() = parser.asInt(abacusStateManager.subaccountNumber)
 }

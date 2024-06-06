@@ -7,22 +7,26 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class DydxTradeInputMarginModeViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val router: DydxRouter,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
-    val toaster: PlatformInfo,
+    private val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
     val state: Flow<DydxTradeInputMarginModeView.ViewState?> =
         abacusStateManager.state.tradeInput
@@ -37,25 +41,33 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
             title = localizer.localize("APP.GENERAL.MARGIN_MODE"),
             asset = tradeInput?.marketId ?: "",
             crossMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
-                localizer.localize("APP.GENERAL.CROSS_MARGIN"),
-                localizer.localize("APP.GENERAL.CROSS_MARGIN_DESCRIPTION"),
-                marginMode == MarginMode.cross,
+                title = localizer.localize("APP.GENERAL.CROSS_MARGIN"),
+                text = localizer.localize("APP.GENERAL.CROSS_MARGIN_DESCRIPTION"),
+                selected = marginMode == MarginMode.cross,
             ) {
                 abacusStateManager.trade("CROSS", TradeInputField.marginMode)
-                router.navigateBack()
+                closeView()
             },
             isolatedMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
-                localizer.localize("APP.GENERAL.ISOLATED_MARGIN"),
-                localizer.localize("APP.GENERAL.ISOLATED_MARGIN_DESCRIPTION"),
-                marginMode == MarginMode.isolated,
+                title = localizer.localize("APP.GENERAL.ISOLATED_MARGIN"),
+                text = localizer.localize("APP.GENERAL.ISOLATED_MARGIN_DESCRIPTION"),
+                selected = marginMode == MarginMode.isolated,
             ) {
                 abacusStateManager.trade("ISOLATED", TradeInputField.marginMode)
-                router.navigateBack()
+                closeView()
             },
             errorText = null,
             closeAction = {
-                router.navigateBack()
+                closeView()
             },
         )
+    }
+
+    private fun closeView() {
+        router.navigateBack()
+        appScope.launch {
+            delay(1.seconds) // Delay to allow the back navigation to complete
+            buttomSheetStateFlow.value = DydxTradeInputView.BottomSheetState.Expanded
+        }
     }
 }
