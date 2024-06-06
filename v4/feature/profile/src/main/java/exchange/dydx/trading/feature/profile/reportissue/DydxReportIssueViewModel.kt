@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.Toast
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineDispatchers
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -66,7 +67,10 @@ class DydxReportIssueViewModel @Inject constructor(
             } else {
                 val error = localizer.localize("APP.ISSUE_REPORT.LOADING_ERROR_TITLE")
                 textFlow.value = error
-                toaster.show(message = error)
+                toaster.show(
+                    message = error,
+                    type = Toast.Type.Error,
+                )
             }
 
             router.navigateBack()

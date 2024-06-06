@@ -57,6 +57,7 @@ class DydxRestrictionsWorker(
                         message = body.orEmpty(),
                         type = Toast.Type.Error,
                         duration = Toast.Duration.Indefinite,
+                        cancellable = compliance.status != BLOCKED,
                     )
                     abacusStateManager.replaceCurrentWallet()
                 }

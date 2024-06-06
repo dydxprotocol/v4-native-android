@@ -6,12 +6,15 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +24,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.platformui.R
+import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -65,9 +73,27 @@ fun PlatformInfoContainer(
                     .padding(12.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(type.backgroundColor)
-                    .clickable(enabled = buttonAction != null) { buttonAction?.invoke() },
+                    .pointerInput(Unit) {
+                        detectVerticalDragGestures { _, dragAmount ->
+                            if (dragAmount < 0) {
+                                // swipe up
+                                cancelAction?.invoke()
+                            }
+                        }
+                    },
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PlatformImage(
+                        icon = R.drawable.icon_info,
+                        modifier = Modifier.size(26.dp),
+                        colorFilter = ColorFilter
+                            .tint(type.foregroundColor),
+                    )
+
                     Column(Modifier.weight(1f)) {
                         title?.let {
                             Text(
@@ -85,10 +111,17 @@ fun PlatformInfoContainer(
                         )
                     }
                     buttonTitle?.let {
-                        Box(Modifier.border(width = 1.dp, color = ThemeColor.SemanticColor.layer_7.color, shape = RoundedCornerShape(6.dp))) {
+                        val shape = RoundedCornerShape(6.dp)
+                        Box(
+                            modifier = Modifier
+                                .clip(shape)
+                                .border(1.dp, type.buttonBorderColor, shape)
+                                .background(type.buttonBackgroundColor)
+                                .clickable(enabled = buttonAction != null) { buttonAction?.invoke() },
+                        ) {
                             Text(
                                 text = it,
-                                color = type.foregroundColor,
+                                color = type.buttonForegroundColor,
                                 style = TextStyle.dydxDefault
                                     .themeFont(fontSize = ThemeFont.FontSize.small),
                                 modifier =
@@ -110,6 +143,7 @@ data class Toast(
     val type: Type = Type.Info,
     val duration: Duration,
     val buttonAction: (() -> Unit)? = null,
+    val cancelAction: (() -> Unit)? = null,
 ) {
     enum class Type {
         Error, Info, Warning;
@@ -126,6 +160,27 @@ data class Toast(
                 Error -> ThemeColor.SemanticColor.color_white.color
                 Info -> ThemeColor.SemanticColor.text_primary.color
                 Warning -> ThemeColor.SemanticColor.color_black.color
+            }
+
+        val buttonBackgroundColor: Color
+            get() = when (this) {
+                Error -> ThemeColor.SemanticColor.color_white.color
+                Info -> ThemeColor.SemanticColor.layer_6.color
+                Warning -> ThemeColor.SemanticColor.color_white.color
+            }
+
+        val buttonForegroundColor: Color
+            get() = when (this) {
+                Error -> ThemeColor.SemanticColor.color_red.color
+                Info -> ThemeColor.SemanticColor.text_primary.color
+                Warning -> ThemeColor.SemanticColor.color_black.color
+            }
+
+        val buttonBorderColor: Color
+            get() = when (this) {
+                Error -> ThemeColor.SemanticColor.color_white.color
+                Info -> ThemeColor.SemanticColor.layer_7.color
+                Warning -> ThemeColor.SemanticColor.color_white.color
             }
     }
 
@@ -151,10 +206,26 @@ class PlatformInfo @Inject constructor(
         buttonTitle: String? = null,
         type: Toast.Type = Toast.Type.Info,
         duration: Toast.Duration = Toast.Duration.Short,
+        cancellable: Boolean = true,
         buttonAction: (() -> Unit)? = null,
     ) {
         toastQueue.add(
-            Toast(title, message, buttonTitle, type, duration, buttonAction),
+            Toast(
+                title = title,
+                message = message,
+                buttonTitle = buttonTitle,
+                type = type,
+                duration = duration,
+                cancelAction = {
+                    if (cancellable) {
+                        currentJob?.cancel()
+                    }
+                },
+                buttonAction = {
+                    buttonAction?.invoke()
+                    currentJob?.cancel()
+                },
+            ),
         )
         if (currentJob == null || currentJob?.isCompleted == true) {
             displayNextToast()
@@ -173,6 +244,10 @@ class PlatformInfo @Inject constructor(
                     displayNextToast()
                 } catch (e: CancellationException) {
                     _toasts.value = null
+                    appScope.launch {
+                        delay(500)
+                        displayNextToast()
+                    }
                 }
             }
         }
