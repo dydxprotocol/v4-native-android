@@ -22,6 +22,7 @@ import exchange.dydx.trading.feature.transfer.components.AddressInputBox
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
 import exchange.dydx.trading.feature.transfer.components.TransferAmountBox
+import exchange.dydx.trading.feature.transfer.components.TransferMemoBox
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchParam
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +43,6 @@ class DydxTransferOutViewModel @Inject constructor(
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
 ) : ViewModel(), DydxViewModel {
-    private val selectedChainFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
     private val selectedTokenFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
 
     val state: Flow<DydxTransferOutView.ViewState?> =
@@ -51,27 +51,22 @@ class DydxTransferOutViewModel @Inject constructor(
             abacusStateManager.state.selectedSubaccount
                 .map { it?.freeCollateral?.current },
             abacusStateManager.state.accountBalance(abacusStateManager.nativeTokenDenom),
-            selectedChainFlow,
             selectedTokenFlow,
-        ) { transferInput, freeCollateral, nativeTokenAmount, selectedChain, selectedToken ->
-            createViewState(transferInput, freeCollateral, nativeTokenAmount, selectedChain, selectedToken)
+        ) { transferInput, freeCollateral, nativeTokenAmount, selectedToken ->
+            createViewState(transferInput, freeCollateral, nativeTokenAmount, selectedToken)
         }
             .distinctUntilChanged()
 
     init {
         abacusStateManager.state.transferInput
-            .map { it?.transferOutOptions?.chains?.toList() }
-            .distinctUntilChanged()
-            .onEach { chains ->
-                selectedChainFlow.value = chains?.firstOrNull()
+            .map { input ->
+                input?.transferOutOptions?.assets?.run {
+                    firstOrNull { it.type == input.token } ?: firstOrNull()
+                }
             }
-            .launchIn(viewModelScope)
-
-        abacusStateManager.state.transferInput
-            .map { it?.transferOutOptions?.assets?.toList() }
             .distinctUntilChanged()
-            .onEach { tokens ->
-                selectedTokenFlow.value = tokens?.firstOrNull()
+            .onEach {
+                selectedTokenFlow.value = it
             }
             .launchIn(viewModelScope)
     }
@@ -80,7 +75,6 @@ class DydxTransferOutViewModel @Inject constructor(
         transferInput: TransferInput?,
         freeCollateral: Double?,
         nativeTokenAmount: Double?,
-        chain: SelectionOption?,
         token: SelectionOption?,
     ): DydxTransferOutView.ViewState {
         val tokenSymbol = token?.localizedString(localizer)
@@ -171,6 +165,17 @@ class DydxTransferOutViewModel @Inject constructor(
                             TransferInputField.size,
                         )
                     }
+                },
+            ),
+            transferMemo = TransferMemoBox.ViewState(
+                localizer = localizer,
+                value = transferInput?.memo,
+                showCexWarning = transferInput?.token != abacusStateManager.usdcTokenKey && transferInput?.memo.isNullOrEmpty(),
+                onEditAction = { memo ->
+                    abacusStateManager.transfer(
+                        input = memo,
+                        type = TransferInputField.MEMO,
+                    )
                 },
             ),
             addressInput = AddressInputBox.ViewState(

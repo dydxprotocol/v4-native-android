@@ -3,10 +3,13 @@ package exchange.dydx.trading.feature.transfer.transferout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,6 +28,7 @@ import exchange.dydx.trading.feature.transfer.components.AddressInputBox
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
 import exchange.dydx.trading.feature.transfer.components.TransferAmountBox
+import exchange.dydx.trading.feature.transfer.components.TransferMemoBox
 
 @Preview
 @Composable
@@ -41,7 +45,9 @@ object DydxTransferOutView : DydxComponent {
         val chainsComboBox: ChainsComboBox.ViewState? = null,
         val tokensComboBox: TokensComboBox.ViewState? = null,
         val transferAmount: TransferAmountBox.ViewState? = null,
+        val transferMemo: TransferMemoBox.ViewState? = null,
     ) {
+
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
@@ -81,17 +87,17 @@ object DydxTransferOutView : DydxComponent {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 item {
-                    ChainsComboBox.Content(
-                        modifier = Modifier.animateItemPlacement(),
-                        state = state.chainsComboBox,
-                    )
-                }
-
-                item {
-                    AddressInputBox.Content(
-                        modifier = Modifier.animateItemPlacement(),
-                        state = state.addressInput,
-                    )
+                    Row(Modifier.animateItemPlacement()) {
+                        AddressInputBox.Content(
+                            modifier = Modifier.weight(1f),
+                            state = state.addressInput,
+                        )
+                        Spacer(Modifier.width(ThemeShapes.HorizontalPadding))
+                        ChainsComboBox.Content(
+                            modifier = Modifier.weight(1f),
+                            state = state.chainsComboBox,
+                        )
+                    }
                 }
 
                 item {
@@ -105,6 +111,13 @@ object DydxTransferOutView : DydxComponent {
                     TransferAmountBox.Content(
                         modifier = Modifier.animateItemPlacement(),
                         state = state.transferAmount,
+                    )
+                }
+
+                item {
+                    TransferMemoBox.Content(
+                        modifier = Modifier.animateItemPlacement(),
+                        state = state.transferMemo,
                     )
                 }
 

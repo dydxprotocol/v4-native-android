@@ -4,8 +4,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -102,7 +104,7 @@ object DydxReceiptView : DydxComponent {
 
         Box(
             modifier = modifier
-                .height(state.height ?: 210.dp)
+                .heightIn(max = state.height ?: 210.dp)
                 .fillMaxWidth()
                 .padding(horizontal = state.padding ?: ThemeShapes.HorizontalPadding)
                 .background(
@@ -113,8 +115,10 @@ object DydxReceiptView : DydxComponent {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = ThemeShapes.HorizontalPadding)
-                    .padding(vertical = ThemeShapes.VerticalPadding * 2),
+                    .padding(
+                        horizontal = ThemeShapes.HorizontalPadding,
+                        vertical = ThemeShapes.VerticalPadding * 2,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
             ) {
                 items(state.lineTypes, key = { it }) { lineType ->
@@ -179,6 +183,10 @@ object DydxReceiptView : DydxComponent {
                             DydxReceiptBridgeFeeView.Content(Modifier.animateItemPlacement())
                         }
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(ThemeShapes.VerticalPadding))
                 }
             }
         }

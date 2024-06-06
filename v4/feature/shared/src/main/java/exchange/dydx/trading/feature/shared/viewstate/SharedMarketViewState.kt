@@ -72,10 +72,10 @@ data class SharedMarketViewState(
                     coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
                 primaryDescription = asset?.resources?.primaryDescriptionKey?.let { key ->
-                    localizer.localize("APP.$key")
+                    localizer.localize("APP.$key").takeUnless { it.startsWith("APP.__ASSETS.") }
                 },
                 secondaryDescription = asset?.resources?.secondaryDescriptionKey?.let { key ->
-                    localizer.localize("APP.$key")
+                    localizer.localize("APP.$key").takeUnless { it.startsWith("APP.__ASSETS.") }
                 },
                 websiteUrl = asset?.resources?.websiteLink,
                 whitepaperUrl = asset?.resources?.whitepaperLink,
