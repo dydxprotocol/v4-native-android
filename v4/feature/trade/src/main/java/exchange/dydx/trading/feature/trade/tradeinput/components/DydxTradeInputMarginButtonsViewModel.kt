@@ -58,7 +58,7 @@ class DydxTradeInputMarginButtonsViewModel @Inject constructor(
                     )
                 } else {
                     router.navigateTo(
-                        route = TradeRoutes.margin_type,
+                        route = TradeRoutes.margin_mode,
                         presentation = DydxRouter.Presentation.Modal,
                     )
                 }
