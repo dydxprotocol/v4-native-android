@@ -20,7 +20,7 @@ fun SelectionOption.localizedString(localizer: LocalizerProtocol): String? {
     return null
 }
 
-fun ErrorString.localizedString(localizer: LocalizerProtocol): String? =
+fun ErrorString.localizedString(localizer: LocalizerProtocol): String =
     localized ?: localizer.localize(stringKey)
 
 fun TradeInput.selectedTypeText(localizer: LocalizerProtocol): String? {
@@ -33,7 +33,7 @@ fun ParsingError.localizedString(localizer: LocalizerProtocol): String? {
     return if (stringKey != null) localizer.localize(stringKey) else null
 }
 
-fun LocalizerProtocol.localizeWithParams(path: String, params: Map<String, String>): String? {
+fun LocalizerProtocol.localizeWithParams(path: String, params: Map<String, String>): String {
     return localize(path = path, paramsAsJson = params.toJsonPrettyPrint())
 }
 

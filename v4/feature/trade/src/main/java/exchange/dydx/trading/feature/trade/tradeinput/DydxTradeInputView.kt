@@ -39,8 +39,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.buttons.PlatformButton
-import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
@@ -52,6 +50,7 @@ import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
 import exchange.dydx.trading.feature.trade.orderbook.DydxOrderbookView
 import exchange.dydx.trading.feature.trade.orderbook.components.DydxOrderbookGroupView
 import exchange.dydx.trading.feature.trade.tradeinput.components.DydxTradeInputCtaButtonView
+import exchange.dydx.trading.feature.trade.tradeinput.components.DydxTradeInputMarginButtonsView
 import exchange.dydx.trading.feature.trade.tradeinput.components.DydxTradeInputOrderbookToggleView
 import exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.execution.DydxTradeInputExecutionView
 import exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.goodtil.DydxTradeInputGoodTilView
@@ -110,19 +109,14 @@ object DydxTradeInputView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val isIsolatedMarketEnabled: Boolean = false,
-        val isIsolatedMarketSelected: Boolean = false,
-        val isolatedMarketTargetLeverageText: String?,
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
-        val onMarketType: () -> Unit = {},
-        val onTargetLeverage: () -> Unit = {},
         val onRequestedBottomSheetStateCompleted: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                isolatedMarketTargetLeverageText = "2x",
                 inputFields = listOf(
                     InputField.Size,
                     InputField.Leverage,
@@ -298,56 +292,12 @@ object DydxTradeInputView : DydxComponent {
         Row(
             modifier = modifier
                 .fillMaxWidth()
+                .padding(start = ThemeShapes.HorizontalPadding)
                 .height(44.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.5f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    PlatformButton(
-                        modifier = if (state.isIsolatedMarketSelected) {
-                            Modifier
-                                .padding(start = 8.dp)
-                        } else {
-                            Modifier
-                                .padding(start = 8.dp)
-                                .fillMaxWidth()
-                        },
-                        state = PlatformButtonState.Secondary,
-                        text = state.localizer.localize(
-                            if (state.isIsolatedMarketSelected) {
-                                "APP.GENERAL.ISOLATED"
-                            } else {
-                                "APP.GENERAL.CROSS"
-                            },
-                        ),
-                    ) {
-                        state.onMarketType()
-                    }
-                    if (state.isIsolatedMarketSelected) {
-                        PlatformButton(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            state = PlatformButtonState.Secondary,
-                            text = state.isolatedMarketTargetLeverageText,
-                        ) {
-                            state.onTargetLeverage()
-                        }
-                    }
-                }
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                DydxTradeInputSideView.Content(Modifier)
-            }
+            DydxTradeInputMarginButtonsView.Content(Modifier.weight(1f))
+            DydxTradeInputSideView.Content(Modifier.weight(1f))
         }
     }
 

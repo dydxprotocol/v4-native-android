@@ -9,9 +9,6 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
-import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.feature.receipt.ReceiptType
 import exchange.dydx.trading.feature.receipt.TradeReceiptType
 import kotlinx.coroutines.flow.Flow
@@ -23,10 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DydxTradeInputViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
-    private val router: DydxRouter,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val featureFlags: DydxFeatureFlags,
-    private val formatter: DydxFormatter,
     val receiptTypeFlow: MutableStateFlow<@JvmSuppressWildcards ReceiptType?>,
     val orderbookToggleStateFlow: Flow<@JvmSuppressWildcards DydxTradeInputView.OrderbookToggleState>,
     val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
@@ -55,7 +50,7 @@ class DydxTradeInputViewModel @Inject constructor(
             localizer = localizer,
             inputFields = listOfNotNull(
                 if (tradeInput?.options?.needsSize == true) DydxTradeInputView.InputField.Size else null,
-                if (tradeInput?.options?.needsSize == true && tradeInput.options?.needsLeverage == true) {
+                if (tradeInput?.options?.needsSize == true && tradeInput.options?.needsLeverage == true && tradeInput.marginMode == MarginMode.cross) {
                     DydxTradeInputView.InputField.Leverage
                 } else {
                     null
@@ -70,25 +65,8 @@ class DydxTradeInputViewModel @Inject constructor(
                 if (tradeInput?.options?.needsReduceOnly == true) DydxTradeInputView.InputField.ReduceOnly else null,
             ),
             isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
-            isIsolatedMarketSelected = tradeInput?.marginMode == MarginMode.isolated,
-            isolatedMarketTargetLeverageText = formatter.leverage(
-                (tradeInput?.targetLeverage ?: 2.0),
-                1,
-            ),
             orderbookToggleState = orderbookToggleState,
             requestedBottomSheetState = buttomSheetState,
-            onMarketType = {
-                router.navigateTo(
-                    route = TradeRoutes.margin_type,
-                    presentation = DydxRouter.Presentation.Modal,
-                )
-            },
-            onTargetLeverage = {
-                router.navigateTo(
-                    route = TradeRoutes.target_leverage,
-                    presentation = DydxRouter.Presentation.Modal,
-                )
-            },
             onRequestedBottomSheetStateCompleted = {
                 buttomSheetStateFlow.value = null
             },

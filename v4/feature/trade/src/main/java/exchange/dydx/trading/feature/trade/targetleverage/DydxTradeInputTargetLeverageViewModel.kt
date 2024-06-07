@@ -1,7 +1,8 @@
-package exchange.dydx.trading.feature.trade.tradeinput
+package exchange.dydx.trading.feature.trade.targetleverage
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
@@ -10,12 +11,16 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -29,20 +34,34 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     private val buttomSheetStateFlow: MutableStateFlow<@JvmSuppressWildcards DydxTradeInputView.BottomSheetState?>,
     @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
-    var targetLeverage: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    private val marketAssetId: Flow<String> =
+        abacusStateManager.state.tradeInput
+            .mapNotNull { it?.marketId }
+            .flatMapLatest { marketId ->
+                abacusStateManager.state.market(marketId)
+            }
+            .mapNotNull { it?.assetId }
+            .distinctUntilChanged()
+
+    private var targetLeverage: MutableStateFlow<String?> = MutableStateFlow(null)
 
     val state: Flow<DydxTradeInputTargetLeverageView.ViewState?> =
         combine(
             abacusStateManager.state.tradeInput,
             targetLeverage,
-        ) { selectedSubaccountPosition, marketAndAsset ->
-            createViewState(selectedSubaccountPosition, marketAndAsset)
+            marketAssetId,
+            abacusStateManager.state.assetMap.filterNotNull(),
+        ) { selectedSubaccountPosition, leverage, assetId, assetMap ->
+            createViewState(selectedSubaccountPosition, leverage, assetId, assetMap)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         tradeInput: TradeInput?,
-        targetLeverage: String?
+        targetLeverage: String?,
+        assetId: String,
+        assetMap: Map<String, Asset>,
     ): DydxTradeInputTargetLeverageView.ViewState {
         val maxLeverage = tradeInput?.options?.maxLeverage ?: 5.0
         val leverages = leverageOptions(maxLeverage)
@@ -54,8 +73,12 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
                 }
                 ) ?: "2.0",
             leverageOptions = leverages,
+            logoUrl = assetMap[assetId]?.resources?.imageUrl,
             selectAction = { leverage ->
                 this.targetLeverage.value = leverage
+//                abacusStateManager.adjustIsolatedMargin(
+//                    leverage.toDouble(),
+//                    AdjustIsolatedMarginInputField.
             },
             closeAction = {
                 targetLeverage.let {

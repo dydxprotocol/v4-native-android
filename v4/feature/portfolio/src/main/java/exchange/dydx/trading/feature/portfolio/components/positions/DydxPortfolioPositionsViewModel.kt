@@ -78,13 +78,6 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Push,
                 )
             },
-            onModifyMarginAction = { position ->
-                val market = marketMap?.get(position.id) ?: return@ViewState
-                router.navigateTo(
-                    route = TradeRoutes.adjust_margin + "/${market.id}",
-                    presentation = DydxRouter.Presentation.Push,
-                )
-            },
             onboarded = onboarded,
         )
     }
