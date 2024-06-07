@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.platformui.components.gradient.GradientType
@@ -17,6 +18,7 @@ import kotlin.math.absoluteValue
 data class SharedMarketPositionViewState(
     val id: String,
     val childSubaccountNumber: Int? = null, // null if it is cross margin in parent subaccount
+    val marginMode: MarginMode? = null,
     val unrealizedPNLAmount: SignedAmountView.ViewState? = null,
     val unrealizedPNLPercent: SignedAmountView.ViewState? = null,
     val realizedPNLAmount: SignedAmountView.ViewState? = null,
@@ -102,6 +104,7 @@ data class SharedMarketPositionViewState(
             return SharedMarketPositionViewState(
                 id = position.id,
                 childSubaccountNumber = position.childSubaccountNumber,
+                marginMode = position.marginMode,
                 size = formatter.localFormatted(
                     positionSize.absoluteValue,
                     configs.displayStepSizeDecimals ?: 1,

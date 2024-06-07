@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
@@ -333,7 +334,7 @@ object DydxPortfolioPositionItemView {
 
             Text(
                 text = localizer.localize(
-                    if (position.childSubaccountNumber != null) {
+                    if (position.marginMode == MarginMode.isolated) {
                         "APP.GENERAL.ISOLATED"
                     } else {
                         "APP.GENERAL.CROSS"
@@ -357,7 +358,7 @@ object DydxPortfolioPositionItemView {
             verticalArrangement = Arrangement.Bottom,
         ) {
             Spacer(modifier = Modifier.weight(1.0f))
-            if (position.childSubaccountNumber != null) {
+            if (position.marginMode == MarginMode.isolated) {
                 PlatformIconButton(
                     modifier = Modifier
                         .width(32.dp)
