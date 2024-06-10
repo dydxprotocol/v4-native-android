@@ -61,7 +61,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common:$archLifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
 
-    
+
     // Add non-standard deps above. Deps added below this line may be periodically overwritten
     /* Standard Deps */
 
