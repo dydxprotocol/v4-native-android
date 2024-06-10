@@ -58,7 +58,7 @@
             },
             {
                 "title" : {
-                    "text" : "Gas Token"
+                    "text" : "APP.GENERAL.PAY_GAS_WITH"
                 },
                 "link" : {
                     "text" : "settings/gas_token"

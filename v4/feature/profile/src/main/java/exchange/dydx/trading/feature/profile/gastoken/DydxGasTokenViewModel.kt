@@ -5,6 +5,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.manager.GasToken
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.nativeTokenName
+import exchange.dydx.dydxstatemanager.usdcTokenName
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.PreferenceKeys
@@ -35,15 +37,15 @@ class DydxGasTokenViewModel @Inject constructor(
     private fun createViewState(): SettingsView.ViewState {
         val items: List<SettingsView.ViewState.Item> = gasTokenValues.map { token ->
             SettingsView.ViewState.Item(
-                title = token.name,
+                title = token.displayName(abacusStateManager) ?: token.name,
                 value = token.name,
-                selected = token.name == currentValueText(preferencesStore),
+                selected = token.name == currentValue,
             )
         }
 
         return SettingsView.ViewState(
             localizer = localizer,
-            header = localizer.localize("TOKENS.GAS_TOKEN"),
+            header = localizer.localize("APP.GENERAL.PAY_GAS_WITH"),
             backAction = {
                 router.navigateBack()
             },
@@ -53,7 +55,7 @@ class DydxGasTokenViewModel @Inject constructor(
                 ),
             ),
             itemAction = { value ->
-                if (value != currentValueText(preferencesStore)) {
+                if (value != currentValue) {
                     preferencesStore.save(value, PreferenceKeys.GasToken)
                     updateGasToken(value)
                     mutableState.value = createViewState()
@@ -63,21 +65,41 @@ class DydxGasTokenViewModel @Inject constructor(
         )
     }
 
-    private fun updateGasToken(denom: String) {
+    private fun updateGasToken(tokenName: String) {
         try {
-            val token = GasToken.valueOf(denom)
+            val token = GasToken.valueOf(tokenName)
             abacusStateManager.setGasToken(token)
         } catch (e: IllegalArgumentException) {
-            logger.e(TAG, "Invalid gas token: $denom")
+            logger.e(TAG, "Invalid gas token: $tokenName")
             return
         }
     }
 
+    private val currentValue: String?
+        get() {
+            return preferencesStore.read(PreferenceKeys.GasToken, defaultValue = "USDC")
+        }
+
     companion object {
         fun currentValueText(
             preferencesStore: SharedPreferencesStore,
+            abacusStateManager: AbacusStateManagerProtocol,
         ): String? {
-            return preferencesStore.read(PreferenceKeys.GasToken, defaultValue = "USDC")
+            try {
+                val tokenName =
+                    preferencesStore.read(PreferenceKeys.GasToken, defaultValue = "USDC")
+                val token = GasToken.valueOf(tokenName)
+                return token.displayName(abacusStateManager)
+            } catch (e: IllegalArgumentException) {
+                return null
+            }
         }
+    }
+}
+
+private fun GasToken.displayName(abacusStateManager: AbacusStateManagerProtocol): String? {
+    return when (this) {
+        GasToken.USDC -> abacusStateManager.usdcTokenName
+        GasToken.NATIVE -> abacusStateManager.nativeTokenName
     }
 }

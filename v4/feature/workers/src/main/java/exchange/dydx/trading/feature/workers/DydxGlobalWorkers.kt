@@ -47,7 +47,7 @@ class DydxGlobalWorkers(
         DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context, logger),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
         DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
-        DydxGasTokenWorker(scope, logger, cosmosClient, preferencesStore, abacusStateManager),
+        DydxGasTokenWorker(scope, preferencesStore, abacusStateManager, logger),
     )
 
     override var isStarted = false
