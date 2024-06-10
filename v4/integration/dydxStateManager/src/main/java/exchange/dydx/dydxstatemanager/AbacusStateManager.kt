@@ -24,6 +24,7 @@ import exchange.dydx.abacus.state.changes.StateChanges
 import exchange.dydx.abacus.state.manager.ApiState
 import exchange.dydx.abacus.state.manager.AppConfigs
 import exchange.dydx.abacus.state.manager.AsyncAbacusStateManager
+import exchange.dydx.abacus.state.manager.GasToken
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.abacus.state.manager.OrderbookGrouping
@@ -122,6 +123,8 @@ interface AbacusStateManagerProtocol {
 
     fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?)
     fun commitAdjustIsolatedMargin(statusCallback: (SubmissionStatus) -> Unit)
+
+    fun setGasToken(gasToken: GasToken)
 
     // extensions
     fun resetTransferInputFields() {
@@ -468,6 +471,10 @@ class AbacusStateManager @Inject constructor(
                 statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
             }
         }
+    }
+
+    override fun setGasToken(gasToken: GasToken) {
+        asyncStateManager.gasToken = gasToken
     }
 
     // MARK: StateNotificationProtocol

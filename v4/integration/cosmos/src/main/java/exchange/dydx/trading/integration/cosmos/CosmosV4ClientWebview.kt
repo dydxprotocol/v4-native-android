@@ -36,9 +36,9 @@ class CosmosV4ClientWebview @Inject constructor(
         completion: JavascriptCompletion,
     ) {
         callNativeClient(
-            "deriveMnemomicFromEthereumSignature",
-            listOf(signature),
-            completion,
+            functionName = "deriveMnemomicFromEthereumSignature",
+            params = listOf(signature),
+            completion = completion,
         )
     }
 
@@ -47,9 +47,9 @@ class CosmosV4ClientWebview @Inject constructor(
         completion: JavascriptCompletion,
     ) {
         callNativeClient(
-            "connectNetwork",
-            listOf(paramsInJson),
-            completion,
+            functionName = "connectNetwork",
+            params = listOf(paramsInJson),
+            completion = completion,
         )
     }
 
@@ -58,9 +58,9 @@ class CosmosV4ClientWebview @Inject constructor(
         completion: JavascriptCompletion,
     ) {
         callNativeClient(
-            "connectWallet",
-            listOf(mnemonic),
-            completion,
+            functionName = "connectWallet",
+            params = listOf(mnemonic),
+            completion = completion,
         )
     }
 
@@ -75,9 +75,9 @@ class CosmosV4ClientWebview @Inject constructor(
             listOf()
         }
         callNativeClient(
-            functionName,
-            params,
-            completion,
+            functionName = functionName,
+            params = params,
+            completion = completion,
         )
     }
 
@@ -90,103 +90,9 @@ class CosmosV4ClientWebview @Inject constructor(
         val data = payload.toByteArray()
         val base64String = android.util.Base64.encodeToString(data, android.util.Base64.NO_WRAP)
         callNativeClient(
-            "withdrawToIBC",
-            listOf(subaccount, amount, base64String),
-            completion,
-        )
-    }
-
-    override fun encodeAccountRequestData(
-        address: String,
-        completion: JavascriptCompletion,
-    ) {
-        callNativeClient(
-            "encodeAccountRequestData",
-            listOf(address),
-            completion,
-        )
-    }
-
-    override fun decodeAccountResponseValue(
-        encodedAccountResponse: String,
-        completion: JavascriptCompletion,
-    ) {
-        callNativeClient(
-            "decodeAccountResponseValue",
-            listOf(encodedAccountResponse),
-            completion,
-        )
-    }
-
-    override fun signPlaceOrderTransaction(
-        chainId: String,
-        address: String,
-        mnemonic: String,
-        accountNumber: Int,
-        sequence: Int,
-        subaccountNumber: Int,
-        clobPairId: Int,
-        side: Int,
-        quantums: Double,
-        subticks: Double,
-        goodTilBlock: Int?,
-        goodTilTime: Int?,
-        clientId: Int,
-        timeInForce: Int,
-        orderFlags: Int,
-        reduceOnly: Boolean,
-        completion: CosmosV4ClientResponseHandler,
-    ) {
-        callNativeClient(
-            "signPlaceOrderWithCallback",
-            listOf(
-                chainId,
-                address,
-                mnemonic,
-                accountNumber,
-                sequence,
-                subaccountNumber,
-                clobPairId,
-                side,
-                quantums,
-                subticks,
-                goodTilBlock ?: 0,
-                goodTilTime ?: 0,
-                clientId,
-                timeInForce,
-                orderFlags,
-                reduceOnly,
-            ),
-            completion.completion(),
-        )
-    }
-
-    override fun signCancelOrderTransaction(
-        chainId: String,
-        address: String,
-        mnemonic: String,
-        accountNumber: Int,
-        sequence: Int,
-        subaccountNumber: Int,
-        clobPairId: Int,
-        clientId: Int,
-        goodTilBlock: Int?,
-        completion: CosmosV4ClientResponseHandler,
-    ) {
-        callNativeClient(
-            "signCancelOrderWithCallback",
-            listOf(
-                chainId,
-                address,
-                mnemonic,
-                accountNumber,
-                sequence,
-                subaccountNumber,
-                clobPairId,
-                clientId,
-                goodTilBlock ?: 0,
-            ),
-            completion.completion(),
+            functionName = "withdrawToIBC",
+            params = listOf(subaccount, amount, base64String),
+            completion = completion,
         )
     }
 
@@ -212,13 +118,5 @@ class CosmosV4ClientWebview @Inject constructor(
             logger.d(TAG, "callNativeClient $functionName, params: $paramsString, result: $result")
             completion(result?.response)
         }
-    }
-
-    override fun echo(value: String, completion: CosmosV4ClientResponseHandler) {
-        callNativeClient(
-            "echoCallback",
-            listOf(value),
-            completion.completion(),
-        )
     }
 }
