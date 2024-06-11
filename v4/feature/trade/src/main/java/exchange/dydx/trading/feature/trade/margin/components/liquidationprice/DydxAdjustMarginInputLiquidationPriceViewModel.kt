@@ -6,6 +6,7 @@ import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
+import exchange.dydx.platformui.components.gradient.GradientType
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.AmountText
@@ -54,6 +55,15 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
                     tickSize = configsAndAsset?.configs?.tickSizeDecimals,
                 )
             },
+            direction = adjustMarginInput.summary?.liquidationPrice?.let { liquidationPrice ->
+                adjustMarginInput.summary?.liquidationPriceUpdated?.let { liquidationPriceUpdated ->
+                    if (liquidationPrice < liquidationPriceUpdated) {
+                        GradientType.PLUS
+                    } else {
+                        GradientType.MINUS
+                    }
+                }
+            } ?: GradientType.NONE,
         )
     }
 }

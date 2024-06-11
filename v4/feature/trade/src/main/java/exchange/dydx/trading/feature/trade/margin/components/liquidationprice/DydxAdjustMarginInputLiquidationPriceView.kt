@@ -21,10 +21,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.changes.PlatformDirection
 import exchange.dydx.platformui.components.changes.PlatformDirectionArrow
+import exchange.dydx.platformui.components.gradient.GradientType
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
-import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -50,6 +50,7 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
         val localizer: LocalizerProtocol,
         val before: AmountText.ViewState? = null,
         val after: AmountText.ViewState? = null,
+        val direction: GradientType = GradientType.NONE,
     ) {
         companion object {
             val preview = ViewState(
@@ -79,7 +80,11 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
             modifier = modifier
                 .fillMaxWidth()
                 .height(80.dp)
-                .background(color = exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.layer_5.color, shape = shape)
+                .background(
+                    brush = state.direction.brush(ThemeColor.SemanticColor.layer_5),
+                    shape = shape,
+                )
+                // .background(color = ThemeColor.SemanticColor.layer_5.color, shape = shape)
                 .padding(horizontal = ThemeShapes.HorizontalPadding)
                 .padding(vertical = ThemeShapes.VerticalPadding),
         ) {
