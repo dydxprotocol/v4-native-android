@@ -84,7 +84,6 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
                     brush = state.direction.brush(ThemeColor.SemanticColor.layer_5),
                     shape = shape,
                 )
-                // .background(color = ThemeColor.SemanticColor.layer_5.color, shape = shape)
                 .padding(horizontal = ThemeShapes.HorizontalPadding)
                 .padding(vertical = ThemeShapes.VerticalPadding),
         ) {
