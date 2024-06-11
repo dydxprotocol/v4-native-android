@@ -2,21 +2,17 @@ package exchange.dydx.trading.feature.trade.margin.components.liquidationprice
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.common.navigation.PortfolioRoutes.positions
 import exchange.dydx.trading.feature.shared.views.AmountText
-import exchange.dydx.trading.feature.trade.margin.components.ioslatedreceipt.DydxAdjustMarginInputIsolatedReceiptView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,7 +35,7 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
         adjustMarginInput: AdjustIsolatedMarginInput,
         configsAndAssetMap: Map<String, MarketConfigsAndAsset>?,
     ): DydxAdjustMarginInputLiquidationPriceView.ViewState {
-        val configsAndAsset =  abacusStateManager.marketId.value?.let {
+        val configsAndAsset = abacusStateManager.marketId.value?.let {
             configsAndAssetMap?.get(it)
         }
         return DydxAdjustMarginInputLiquidationPriceView.ViewState(

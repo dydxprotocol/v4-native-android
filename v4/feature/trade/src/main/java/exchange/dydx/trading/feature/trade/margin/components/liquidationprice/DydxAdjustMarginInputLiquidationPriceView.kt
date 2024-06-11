@@ -135,7 +135,7 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(
                                     fontSize = ThemeFont.FontSize.medium,
-                                    fontType = ThemeFont.FontType.number
+                                    fontType = ThemeFont.FontType.number,
                                 )
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
