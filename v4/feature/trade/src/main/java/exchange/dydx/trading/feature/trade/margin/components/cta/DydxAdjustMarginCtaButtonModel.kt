@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.output.input.ErrorType
+import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
 import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -46,7 +47,14 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
                 localizer = localizer,
                 ctaButtonState =
                 InputCtaButton.State.Enabled(
-                    localizer.localize("APP.TRADE.ADD_MARGIN"),
+                    when (adjustMarginInput.type) {
+                        IsolatedMarginAdjustmentType.Add -> {
+                            localizer.localize("APP.TRADE.ADD_MARGIN")
+                        }
+                        IsolatedMarginAdjustmentType.Remove -> {
+                            localizer.localize("APP.TRADE.REMOVE_MARGIN")
+                        }
+                    },
                 ),
                 ctaAction = {
                     commitAdjustMargin()

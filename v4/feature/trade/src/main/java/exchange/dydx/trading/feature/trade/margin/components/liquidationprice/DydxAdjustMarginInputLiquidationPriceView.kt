@@ -119,22 +119,29 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
                             .themeColor(ThemeColor.SemanticColor.text_tertiary),
                     )
                 }
-                Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    PlatformDirectionArrow(
-                        direction = PlatformDirection.None,
-                        modifier = Modifier.size(12.dp),
-                    )
-                    AmountText.Content(
-                        state = state.after,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.number)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
+
+                if (state.after != null) {
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        PlatformDirectionArrow(
+                            direction = PlatformDirection.None,
+                            modifier = Modifier.size(12.dp),
+                        )
+                        AmountText.Content(
+                            state = state.after,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.medium,
+                                    fontType = ThemeFont.FontType.number
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
                 }
+
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
