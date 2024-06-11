@@ -89,13 +89,15 @@ class DydxFormatter @Inject constructor() {
 
     fun formatBigDecimal(number: BigDecimal?): String? {
         if (number == null) return null
-        val format = NumberFormat.getInstance(locale)
-        return format.format(number)
+        val formatter = NumberFormat.getInstance(locale)
+        formatter.maximumFractionDigits = 99
+        return formatter.format(number)
     }
 
     fun localFormatted(number: Double?): String? {
         return if (number != null) {
             val formatter = NumberFormat.getInstance(locale)
+            formatter.maximumFractionDigits = 99
             formatter.format(number)
         } else {
             null

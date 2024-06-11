@@ -45,7 +45,7 @@ class DydxMarketConfigsViewModel @Inject constructor(
             ),
             DydxMarketConfigsView.Item(
                 title = localizer.localize("APP.GENERAL.TICK_SIZE"),
-                value = "$" + formatter.localFormatted(marketConfigs?.tickSize) ?: "-",
+                value = "$" + formatter.localFormatted(marketConfigs?.tickSize),
             ),
             DydxMarketConfigsView.Item(
                 title = localizer.localize("APP.GENERAL.STEP_SIZE"),
@@ -59,7 +59,7 @@ class DydxMarketConfigsViewModel @Inject constructor(
             ),
             DydxMarketConfigsView.Item(
                 title = localizer.localize("APP.GENERAL.MAXIMUM_LEVERAGE"),
-                value = maxLeverageText + "x" ?: "-",
+                value = maxLeverageText + "x",
             ),
             DydxMarketConfigsView.Item(
                 title = localizer.localize("APP.GENERAL.MAINTENANCE_MARGIN_FRACTION"),
