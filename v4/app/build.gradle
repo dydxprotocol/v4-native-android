@@ -19,7 +19,7 @@ android {
         minSdkVersion parent.minSdkVersion
         targetSdkVersion parent.targetSdkVersion
         versionCode 11
-        versionName "1.4.0"
+        versionName "1.4.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
