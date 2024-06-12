@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 
 class DydxTransferSubaccountWorker(
-    override val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val formatter: DydxFormatter,

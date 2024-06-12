@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class DydxRestrictionsWorker(
-    override val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
     private val toaster: PlatformInfo,

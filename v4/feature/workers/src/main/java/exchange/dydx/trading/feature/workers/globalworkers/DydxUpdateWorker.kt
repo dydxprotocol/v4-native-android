@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
 private const val TAG = "DydxUpdateWorker"
 
 class DydxUpdateWorker(
-    override val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val context: Context,

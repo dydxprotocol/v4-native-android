@@ -6,12 +6,10 @@ import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import exchange.dydx.utilities.utils.WorkerProtocol
-import kotlinx.coroutines.CoroutineScope
 
 private const val TAG = "DydxGasTokenWorker"
 
 class DydxGasTokenWorker(
-    override val scope: CoroutineScope,
     private val preferencesStore: SharedPreferencesStore,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val logger: Logging,

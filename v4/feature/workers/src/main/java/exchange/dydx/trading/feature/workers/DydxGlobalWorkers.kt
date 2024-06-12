@@ -24,7 +24,7 @@ import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 
 class DydxGlobalWorkers(
-    override val scope: CoroutineScope,
+    val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     private val router: DydxRouter,
@@ -47,7 +47,7 @@ class DydxGlobalWorkers(
         DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context, logger),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
         DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
-        DydxGasTokenWorker(scope, preferencesStore, abacusStateManager, logger),
+        DydxGasTokenWorker(preferencesStore, abacusStateManager, logger),
     )
 
     override var isStarted = false

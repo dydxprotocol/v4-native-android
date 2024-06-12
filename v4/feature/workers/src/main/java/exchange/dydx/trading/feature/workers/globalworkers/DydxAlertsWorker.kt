@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 
 class DydxAlertsWorker(
-    override val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
     private val router: DydxRouter,
