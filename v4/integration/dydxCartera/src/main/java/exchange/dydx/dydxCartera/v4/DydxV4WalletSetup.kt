@@ -47,7 +47,7 @@ class DydxV4WalletSetup @Inject constructor(
                 val map = json.jsonObject.toMap()
                 val mnemonic = parser.asString(map["mnemonic"])
                 val cosmosAddress = parser.asString(map["address"])
-                if (mnemonic != null && address != null) {
+                if (mnemonic != null) {
                     _status.value = Status.Signed(
                         SetupResult(
                             ethereumAddress = address,
