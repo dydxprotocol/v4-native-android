@@ -12,6 +12,8 @@ import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 private const val TAG = "DydxCarteraConfigWorker"
 
@@ -38,11 +40,16 @@ class DydxCarteraConfigWorker(
                 }
             }
 
-            abacusStateManager.environment?.let {
-                configureCartera(it)
-            } ?: run {
-                logger.e(TAG, "Environment is null")
-            }
+            abacusStateManager.currentEnvironmentId
+                .filterNotNull()
+                .onEach {
+                    abacusStateManager.environment?.let {
+                        configureCartera(it)
+                    } ?: run {
+                        logger.e(TAG, "Environment is null")
+                    }
+                }
+                .launchIn(scope)
         }
     }
 

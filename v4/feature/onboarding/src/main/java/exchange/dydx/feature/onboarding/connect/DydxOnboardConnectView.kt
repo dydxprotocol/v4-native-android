@@ -91,7 +91,7 @@ object DydxOnboardConnectView : DydxComponent {
                 closeAction = { state.closeButtonHandler?.invoke() },
             )
             Text(
-                text = state.localizer.localize("ONBOARDING.TWO_SIGNATURE_REQUESTS"),
+                text = state.localizer.localize("APP.ONBOARDING.TWO_SIGNATURE_REQUESTS"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
