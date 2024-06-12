@@ -131,7 +131,7 @@ class DydxMarketStatsViewModel @Inject constructor(
 
         val value = market.perpetual?.openInterest
         val openInterest: String = if (value != null) {
-            formatter.localFormatted(number = value, digits = stepSize) ?: "-"
+            formatter.condensed(number = value, digits = 2) ?: "-"
         } else {
             "-"
         }

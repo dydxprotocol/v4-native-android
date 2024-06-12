@@ -67,17 +67,17 @@ data class SharedMarketPositionViewState(
             onAdjustMarginAction: (() -> Unit)
         ): SharedMarketPositionViewState? {
             val configs = market.configs ?: return null
-            val positionSize = position.size?.current ?: 0.0
+            val positionSize = position.size.current ?: 0.0
             if (positionSize == 0.0) return null
 
-            val unrealizedPnlPercent = position.unrealizedPnlPercent?.current ?: 0.0
+            val unrealizedPnlPercent = position.unrealizedPnlPercent.current ?: 0.0
             val unrealizedPnlSign: PlatformUISign = when {
                 unrealizedPnlPercent > 0 -> PlatformUISign.Plus
                 unrealizedPnlPercent < 0 -> PlatformUISign.Minus
                 else -> PlatformUISign.None
             }
 
-            val realizedPNLAmount = position.realizedPnl?.current ?: 0.0
+            val realizedPNLAmount = position.realizedPnl.current ?: 0.0
             val realizedPNLSign: PlatformUISign = when {
                 realizedPNLAmount > 0 -> PlatformUISign.Plus
                 realizedPNLAmount < 0 -> PlatformUISign.Minus
@@ -91,8 +91,8 @@ data class SharedMarketPositionViewState(
                 else -> PlatformUISign.None
             }
 
-            val leverage = position.leverage?.current ?: 0.0
-            val maxLeverage = position.maxLeverage?.current ?: 0.0
+            val leverage = position.leverage.current ?: 0.0
+            val maxLeverage = position.maxLeverage.current ?: 0.0
             val riskLevel =
                 if (leverage > 0 && maxLeverage > 0) {
                     LeverageRiskView.Level.createFromMarginUsage(
@@ -133,12 +133,12 @@ data class SharedMarketPositionViewState(
                     coloringOption = SignedAmountView.ColoringOption.SignOnly,
                 ),
                 unrealizedPNLAmount = SignedAmountView.ViewState(
-                    text = formatter.dollar(position.unrealizedPnl?.current?.absoluteValue ?: 0.0),
+                    text = formatter.dollar(position.unrealizedPnl.current?.absoluteValue ?: 0.0, 2),
                     sign = unrealizedPnlSign,
                     coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
                 realizedPNLAmount = SignedAmountView.ViewState(
-                    text = formatter.dollar(realizedPNLAmount.absoluteValue),
+                    text = formatter.dollar(realizedPNLAmount.absoluteValue, 2),
                     sign = realizedPNLSign,
                     coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
@@ -148,7 +148,7 @@ data class SharedMarketPositionViewState(
                     configs.displayTickSizeDecimals ?: 0,
                 ),
                 entryPrice = formatter.dollar(
-                    position.entryPrice?.current,
+                    position.entryPrice.current,
                     configs.displayTickSizeDecimals ?: 0,
                 ),
                 exitPrice = formatter.dollar(
@@ -156,12 +156,12 @@ data class SharedMarketPositionViewState(
                     configs.displayTickSizeDecimals ?: 0,
                 ),
                 liquidationPrice = formatter.dollar(
-                    position.liquidationPrice?.current,
+                    position.liquidationPrice.current,
                     configs.displayTickSizeDecimals ?: 0,
                 ),
-                margin = position.equity?.let {
-                    formatter.dollar(it.current)
-                } ?: formatter.dollar(position.notionalTotal?.current),
+                margin = position.equity.let {
+                    formatter.dollar(it.current, 2)
+                } ?: formatter.dollar(position.notionalTotal.current, 2),
                 funding = SignedAmountView.ViewState(
                     text = formatter.dollar(netFunding.absoluteValue),
                     sign = netFundingSign,

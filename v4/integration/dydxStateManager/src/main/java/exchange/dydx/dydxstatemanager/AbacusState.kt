@@ -212,10 +212,10 @@ class AbacusState(
         return selectedSubaccountPositions
             .map { positions ->
                 positions?.firstOrNull { position ->
-                    position?.id == marketId &&
+                    position.id == marketId &&
                         (
-                            position?.side?.current == PositionSide.SHORT ||
-                                position?.side?.current == PositionSide.LONG
+                            position.side.current == PositionSide.SHORT ||
+                                position.side.current == PositionSide.LONG
                             )
                 }
             }

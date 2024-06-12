@@ -34,7 +34,17 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
         if (marketId == null) {
             router.navigateBack()
         } else {
-            abacusStateManager.setMarket(marketId = marketId)
+            if (abacusStateManager.marketId.value != marketId) {
+                abacusStateManager.setMarket(marketId = marketId)
+                abacusStateManager.adjustIsolatedMargin(
+                    data = null,
+                    type = AdjustIsolatedMarginInputField.Amount,
+                )
+                abacusStateManager.adjustIsolatedMargin(
+                    data = null,
+                    type = AdjustIsolatedMarginInputField.AmountPercent,
+                )
+            }
 
             abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
                 it.id == marketId
