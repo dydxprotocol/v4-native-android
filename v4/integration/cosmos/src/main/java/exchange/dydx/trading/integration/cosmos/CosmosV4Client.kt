@@ -2,9 +2,7 @@ package exchange.dydx.trading.integration.cosmos
 
 import exchange.dydx.integration.javascript.JavascriptApi
 import exchange.dydx.trading.common.DydxException
-import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.json.Json
 
 private const val TAG = "CosmosV4Client"
 
@@ -41,51 +39,6 @@ interface CosmosV4ClientProtocol {
         payload: String,
         completion: JavascriptCompletion
     )
-
-    fun encodeAccountRequestData(
-        address: String,
-        completion: JavascriptCompletion,
-    )
-
-    fun decodeAccountResponseValue(
-        encodedAccountResponse: String,
-        completion: JavascriptCompletion,
-    )
-
-    fun signPlaceOrderTransaction(
-        chainId: String,
-        address: String,
-        mnemonic: String,
-        accountNumber: Int,
-        sequence: Int,
-        subaccountNumber: Int,
-        clobPairId: Int,
-        side: Int,
-        quantums: Double,
-        subticks: Double,
-        goodTilBlock: Int?,
-        goodTilTime: Int?,
-        clientId: Int,
-        timeInForce: Int,
-        orderFlags: Int,
-        reduceOnly: Boolean,
-        completion: CosmosV4ClientResponseHandler,
-    )
-
-    fun signCancelOrderTransaction(
-        chainId: String,
-        address: String,
-        mnemonic: String,
-        accountNumber: Int,
-        sequence: Int,
-        subaccountNumber: Int,
-        clobPairId: Int,
-        clientId: Int,
-        goodTilBlock: Int?,
-        completion: CosmosV4ClientResponseHandler,
-    )
-
-    fun echo(value: String, completion: CosmosV4ClientResponseHandler)
 }
 
 @kotlinx.serialization.Serializable
@@ -108,29 +61,3 @@ data class CosmosV4ClientError(
 class CosmosV4ClientException(s: String, cause: Throwable? = null) : DydxException(s, cause)
 
 typealias JavascriptCompletion = (result: String?) -> Unit
-
-abstract class CosmosV4ClientResponseHandler(
-    val json: Json,
-    val logger: Logging,
-) {
-    fun completion(): JavascriptCompletion {
-        return { result: String? ->
-            if (result == null) {
-                onError(null)
-            } else {
-                val response: CosmosV4ClientResponse = json.decodeFromString(result)
-                when (response.status) {
-                    "SUCCESS" -> onSuccess(response.result)
-                    "ERROR" -> onError(response.error)
-                    else -> {
-                        logger.e(TAG, "Unknown response status: ${response.status}")
-                        onError(response.error)
-                    }
-                }
-            }
-        }
-    }
-
-    abstract fun onSuccess(result: String?)
-    abstract fun onError(err: CosmosV4ClientError?)
-}

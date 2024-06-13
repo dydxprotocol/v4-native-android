@@ -19,7 +19,10 @@ class RoutingAnalytics @Inject constructor(
             pathWithArguments = pathWithArguments.replace("market/{marketId}", "trade/{marketId}")
         }
         arguments?.keySet()?.forEach { key ->
-            pathWithArguments = pathWithArguments.replace("{$key}", arguments.getString(key) ?: "")
+            if (!key.startsWith("android-support-nav:controller:deepLinkIntent")) {
+                pathWithArguments =
+                    pathWithArguments.replace("{$key}", arguments.getString(key) ?: "")
+            }
         }
         if (!pathWithArguments.startsWith("/")) {
             // Android routes don't start with "/"

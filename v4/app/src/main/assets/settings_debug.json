@@ -58,6 +58,17 @@
             },
             {
                 "title" : {
+                    "text" : "APP.GENERAL.PAY_GAS_WITH"
+                },
+                "link" : {
+                    "text" : "settings/gas_token"
+                },
+                "field":{
+                    "field":"gas_token"
+                }
+            },
+            {
+                "title" : {
                     "text" : "APP.V4.SYSTEM_STATUS"
                 },
                 "link" : {

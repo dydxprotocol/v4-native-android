@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
 class DydxUserTrackingWorker(
-    override val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     private val tracker: Tracking,

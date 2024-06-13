@@ -10,6 +10,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.workers.globalworkers.DydxAlertsWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxApiStatusWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxCarteraConfigWorker
+import exchange.dydx.trading.feature.workers.globalworkers.DydxGasTokenWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxRestrictionsWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferSubaccountWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUpdateWorker
@@ -23,7 +24,7 @@ import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 
 class DydxGlobalWorkers(
-    override val scope: CoroutineScope,
+    val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     private val router: DydxRouter,
@@ -46,6 +47,7 @@ class DydxGlobalWorkers(
         DydxCarteraConfigWorker(scope, abacusStateManager, cachedFileLoader, context, logger),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
         DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
+        DydxGasTokenWorker(preferencesStore, abacusStateManager, logger),
     )
 
     override var isStarted = false

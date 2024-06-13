@@ -11,6 +11,7 @@ import exchange.dydx.trading.feature.profile.color.DydxDirectionColorPreferenceV
 import exchange.dydx.trading.feature.profile.debug.DydxDebugView
 import exchange.dydx.trading.feature.profile.featureflags.DydxFeatureFlagsView
 import exchange.dydx.trading.feature.profile.feesstructure.DydxFeesStrcutureView
+import exchange.dydx.trading.feature.profile.gastoken.DydxGasTokenView
 import exchange.dydx.trading.feature.profile.help.DydxHelpView
 import exchange.dydx.trading.feature.profile.history.DydxHistoryView
 import exchange.dydx.trading.feature.profile.keyexport.DydxKeyExportView
@@ -180,5 +181,13 @@ fun NavGraphBuilder.profileGraph(
         deepLinks = appRouter.deeplinks(ProfileRoutes.notifications),
     ) { navBackStackEntry ->
         DydxNotificationsView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = ProfileRoutes.gas_token,
+        deepLinks = appRouter.deeplinks(ProfileRoutes.gas_token),
+    ) { navBackStackEntry ->
+        DydxGasTokenView.Content(Modifier)
     }
 }
