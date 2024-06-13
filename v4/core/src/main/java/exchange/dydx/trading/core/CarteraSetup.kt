@@ -7,9 +7,9 @@ import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
-import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.core.WalletProvidersConfigUtil.getWalletProvidersConfig
+import exchange.dydx.utilities.utils.Logging
 
 object CarteraSetup {
 
@@ -47,17 +47,17 @@ object CarteraSetup {
 
 object WalletProvidersConfigUtil {
     fun getWalletProvidersConfig(appContext: Context): WalletProvidersConfig {
-        val appHostUrl = "https://" +  appContext.getString(R.string.app_web_host)
+        val appHostUrl = "https://" + appContext.getString(R.string.app_web_host)
         val walletConnectV2Config = WalletConnectV2Config(
             projectId = appContext.getString(R.string.wallet_connect_project_id),
             clientName = appContext.getString(R.string.app_name),
             clientDescription = appContext.getString(R.string.wallet_connect_description),
             clientUrl = appHostUrl,
-            iconUrls = listOf<String>(appHostUrl + appContext.getString(R.string.wallet_connect_logo))
+            iconUrls = listOf<String>(appHostUrl + appContext.getString(R.string.wallet_connect_logo)),
         )
 
         val walletSegueConfig = WalletSegueConfig(
-            callbackUrl = appHostUrl + appContext.getString(R.string.wallet_segue_callback)
+            callbackUrl = appHostUrl + appContext.getString(R.string.wallet_segue_callback),
         )
 
         return WalletProvidersConfig(
