@@ -34,7 +34,6 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.shared.views.HeaderView
-import org.bouncycastle.asn1.x500.style.RFC4519Style.title
 
 @Preview
 @Composable

@@ -38,7 +38,6 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.utilities.utils.applyLink
-import org.bouncycastle.util.Arrays.append
 
 @Preview
 @Composable

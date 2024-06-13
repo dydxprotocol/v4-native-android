@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,11 +66,6 @@ object DydxOnboardConnectView : DydxComponent {
     override fun Content(modifier: Modifier) {
         val viewModel: DydxOnboardConnectViewModel = hiltViewModel<DydxOnboardConnectViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        val context = LocalContext.current
-        LaunchedEffect(Unit) {
-            viewModel.updateContext(context)
-        }
-
         Content(modifier, state)
     }
 

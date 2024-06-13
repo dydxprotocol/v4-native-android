@@ -68,7 +68,6 @@ object DydxPortfolioPendingPositionItemView {
         val shape = RoundedCornerShape(10.dp)
         Column(
             modifier = modifier
-                //  .height(112.dp)
                 .fillMaxWidth()
                 .clip(shape)
                 .themeColor(ThemeColor.SemanticColor.layer_3),
@@ -76,7 +75,7 @@ object DydxPortfolioPendingPositionItemView {
             Column(
                 modifier = Modifier
                     .padding(
-                        horizontal = ThemeShapes.HorizontalPadding,
+                        horizontal = 12.dp,
                         vertical = 10.dp,
                     ),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -125,8 +124,8 @@ object DydxPortfolioPendingPositionItemView {
             Row(
                 modifier = Modifier
                     .padding(
-                        horizontal = ThemeShapes.HorizontalPadding,
-                        vertical = ThemeShapes.VerticalPadding,
+                        horizontal = 12.dp,
+                        vertical = 10.dp,
                     ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
