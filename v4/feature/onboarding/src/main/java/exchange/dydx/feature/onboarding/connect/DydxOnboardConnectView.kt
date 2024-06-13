@@ -68,11 +68,6 @@ object DydxOnboardConnectView : DydxComponent {
     override fun Content(modifier: Modifier) {
         val viewModel: DydxOnboardConnectViewModel = hiltViewModel<DydxOnboardConnectViewModel>()
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        val context = LocalContext.current
-        LaunchedEffect(Unit) {
-            viewModel.updateContext(context)
-        }
-
         Content(modifier, state)
     }
 

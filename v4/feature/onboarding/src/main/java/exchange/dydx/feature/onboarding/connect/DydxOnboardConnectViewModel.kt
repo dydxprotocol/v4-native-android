@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.cartera.CarteraConfig
@@ -43,76 +44,93 @@ class DydxOnboardConnectViewModel @Inject constructor(
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
     private val logger: Logging,
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
     private val walletId: String = checkNotNull(savedStateHandle["walletId"])
 
-    private var context: Context? = null
     private var walletSetup: DydxWalletSetup? = null
 
     private val _state = MutableStateFlow(createViewState())
     val state: Flow<DydxOnboardConnectView.ViewState> = _state
 
-    fun updateContext(context: Context) {
-        if (context != this.context) {
-            this.context = context
-            val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser, logger)
+    init {
+        val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser, logger)
 
-            walletSetup.status.onEach { walletStatus ->
-                when (walletStatus) {
-                    is DydxWalletSetup.Status.Started -> {
-                        _state.update { state ->
-                            state.copy(
-                                steps = listOf(step1(status = ProgressStepView.Status.InProgress), step2()),
-                                linkWalletButtonEnabled = false,
-                            )
-                        }
-                    }
-                    is DydxWalletSetup.Status.Connected -> {
-                        _state.update { state ->
-                            state.copy(
-                                steps = listOf(step1(status = ProgressStepView.Status.Completed), step2(status = ProgressStepView.Status.InProgress)),
-                                linkWalletButtonEnabled = false,
-                            )
-                        }
-                    }
-                    is DydxWalletSetup.Status.Signed -> {
-                        onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
-                        walletAnalytics.logConnected(walletId)
+//        try {
+//            walletSetup.tryConnet()
+//        } catch (e: Exception) {
+//            logger.e(TAG, "Failed to connect wallet")
+//        }
 
-                        _state.update { state ->
-                            state.copy(
-                                steps = listOf(step1(status = ProgressStepView.Status.Completed), step2(status = ProgressStepView.Status.Completed)),
-                                linkWalletButtonEnabled = false,
-                            )
-                        }
-
-                        mutableSetupStatusFlow.value = walletStatus
-
-                        router.navigateBack()
-                        router.navigateTo(
-                            route = OnboardingRoutes.tos,
-                            presentation = DydxRouter.Presentation.Modal,
-                        )
-
-                        walletSetup.stop()
-                    }
-                    is DydxWalletSetup.Status.Error -> {
-                        val error = walletStatus.error
-                        val message = error.message ?: localizer.localize("APP.GENERAL.ERROR")
-                        toaster.show(
-                            message = message,
-                            type = Toast.Type.Error,
+        walletSetup.status.onEach { walletStatus ->
+            when (walletStatus) {
+                is DydxWalletSetup.Status.Started -> {
+                    _state.update { state ->
+                        state.copy(
+                            steps = listOf(
+                                step1(status = ProgressStepView.Status.InProgress),
+                                step2()
+                            ),
+                            linkWalletButtonEnabled = false,
                         )
                     }
-                    else -> {}
                 }
-            }.launchIn(viewModelScope)
 
-            this.walletSetup = walletSetup
-        }
+                is DydxWalletSetup.Status.Connected -> {
+                    _state.update { state ->
+                        state.copy(
+                            steps = listOf(
+                                step1(status = ProgressStepView.Status.Completed),
+                                step2(status = ProgressStepView.Status.InProgress)
+                            ),
+                            linkWalletButtonEnabled = false,
+                        )
+                    }
+                }
+
+                is DydxWalletSetup.Status.Signed -> {
+                    onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
+                    walletAnalytics.logConnected(walletId)
+
+                    _state.update { state ->
+                        state.copy(
+                            steps = listOf(
+                                step1(status = ProgressStepView.Status.Completed),
+                                step2(status = ProgressStepView.Status.Completed)
+                            ),
+                            linkWalletButtonEnabled = false,
+                        )
+                    }
+
+                    mutableSetupStatusFlow.value = walletStatus
+
+                    router.navigateBack()
+                    router.navigateTo(
+                        route = OnboardingRoutes.tos,
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+
+                    walletSetup.stop()
+                }
+
+                is DydxWalletSetup.Status.Error -> {
+                    val error = walletStatus.error
+                    val message = error.message ?: localizer.localize("APP.GENERAL.ERROR")
+                    toaster.show(
+                        message = message,
+                        type = Toast.Type.Error,
+                    )
+                }
+
+                else -> {}
+            }
+        }.launchIn(viewModelScope)
+
+        this.walletSetup = walletSetup
     }
+
 
     private fun createViewState(): DydxOnboardConnectView.ViewState {
         val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId }
@@ -131,8 +149,10 @@ class DydxOnboardConnectViewModel @Inject constructor(
             },
             linkWalletAction = {
                 val ethereumChainId = parser.asInt(abacusStateManager.environment?.ethereumChainId)
-                val signTypedDataAction = abacusStateManager.environment?.walletConnection?.signTypedDataAction
-                val signTypedDataDomainName = abacusStateManager.environment?.walletConnection?.signTypedDataDomainName
+                val signTypedDataAction =
+                    abacusStateManager.environment?.walletConnection?.signTypedDataAction
+                val signTypedDataDomainName =
+                    abacusStateManager.environment?.walletConnection?.signTypedDataDomainName
                 if (ethereumChainId != null && signTypedDataAction != null && signTypedDataDomainName != null) {
                     walletSetup?.start(
                         walletId = walletId,

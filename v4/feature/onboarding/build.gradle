@@ -122,21 +122,21 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
 
-    //
-    // https://github.com/WalletConnect/WalletConnectKotlinV2
-    //
-
-    implementation platform("com.walletconnect:android-bom:$walletConnectVersion")
-    implementation('com.walletconnect:android-core')
-    implementation 'com.walletconnect:sign'
-
-    //
-    // https://docs.cloud.coinbase.com/wallet-sdk/docs/android-install
-    //
-    implementation 'com.coinbase:coinbase-wallet-sdk:1.0.4'
-
-    //
-    // https://github.com/WalletConnect/kotlin-walletconnect-lib
-    //
-    implementation 'com.github.WalletConnect:kotlin-walletconnect-lib:0.9.9'
+//    //
+//    // https://github.com/WalletConnect/WalletConnectKotlinV2
+//    //
+//
+//    implementation platform("com.walletconnect:android-bom:$walletConnectVersion")
+//    implementation('com.walletconnect:android-core')
+//    implementation 'com.walletconnect:sign'
+//
+//    //
+//    // https://docs.cloud.coinbase.com/wallet-sdk/docs/android-install
+//    //
+//    implementation 'com.coinbase:coinbase-wallet-sdk:1.0.4'
+//
+//    //
+//    // https://github.com/WalletConnect/kotlin-walletconnect-lib
+//    //
+//    implementation 'com.github.WalletConnect:kotlin-walletconnect-lib:0.9.9'
 }
