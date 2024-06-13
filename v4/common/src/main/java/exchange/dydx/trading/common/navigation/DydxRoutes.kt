@@ -30,6 +30,7 @@ object ProfileRoutes {
     const val features = "features"
     const val debug = "settings/debug"
     const val color = "settings/direction_color_preference"
+    const val gas_token = "settings/gas_token"
     const val wallets = "wallets"
     const val key_export = "my-profile/keyexport"
     const val history = "portfolio/history"

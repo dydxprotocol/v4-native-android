@@ -347,40 +347,47 @@ object SettingsView {
                 .fillMaxWidth()
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
-                    vertical = 16.dp,
                 ),
             verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
         ) {
             if (field.options == null) {
-                CreateFieldTitle()
-                PlatformTextInput(
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(color = ThemeColor.SemanticColor.layer_4.color),
-                    value = item.value ?: "",
-                    onValueChange = { value ->
-                        item.field.fieldAction?.invoke(value)
-                    },
-                )
+                Column(
+                    modifier = modifier.padding(vertical = 16.dp),
+                ) {
+                    CreateFieldTitle()
+                    PlatformTextInput(
+                        modifier = Modifier
+                            .height(40.dp)
+                            .background(color = ThemeColor.SemanticColor.layer_4.color),
+                        value = item.value ?: "",
+                        onValueChange = { value ->
+                            item.field.fieldAction?.invoke(value)
+                        },
+                    )
+                }
             } else {
                 when (field.type) {
                     ViewState.ItemFieldType.SELECT, null -> {
-                        CreateFieldTitle()
-                        Row {
-                            Spacer(modifier = Modifier.weight(1f))
-                            PlatformTextTabGroup(
-                                items = field.options.map { it.text ?: "" },
-                                selectedItems = field.options.map { it.text ?: "" },
-                                currentSelection = field.options.indexOfFirst { it.selected == true },
-                                onSelectionChanged = { index ->
-                                    field.options.forEachIndexed { i, option ->
-                                        option.selected = i == index
-                                    }
-                                    item.field.fieldAction?.invoke(
-                                        field.options[index].value ?: "",
-                                    )
-                                },
-                            )
+                        Column(
+                            modifier = modifier.padding(vertical = 16.dp),
+                        ) {
+                            CreateFieldTitle()
+                            Row {
+                                Spacer(modifier = Modifier.weight(1f))
+                                PlatformTextTabGroup(
+                                    items = field.options.map { it.text ?: "" },
+                                    selectedItems = field.options.map { it.text ?: "" },
+                                    currentSelection = field.options.indexOfFirst { it.selected == true },
+                                    onSelectionChanged = { index ->
+                                        field.options.forEachIndexed { i, option ->
+                                            option.selected = i == index
+                                        }
+                                        item.field.fieldAction?.invoke(
+                                            field.options[index].value ?: "",
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
 
@@ -393,7 +400,7 @@ object SettingsView {
                             CreateFieldTitle()
                             Spacer(modifier = Modifier.weight(1f))
                             Switch(
-                                checked = item?.value == "1",
+                                checked = item.value == "1",
                                 onCheckedChange = {
                                     item.field.fieldAction?.invoke(if (it) "1" else "0")
                                 },
@@ -433,7 +440,7 @@ object SettingsView {
                     .weight(1f),
             ) {
                 Text(
-                    text = if (item.title != null) state.localizer.localize(item.title!!) else "",
+                    text = if (item.title != null) state.localizer.localize(item.title) else "",
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.base)
                         .themeColor(ThemeColor.SemanticColor.text_primary),
@@ -489,7 +496,7 @@ object SettingsView {
             horizontalArrangement = Arrangement.Start,
         ) {
             Text(
-                text = state?.footer ?: "",
+                text = state.footer ?: "",
                 style = TextStyle.dydxDefault
                     .themeFont(
                         fontSize = ThemeFont.FontSize.small,

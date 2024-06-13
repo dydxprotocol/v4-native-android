@@ -11,6 +11,7 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.profile.color.DydxDirectionColorPreferenceViewModel
+import exchange.dydx.trading.feature.profile.gastoken.DydxGasTokenViewModel
 import exchange.dydx.trading.feature.profile.language.DydxLanguageViewModel
 import exchange.dydx.trading.feature.profile.notifications.DydxNotificationsViewModel
 import exchange.dydx.trading.feature.profile.theme.DydxThemeViewModel
@@ -87,6 +88,12 @@ class DydxSettingsViewModel @Inject constructor(
                         return@createFrom DydxNotificationsViewModel.currentValueText(
                             localizer = localizer,
                             preferencesStore = preferencesStore,
+                        )
+                    }
+                    PreferenceKeys.GasToken -> {
+                        return@createFrom DydxGasTokenViewModel.currentValueText(
+                            preferencesStore = preferencesStore,
+                            abacusStateManager = abacusStateManager,
                         )
                     }
                     else -> {

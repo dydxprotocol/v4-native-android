@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.onEach
 private const val TAG = "DydxCarteraConfigWorker"
 
 class DydxCarteraConfigWorker(
-    override val scope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val cachedFileLoader: CachedFileLoader,
     private val context: android.content.Context,
