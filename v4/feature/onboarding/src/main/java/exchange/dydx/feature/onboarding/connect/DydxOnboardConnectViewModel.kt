@@ -71,7 +71,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
                         state.copy(
                             steps = listOf(
                                 step1(status = ProgressStepView.Status.InProgress),
-                                step2()
+                                step2(),
                             ),
                             linkWalletButtonEnabled = false,
                         )
@@ -83,7 +83,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
                         state.copy(
                             steps = listOf(
                                 step1(status = ProgressStepView.Status.Completed),
-                                step2(status = ProgressStepView.Status.InProgress)
+                                step2(status = ProgressStepView.Status.InProgress),
                             ),
                             linkWalletButtonEnabled = false,
                         )
@@ -98,7 +98,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
                         state.copy(
                             steps = listOf(
                                 step1(status = ProgressStepView.Status.Completed),
-                                step2(status = ProgressStepView.Status.Completed)
+                                step2(status = ProgressStepView.Status.Completed),
                             ),
                             linkWalletButtonEnabled = false,
                         )
@@ -130,7 +130,6 @@ class DydxOnboardConnectViewModel @Inject constructor(
 
         this.walletSetup = walletSetup
     }
-
 
     private fun createViewState(): DydxOnboardConnectView.ViewState {
         val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId }
