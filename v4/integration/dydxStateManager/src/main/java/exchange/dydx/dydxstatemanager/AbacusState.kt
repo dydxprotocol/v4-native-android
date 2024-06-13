@@ -26,6 +26,7 @@ import exchange.dydx.abacus.output.SubaccountFill
 import exchange.dydx.abacus.output.SubaccountFundingPayment
 import exchange.dydx.abacus.output.SubaccountHistoricalPNL
 import exchange.dydx.abacus.output.SubaccountOrder
+import exchange.dydx.abacus.output.SubaccountPendingPosition
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.SubaccountTransfer
 import exchange.dydx.abacus.output.TransferStatus
@@ -204,6 +205,14 @@ class AbacusState(
         selectedSubaccount
             .map { subaccount ->
                 subaccount?.openPositions
+            }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+    }
+
+    val selectedSubaccountPendingPositions: StateFlow<List<SubaccountPendingPosition>?> by lazy {
+        selectedSubaccount
+            .map { subaccount ->
+                subaccount?.pendingPositions
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
