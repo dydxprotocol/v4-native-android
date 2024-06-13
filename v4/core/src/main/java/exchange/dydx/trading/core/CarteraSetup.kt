@@ -1,11 +1,14 @@
 package exchange.dydx.trading.core
 
+import android.content.Context
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
+import exchange.dydx.trading.common.R
+import exchange.dydx.trading.core.WalletProvidersConfigUtil.getWalletProvidersConfig
 import exchange.dydx.utilities.utils.Logging
 
 object CarteraSetup {
@@ -30,11 +33,7 @@ object CarteraSetup {
         }
 
         CarteraConfig.shared = CarteraConfig(
-            walletProvidersConfig = WalletProvidersConfig(
-                null,
-                null,
-                null,
-            ),
+            walletProvidersConfig = getWalletProvidersConfig(activity.applicationContext),
             application = activity.application,
             launcher = launcher,
         )
@@ -47,23 +46,24 @@ object CarteraSetup {
 }
 
 object WalletProvidersConfigUtil {
-    fun getWalletProvidersConfig(): WalletProvidersConfig {
+    fun getWalletProvidersConfig(appContext: Context): WalletProvidersConfig {
+        val appHostUrl = "https://" + appContext.getString(R.string.app_web_host)
         val walletConnectV2Config = WalletConnectV2Config(
-            "47559b2ec96c09aed9ff2cb54a31ab0e",
-            "dYdX v4",
-            "dYdX Trading App",
-            "https://v4.testnet.dydx.exchange/",
-            listOf<String>("https://v4.testnet.dydx.exchange/logos/dydx-x.png"),
+            projectId = appContext.getString(R.string.wallet_connect_project_id),
+            clientName = appContext.getString(R.string.app_name),
+            clientDescription = appContext.getString(R.string.wallet_connect_description),
+            clientUrl = appHostUrl,
+            iconUrls = listOf<String>(appHostUrl + appContext.getString(R.string.wallet_connect_logo)),
         )
 
         val walletSegueConfig = WalletSegueConfig(
-            "https://v4.testnet.dydx.exchange/walletsegue",
+            callbackUrl = appHostUrl + appContext.getString(R.string.wallet_segue_callback),
         )
 
         return WalletProvidersConfig(
-            null,
-            walletConnectV2Config,
-            walletSegueConfig,
+            walletConnectV1 = null,
+            walletConnectV2 = walletConnectV2Config,
+            walletSegue = walletSegueConfig,
         )
     }
 }
