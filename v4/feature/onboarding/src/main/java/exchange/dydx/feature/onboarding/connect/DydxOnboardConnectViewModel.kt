@@ -1,11 +1,9 @@
 package exchange.dydx.feature.onboarding.connect
 
-import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.cartera.CarteraConfig
@@ -21,7 +19,6 @@ import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
-import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +33,6 @@ private const val TAG = "DydxOnboardConnectViewModel"
 class DydxOnboardConnectViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val router: DydxRouter,
-    private val cosmosV4Client: CosmosV4ClientProtocol,
     private val parser: ParserProtocol,
     val abacusStateManager: AbacusStateManagerProtocol,
     val toaster: PlatformInfo,
@@ -44,26 +40,16 @@ class DydxOnboardConnectViewModel @Inject constructor(
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
     private val logger: Logging,
-    @ApplicationContext private val context: Context,
+    private val walletSetup: DydxV4WalletSetup,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
     private val walletId: String = checkNotNull(savedStateHandle["walletId"])
 
-    private var walletSetup: DydxWalletSetup? = null
-
     private val _state = MutableStateFlow(createViewState())
     val state: Flow<DydxOnboardConnectView.ViewState> = _state
 
     init {
-        val walletSetup = DydxV4WalletSetup(context, cosmosV4Client, parser, logger)
-
-//        try {
-//            walletSetup.tryConnet()
-//        } catch (e: Exception) {
-//            logger.e(TAG, "Failed to connect wallet")
-//        }
-
         walletSetup.status.onEach { walletStatus ->
             when (walletStatus) {
                 is DydxWalletSetup.Status.Started -> {
@@ -127,8 +113,6 @@ class DydxOnboardConnectViewModel @Inject constructor(
                 else -> {}
             }
         }.launchIn(viewModelScope)
-
-        this.walletSetup = walletSetup
     }
 
     private fun createViewState(): DydxOnboardConnectView.ViewState {
