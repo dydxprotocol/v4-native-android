@@ -13,7 +13,6 @@ import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.feature.market.marketinfo.streams.MarketAndAsset
 import exchange.dydx.trading.feature.market.marketinfo.streams.MarketInfoStreaming
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketPositionViewState
-import exchange.dydx.utilities.BuildConfig
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
