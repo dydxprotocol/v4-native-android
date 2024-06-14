@@ -8,7 +8,6 @@ enum class DydxFeatureFlag {
     force_mainnet,
     enable_isolated_market,
     enable_abacus_v2,
-    enable_sl_tp_trigger,
 }
 
 class DydxFeatureFlags @Inject constructor(

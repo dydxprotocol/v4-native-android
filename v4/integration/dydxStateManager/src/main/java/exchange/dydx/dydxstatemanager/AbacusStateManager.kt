@@ -206,7 +206,7 @@ class AbacusStateManager @Inject constructor(
 
         if (featureFlags.isFeatureEnabled(
                 DydxFeatureFlag.enable_abacus_v2,
-                default = BuildConfig.DEBUG,
+                default = true,
             )
         ) {
             AsyncAbacusStateManagerV2(
