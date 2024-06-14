@@ -6,7 +6,6 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -44,6 +43,9 @@ class DydxMarketPositionViewModel @Inject constructor(
         position: SubaccountPosition,
         marketAndAsset: MarketAndAsset,
     ): DydxMarketPositionView.ViewState {
+        val isSlTpEnabled = abacusStateManager.environment?.featureFlags?.isSlTpEnabled?.let {
+            it
+        } ?: true
         return DydxMarketPositionView.ViewState(
             localizer = localizer,
             shareAction = {},
@@ -66,12 +68,7 @@ class DydxMarketPositionViewModel @Inject constructor(
                     )
                 },
             ),
-            enableTrigger = if (BuildConfig.DEBUG) {
-                featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger)
-            } else {
-                featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_sl_tp_trigger) &&
-                    abacusStateManager.environment?.featureFlags?.isSlTpEnabled == true
-            },
+            enableTrigger = isSlTpEnabled,
         )
     }
 }
