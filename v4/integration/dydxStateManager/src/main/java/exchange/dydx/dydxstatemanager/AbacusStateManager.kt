@@ -23,7 +23,6 @@ import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.changes.StateChanges
 import exchange.dydx.abacus.state.manager.ApiState
 import exchange.dydx.abacus.state.manager.AppConfigs
-import exchange.dydx.abacus.state.manager.AsyncAbacusStateManager
 import exchange.dydx.abacus.state.manager.GasToken
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
@@ -204,32 +203,16 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
-        if (featureFlags.isFeatureEnabled(
-                DydxFeatureFlag.enable_abacus_v2,
-                default = true,
-            )
-        ) {
-            AsyncAbacusStateManagerV2(
-                deploymentUri = deploymentUri,
-                deployment = deployment,
-                appConfigs = appConfigsV2,
-                ioImplementations = ioImplementations,
-                uiImplementations = UIImplementationsExtensions.shared!!,
-                stateNotification = this,
-                dataNotification = null,
-                presentationProtocol = presentationProtocol,
-            )
-        } else {
-            AsyncAbacusStateManager(
-                deploymentUri = deploymentUri,
-                deployment = deployment,
-                appConfigs = appConfigs,
-                ioImplementations = ioImplementations,
-                uiImplementations = UIImplementationsExtensions.shared!!,
-                stateNotification = this,
-                dataNotification = null,
-            )
-        }
+        AsyncAbacusStateManagerV2(
+            deploymentUri = deploymentUri,
+            deployment = deployment,
+            appConfigs = appConfigsV2,
+            ioImplementations = ioImplementations,
+            uiImplementations = UIImplementationsExtensions.shared!!,
+            stateNotification = this,
+            dataNotification = null,
+            presentationProtocol = presentationProtocol,
+        )
     }
 
     // MARK: AbacusStateManagerProtocol
