@@ -1,6 +1,8 @@
 package exchange.dydx.trading.feature.portfolio.components.pendingpositions
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +27,7 @@ import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -42,6 +47,7 @@ fun Preview_DydxPortfolioPendingPositionItemView() {
 
 object DydxPortfolioPendingPositionItemView {
     data class ViewState(
+        val id: String,
         val localizer: LocalizerProtocol,
         val logoUrl: String? = null,
         val marketName: String? = null,
@@ -52,6 +58,7 @@ object DydxPortfolioPendingPositionItemView {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                id = "1",
                 logoUrl = "https://media.dydx.exchange/currencies/eth.png",
                 marketName = "Ethereum",
                 margin = "1000.00",
@@ -75,8 +82,8 @@ object DydxPortfolioPendingPositionItemView {
             Column(
                 modifier = Modifier
                     .padding(
-                        horizontal = 12.dp,
-                        vertical = 10.dp,
+                        horizontal = ThemeShapes.HorizontalPadding,
+                        vertical = 12.dp,
                     ),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
@@ -122,18 +129,23 @@ object DydxPortfolioPendingPositionItemView {
             PlatformDivider()
 
             Row(
-                modifier = Modifier
-                    .padding(
-                        horizontal = 12.dp,
-                        vertical = 10.dp,
-                    ),
+                modifier = Modifier,
+
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
             ) {
                 Text(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { state.viewOrderAction() },
+                        .padding(
+                            horizontal = ThemeShapes.HorizontalPadding,
+                            vertical = 12.dp,
+                        )
+                        .clickable(
+                            indication = rememberRipple(color = ThemeColor.SemanticColor.layer_3.color),
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { state.viewOrderAction() },
+                        ),
                     text = state.localizer.localize("APP.GENERAL.VIEW_ORDER"),
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.mini)
@@ -143,7 +155,16 @@ object DydxPortfolioPendingPositionItemView {
                 Text(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { state.cancelOrderAction() },
+                        .background(ThemeColor.SemanticColor.transparent.color)
+                        .padding(
+                            horizontal = ThemeShapes.HorizontalPadding,
+                            vertical = 12.dp,
+                        )
+                        .clickable(
+                            indication = rememberRipple(color = ThemeColor.SemanticColor.layer_3.color),
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = { state.cancelOrderAction() },
+                        ),
                     text = state.localizer.localize("APP.TRADE.CANCEL_ALL"),
                     textAlign = TextAlign.End,
                     style = TextStyle.dydxDefault

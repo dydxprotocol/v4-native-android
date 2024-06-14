@@ -45,6 +45,7 @@ class DydxPortfolioPendingPositionsViewModel @Inject constructor(
                 val configsAndAsset = configsAndAssetMap?.get(position.marketId) ?: return@mapNotNull null
                 DydxPortfolioPendingPositionItemView.ViewState(
                     localizer = localizer,
+                    id = position.marketId,
                     logoUrl = configsAndAsset.asset?.resources?.imageUrl,
                     marketName = configsAndAsset.asset?.name,
                     margin = formatter.dollar(position.freeCollateral?.current, 2),
