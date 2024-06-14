@@ -7,7 +7,6 @@ enum class DydxFeatureFlag {
     deployment_url,
     force_mainnet,
     enable_isolated_market,
-    enable_abacus_v2,
     enable_sl_tp_trigger,
 }
 
