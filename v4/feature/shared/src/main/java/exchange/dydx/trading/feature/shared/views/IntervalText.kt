@@ -82,7 +82,7 @@ class IntervalTextViewModel @Inject constructor(
 ) : ViewModel() {
     val dateText: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    private var timer = Timer()
+    private val timer = Timer()
 
     private var date: Instant? = null
     private var direction: IntervalText.Direction = IntervalText.Direction.COUNT_UP
