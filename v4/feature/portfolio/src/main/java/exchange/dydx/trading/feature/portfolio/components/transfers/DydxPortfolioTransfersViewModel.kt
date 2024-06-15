@@ -64,20 +64,18 @@ class DydxPortfolioTransfersViewModel @Inject constructor(
                                 params = mapOf(
                                     "FROM" to (getTruncatedAddress(transfer.fromAddress ?: "-")),
                                 ),
-                            ) ?: "-"
+                            )
                         TransferRecordType.WITHDRAW, TransferRecordType.TRANSFER_OUT ->
                             localizer.localizeWithParams(
                                 path = "APP.GENERAL.TO",
                                 params = mapOf(
                                     "TO" to (getTruncatedAddress(transfer.toAddress ?: "-")),
                                 ),
-                            ) ?: "-"
-                        else -> "-"
+                            )
                     },
                     date = transfer.updatedAtMilliseconds?.let {
                         IntervalText.ViewState(
                             date = Instant.ofEpochMilli(it.toLong()),
-                            formatter = formatter,
                         )
                     },
                 )

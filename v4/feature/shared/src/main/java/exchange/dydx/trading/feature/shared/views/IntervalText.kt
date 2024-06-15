@@ -2,10 +2,14 @@ package exchange.dydx.trading.feature.shared.views
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -13,7 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Timer
-import kotlin.concurrent.fixedRateTimer
+import javax.inject.Inject
+import kotlin.concurrent.scheduleAtFixedRate
 
 @Preview
 @Composable
@@ -37,78 +42,14 @@ object IntervalText {
         var date: Instant? = null,
         val direction: Direction = Direction.COUNT_UP,
         val format: Format = Format.SHORT,
-        val formatter: DydxFormatter,
     ) {
         companion object {
             val preview = ViewState(
-                formatter = DydxFormatter(),
+                date = Instant.now(),
+                direction = Direction.COUNT_UP,
+                format = Format.SHORT,
             )
         }
-
-        var dateText: MutableStateFlow<String?> = MutableStateFlow(null)
-
-        private var timer: Timer? = null
-
-        init {
-            resetTimer()
-        }
-
-        private fun resetTimer() {
-            timer?.cancel()
-            dateText.value = null
-
-            if (direction == Direction.COUNT_DOWN_TO_HOUR) {
-                val now = Instant.now()
-                if (date == null || now > date) {
-                    date = now.truncatedTo(ChronoUnit.HOURS).plusSeconds(3600)
-                }
-            }
-
-            val timerInterval: Long? = when (format) {
-                Format.SHORT -> timerInterval
-                Format.FULL -> 1000 // 1 second for full format
-            }
-
-            timerInterval?.let {
-                displayDate()
-                timer?.cancel()
-                timer = fixedRateTimer(initialDelay = 0, period = it) {
-                    val now = Instant.now()
-                    if (direction == Direction.COUNT_DOWN_TO_HOUR && now > date) {
-                        date = now.truncatedTo(ChronoUnit.HOURS).plusSeconds(3600)
-                    }
-                    displayDate()
-                }
-            }
-        }
-
-        private fun displayDate() {
-            if (timerInterval != null) {
-                dateText.value = when (format) {
-                    Format.SHORT -> formatter.interval(date)
-                    Format.FULL -> formatter.time(date)
-                }
-            } else {
-                dateText.value = null
-            }
-        }
-
-        private val timerInterval: Long?
-            get() {
-                val currentDate = date ?: return null
-
-                val now = Instant.now()
-                val interval: Long = when (direction) {
-                    Direction.COUNT_UP -> currentDate.until(now, ChronoUnit.SECONDS)
-                    Direction.COUNT_DOWN, Direction.COUNT_DOWN_TO_HOUR -> now.until(currentDate, ChronoUnit.SECONDS)
-                }
-
-                return when {
-                    interval in 1..60 -> 1000 // 1 second
-                    interval <= 60 * 60 -> 60 * 1000 // 1 minute
-                    else -> 24 * 60 * 60 * 1000 // 1 day
-                }
-            }
     }
 
     @Composable
@@ -121,7 +62,11 @@ object IntervalText {
             return
         }
 
-        val dateText = state.dateText.collectAsState().value
+        val viewModel: IntervalTextViewModel = hiltViewModel()
+        LaunchedEffect(Unit) {
+            viewModel.start(state.date, state.direction, state.format)
+        }
+        val dateText = viewModel.dateText.collectAsState().value
 
         Text(
             text = dateText ?: "",
@@ -129,4 +74,85 @@ object IntervalText {
             modifier = modifier,
         )
     }
+}
+
+@HiltViewModel
+class IntervalTextViewModel @Inject constructor(
+    val formatter: DydxFormatter,
+) : ViewModel() {
+    val dateText: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    private val timer = Timer()
+
+    private var date: Instant? = null
+    private var direction: IntervalText.Direction = IntervalText.Direction.COUNT_UP
+    private var format: IntervalText.Format = IntervalText.Format.SHORT
+
+    override fun onCleared() {
+        timer.cancel()
+        timer.purge()
+    }
+
+    fun start(date: Instant?, direction: IntervalText.Direction, format: IntervalText.Format) {
+        this.date = date
+        this.direction = direction
+        this.format = format
+
+        startTimer()
+    }
+
+    private fun startTimer() {
+        dateText.value = null
+
+        if (direction == IntervalText.Direction.COUNT_DOWN_TO_HOUR) {
+            val now = Instant.now()
+            if (date == null || now > date) {
+                date = now.truncatedTo(ChronoUnit.HOURS).plusSeconds(3600)
+            }
+        }
+
+        val timerInterval: Long? = when (format) {
+            IntervalText.Format.SHORT -> timerInterval
+            IntervalText.Format.FULL -> 1000 // 1 second for full format
+        }
+
+        timerInterval?.let {
+            displayDate()
+            timer.scheduleAtFixedRate(delay = 0, period = it) {
+                val now = Instant.now()
+                if (direction == IntervalText.Direction.COUNT_DOWN_TO_HOUR && now > date) {
+                    date = now.truncatedTo(ChronoUnit.HOURS).plusSeconds(3600)
+                }
+                displayDate()
+            }
+        }
+    }
+
+    private fun displayDate() {
+        if (timerInterval != null) {
+            dateText.value = when (format) {
+                IntervalText.Format.SHORT -> formatter.interval(date)
+                IntervalText.Format.FULL -> formatter.time(date)
+            }
+        } else {
+            dateText.value = null
+        }
+    }
+
+    private val timerInterval: Long?
+        get() {
+            val currentDate = date ?: return null
+
+            val now = Instant.now()
+            val interval: Long = when (direction) {
+                IntervalText.Direction.COUNT_UP -> currentDate.until(now, ChronoUnit.SECONDS)
+                IntervalText.Direction.COUNT_DOWN, IntervalText.Direction.COUNT_DOWN_TO_HOUR -> now.until(currentDate, ChronoUnit.SECONDS)
+            }
+
+            return when {
+                interval in 1..60 -> 1000 // 1 second
+                interval <= 60 * 60 -> 60 * 1000 // 1 minute
+                else -> 24 * 60 * 60 * 1000 // 1 day
+            }
+        }
 }

@@ -61,7 +61,9 @@ data class SharedFillViewState(
                 type = fill.resources.typeString ?: localizer.localize(fill.resources.typeStringKey ?: ""),
                 size = formatter.localFormatted(fill.size, stepSize),
                 date = if (longValue != null) {
-                    IntervalText.ViewState(date = Instant.ofEpochMilli(longValue), formatter = formatter)
+                    IntervalText.ViewState(
+                        date = Instant.ofEpochMilli(longValue),
+                    )
                 } else {
                     null
                 },

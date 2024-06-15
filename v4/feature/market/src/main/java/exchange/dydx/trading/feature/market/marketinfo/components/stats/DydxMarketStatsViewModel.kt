@@ -112,14 +112,12 @@ class DydxMarketStatsViewModel @Inject constructor(
                 date = nextFundingAt,
                 direction = IntervalText.Direction.COUNT_DOWN,
                 format = IntervalText.Format.FULL,
-                formatter = formatter,
             )
         } else {
             // With no nextFundingAt, we will just count down to the next hour mark
             nextFundingViewState = IntervalText.ViewState(
                 direction = IntervalText.Direction.COUNT_DOWN_TO_HOUR,
                 format = IntervalText.Format.FULL,
-                formatter = formatter,
             )
         }
         items.add(
