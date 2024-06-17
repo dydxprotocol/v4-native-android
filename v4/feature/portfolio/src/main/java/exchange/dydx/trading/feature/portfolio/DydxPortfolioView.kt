@@ -34,6 +34,8 @@ import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOr
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioChartView
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioDetailsView
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioSectionsView
+import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxPortfolioPendingPositionsView.pendingPositionsListContent
+import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxPortfolioPendingPositionsViewModel
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.positionsListContent
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsViewModel
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
@@ -96,6 +98,9 @@ object DydxPortfolioView : DydxComponent {
         val positionsViewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
         val positionsViewState = positionsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
+        val pendingPositionsViewModel: DydxPortfolioPendingPositionsViewModel = hiltViewModel()
+        val pendingPositionsViewState = pendingPositionsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+
         val ordersViewModel: DydxPortfolioOrdersViewModel = hiltViewModel()
         val ordersViewState = ordersViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
@@ -131,6 +136,7 @@ object DydxPortfolioView : DydxComponent {
                 when (state.tabSelection) {
                     DydxPortfolioSectionsView.Selection.Positions -> {
                         positionsListContent(positionsViewState)
+                        pendingPositionsListContent(pendingPositionsViewState)
                     }
 
                     DydxPortfolioSectionsView.Selection.Orders -> {
