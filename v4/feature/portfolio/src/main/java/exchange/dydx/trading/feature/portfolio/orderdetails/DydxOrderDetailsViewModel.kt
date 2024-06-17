@@ -39,11 +39,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
     val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
-    private val orderOrFillId: String?
-
-    init {
-        orderOrFillId = savedStateHandle["id"]
-    }
+    private val orderOrFillId: String? = savedStateHandle["id"]
 
     val state: Flow<DydxOrderDetailsView.ViewState?> =
         combine(

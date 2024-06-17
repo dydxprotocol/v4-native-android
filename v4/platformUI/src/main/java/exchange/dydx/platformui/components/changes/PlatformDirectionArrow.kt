@@ -16,8 +16,8 @@ enum class PlatformDirection {
     companion object {
         fun from(value1: Double?, value2: Double?): PlatformDirection {
             return when {
-                value1 ?: 0.0 > value2 ?: 0.0 -> Down
-                value1 ?: 0.0 < value2 ?: 0.0 -> Up
+                (value1 ?: 0.0) > (value2 ?: 0.0) -> Down
+                (value1 ?: 0.0) < (value2 ?: 0.0) -> Up
                 else -> None
             }
         }
