@@ -202,7 +202,10 @@ class DydxCancelPendingPositionViewModel @Inject constructor(
                     else -> {}
                 }
 
-                pendingOrdersFlow.value = pendingOrdersFlow.value.drop(1)
+                val pendingOrders = pendingOrdersFlow.value
+                if (pendingOrders.isNotEmpty()) {
+                    pendingOrdersFlow.value = pendingOrders.drop(1)
+                }
                 processCancelOrders(marketMap, assetMap)
             }
         } else {
