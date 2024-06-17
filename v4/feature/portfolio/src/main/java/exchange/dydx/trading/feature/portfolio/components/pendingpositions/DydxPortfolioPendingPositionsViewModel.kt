@@ -53,7 +53,10 @@ class DydxPortfolioPendingPositionsViewModel @Inject constructor(
                         router.navigateTo(PortfolioRoutes.orders)
                     },
                     cancelOrderAction = {
-                        // TODO
+                        router.navigateTo(
+                            route = PortfolioRoutes.cancel_pending_position + "/${position.marketId}",
+                            presentation = DydxRouter.Presentation.Modal,
+                        )
                     },
                 )
             } ?: listOf(),
