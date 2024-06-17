@@ -212,7 +212,9 @@ class AbacusStateManager @Inject constructor(
             stateNotification = this,
             dataNotification = null,
             presentationProtocol = presentationProtocol,
-        )
+        ).also {
+            it.subaccountNumber = 0
+        }
     }
 
     // MARK: AbacusStateManagerProtocol
