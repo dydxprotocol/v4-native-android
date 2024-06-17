@@ -32,6 +32,8 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
+import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxPortfolioPendingPositionsView.pendingPositionsListContent
+import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxPortfolioPendingPositionsViewModel
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.positionsListContent
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketPositionViewState
@@ -75,11 +77,15 @@ object DydxPortfolioPositionsView : DydxComponent {
     @Composable
     fun Content(modifier: Modifier, isFullScreen: Boolean) {
         val viewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
-
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+
+        val pendingPositionsViewModel: DydxPortfolioPendingPositionsViewModel = hiltViewModel()
+        val pendingPositionsViewState = pendingPositionsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+
         if (isFullScreen) {
             Column(
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth()
+                    .themeColor(ThemeColor.SemanticColor.layer_2),
             ) {
                 DydxPortfolioSelectorView.Content(
                     modifier = Modifier
@@ -98,6 +104,7 @@ object DydxPortfolioPositionsView : DydxComponent {
                         .weight(1f),
                 ) {
                     this.positionsListContent(state)
+                    this.pendingPositionsListContent(pendingPositionsViewState)
                 }
             }
         } else {
@@ -105,6 +112,7 @@ object DydxPortfolioPositionsView : DydxComponent {
                 modifier = modifier,
             ) {
                 positionsListContent(state)
+                pendingPositionsListContent(pendingPositionsViewState)
             }
         }
     }

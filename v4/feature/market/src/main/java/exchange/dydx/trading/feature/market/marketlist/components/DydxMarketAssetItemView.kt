@@ -122,6 +122,7 @@ object DydxMarketAssetItemView : DydxComponent {
                                 fontSize = ThemeFont.FontSize.base,
                             )
                             .themeColor(ThemeColor.SemanticColor.text_primary),
+                        maxLines = 1,
                     )
 
                     Text(
@@ -129,6 +130,7 @@ object DydxMarketAssetItemView : DydxComponent {
                         style = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.base)
                             .themeColor(ThemeColor.SemanticColor.text_secondary),
+                        maxLines = 1,
                     )
                 }
 

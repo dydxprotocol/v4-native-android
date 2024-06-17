@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.portfolio.components.positions
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -75,11 +74,6 @@ object DydxPortfolioPositionItemView {
                 .height((if (isIsolatedMarketEnabled) 148.dp else 48.dp) + ThemeShapes.VerticalPadding * 2)
                 .background(
                     brush = position.gradientType.brush(ThemeColor.SemanticColor.layer_3),
-                    shape = shape,
-                )
-                .border(
-                    width = 1.dp,
-                    color = position.gradientType.color.color.copy(alpha = 0.1f),
                     shape = shape,
                 )
                 .clip(shape)

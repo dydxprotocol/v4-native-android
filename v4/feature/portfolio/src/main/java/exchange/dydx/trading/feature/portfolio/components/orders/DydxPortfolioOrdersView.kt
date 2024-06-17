@@ -84,7 +84,8 @@ object DydxPortfolioOrdersView : DydxComponent {
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         if (isFullScreen) {
             Column(
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth()
+                    .themeColor(ThemeColor.SemanticColor.layer_2),
             ) {
                 if (showPortfolioSelector) {
                     DydxPortfolioSelectorView.Content(
