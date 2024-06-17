@@ -22,6 +22,7 @@ class LocalTimer(
     private val block: () -> Boolean,
 ) : LocalTimerProtocol {
     private var timer: Timer? = null
+    private var innerTimer: Timer? = null
 
     init {
         val daleyInMilliseconds = delay * 1000
@@ -33,13 +34,15 @@ class LocalTimer(
                 override fun run() {
                     val shouldContinue = block()
                     if (shouldContinue && repeatInMilliseconds != null) {
-                        val innerTimer = Timer()
-                        innerTimer.scheduleAtFixedRate(
+                        innerTimer = Timer()
+                        innerTimer?.schedule(
                             object : TimerTask() {
                                 override fun run() {
                                     val innerShouldContinue = block()
                                     if (!innerShouldContinue) {
-                                        innerTimer.cancel()
+                                        innerTimer?.cancel()
+                                        innerTimer?.purge()
+                                        innerTimer = null
                                     }
                                 }
                             },
@@ -59,5 +62,10 @@ class LocalTimer(
         timer?.cancel()
         timer?.purge()
         timer = null
+        if (innerTimer != null) {
+            innerTimer?.cancel()
+            innerTimer?.purge()
+            innerTimer = null
+        }
     }
 }

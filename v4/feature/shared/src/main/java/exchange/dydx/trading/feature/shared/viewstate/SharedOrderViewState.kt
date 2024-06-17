@@ -82,7 +82,7 @@ data class SharedOrderViewState(
                     },
                 ),
                 date = if (longValue != null) {
-                    IntervalText.ViewState(date = Instant.ofEpochMilli(longValue), formatter = formatter)
+                    IntervalText.ViewState(date = Instant.ofEpochMilli(longValue))
                 } else {
                     null
                 },
