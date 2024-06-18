@@ -39,6 +39,6 @@ fun LocalizerProtocol.localizeWithParams(path: String, params: Map<String, Strin
 
 val OrderStatus.canCancel: Boolean
     get() = when (this) {
-        OrderStatus.open, OrderStatus.pending, OrderStatus.partiallyFilled, OrderStatus.untriggered -> true
+        OrderStatus.Open, OrderStatus.Pending, OrderStatus.PartiallyFilled, OrderStatus.Untriggered -> true
         else -> false
     }
