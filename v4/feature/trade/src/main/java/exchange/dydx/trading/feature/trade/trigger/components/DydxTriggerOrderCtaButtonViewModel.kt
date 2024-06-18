@@ -50,7 +50,7 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
         val tpSize = triggerOrdersInput?.takeProfitOrder?.size ?: 0.0
         val slSize = triggerOrdersInput?.stopLossOrder?.size ?: 0.0
         val hasSize = inputSize != 0.0 || tpSize != 0.0 || slSize != 0.0
-        return DydxTriggerOrderCtaButtonView.ViewState(
+0        return DydxTriggerOrderCtaButtonView.ViewState(
             localizer = localizer,
             ctaButtonState = if (
                 (
@@ -66,7 +66,8 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
             },
             ctaAction = {
                 router.navigateBack()
-                abacusStateManager.commitTriggerOrders { _ ->
+                abacusStateManager.commitTriggerOrders { status ->
+                    print("Trigger orders committed with status: $status")
                     // order status will be shown from PresentationProtocol.showToast()
                 }
             },
