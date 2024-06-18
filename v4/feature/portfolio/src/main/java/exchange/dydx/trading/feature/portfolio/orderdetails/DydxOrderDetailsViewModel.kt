@@ -82,8 +82,8 @@ class DydxOrderDetailsViewModel @Inject constructor(
             side = SideTextView.ViewState(
                 localizer = localizer,
                 side = when (fill.side) {
-                    OrderSide.buy -> SideTextView.Side.Buy
-                    OrderSide.sell -> SideTextView.Side.Sell
+                    OrderSide.Buy -> SideTextView.Side.Buy
+                    OrderSide.Sell -> SideTextView.Side.Sell
                 },
             ),
             closeAction = {
@@ -171,8 +171,8 @@ class DydxOrderDetailsViewModel @Inject constructor(
             side = SideTextView.ViewState(
                 localizer = localizer,
                 side = when (order.side) {
-                    OrderSide.buy -> SideTextView.Side.Buy
-                    OrderSide.sell -> SideTextView.Side.Sell
+                    OrderSide.Buy -> SideTextView.Side.Buy
+                    OrderSide.Sell -> SideTextView.Side.Sell
                 },
             ),
             closeAction = {

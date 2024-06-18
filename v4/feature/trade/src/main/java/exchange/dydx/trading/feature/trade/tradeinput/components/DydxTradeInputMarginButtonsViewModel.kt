@@ -39,7 +39,7 @@ class DydxTradeInputMarginButtonsViewModel @Inject constructor(
     ): DydxTradeInputMarginButtonsView.ViewState {
         return DydxTradeInputMarginButtonsView.ViewState(
             localizer = localizer,
-            isIsolatedMarketSelected = tradeInput?.marginMode == MarginMode.isolated,
+            isIsolatedMarketSelected = tradeInput?.marginMode == MarginMode.Isolated,
             isolatedMarketTargetLeverageText = formatter.leverage(
                 (tradeInput?.targetLeverage ?: 2.0),
                 1,

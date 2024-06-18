@@ -47,19 +47,19 @@ class DydxTradeStatusHeaderViewModel @Inject constructor(
                 return DydxTradeStatusHeaderView.ViewState(
                     localizer = localizer,
                     status = when (lastOrder.status) {
-                        OrderStatus.cancelled -> DydxTradeStatusHeaderView.StatusIcon.Failed
-                        OrderStatus.canceling, OrderStatus.pending, OrderStatus.partiallyFilled -> DydxTradeStatusHeaderView.StatusIcon.Pending
-                        OrderStatus.filled -> DydxTradeStatusHeaderView.StatusIcon.Filled
-                        OrderStatus.open, OrderStatus.untriggered -> DydxTradeStatusHeaderView.StatusIcon.Open
+                        OrderStatus.Canceled -> DydxTradeStatusHeaderView.StatusIcon.Failed
+                        OrderStatus.Canceling, OrderStatus.Pending, OrderStatus.PartiallyFilled -> DydxTradeStatusHeaderView.StatusIcon.Pending
+                        OrderStatus.Filled -> DydxTradeStatusHeaderView.StatusIcon.Filled
+                        OrderStatus.Open, OrderStatus.Untriggered -> DydxTradeStatusHeaderView.StatusIcon.Open
                         else -> DydxTradeStatusHeaderView.StatusIcon.Submitting
                     },
                     title = localizer.localize(lastOrder?.resources?.statusStringKey ?: ""),
                     detail = when (lastOrder.status) {
-                        OrderStatus.cancelled -> localizer.localize("APP.TRADE.ORDER_CANCELED_DESC")
-                        OrderStatus.canceling, OrderStatus.pending, OrderStatus.partiallyFilled -> localizer.localize("APP.TRADE.ORDER_PENDING_DESC")
-                        OrderStatus.filled -> localizer.localize("APP.TRADE.ORDER_FILLED_DESC")
-                        OrderStatus.open -> localizer.localize("APP.TRADE.ORDER_PLACED_DESC")
-                        OrderStatus.untriggered -> localizer.localize("APP.TRADE.NOT_TRIGGERED_STATUS_DESC")
+                        OrderStatus.Canceled -> localizer.localize("APP.TRADE.ORDER_CANCELED_DESC")
+                        OrderStatus.Canceling, OrderStatus.Pending, OrderStatus.PartiallyFilled -> localizer.localize("APP.TRADE.ORDER_PENDING_DESC")
+                        OrderStatus.Filled -> localizer.localize("APP.TRADE.ORDER_FILLED_DESC")
+                        OrderStatus.Open -> localizer.localize("APP.TRADE.ORDER_PLACED_DESC")
+                        OrderStatus.Untriggered -> localizer.localize("APP.TRADE.NOT_TRIGGERED_STATUS_DESC")
                         else -> null
                     },
                     closeButtonAction = {

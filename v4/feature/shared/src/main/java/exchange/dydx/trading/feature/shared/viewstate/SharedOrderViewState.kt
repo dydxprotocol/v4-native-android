@@ -77,8 +77,8 @@ data class SharedOrderViewState(
                 sideText = SideTextView.ViewState(
                     localizer = localizer,
                     side = when (order.side) {
-                        OrderSide.buy -> SideTextView.Side.Buy
-                        OrderSide.sell -> SideTextView.Side.Sell
+                        OrderSide.Buy -> SideTextView.Side.Buy
+                        OrderSide.Sell -> SideTextView.Side.Sell
                     },
                 ),
                 date = if (longValue != null) {
@@ -89,7 +89,7 @@ data class SharedOrderViewState(
                 size = formatter.localFormatted(order.size, stepSize),
                 filledSize = formatter.localFormatted(filledSize, stepSize),
                 price = when (order.type) {
-                    OrderType.market, OrderType.stopMarket, OrderType.takeProfitMarket -> localizer.localize("APP.GENERAL.MARKET")
+                    OrderType.Market, OrderType.StopMarket, OrderType.TakeProfitMarket -> localizer.localize("APP.GENERAL.MARKET")
                     else -> formatter.dollar(order.price, tickSize)
                 },
                 triggerPrice = formatter.dollar(order.triggerPrice, tickSize),
@@ -108,9 +108,9 @@ data class SharedOrderViewState(
 
 private fun SubaccountOrder.createOrderStatusViewState(localizer: LocalizerProtocol): OrderStatusView.ViewState {
     val color = when (this.status) {
-        OrderStatus.cancelled, OrderStatus.canceling -> OrderStatusView.Status.Red
-        OrderStatus.filled -> OrderStatusView.Status.Green
-        OrderStatus.partiallyFilled, OrderStatus.pending -> OrderStatusView.Status.Yellow
+        OrderStatus.Canceled, OrderStatus.Canceling -> OrderStatusView.Status.Red
+        OrderStatus.Filled -> OrderStatusView.Status.Green
+        OrderStatus.PartiallyFilled, OrderStatus.Pending -> OrderStatusView.Status.Yellow
         else -> OrderStatusView.Status.Blank
     }
     return OrderStatusView.ViewState(

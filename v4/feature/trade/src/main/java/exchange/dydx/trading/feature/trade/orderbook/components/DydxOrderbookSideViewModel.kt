@@ -54,7 +54,7 @@ class DydxOrderbookAsksViewModel @Inject constructor(
                 formatter = formatter,
                 market = marketMap?.get(marketId),
                 orderbook = orderbook,
-                orderbookUsage = if (side == OrderSide.buy) orderbookUsage else null,
+                orderbookUsage = if (side == OrderSide.Buy) orderbookUsage else null,
                 lines = orderbook?.asks?.toList() ?: emptyList(),
                 startingColor = ThemeColor.SemanticColor.negativeColor,
                 side = DydxOrderbookSideView.Side.Asks,
@@ -95,7 +95,7 @@ class DydxOrderbookBidsViewModel @Inject constructor(
                 formatter = formatter,
                 market = marketMap?.get(marketId),
                 orderbook = orderbook,
-                orderbookUsage = if (side == OrderSide.sell) orderbookUsage else null,
+                orderbookUsage = if (side == OrderSide.Sell) orderbookUsage else null,
                 lines = orderbook?.bids?.toList() ?: emptyList(),
                 startingColor = ThemeColor.SemanticColor.positiveColor,
                 side = DydxOrderbookSideView.Side.Bids,
@@ -181,7 +181,7 @@ internal fun lineSelected(
     line: DydxOrderbookSideView.DydxOrderbookLine
 ) {
     when (tradeInput?.type) {
-        OrderType.limit, OrderType.stopLimit, OrderType.takeProfitLimit -> {
+        OrderType.Limit, OrderType.StopLimit, OrderType.TakeProfitLimit -> {
             abacusStateManager.trade("${line.price}", TradeInputField.limitPrice)
         }
 

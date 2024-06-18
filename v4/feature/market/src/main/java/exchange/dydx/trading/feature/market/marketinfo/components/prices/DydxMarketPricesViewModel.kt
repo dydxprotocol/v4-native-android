@@ -129,8 +129,8 @@ class DydxMarketPricesViewModel @Inject constructor(
                 val orderLineData = ordersForMarket?.let { orders ->
                     orders
                         .filter {
-                            it.status in setOf(OrderStatus.open, OrderStatus.untriggered, OrderStatus.partiallyFilled) &&
-                                it.type in setOf(OrderType.limit, OrderType.stopLimit, OrderType.stopMarket, OrderType.takeProfitLimit, OrderType.takeProfitMarket)
+                            it.status in setOf(OrderStatus.Open, OrderStatus.Untriggered, OrderStatus.PartiallyFilled) &&
+                                it.type in setOf(OrderType.Limit, OrderType.StopLimit, OrderType.StopMarket, OrderType.TakeProfitLimit, OrderType.TakeProfitMarket)
                         }
                         .map {
                             val price = it.triggerPrice ?: it.price
@@ -438,22 +438,22 @@ data class OrderLineData(
 
 private val OrderSide.orderLineColor: Int
     get() = when (this) {
-        OrderSide.buy -> SemanticColor.positiveColor.color.toArgb()
-        OrderSide.sell -> SemanticColor.negativeColor.color.toArgb()
+        OrderSide.Buy -> SemanticColor.positiveColor.color.toArgb()
+        OrderSide.Sell -> SemanticColor.negativeColor.color.toArgb()
     }
 
 private val OrderSide.orderLineTextColor: Int
     get() = when (this) {
-        OrderSide.buy -> SemanticColor.textOnPositiveColor.color.toArgb()
-        OrderSide.sell -> SemanticColor.textOnNegativeColor.color.toArgb()
+        OrderSide.Buy -> SemanticColor.textOnPositiveColor.color.toArgb()
+        OrderSide.Sell -> SemanticColor.textOnNegativeColor.color.toArgb()
     }
 
 private val OrderType.labelKey: String
     get() = when (this) {
-        OrderType.takeProfitMarket -> "APP.TRADE.TAKE_PROFIT_MARKET"
-        OrderType.takeProfitLimit -> "APP.TRADE.TAKE_PROFIT_LIMIT"
-        OrderType.limit -> "APP.TRADE.LIMIT_ORDER"
-        OrderType.stopLimit -> "APP.TRADE.STOP_LIMIT"
-        OrderType.stopMarket -> "APP.TRADE.STOP_MARKET"
+        OrderType.TakeProfitMarket -> "APP.TRADE.TAKE_PROFIT_MARKET"
+        OrderType.TakeProfitLimit -> "APP.TRADE.TAKE_PROFIT_LIMIT"
+        OrderType.Limit -> "APP.TRADE.LIMIT_ORDER"
+        OrderType.StopLimit -> "APP.TRADE.STOP_LIMIT"
+        OrderType.StopMarket -> "APP.TRADE.STOP_MARKET"
         else -> error("$this is not supported by orderlines")
     }
