@@ -136,7 +136,7 @@ object DydxOrderDetailsView : DydxComponent {
                     text = state.localizer.localize("APP.TRADE.CANCEL_ORDER"),
                     state = PlatformButtonState.Destructive,
                 ) {
-                    state.cancelAction?.invoke()
+                    state.cancelAction.invoke()
                 }
             }
         }
@@ -150,7 +150,7 @@ object DydxOrderDetailsView : DydxComponent {
         val listState = rememberLazyListState()
 
         LazyColumn(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(
                     vertical = ThemeShapes.VerticalPadding,

@@ -202,6 +202,7 @@ object DydxPortfolioDetailsView : DydxComponent {
         value: String?,
     ) {
         Text(
+            modifier = modifier,
             text = value ?: "-",
             style = TextStyle.dydxDefault
                 .themeColor(ThemeColor.SemanticColor.text_primary),

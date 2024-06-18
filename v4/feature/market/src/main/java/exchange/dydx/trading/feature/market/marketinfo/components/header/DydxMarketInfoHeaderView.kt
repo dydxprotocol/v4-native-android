@@ -84,7 +84,7 @@ object DydxMarketInfoHeaderView : DydxComponent {
         ) {
             Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                 PlatformIconButton(
-                    action = { state.backAction?.invoke() },
+                    action = { state.backAction.invoke() },
                     backgroundColor = ThemeColor.SemanticColor.transparent,
                     borderColor = ThemeColor.SemanticColor.transparent,
                 ) {

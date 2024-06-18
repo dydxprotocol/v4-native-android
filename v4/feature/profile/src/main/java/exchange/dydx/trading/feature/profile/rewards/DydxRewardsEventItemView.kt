@@ -43,7 +43,7 @@ object DydxRewardsEventItemView {
     @Composable
     fun Content(modifier: Modifier, state: DydxRewardsEventItemView.ViewState) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),

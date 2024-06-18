@@ -59,9 +59,9 @@ class DydxProfileHistoryViewModel @Inject constructor(
         val items: MutableList<DydxProfileHistoryItemView.ViewState> = mutableListOf()
         repeat(maxItemCount) {
             val item = mostRecentOf(
-                fills?.firstOrNull(),
-                fundings?.firstOrNull(),
-                transfers?.firstOrNull(),
+                fills.firstOrNull(),
+                fundings.firstOrNull(),
+                transfers.firstOrNull(),
             )
             if (item is SubaccountFill) {
                 createFillItem(item, configsAndAsset)?.let { items.add(it) }

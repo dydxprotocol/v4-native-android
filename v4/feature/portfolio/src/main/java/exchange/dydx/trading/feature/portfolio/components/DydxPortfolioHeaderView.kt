@@ -68,6 +68,7 @@ object DydxPortfolioHeaderView : DydxComponent {
         }
 
         PlatformPillButton(
+            modifier = modifier,
             backgroundColor = ThemeColor.SemanticColor.layer_4,
             action = {
                 when (state.state) {

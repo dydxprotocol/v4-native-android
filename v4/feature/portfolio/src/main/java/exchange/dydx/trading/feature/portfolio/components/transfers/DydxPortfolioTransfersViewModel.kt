@@ -56,7 +56,7 @@ class DydxPortfolioTransfersViewModel @Inject constructor(
                                 else -> PlatformUISign.None
                             },
                         )
-                    } ?: null,
+                    },
                     address = when (transfer.type) {
                         TransferRecordType.DEPOSIT, TransferRecordType.TRANSFER_IN ->
                             localizer.localizeWithParams(
@@ -73,7 +73,7 @@ class DydxPortfolioTransfersViewModel @Inject constructor(
                                 ),
                             )
                     },
-                    date = transfer.updatedAtMilliseconds?.let {
+                    date = transfer.updatedAtMilliseconds.let {
                         IntervalText.ViewState(
                             date = Instant.ofEpochMilli(it.toLong()),
                         )

@@ -203,7 +203,7 @@ object DydxMarketPositionView : DydxComponent {
     private fun CreateCollection(modifier: Modifier, state: ViewState) {
         Column {
             Row(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.SpaceEvenly,
