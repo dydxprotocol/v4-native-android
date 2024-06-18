@@ -38,8 +38,8 @@ class DydxTradeSheetTipBuySellViewModel @Inject constructor(
             sides = tradeInput?.options?.sideOptions?.toList()?.mapNotNull {
                 val text = it.string ?: localizer.localize(it.stringKey ?: return@mapNotNull null)
                 val color = when (it.type) {
-                    OrderSide.buy.rawValue -> ThemeColor.SemanticColor.positiveColor
-                    OrderSide.sell.rawValue -> ThemeColor.SemanticColor.negativeColor
+                    OrderSide.Buy.rawValue -> ThemeColor.SemanticColor.positiveColor
+                    OrderSide.Sell.rawValue -> ThemeColor.SemanticColor.negativeColor
                     else -> ThemeColor.SemanticColor.text_primary
                 }
                 text to color

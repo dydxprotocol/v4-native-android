@@ -50,7 +50,7 @@ class DydxTradeInputViewModel @Inject constructor(
             localizer = localizer,
             inputFields = listOfNotNull(
                 if (tradeInput?.options?.needsSize == true) DydxTradeInputView.InputField.Size else null,
-                if (tradeInput?.options?.needsSize == true && tradeInput.options?.needsLeverage == true && tradeInput.marginMode == MarginMode.cross) {
+                if (tradeInput?.options?.needsSize == true && tradeInput.options?.needsLeverage == true && tradeInput.marginMode == MarginMode.Cross) {
                     DydxTradeInputView.InputField.Leverage
                 } else {
                     null

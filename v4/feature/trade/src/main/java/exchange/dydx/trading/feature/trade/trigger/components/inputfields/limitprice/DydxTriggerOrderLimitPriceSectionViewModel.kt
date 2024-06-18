@@ -46,20 +46,20 @@ class DydxTriggerOrderLimitPriceSectionViewModel @Inject constructor(
                         TriggerOrdersInputField.stopLossLimitPrice,
                     )
                     abacusStateManager.triggerOrders(
-                        OrderType.takeProfitMarket.rawValue,
+                        OrderType.TakeProfitMarket.rawValue,
                         TriggerOrdersInputField.takeProfitOrderType,
                     )
                     abacusStateManager.triggerOrders(
-                        OrderType.stopMarket.rawValue,
+                        OrderType.StopMarket.rawValue,
                         TriggerOrdersInputField.stopLossOrderType,
                     )
                 } else {
                     abacusStateManager.triggerOrders(
-                        OrderType.takeProfitLimit.rawValue,
+                        OrderType.TakeProfitLimit.rawValue,
                         TriggerOrdersInputField.takeProfitOrderType,
                     )
                     abacusStateManager.triggerOrders(
-                        OrderType.stopLimit.rawValue,
+                        OrderType.StopLimit.rawValue,
                         TriggerOrdersInputField.stopLossOrderType,
                     )
                 }

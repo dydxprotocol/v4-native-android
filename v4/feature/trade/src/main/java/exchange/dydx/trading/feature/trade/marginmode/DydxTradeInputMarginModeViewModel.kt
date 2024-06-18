@@ -58,14 +58,14 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
         assetId: String,
         assetMap: Map<String, Asset>,
     ): DydxTradeInputMarginModeView.ViewState {
-        val marginMode = tradeInput?.marginMode ?: MarginMode.cross
+        val marginMode = tradeInput?.marginMode ?: MarginMode.Cross
         return DydxTradeInputMarginModeView.ViewState(
             title = localizer.localize("APP.GENERAL.MARGIN_MODE"),
             asset = tradeInput?.marketId ?: "",
             crossMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 title = localizer.localize("APP.GENERAL.CROSS_MARGIN"),
                 text = localizer.localize("APP.GENERAL.CROSS_MARGIN_DESCRIPTION"),
-                selected = marginMode == MarginMode.cross,
+                selected = marginMode == MarginMode.Cross,
             ) {
                 abacusStateManager.trade("CROSS", TradeInputField.marginMode)
                 closeView()
@@ -73,7 +73,7 @@ class DydxTradeInputMarginModeViewModel @Inject constructor(
             isolatedMargin = DydxTradeInputMarginModeView.MarginTypeSelection(
                 title = localizer.localize("APP.GENERAL.ISOLATED_MARGIN"),
                 text = localizer.localize("APP.GENERAL.ISOLATED_MARGIN_DESCRIPTION"),
-                selected = marginMode == MarginMode.isolated,
+                selected = marginMode == MarginMode.Isolated,
             ) {
                 abacusStateManager.trade("ISOLATED", TradeInputField.marginMode)
                 closeView()

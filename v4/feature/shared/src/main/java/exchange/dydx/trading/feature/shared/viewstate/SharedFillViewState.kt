@@ -73,8 +73,8 @@ data class SharedFillViewState(
                 sideText = SideTextView.ViewState(
                     localizer = localizer,
                     side = when (fill.side) {
-                        OrderSide.buy -> SideTextView.Side.Buy
-                        OrderSide.sell -> SideTextView.Side.Sell
+                        OrderSide.Buy -> SideTextView.Side.Buy
+                        OrderSide.Sell -> SideTextView.Side.Sell
                     },
                 ),
                 token = if (asset.id != null) {

@@ -105,7 +105,7 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
         return DydxMarketPositionButtonsView.TriggerViewState(
             label = label,
             triggerPrice = order.triggerPrice?.let { formatter.dollar(it, tickSize) },
-            limitPrice = if (order.type == OrderType.stopLimit || order.type == OrderType.takeProfitLimit) order.price.let { formatter.dollar(it, tickSize) } else null,
+            limitPrice = if (order.type == OrderType.StopLimit || order.type == OrderType.TakeProfitLimit) order.price.let { formatter.dollar(it, tickSize) } else null,
             sizePercent = formatter.percent(percentage, 2),
             hasMultipleOrders = orders.size > 1,
         )
