@@ -65,10 +65,10 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
                 DydxTriggerOrderCtaButtonView.State.Disabled(buttonTitle)
             },
             ctaAction = {
-                router.navigateBack()
                 abacusStateManager.commitTriggerOrders { _ ->
                     // order status will be shown from PresentationProtocol.showToast()
                 }
+                router.navigateBack()
             },
         )
     }
