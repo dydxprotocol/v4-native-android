@@ -28,8 +28,8 @@ class DydxTriggerOrderCtaButtonViewModel @Inject constructor(
             triggerOrderStream.isNewTriggerOrder,
             abacusStateManager.state.triggerOrdersInput,
             abacusStateManager.state.validationErrors,
-        ) { isNewTriggerOrder, triggerOrdersInput, error ->
-            createViewState(isNewTriggerOrder, triggerOrdersInput, error)
+        ) { isNewTriggerOrder, triggerOrdersInput, errors ->
+            createViewState(isNewTriggerOrder, triggerOrdersInput, errors)
         }
             .distinctUntilChanged()
 
