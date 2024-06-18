@@ -118,7 +118,7 @@ interface AbacusStateManagerProtocol {
     fun commitCCTPWithdraw(callback: (Boolean, ParsingError?, Any?) -> Unit)
 
     fun triggerOrders(input: String?, type: TriggerOrdersInputField?)
-    fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit)
+    fun commitTriggerOrders(callback: (SubmissionStatus) -> Unit): Int
 
     fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?)
     fun commitAdjustIsolatedMargin(statusCallback: (SubmissionStatus) -> Unit)
@@ -434,14 +434,15 @@ class AbacusStateManager @Inject constructor(
         asyncStateManager.triggerOrders(input, type)
     }
 
-    override fun commitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit) {
-        asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
+    override fun commitTriggerOrders(callback: (AbacusStateManagerProtocol.SubmissionStatus) -> Unit): Int {
+        val payload = asyncStateManager.commitTriggerOrders { successful: Boolean, error: ParsingError?, _ ->
             if (successful) {
                 callback(AbacusStateManagerProtocol.SubmissionStatus.Success)
             } else {
                 callback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
             }
         }
+        return (payload?.cancelOrderPayloads?.size ?: 0) + (payload?.placeOrderPayloads?.size ?: 0)
     }
 
     override fun adjustIsolatedMargin(data: String?, type: AdjustIsolatedMarginInputField?) {
