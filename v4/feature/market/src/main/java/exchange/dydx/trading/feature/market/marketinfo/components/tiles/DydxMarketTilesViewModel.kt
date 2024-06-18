@@ -41,10 +41,6 @@ class DydxMarketTilesViewModel @Inject constructor(
             DydxMarketTilesView.Tile(DydxMarketTilesView.TileType.RECENT),
         )
 
-        if (currentTile == null) {
-            tileFlow.value = tiles.first()
-        }
-
         return DydxMarketTilesView.ViewState(
             localizer = localizer,
             tiles = tiles,

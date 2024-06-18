@@ -151,7 +151,7 @@ class DydxCancelPendingPositionViewModel @Inject constructor(
         assetMap: Map<String, Asset>?,
     ) {
         pendingOrdersFlow.value = selectedSubaccount?.orders?.toList()?.filter {
-            it.marketId == marketId && it.status == OrderStatus.open || it.status == OrderStatus.untriggered
+            it.marketId == marketId && it.status == OrderStatus.Open || it.status == OrderStatus.Untriggered
         } ?: emptyList()
 
         processCancelOrders(marketMap, assetMap)

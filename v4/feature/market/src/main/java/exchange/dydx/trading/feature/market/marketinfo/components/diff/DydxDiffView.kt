@@ -156,9 +156,6 @@ object DydxDiffView : DydxComponent {
                     //   Text(text = state.diff.after ?: "")
                 }
             }
-
-            else -> {
-            }
         }
     }
 

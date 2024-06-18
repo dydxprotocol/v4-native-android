@@ -97,7 +97,7 @@ class TradingActivity : FragmentActivity() {
         content: @Composable () -> Unit,
     ) {
         setContent {
-            viewModel.cosmosClient?.let {
+            viewModel.cosmosClient.let {
                 JavascriptRunnerWebview(
                     modifier = Modifier,
                     isVisible = false,

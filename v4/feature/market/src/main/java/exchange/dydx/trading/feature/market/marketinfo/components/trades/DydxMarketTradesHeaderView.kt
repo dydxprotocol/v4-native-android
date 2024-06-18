@@ -43,7 +43,7 @@ object DydxMarketTradesHeaderView {
             modifier = modifier,
             colume1 = {
                 Text(
-                    text = state.time ?: "",
+                    text = state.time,
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
                         .themeFont(

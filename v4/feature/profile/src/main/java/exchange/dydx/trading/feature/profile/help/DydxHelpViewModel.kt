@@ -39,7 +39,7 @@ class DydxHelpViewModel @Inject constructor(
                             router.navigateTo(it)
                         },
                     )
-                } ?: null,
+                },
 
                 abacusStateManager.environment?.links?.community?.let {
                     DydxHelpItemView.ViewState(
@@ -51,7 +51,7 @@ class DydxHelpViewModel @Inject constructor(
                             router.navigateTo(it)
                         },
                     )
-                } ?: null,
+                },
 
                 abacusStateManager.environment?.links?.feedback?.let {
                     DydxHelpItemView.ViewState(
@@ -63,7 +63,7 @@ class DydxHelpViewModel @Inject constructor(
                             router.navigateTo(it)
                         },
                     )
-                } ?: null,
+                },
 
                 abacusStateManager.environment?.links?.documentation?.let {
                     DydxHelpItemView.ViewState(
@@ -75,7 +75,7 @@ class DydxHelpViewModel @Inject constructor(
                             router.navigateTo(it)
                         },
                     )
-                } ?: null,
+                },
             ),
         )
     }

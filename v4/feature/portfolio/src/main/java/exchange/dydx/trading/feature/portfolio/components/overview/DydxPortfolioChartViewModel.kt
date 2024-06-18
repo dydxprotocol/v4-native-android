@@ -133,7 +133,7 @@ class DydxPortfolioChartViewModel @Inject constructor(
                 ),
             ),
             diffText = if (firstPnl != null && lastPnl != null) {
-                val firstEqulity = pnls?.firstOrNull()?.equity ?: 0.0
+                val firstEqulity = pnls.firstOrNull()?.equity ?: 0.0
                 val diff = lastPnl - firstPnl
 
                 val diffText = formatter.dollar(diff.absoluteValue, 2)
