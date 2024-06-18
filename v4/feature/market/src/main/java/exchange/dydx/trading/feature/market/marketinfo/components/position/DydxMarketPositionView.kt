@@ -20,7 +20,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.dividers.PlatformDivider
@@ -29,6 +31,7 @@ import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.noGradient
 import exchange.dydx.platformui.designSystem.theme.themeColor
@@ -214,7 +217,9 @@ object DydxMarketPositionView : DydxComponent {
                         .padding(horizontal = ThemeShapes.HorizontalPadding)
                         .padding(vertical = ThemeShapes.VerticalPadding)
                         .background(
-                            brush = state.sharedMarketPositionViewState?.gradientType?.brush(ThemeColor.SemanticColor.layer_3)
+                            brush = state.sharedMarketPositionViewState?.gradientType?.brush(
+                                ThemeColor.SemanticColor.layer_3,
+                            )
                                 ?: ThemeColor.SemanticColor.layer_3.noGradient,
                             shape = RoundedCornerShape(12.dp),
                         )
@@ -234,7 +239,7 @@ object DydxMarketPositionView : DydxComponent {
                             .padding(horizontal = ThemeShapes.HorizontalPadding)
                             .padding(vertical = ThemeShapes.VerticalPadding)
                             .weight(1f),
-                        title = state.localizer.localize("APP.GENERAL.LEVERAGE"),
+                        title = state.localizer.localize("APP.TRADE.POSITION_LEVERAGE"),
                         valueItem = {
                             Row(
                                 modifier = Modifier,
@@ -335,44 +340,65 @@ object DydxMarketPositionView : DydxComponent {
                     size = 32.dp,
                 )
 
-                Spacer(modifier = Modifier.height(ThemeShapes.VerticalPadding))
+                Spacer(modifier = Modifier.weight(1f))
 
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier,
+                    ) {
+                        Text(
+                            text = state.sharedMarketPositionViewState?.size ?: "-",
+                            style = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.medium,
+                                    fontType = ThemeFont.FontType.plus,
+                                ),
+                        )
+
+                        TokenTextView.Content(
+                            modifier = Modifier,
+                            state = state.sharedMarketPositionViewState?.token,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.tiny,
+                                    fontType = ThemeFont.FontType.plus,
+                                ),
+                        )
+                    }
+
+                    Text(
+                        text = state.sharedMarketPositionViewState?.margin ?: "-",
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.small)
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(36.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = ThemeShapes.VerticalPadding),
+            ) {
                 SideTextView.Content(
                     modifier = Modifier,
                     state = state.sharedMarketPositionViewState?.side,
                     textStyle = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.small),
                 )
-            }
 
-            Spacer(modifier = Modifier.height(36.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                Text(
-                    text = state.sharedMarketPositionViewState?.size ?: "-",
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.plus),
-                )
-
-                TokenTextView.Content(
+                MarginMode(
                     modifier = Modifier,
-                    state = state.sharedMarketPositionViewState?.token,
-                    textStyle = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.tiny, fontType = ThemeFont.FontType.plus),
+                    marginMode = state.sharedMarketPositionViewState?.marginMode ?: MarginMode.Cross,
+                    localizer = state.localizer,
                 )
             }
-
-            Text(
-                text = state.sharedMarketPositionViewState?.margin ?: "-",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.small)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-            )
         }
     }
 
@@ -413,6 +439,32 @@ object DydxMarketPositionView : DydxComponent {
             Spacer(modifier = Modifier.height(ThemeShapes.VerticalPadding))
 
             valueItem()
+        }
+    }
+
+    @Composable
+    private fun MarginMode(
+        modifier: Modifier,
+        marginMode: MarginMode,
+        localizer: LocalizerProtocol
+    ) {
+        marginMode.localizedString(localizer)?.let {
+            Column(
+                modifier = modifier
+                    .background(
+                        color = ThemeColor.SemanticColor.layer_7.color,
+                        shape = RoundedCornerShape(4.dp),
+                    )
+                    .padding(horizontal = 4.dp)
+                    .padding(vertical = 2.dp),
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = it,
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+            }
         }
     }
 }

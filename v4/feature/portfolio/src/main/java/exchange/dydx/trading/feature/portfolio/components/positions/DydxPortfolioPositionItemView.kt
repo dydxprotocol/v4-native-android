@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -327,13 +328,7 @@ object DydxPortfolioPositionItemView {
             )
 
             Text(
-                text = localizer.localize(
-                    if (position.marginMode == MarginMode.Isolated) {
-                        "APP.GENERAL.ISOLATED"
-                    } else {
-                        "APP.GENERAL.CROSS"
-                    },
-                ),
+                text = position.marginMode?.localizedString(localizer) ?: "",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.mini)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
