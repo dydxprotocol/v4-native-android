@@ -47,8 +47,8 @@ class DydxClosePositionInputViewModel @Inject constructor(
         return DydxClosePositionInputView.ViewState(
             localizer = localizer,
             side = when (closePositionInput?.side) {
-                OrderSide.sell -> DydxClosePositionInputView.DisplaySide.Bids
-                OrderSide.buy -> DydxClosePositionInputView.DisplaySide.Asks
+                OrderSide.Sell -> DydxClosePositionInputView.DisplaySide.Bids
+                OrderSide.Buy -> DydxClosePositionInputView.DisplaySide.Asks
                 else -> DydxClosePositionInputView.DisplaySide.None
             },
         )

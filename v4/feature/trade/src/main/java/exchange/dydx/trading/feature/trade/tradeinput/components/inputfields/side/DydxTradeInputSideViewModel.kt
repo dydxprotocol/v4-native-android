@@ -45,8 +45,8 @@ class DydxTradeInputSideViewModel @Inject constructor(
                 }
             },
             color = when (tradeInput?.side) {
-                OrderSide.buy -> ThemeColor.SemanticColor.positiveColor
-                OrderSide.sell -> ThemeColor.SemanticColor.negativeColor
+                OrderSide.Buy -> ThemeColor.SemanticColor.positiveColor
+                OrderSide.Sell -> ThemeColor.SemanticColor.negativeColor
                 else -> ThemeColor.SemanticColor.text_primary
             },
         )

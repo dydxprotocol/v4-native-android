@@ -70,7 +70,7 @@ class DydxMarketTradesListViewModel @Inject constructor(
                     DydxMarketTradeItemView.ViewState(
                         id = trade.id!!,
                         time = formatter.clock(time),
-                        side = if (trade.side == OrderSide.buy) buy else sell,
+                        side = if (trade.side == OrderSide.Buy) buy else sell,
                         price = formatter.dollar(trade.price, market?.configs?.tickSizeDecimals ?: 2) ?: "",
                         size = formatter.raw(trade.size, market?.configs?.stepSizeDecimals ?: 2) ?: "",
                         percent = if (max > 0) trade.size / max else 0.0,

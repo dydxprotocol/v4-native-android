@@ -58,13 +58,13 @@ class DydxTradeInputCtaButtonViewModel @Inject constructor(
                             )
                         } else {
                             val key: String = when (tradeInput?.type) {
-                                OrderType.market -> "APP.TRADE.PLACE_MARKET_ORDER"
-                                OrderType.limit -> "APP.TRADE.PLACE_LIMIT_ORDER"
-                                OrderType.stopLimit -> "APP.TRADE.PLACE_STOP_LIMIT_ORDER"
-                                OrderType.stopMarket -> "APP.TRADE.PLACE_STOP_MARKET_ORDER"
-                                OrderType.takeProfitLimit -> "APP.TRADE.PLACE_TAKE_PROFIT_LIMIT_ORDER"
-                                OrderType.takeProfitMarket -> "APP.TRADE.PLACE_TAKE_PROFIT_MARKET_ORDER"
-                                OrderType.trailingStop -> "APP.TRADE.PLACE_TRAILING_STOP_ORDER"
+                                OrderType.Market -> "APP.TRADE.PLACE_MARKET_ORDER"
+                                OrderType.Limit -> "APP.TRADE.PLACE_LIMIT_ORDER"
+                                OrderType.StopLimit -> "APP.TRADE.PLACE_STOP_LIMIT_ORDER"
+                                OrderType.StopMarket -> "APP.TRADE.PLACE_STOP_MARKET_ORDER"
+                                OrderType.TakeProfitLimit -> "APP.TRADE.PLACE_TAKE_PROFIT_LIMIT_ORDER"
+                                OrderType.TakeProfitMarket -> "APP.TRADE.PLACE_TAKE_PROFIT_MARKET_ORDER"
+                                OrderType.TrailingStop -> "APP.TRADE.PLACE_TRAILING_STOP_ORDER"
                                 else -> "APP.TRADE.PLACE_TRADE"
                             }
                             InputCtaButton.State.Enabled(

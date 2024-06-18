@@ -114,8 +114,8 @@ class DydxProfileHistoryViewModel @Inject constructor(
         val action = DydxProfileHistoryItemView.ViewState.ActionType.Fill(
             sideTextViewModel = SideTextView.ViewState(
                 side = when (fill.side) {
-                    OrderSide.buy -> SideTextView.Side.Buy
-                    OrderSide.sell -> SideTextView.Side.Sell
+                    OrderSide.Buy -> SideTextView.Side.Buy
+                    OrderSide.Sell -> SideTextView.Side.Sell
                 },
                 localizer = localizer,
             ),
@@ -123,8 +123,8 @@ class DydxProfileHistoryViewModel @Inject constructor(
         )
         val side = SideTextView.ViewState(
             side = when (fill.side) {
-                OrderSide.buy -> SideTextView.Side.Long
-                OrderSide.sell -> SideTextView.Side.Short
+                OrderSide.Buy -> SideTextView.Side.Long
+                OrderSide.Sell -> SideTextView.Side.Short
             },
             coloringOption = SideTextView.ColoringOption.NONE,
             localizer = localizer,

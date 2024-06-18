@@ -14,7 +14,7 @@ fun AbacusState.triggerOrders(marketId: String): Flow<List<SubaccountOrder>?> =
     selectedSubaccountOrdersOfMarket(marketId)
         .map { orders ->
             orders?.filter { order ->
-                order.status == OrderStatus.untriggered
+                order.status == OrderStatus.Untriggered
             }
         }
         .distinctUntilChanged()
@@ -27,8 +27,8 @@ fun AbacusState.takeProfitOrders(marketId: String, includeLimitOrders: Boolean):
         orders?.filter { order ->
             position?.side?.current?.let { currentSide ->
                 (
-                    order.type == OrderType.takeProfitMarket ||
-                        (order.type == OrderType.takeProfitLimit && includeLimitOrders)
+                    order.type == OrderType.TakeProfitMarket ||
+                        (order.type == OrderType.TakeProfitLimit && includeLimitOrders)
                     ) &&
                     order.side.isOppositeOf(currentSide)
             } ?: false
@@ -44,8 +44,8 @@ fun AbacusState.stopLossOrders(marketId: String, includeLimitOrders: Boolean): F
         orders?.filter { order ->
             position?.side?.current?.let { currentSide ->
                 (
-                    order.type == OrderType.stopMarket ||
-                        (order.type == OrderType.stopLimit && includeLimitOrders)
+                    order.type == OrderType.StopMarket ||
+                        (order.type == OrderType.StopLimit && includeLimitOrders)
                     ) &&
                     order.side.isOppositeOf(currentSide)
             } ?: false
@@ -54,4 +54,4 @@ fun AbacusState.stopLossOrders(marketId: String, includeLimitOrders: Boolean): F
         .distinctUntilChanged()
 
 private fun OrderSide.isOppositeOf(that: PositionSide): Boolean =
-    (this == OrderSide.buy && that == PositionSide.SHORT) || (this == OrderSide.sell && that == PositionSide.LONG)
+    (this == OrderSide.Buy && that == PositionSide.SHORT) || (this == OrderSide.Sell && that == PositionSide.LONG)

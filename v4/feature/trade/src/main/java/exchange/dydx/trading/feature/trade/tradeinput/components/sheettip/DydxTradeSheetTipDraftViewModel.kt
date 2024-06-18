@@ -51,17 +51,17 @@ class DydxTradeSheetTipDraftViewModel @Inject constructor(
         val asset = configsAndAsset?.asset
 
         val side = when (tradeInput.side) {
-            OrderSide.buy -> SideTextView.Side.Buy
-            OrderSide.sell -> SideTextView.Side.Sell
+            OrderSide.Buy -> SideTextView.Side.Buy
+            OrderSide.Sell -> SideTextView.Side.Sell
             else -> null
         }
 
         val symbol = asset?.id ?: configsAndAsset?.assetId
 
         val price = when (tradeInput.type) {
-            OrderType.limit, OrderType.stopLimit, OrderType.takeProfitLimit -> tradeInput.price?.limitPrice
-            OrderType.stopMarket, OrderType.takeProfitMarket -> tradeInput.price?.triggerPrice
-            OrderType.market -> {
+            OrderType.Limit, OrderType.StopLimit, OrderType.TakeProfitLimit -> tradeInput.price?.limitPrice
+            OrderType.StopMarket, OrderType.TakeProfitMarket -> tradeInput.price?.triggerPrice
+            OrderType.Market -> {
                 val usdcSize = tradeInput.size?.usdcSize
                 val size = tradeInput.size?.size
                 if (usdcSize != null && size != null && size > 0.0) {

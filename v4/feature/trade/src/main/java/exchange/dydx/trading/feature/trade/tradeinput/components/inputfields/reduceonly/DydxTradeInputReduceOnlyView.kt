@@ -53,7 +53,7 @@ object DydxTradeInputReduceOnlyView : DydxComponent {
         }
         PlatformSwitchInput(
             modifier = modifier.padding(ThemeShapes.InputPaddingValues),
-            label = state.localizer?.localize("APP.TRADE.REDUCE_ONLY"),
+            label = state.localizer.localize("APP.TRADE.REDUCE_ONLY"),
             value = state.value,
             onValueChange = state.onValueChanged,
         )

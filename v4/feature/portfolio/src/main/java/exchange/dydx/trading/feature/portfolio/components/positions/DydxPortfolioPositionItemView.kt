@@ -328,7 +328,7 @@ object DydxPortfolioPositionItemView {
 
             Text(
                 text = localizer.localize(
-                    if (position.marginMode == MarginMode.isolated) {
+                    if (position.marginMode == MarginMode.Isolated) {
                         "APP.GENERAL.ISOLATED"
                     } else {
                         "APP.GENERAL.CROSS"
@@ -352,7 +352,7 @@ object DydxPortfolioPositionItemView {
             verticalArrangement = Arrangement.Bottom,
         ) {
             Spacer(modifier = Modifier.weight(1.0f))
-            if (position.marginMode == MarginMode.isolated) {
+            if (position.marginMode == MarginMode.Isolated) {
                 PlatformIconButton(
                     modifier = Modifier
                         .width(32.dp)

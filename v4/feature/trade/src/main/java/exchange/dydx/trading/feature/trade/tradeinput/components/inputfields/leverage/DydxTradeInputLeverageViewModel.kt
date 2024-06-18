@@ -43,14 +43,14 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
             positionLeverage = positionLeverage,
             maxLeverage = tradeInput?.options?.maxLeverage,
             side = when (tradeInput?.side) {
-                OrderSide.buy -> DydxTradeInputLeverageView.OrderSide.Buy
-                OrderSide.sell -> DydxTradeInputLeverageView.OrderSide.Sell
+                OrderSide.Buy -> DydxTradeInputLeverageView.OrderSide.Buy
+                OrderSide.Sell -> DydxTradeInputLeverageView.OrderSide.Sell
                 else -> DydxTradeInputLeverageView.OrderSide.Buy
             },
             sideToggleAction = { side ->
                 val orderSide = when (side) {
-                    DydxTradeInputLeverageView.OrderSide.Buy -> OrderSide.sell
-                    DydxTradeInputLeverageView.OrderSide.Sell -> OrderSide.buy
+                    DydxTradeInputLeverageView.OrderSide.Buy -> OrderSide.Sell
+                    DydxTradeInputLeverageView.OrderSide.Sell -> OrderSide.Buy
                 }
                 abacusStateManager.trade(orderSide.rawValue, TradeInputField.side)
             },

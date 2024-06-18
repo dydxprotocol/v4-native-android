@@ -172,7 +172,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         formatter.decimalLocaleAgnostic(order.triggerPrice),
                         TriggerOrdersInputField.takeProfitPrice,
                     )
-                    if (triggerOrdersInput?.takeProfitOrder?.type == OrderType.takeProfitLimit) {
+                    if (triggerOrdersInput?.takeProfitOrder?.type == OrderType.TakeProfitLimit) {
                         abacusStateManager.triggerOrders(
                             formatter.decimalLocaleAgnostic(order.price),
                             TriggerOrdersInputField.takeProfitLimitPrice,
@@ -183,7 +183,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         } else {
             if (triggerOrdersInput?.takeProfitOrder?.type == null) {
                 abacusStateManager.triggerOrders(
-                    OrderType.takeProfitMarket.rawValue,
+                    OrderType.TakeProfitMarket.rawValue,
                     TriggerOrdersInputField.takeProfitOrderType,
                 )
             }
@@ -210,7 +210,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
                         formatter.decimalLocaleAgnostic(order.triggerPrice),
                         TriggerOrdersInputField.stopLossPrice,
                     )
-                    if (triggerOrdersInput?.stopLossOrder?.type == OrderType.stopLimit) {
+                    if (triggerOrdersInput?.stopLossOrder?.type == OrderType.StopLimit) {
                         abacusStateManager.triggerOrders(
                             formatter.decimalLocaleAgnostic(order.price),
                             TriggerOrdersInputField.stopLossLimitPrice,
@@ -221,7 +221,7 @@ class DydxTriggerOrderInputViewModel @Inject constructor(
         } else {
             if (triggerOrdersInput?.stopLossOrder?.type == null) {
                 abacusStateManager.triggerOrders(
-                    OrderType.stopMarket.rawValue,
+                    OrderType.StopMarket.rawValue,
                     TriggerOrdersInputField.stopLossOrderType,
                 )
             }
