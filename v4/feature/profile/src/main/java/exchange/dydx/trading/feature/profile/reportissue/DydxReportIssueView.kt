@@ -60,7 +60,7 @@ object DydxReportIssueView : DydxComponent {
         ) {
             Text(
                 style = TextStyle.dydxDefault.themeFont(fontSize = ThemeFont.FontSize.extra),
-                text = state?.text ?: "",
+                text = state.text ?: "",
             )
         }
     }

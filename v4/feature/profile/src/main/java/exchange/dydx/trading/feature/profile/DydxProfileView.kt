@@ -68,7 +68,7 @@ object DydxProfileView : DydxComponent {
         val scope = rememberCoroutineScope()
 
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {

@@ -81,7 +81,7 @@ object DydxRewardsFaqsView : DydxComponent {
                         horizontal = ThemeShapes.HorizontalPadding,
                         vertical = ThemeShapes.VerticalPadding,
                     ),
-                state = state.title ?: DydxRewardsFaqsHeaderView.ViewState.preview,
+                state = state.title,
             )
 
             LazyColumn {
@@ -108,7 +108,7 @@ object DydxRewardsFaqsView : DydxComponent {
                         horizontal = ThemeShapes.HorizontalPadding,
                         vertical = ThemeShapes.VerticalPadding,
                     ),
-                state = state.title ?: DydxRewardsFaqsHeaderView.ViewState.preview,
+                state = state.title,
             )
         }
         ListContent(

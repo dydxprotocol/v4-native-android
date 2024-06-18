@@ -7,6 +7,7 @@ import androidx.navigation.navArgument
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
+import exchange.dydx.trading.feature.portfolio.cancelpendingposition.DydxCancelPendingPositionView
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
@@ -88,5 +89,24 @@ fun NavGraphBuilder.portfolioGraph(
         deepLinks = appRouter.deeplinks(PortfolioRoutes.transfers),
     ) { navBackStackEntry ->
         DydxPortfolioTransfersView.Content(Modifier, isFullScreen = true)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = PortfolioRoutes.cancel_pending_position + "/{marketId}",
+        arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinksWithParam(
+            destination = PortfolioRoutes.cancel_pending_position,
+            param = "marketId",
+            isPath = true,
+        ),
+    ) { navBackStackEntry ->
+        val id = navBackStackEntry.arguments?.getString("marketId")
+        if (id == null) {
+            logger.e(TAG, "No identifier passed")
+            appRouter.navigateTo(PortfolioRoutes.cancel_pending_position)
+            return@dydxComposable
+        }
+        DydxCancelPendingPositionView.Content(Modifier)
     }
 }

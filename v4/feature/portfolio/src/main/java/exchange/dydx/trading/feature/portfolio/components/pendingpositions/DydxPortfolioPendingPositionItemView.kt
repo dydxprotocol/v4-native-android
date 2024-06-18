@@ -121,7 +121,7 @@ object DydxPortfolioPendingPositionItemView {
                         text = state.margin ?: "",
                         style = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.small)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                            .themeColor(ThemeColor.SemanticColor.text_secondary),
                     )
                 }
             }

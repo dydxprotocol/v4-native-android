@@ -39,11 +39,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
     val toaster: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
-    private val orderOrFillId: String?
-
-    init {
-        orderOrFillId = savedStateHandle["id"]
-    }
+    private val orderOrFillId: String? = savedStateHandle["id"]
 
     val state: Flow<DydxOrderDetailsView.ViewState?> =
         combine(
@@ -82,7 +78,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
 
         return DydxOrderDetailsView.ViewState(
             localizer = localizer,
-            logoUrl = sharedFillViewState?.logoUrl,
+            logoUrl = sharedFillViewState.logoUrl,
             side = SideTextView.ViewState(
                 localizer = localizer,
                 side = when (fill.side) {
@@ -171,7 +167,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
         ) ?: return null
         return DydxOrderDetailsView.ViewState(
             localizer = localizer,
-            logoUrl = sharedOrderViewState?.logoUrl,
+            logoUrl = sharedOrderViewState.logoUrl,
             side = SideTextView.ViewState(
                 localizer = localizer,
                 side = when (order.side) {
@@ -277,7 +273,7 @@ class DydxOrderDetailsViewModel @Inject constructor(
                                 "SIZE" to (sharedOrderViewState.size ?: ""),
                                 "MARKET" to order.marketId,
                             ),
-                        ) ?: "",
+                        ),
                         type = Toast.Type.Info,
                         buttonTitle = localizer.localize("APP.GENERAL.OK"),
                         buttonAction = {
