@@ -361,7 +361,7 @@ object DydxPortfolioPositionItemView {
                     borderColor = ThemeColor.SemanticColor.layer_7,
                 ) {
                     Icon(
-                        painter = painterResource(id = exchange.dydx.trading.common.R.drawable.ic_edit),
+                        painter = painterResource(id = exchange.dydx.trading.feature.shared.R.drawable.icon_edit),
                         contentDescription = "",
                         tint = ThemeColor.SemanticColor.text_primary.color,
                     )

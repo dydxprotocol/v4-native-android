@@ -159,9 +159,9 @@ data class SharedMarketPositionViewState(
                     position.liquidationPrice.current,
                     configs.displayTickSizeDecimals ?: 0,
                 ),
-                margin = position.equity.let {
-                    formatter.dollar(it.current, 2)
-                } ?: formatter.dollar(position.notionalTotal.current, 2),
+                margin = position.valueTotal.current?.let {
+                    formatter.dollar(it.absoluteValue, 2)
+                } ?: formatter.dollar(position.notionalTotal.current?.absoluteValue, 2),
                 funding = SignedAmountView.ViewState(
                     text = formatter.dollar(netFunding.absoluteValue),
                     sign = netFundingSign,

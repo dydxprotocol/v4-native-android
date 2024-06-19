@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.shared.views
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,7 +46,10 @@ object SignedAmountView {
         if (state?.text == null) {
             return
         }
-        Row(modifier) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             when (state.coloringOption) {
                 ColoringOption.SignOnly, ColoringOption.AllText -> {
                     when (state.sign) {

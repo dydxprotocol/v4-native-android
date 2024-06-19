@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +29,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
+import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.dividers.PlatformVerticalDivider
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
@@ -61,6 +66,7 @@ object DydxMarketPositionView : DydxComponent {
         val localizer: LocalizerProtocol,
         val shareAction: (() -> Unit)? = null,
         val closeAction: (() -> Unit)? = null,
+        val marginEditAction: (() -> Unit)? = null,
         val sharedMarketPositionViewState: SharedMarketPositionViewState? = null,
         val enableTrigger: Boolean = false,
         val pendingPosition: DydxPortfolioPendingPositionItemView.ViewState? = null,
@@ -268,7 +274,7 @@ object DydxMarketPositionView : DydxComponent {
                         title = state.localizer.localize("APP.TRADE.POSITION_LEVERAGE"),
                         valueItem = {
                             Row(
-                                modifier = Modifier,
+                                modifier = Modifier.sizeIn(minHeight = 32.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
                             ) {
@@ -337,9 +343,53 @@ object DydxMarketPositionView : DydxComponent {
                     title = state.localizer.localize("APP.TRADE.REALIZED_PNL"),
                     valueItem = {
                         SignedAmountView.Content(
-                            modifier = Modifier,
+                            modifier = Modifier.sizeIn(minHeight = 32.dp),
                             state = state.sharedMarketPositionViewState?.realizedPNLAmount,
                         )
+                    },
+                )
+
+                PlatformVerticalDivider()
+
+                CreateCollectionItem(
+                    modifier = Modifier
+                        .padding(horizontal = ThemeShapes.HorizontalPadding)
+                        .padding(vertical = ThemeShapes.VerticalPadding)
+                        .weight(1f),
+                    title = state.localizer.localize("APP.GENERAL.MARGIN"),
+                    valueItem = {
+                        Row(
+                            modifier = Modifier.sizeIn(minHeight = 32.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = state.sharedMarketPositionViewState?.margin ?: "-",
+                                style = TextStyle.dydxDefault
+                                    .themeFont(fontSize = ThemeFont.FontSize.base)
+                                    .themeColor(ThemeColor.SemanticColor.text_secondary),
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            if (state.marginEditAction != null) {
+                                PlatformIconButton(
+                                    modifier = Modifier
+                                        .width(32.dp)
+                                        .height(32.dp),
+                                    action = state.marginEditAction,
+                                    padding = 0.dp,
+                                    shape = RoundedCornerShape(4.dp),
+                                    backgroundColor = ThemeColor.SemanticColor.layer_6,
+                                    borderColor = ThemeColor.SemanticColor.layer_7,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = exchange.dydx.trading.feature.shared.R.drawable.icon_edit),
+                                        contentDescription = "",
+                                        tint = ThemeColor.SemanticColor.text_primary.color,
+                                    )
+                                }
+                            }
+                        }
                     },
                 )
             }
