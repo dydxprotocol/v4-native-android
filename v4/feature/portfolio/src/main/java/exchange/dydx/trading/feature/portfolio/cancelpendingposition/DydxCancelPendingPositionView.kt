@@ -66,6 +66,7 @@ object DydxCancelPendingPositionView : DydxComponent {
         val closeAction: () -> Unit = {},
         val cancelAction: () -> Unit = {},
         val ctaButtonState: CtaButtonState = CtaButtonState.Enabled,
+        val ctaButtonTitle: String? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -186,10 +187,7 @@ object DydxCancelPendingPositionView : DydxComponent {
                     .padding(
                         vertical = ThemeShapes.VerticalPadding,
                     ),
-                text = when (state.ctaButtonState) {
-                    CtaButtonState.Enabled -> state.localizer.localize("APP.TRADE.CANCEL_ORDER")
-                    CtaButtonState.Disabled -> state.localizer.localize("APP.TRADE.CANCELING")
-                },
+                text = state.ctaButtonTitle ?: "",
                 state = when (state.ctaButtonState) {
                     CtaButtonState.Enabled -> PlatformButtonState.Destructive
                     CtaButtonState.Disabled -> PlatformButtonState.Disabled
