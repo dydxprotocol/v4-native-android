@@ -196,37 +196,29 @@ class DydxRouterImpl @Inject constructor(
         return routeQueue.contains(route)
     }
 
-    override fun deeplinks(path: String): List<NavDeepLink> {
-        return dydxUris.map { uri ->
-            navDeepLink {
-                uriPattern = "$uri/$path"
-            }
-        }
-    }
-
-    override fun deeplinksWithParam(
+    override fun deeplinks(
         destination: String,
-        param: String,
-        isPath: Boolean,
-        moreParams: List<String>,
+        path: String?,
+        params: List<String>,
     ): List<NavDeepLink> {
         val baseLinks = dydxUris.map { uri -> "$uri/$destination" }
 
-        var moreParamString = ""
-        for (moreParam in moreParams) {
-            if (moreParamString.isNotEmpty()) {
-                moreParamString += "&"
+        var paramsString = ""
+        for (moreParam in params) {
+            if (paramsString.isNotEmpty()) {
+                paramsString += "&"
             }
-            moreParamString += "$moreParam={$moreParam}"
+            paramsString += "$moreParam={$moreParam}"
         }
-        return if (isPath) {
+
+        return if (path.isNullOrBlank().not()) {
             baseLinks.map { uri ->
                 navDeepLink {
                     uriPattern =
-                        if (moreParamString.isNotEmpty()) {
-                            "$uri/{$param}?$moreParamString"
+                        if (paramsString.isNotEmpty()) {
+                            "$uri/{$path}?$paramsString"
                         } else {
-                            "$uri/{$param}"
+                            "$uri/{$path}"
                         }
                 }
             }
@@ -234,10 +226,10 @@ class DydxRouterImpl @Inject constructor(
             baseLinks.map { uri ->
                 navDeepLink {
                     uriPattern =
-                        if (moreParamString.isNotEmpty()) {
-                            "$uri?$param={$param}&$moreParamString"
+                        if (paramsString.isNotEmpty()) {
+                            "$uri?$paramsString"
                         } else {
-                            "$uri?$param={$param}"
+                            uri
                         }
                 }
             }

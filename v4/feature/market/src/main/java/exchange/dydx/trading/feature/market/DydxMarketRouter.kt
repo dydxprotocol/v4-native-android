@@ -49,11 +49,10 @@ fun NavGraphBuilder.marketGraph(
                 defaultValue = DydxMarketAccountTabView.Selection.Position.name
             },
         ),
-        deepLinks = appRouter.deeplinksWithParam(
+        deepLinks = appRouter.deeplinks(
             destination = MarketRoutes.marketInfo,
-            param = "marketId",
-            isPath = true,
-            moreParams = listOf("currentSection"),
+            path = "marketId",
+            params = listOf("currentSection"),
         ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")

@@ -26,7 +26,10 @@ fun NavGraphBuilder.tradeGraph(
         router = appRouter,
         route = TradeRoutes.status + "/{tradeType}",
         arguments = listOf(navArgument("tradeType") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.status, "tradeType", true),
+        deepLinks = appRouter.deeplinks(
+            destination = TradeRoutes.status,
+            path = "tradeType",
+        ),
     ) { navBackStackEntry ->
         DydxTradeStatusView.Content(Modifier)
     }
@@ -35,7 +38,10 @@ fun NavGraphBuilder.tradeGraph(
         router = appRouter,
         route = TradeRoutes.close_position + "/{marketId}",
         arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.close_position, "marketId", true),
+        deepLinks = appRouter.deeplinks(
+            destination = TradeRoutes.close_position,
+            path = "marketId",
+        ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
@@ -50,7 +56,10 @@ fun NavGraphBuilder.tradeGraph(
         router = appRouter,
         route = TradeRoutes.trigger + "/{marketId}",
         arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.trigger, "marketId", true),
+        deepLinks = appRouter.deeplinks(
+            destination = TradeRoutes.trigger,
+            path = "marketId",
+        ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {
@@ -81,7 +90,10 @@ fun NavGraphBuilder.tradeGraph(
         router = appRouter,
         route = TradeRoutes.adjust_margin + "/{marketId}",
         arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(TradeRoutes.adjust_margin, "marketId", true),
+        deepLinks = appRouter.deeplinks(
+            destination = TradeRoutes.adjust_margin,
+            path = "marketId",
+        ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {

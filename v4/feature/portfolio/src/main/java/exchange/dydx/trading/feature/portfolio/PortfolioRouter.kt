@@ -33,10 +33,9 @@ fun NavGraphBuilder.portfolioGraph(
         router = appRouter,
         route = PortfolioRoutes.order_details + "/{id}",
         arguments = listOf(navArgument("id") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(
+        deepLinks = appRouter.deeplinks(
             destination = PortfolioRoutes.order_details,
-            param = "id",
-            isPath = true,
+            path = "id",
         ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("id")
@@ -57,10 +56,9 @@ fun NavGraphBuilder.portfolioGraph(
                 type = NavType.BoolType
             },
         ),
-        deepLinks = appRouter.deeplinksWithParam(
+        deepLinks = appRouter.deeplinks(
             destination = PortfolioRoutes.orders,
-            param = "showPortfolioSelector",
-            isPath = false,
+            params = listOf("showPortfolioSelector"),
         ),
     ) { navBackStackEntry ->
         val showPortfolioSelector = navBackStackEntry.arguments?.getBoolean("showPortfolioSelector") ?: false
@@ -95,10 +93,9 @@ fun NavGraphBuilder.portfolioGraph(
         router = appRouter,
         route = PortfolioRoutes.cancel_pending_position + "/{marketId}",
         arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(
+        deepLinks = appRouter.deeplinks(
             destination = PortfolioRoutes.cancel_pending_position,
-            param = "marketId",
-            isPath = true,
+            path = "marketId",
         ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
