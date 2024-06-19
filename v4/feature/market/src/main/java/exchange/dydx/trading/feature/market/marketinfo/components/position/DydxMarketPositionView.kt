@@ -40,6 +40,8 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxPortfolioPendingPositionItemView
+import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
 import exchange.dydx.trading.feature.shared.views.LeverageRiskView
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
@@ -61,6 +63,7 @@ object DydxMarketPositionView : DydxComponent {
         val closeAction: (() -> Unit)? = null,
         val sharedMarketPositionViewState: SharedMarketPositionViewState? = null,
         val enableTrigger: Boolean = false,
+        val pendingPosition: DydxPortfolioPendingPositionItemView.ViewState? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -69,6 +72,7 @@ object DydxMarketPositionView : DydxComponent {
                 closeAction = {},
                 sharedMarketPositionViewState = SharedMarketPositionViewState.preview,
                 enableTrigger = true,
+                pendingPosition = DydxPortfolioPendingPositionItemView.ViewState.preview,
             )
         }
     }
@@ -90,15 +94,37 @@ object DydxMarketPositionView : DydxComponent {
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
         ) {
-            CreateCollection(Modifier, state)
-
-            if (state.enableTrigger) {
-                DydxMarketPositionButtonsView.Content(Modifier)
+            if (state.sharedMarketPositionViewState == null) {
+                // No position; show placeholder
+                DydxPortfolioPlaceholderView.Content(Modifier)
             } else {
-                CreateButtons(Modifier, state)
+                // Show position details
+                CreateCollection(Modifier, state)
+
+                if (state.enableTrigger) {
+                    DydxMarketPositionButtonsView.Content(Modifier)
+                } else {
+                    CreateButtons(Modifier, state)
+                }
+
+                CreateList(Modifier, state)
             }
 
-            CreateList(Modifier, state)
+            state.pendingPosition?.let {
+                // Show pending position
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = state.localizer.localize("APP.TRADE.UNOPENED_ISOLATED_POSITIONS"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.large)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+
+                DydxPortfolioPendingPositionItemView.Content(
+                    modifier = Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
+                    state = it,
+                )
+            }
         }
     }
 

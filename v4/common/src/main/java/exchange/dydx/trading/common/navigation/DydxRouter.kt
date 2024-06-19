@@ -53,5 +53,6 @@ interface DydxRouter {
         destination: String,
         param: String,
         isPath: Boolean = true,
+        moreParams: List<String> = emptyList(),
     ): List<NavDeepLink>
 }

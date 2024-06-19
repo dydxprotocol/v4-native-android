@@ -8,9 +8,9 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketAccountTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketStatsTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tiles.DydxMarketTilesView
-import exchange.dydx.trading.feature.market.marketinfo.streams.MarketInfoStreaming
 import exchange.dydx.trading.feature.market.marketinfo.streams.MutableMarketInfoStreaming
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
@@ -19,15 +19,19 @@ import javax.inject.Inject
 class DydxMarketInfoViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val mutableMarketInfoStream: MutableMarketInfoStreaming,
-    private val marketInfoStream: MarketInfoStreaming,
     statsTabFlow: Flow<@JvmSuppressWildcards DydxMarketStatsTabView.Selection>,
-    accountTabFlow: Flow<@JvmSuppressWildcards DydxMarketAccountTabView.Selection>,
+    accountTabFlow: MutableStateFlow<@JvmSuppressWildcards DydxMarketAccountTabView.Selection>,
     tileFlow: Flow<@JvmSuppressWildcards DydxMarketTilesView.Tile>,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
 
     init {
         mutableMarketInfoStream.update(marketId = savedStateHandle["marketId"])
+
+        val currentSection: String? = savedStateHandle["currentSection"]
+        if (currentSection != null) {
+            accountTabFlow.value = DydxMarketAccountTabView.Selection.valueOf(currentSection)
+        }
     }
 
     override fun onCleared() {
@@ -42,13 +46,11 @@ class DydxMarketInfoViewModel @Inject constructor(
 
     val state: Flow<DydxMarketInfoView.ViewState?> =
         combine(
-            marketInfoStream.selectedSubaccountPosition,
             statsTabFlow,
             accountTabFlow,
             tileFlow,
-        ) { selectedSubaccountPosition, statsTabSelection, accountTabSelection, tileSelection ->
+        ) { statsTabSelection, accountTabSelection, tileSelection ->
             createViewState(
-                hasPosition = selectedSubaccountPosition != null,
                 statsTabSelection = statsTabSelection,
                 accountTabSelection = accountTabSelection,
                 tileSelection = tileSelection,
@@ -64,7 +66,6 @@ class DydxMarketInfoViewModel @Inject constructor(
             .distinctUntilChanged()
 
     private fun createViewState(
-        hasPosition: Boolean,
         statsTabSelection: DydxMarketStatsTabView.Selection,
         accountTabSelection: DydxMarketAccountTabView.Selection,
         tileSelection: DydxMarketTilesView.Tile,
@@ -74,7 +75,6 @@ class DydxMarketInfoViewModel @Inject constructor(
     ): DydxMarketInfoView.ViewState {
         return DydxMarketInfoView.ViewState(
             localizer = localizer,
-            hasPosition = hasPosition,
             statsTabSelection = statsTabSelection,
             tileSelection = tileSelection.type,
             accountTabSelection = accountTabSelection,

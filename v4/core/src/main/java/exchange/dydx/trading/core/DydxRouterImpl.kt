@@ -208,13 +208,39 @@ class DydxRouterImpl @Inject constructor(
         destination: String,
         param: String,
         isPath: Boolean,
+        moreParams: List<String>,
     ): List<NavDeepLink> {
         val baseLinks = dydxUris.map { uri -> "$uri/$destination" }
 
+        var moreParamString = ""
+        for (moreParam in moreParams) {
+            if (moreParamString.isNotEmpty()) {
+                moreParamString += "&"
+            }
+            moreParamString += "$moreParam={$moreParam}"
+        }
         return if (isPath) {
-            baseLinks.map { uri -> navDeepLink { uriPattern = "$uri/{$param}" } }
+            baseLinks.map { uri ->
+                navDeepLink {
+                    uriPattern =
+                        if (moreParamString.isNotEmpty()) {
+                            "$uri/{$param}?$moreParamString"
+                        } else {
+                            "$uri/{$param}"
+                        }
+                }
+            }
         } else {
-            baseLinks.map { uri -> navDeepLink { uriPattern = "$uri?$param={$param}" } }
+            baseLinks.map { uri ->
+                navDeepLink {
+                    uriPattern =
+                        if (moreParamString.isNotEmpty()) {
+                            "$uri?$param={$param}&$moreParamString"
+                        } else {
+                            "$uri?$param={$param}"
+                        }
+                }
+            }
         }
     }
 
