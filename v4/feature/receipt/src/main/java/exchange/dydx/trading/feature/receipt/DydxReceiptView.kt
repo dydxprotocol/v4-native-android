@@ -68,8 +68,6 @@ object DydxReceiptView : DydxComponent {
         ExchangeReceived,
         TransferDuration,
         Slippage,
-        CrossFreeCollateral,
-        CrossMarginUsage,
         PositionMargin,
         LiquidationPrice;
     }
@@ -188,15 +186,8 @@ object DydxReceiptView : DydxComponent {
                             DydxReceiptBridgeFeeView.Content(Modifier.animateItemPlacement())
                         }
 
-                        ReceiptLineType.CrossFreeCollateral -> {
-                            DydxReceiptLiquidationPriceView.Content(Modifier.animateItemPlacement())
-                        }
-
-                        ReceiptLineType.CrossMarginUsage -> {
-                            DydxReceiptLiquidationPriceView.Content(Modifier.animateItemPlacement())
-                        }
                         ReceiptLineType.PositionMargin -> {
-                            DydxReceiptLiquidationPriceView.Content(Modifier.animateItemPlacement())
+                            DydxReceiptIsolatedPositionMarginUsageView.Content(Modifier.animateItemPlacement())
                         }
 
                         ReceiptLineType.LiquidationPrice -> {

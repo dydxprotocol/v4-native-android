@@ -48,12 +48,12 @@ private fun ReceiptLine.toType(): DydxReceiptView.ReceiptLineType? {
         ReceiptLine.Slippage -> DydxReceiptView.ReceiptLineType.Slippage
         ReceiptLine.BridgeFee -> DydxReceiptView.ReceiptLineType.BridgeFee
         ReceiptLine.GasFee -> DydxReceiptView.ReceiptLineType.GasFee
-        ReceiptLine.Total -> null
-        ReceiptLine.WalletBalance -> null
-        ReceiptLine.CrossFreeCollateral -> DydxReceiptView.ReceiptLineType.CrossFreeCollateral
-        ReceiptLine.CrossMarginUsage -> DydxReceiptView.ReceiptLineType.CrossMarginUsage
         ReceiptLine.PositionMargin -> DydxReceiptView.ReceiptLineType.PositionMargin
         ReceiptLine.PositionLeverage -> DydxReceiptView.ReceiptLineType.PositionLeverage
         ReceiptLine.LiquidationPrice -> DydxReceiptView.ReceiptLineType.LiquidationPrice
+        ReceiptLine.Total -> null
+        ReceiptLine.WalletBalance -> null
+        ReceiptLine.CrossFreeCollateral -> null
+        ReceiptLine.CrossMarginUsage -> null
     }
 }
