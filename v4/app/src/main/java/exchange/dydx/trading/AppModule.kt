@@ -16,9 +16,9 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.protocols.ThreadingProtocol
-import exchange.dydx.abacus.protocols.TimerProtocol
 import exchange.dydx.abacus.protocols.TrackingProtocol
 import exchange.dydx.abacus.protocols.WebSocketProtocol
+import exchange.dydx.abacus.utils.CoroutineTimer
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.abacus.utils.Parser
 import exchange.dydx.dydxstatemanager.AbacusStateManager
@@ -36,7 +36,6 @@ import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusLocalizerImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusPresentationImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusRestImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusThreadingImp
-import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusTimerImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusTrackingImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusWebSocketImp
 import exchange.dydx.dydxstatemanager.protocolImplementations.LanguageKey
@@ -101,11 +100,10 @@ interface AppModule {
             chain: DYDXChainTransactionsProtocol?,
             tracking: TrackingProtocol?,
             threading: ThreadingProtocol?,
-            timer: TimerProtocol?,
             fileSystem: FileSystemProtocol?,
             logger: CompositeLogging?
         ): IOImplementations =
-            IOImplementations(rest, webSocket, chain, tracking, threading, timer, fileSystem, logger)
+            IOImplementations(rest, webSocket, chain, tracking, threading, CoroutineTimer.instance, fileSystem, logger)
 
         @EnvKey @Provides
         fun provideEnvKey(): String = PreferenceKeys.Env
@@ -172,8 +170,6 @@ interface AppModule {
     @Binds fun bindCompositeLogging(compositeLogger: CompositeLogger): CompositeLogging
 
     @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
-
-    @Binds fun bindTimer(abacusTimerImp: AbacusTimerImp): TimerProtocol
 
     @Binds fun bindFileSystem(abacusFileSystemImp: AbacusFileSystemImp): FileSystemProtocol
 
