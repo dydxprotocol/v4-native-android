@@ -37,6 +37,7 @@ import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptGasFeeView
 import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.leverage.DydxReceiptPositionLeverageView
+import exchange.dydx.trading.feature.receipt.components.liquidationprice.DydxReceiptLiquidationPriceView
 import exchange.dydx.trading.feature.receipt.components.marginusage.DydxReceiptMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.rewards.DydxReceiptRewardsView
 import exchange.dydx.trading.feature.receipt.components.slippage.DydxReceiptSlippageView
@@ -67,6 +68,8 @@ object DydxReceiptView : DydxComponent {
         ExchangeReceived,
         TransferDuration,
         Slippage,
+        PositionMargin,
+        LiquidationPrice;
     }
 
     data class ViewState(
@@ -181,6 +184,14 @@ object DydxReceiptView : DydxComponent {
 
                         ReceiptLineType.BridgeFee -> {
                             DydxReceiptBridgeFeeView.Content(Modifier.animateItemPlacement())
+                        }
+
+                        ReceiptLineType.PositionMargin -> {
+                            DydxReceiptIsolatedPositionMarginUsageView.Content(Modifier.animateItemPlacement())
+                        }
+
+                        ReceiptLineType.LiquidationPrice -> {
+                            DydxReceiptLiquidationPriceView.Content(Modifier.animateItemPlacement())
                         }
                     }
                 }

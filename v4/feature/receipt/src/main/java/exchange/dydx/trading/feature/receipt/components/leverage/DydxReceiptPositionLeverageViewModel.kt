@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.receipt.components.leverage
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.TradeStatesWithDoubleValues
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -9,9 +10,12 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.LeverageView
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 @HiltViewModel
 class DydxReceiptPositionLeverageViewModel @Inject constructor(
@@ -22,28 +26,30 @@ class DydxReceiptPositionLeverageViewModel @Inject constructor(
 
     val state: Flow<DydxReceiptPositionLeverageView.ViewState?> =
         abacusStateManager.marketId
-            .map {
-                createViewState(it)
+            .filterNotNull()
+            .flatMapLatest { marketId ->
+                combine(
+                    abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
+                    abacusStateManager.state.selectedSubaccountUnopenedPositionOfMarket(marketId),
+                ) { position, unopenedIsolatedPosition ->
+                    createViewState(position, unopenedIsolatedPosition)
+                }
             }
             .distinctUntilChanged()
 
     private fun createViewState(
-        marketId: String?
+        position: SubaccountPosition?,
+        unopenedIsolatedPosition: SubaccountPosition?,
     ): DydxReceiptPositionLeverageView.ViewState {
-        val position = if (marketId != null) abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId).value else null
-        val leverage: TradeStatesWithDoubleValues? = position?.leverage
-        val margin: TradeStatesWithDoubleValues? = null // position?.margin
-        /*
-        TODO: After abacus exposes Leverage, changes to next line
-        if (marketId != null) abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId).value?.leverage else null
-         */
+        val leverage: TradeStatesWithDoubleValues? = position?.leverage ?: unopenedIsolatedPosition?.leverage
+        val margin: TradeStatesWithDoubleValues? = position?.marginUsage ?: unopenedIsolatedPosition?.marginUsage
         return DydxReceiptPositionLeverageView.ViewState(
             localizer = localizer,
             before = if (leverage?.current != null) {
                 LeverageView.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    leverage = leverage.current ?: 0.0,
+                    leverage = leverage.current?.absoluteValue ?: 0.0,
                     margin = margin?.current,
                 )
             } else {
@@ -53,7 +59,7 @@ class DydxReceiptPositionLeverageViewModel @Inject constructor(
                 LeverageView.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    leverage = leverage.postOrder ?: 0.0,
+                    leverage = leverage.postOrder?.absoluteValue ?: 0.0,
                     margin = margin?.postOrder,
                 )
             } else {

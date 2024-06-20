@@ -306,7 +306,10 @@ class AbacusStateManager @Inject constructor(
 
     override fun setMarket(marketId: String?) {
         this.marketId.value = marketId
-        asyncStateManager.market = marketId
+        if (marketId != asyncStateManager.market) {
+            asyncStateManager.market = marketId
+            asyncStateManager.trade(null, TradeInputField.size)
+        }
     }
 
     override fun setCandlesPeriod(candlesPeriod: String) {

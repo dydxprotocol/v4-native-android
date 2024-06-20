@@ -167,11 +167,9 @@ class AbacusState(
 
     val selectedSubaccount: StateFlow<Subaccount?> by lazy {
         perpetualState
-            .map {
-                if (subaccountNumber != null) {
-                    it?.subaccount(subaccountNumber!!)
-                } else {
-                    null
+            .map { state ->
+                subaccountNumber?.let {
+                    state?.subaccount(it)
                 }
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
@@ -226,6 +224,16 @@ class AbacusState(
                             position.side.current == PositionSide.SHORT ||
                                 position.side.current == PositionSide.LONG
                             )
+                }
+            }
+            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
+    }
+
+    fun selectedSubaccountUnopenedPositionOfMarket(marketId: String): StateFlow<SubaccountPosition?> {
+        return selectedSubaccountPositions
+            .map { positions ->
+                positions?.firstOrNull { position ->
+                    position.id == marketId && position.side.current == PositionSide.NONE
                 }
             }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)

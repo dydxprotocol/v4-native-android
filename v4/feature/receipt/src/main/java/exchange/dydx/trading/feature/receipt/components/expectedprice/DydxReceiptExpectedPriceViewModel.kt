@@ -41,7 +41,7 @@ class DydxReceiptExpectedPriceViewModel @Inject constructor(
     ): DydxReceiptItemView.ViewState {
         return DydxReceiptItemView.ViewState(
             localizer = localizer,
-            title = localizer.localize("APP.GENERAL.PRICE"),
+            title = localizer.localize("APP.TRADE.EXPECTED_PRICE"),
             value = if (tradeSummary?.price != null) {
                 formatter.dollar(
                     tradeSummary?.price ?: 0.0,

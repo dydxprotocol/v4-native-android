@@ -133,7 +133,10 @@ data class SharedMarketPositionViewState(
                     coloringOption = SignedAmountView.ColoringOption.SignOnly,
                 ),
                 unrealizedPNLAmount = SignedAmountView.ViewState(
-                    text = formatter.dollar(position.unrealizedPnl.current?.absoluteValue ?: 0.0, 2),
+                    text = formatter.dollar(
+                        position.unrealizedPnl.current?.absoluteValue ?: 0.0,
+                        2,
+                    ),
                     sign = unrealizedPnlSign,
                     coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
@@ -159,9 +162,21 @@ data class SharedMarketPositionViewState(
                     position.liquidationPrice.current,
                     configs.displayTickSizeDecimals ?: 0,
                 ),
-                margin = position.valueTotal.current?.let {
-                    formatter.dollar(it.absoluteValue, 2)
-                } ?: formatter.dollar(position.notionalTotal.current?.absoluteValue, 2),
+                margin = when (position.marginMode) {
+                    MarginMode.Cross ->
+                        position.adjustedMmf.current?.let { maintenanceMarginFraction ->
+                            position.notionalTotal.current?.let { notionalTotal ->
+                                formatter.dollar(maintenanceMarginFraction * notionalTotal, 2)
+                            }
+                        }
+
+                    MarginMode.Isolated -> formatter.dollar(
+                        position.equity.current?.absoluteValue ?: 0.0,
+                        2,
+                    )
+
+                    else -> null
+                },
                 funding = SignedAmountView.ViewState(
                     text = formatter.dollar(netFunding.absoluteValue),
                     sign = netFundingSign,
