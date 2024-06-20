@@ -1,6 +1,7 @@
 package exchange.dydx.dydxstatemanager
 
 import exchange.dydx.abacus.output.input.ErrorString
+import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.output.input.TradeInput
@@ -42,3 +43,10 @@ val OrderStatus.canCancel: Boolean
         OrderStatus.Open, OrderStatus.Pending, OrderStatus.PartiallyFilled, OrderStatus.Untriggered -> true
         else -> false
     }
+
+fun MarginMode.localizedString(localizer: LocalizerProtocol): String? {
+    when (this) {
+        MarginMode.Cross -> return localizer.localize("APP.GENERAL.CROSS")
+        MarginMode.Isolated -> return localizer.localize("APP.GENERAL.ISOLATED")
+    }
+}

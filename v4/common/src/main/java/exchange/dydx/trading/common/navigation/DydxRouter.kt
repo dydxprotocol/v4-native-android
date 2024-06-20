@@ -48,10 +48,9 @@ interface DydxRouter {
         val arguments: Bundle?,
     )
 
-    fun deeplinks(path: String): List<NavDeepLink>
-    fun deeplinksWithParam(
+    fun deeplinks(
         destination: String,
-        param: String,
-        isPath: Boolean = true,
+        path: String? = null,
+        params: List<String> = emptyList(),
     ): List<NavDeepLink>
 }

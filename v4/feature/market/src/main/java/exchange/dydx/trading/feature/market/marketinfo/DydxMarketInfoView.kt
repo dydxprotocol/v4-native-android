@@ -59,7 +59,6 @@ object DydxMarketInfoView : DydxComponent {
         val statsTabSelection: DydxMarketStatsTabView.Selection = DydxMarketStatsTabView.Selection.Statistics,
         val accountTabSelection: DydxMarketAccountTabView.Selection = DydxMarketAccountTabView.Selection.Position,
         val tileSelection: DydxMarketTilesView.TileType = DydxMarketTilesView.TileType.PRICE,
-        val hasPosition: Boolean = true,
         val scrollToTop: Boolean = false,
         val scrollToIndex: Int? = null,
     ) {
@@ -87,10 +86,12 @@ object DydxMarketInfoView : DydxComponent {
         val scope = rememberCoroutineScope()
 
         val ordersViewModel: DydxPortfolioOrdersViewModel = hiltViewModel()
-        val ordersViewState = ordersViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        val ordersViewState =
+            ordersViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
         val fillsViewModel: DydxPortfolioFillsViewModel = hiltViewModel()
-        val fillsViewState = fillsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        val fillsViewState =
+            fillsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
         Box(
             modifier = modifier
@@ -123,30 +124,31 @@ object DydxMarketInfoView : DydxComponent {
                         )
                     }
 
-                    if (state.hasPosition) {
-                        stickyHeader(key = "account_tabs") {
-                            DydxMarketAccountTabView.Content(
-                                modifier = Modifier
-                                    .themeColor(ThemeColor.SemanticColor.layer_2)
-                                    .fillParentMaxWidth()
-                                    .padding(vertical = ThemeShapes.VerticalPadding * 2),
-                            )
+                    stickyHeader(key = "account_tabs") {
+                        DydxMarketAccountTabView.Content(
+                            modifier = Modifier
+                                .themeColor(ThemeColor.SemanticColor.layer_2)
+                                .fillParentMaxWidth()
+                                .padding(vertical = ThemeShapes.VerticalPadding * 2),
+                        )
+                    }
+
+                    when (state.accountTabSelection) {
+                        DydxMarketAccountTabView.Selection.Position -> {
+                            item(key = "account") {
+                                DydxMarketPositionView.Content(Modifier)
+                            }
                         }
 
-                        when (state.accountTabSelection) {
-                            DydxMarketAccountTabView.Selection.Position -> {
-                                item(key = "account") {
-                                    DydxMarketPositionView.Content(Modifier)
-                                }
-                            }
-                            DydxMarketAccountTabView.Selection.Orders -> {
-                                ordersListContent(ordersViewState)
-                            }
-                            DydxMarketAccountTabView.Selection.Trades -> {
-                                fillsListContent(fillsViewState)
-                            }
-                            else -> {}
+                        DydxMarketAccountTabView.Selection.Orders -> {
+                            ordersListContent(ordersViewState)
                         }
+
+                        DydxMarketAccountTabView.Selection.Trades -> {
+                            fillsListContent(fillsViewState)
+                        }
+
+                        else -> {}
                     }
 
                     stickyHeader(key = "stats_tabs") {

@@ -37,7 +37,10 @@ fun NavGraphBuilder.transferGraph(
         router = appRouter,
         route = TransferRoutes.transfer_status + "/{hash}",
         arguments = listOf(navArgument("hash") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(TransferRoutes.transfer_status, "hash", true),
+        deepLinks = appRouter.deeplinks(
+            destination = TransferRoutes.transfer_status,
+            path = "hash",
+        ),
     ) { navBackStackEntry ->
         val hash = navBackStackEntry.arguments?.getString("hash")
         if (hash == null) {

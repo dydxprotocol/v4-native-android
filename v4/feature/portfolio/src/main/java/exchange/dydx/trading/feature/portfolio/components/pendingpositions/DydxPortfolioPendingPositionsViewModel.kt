@@ -9,6 +9,7 @@ import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -50,7 +51,9 @@ class DydxPortfolioPendingPositionsViewModel @Inject constructor(
                     marketName = configsAndAsset.asset?.name,
                     margin = formatter.dollar(position.freeCollateral?.current, 2),
                     viewOrderAction = {
-                        router.navigateTo(PortfolioRoutes.orders)
+                        router.navigateTo(
+                            route = MarketRoutes.marketInfo + "/${position.marketId}?currentSection=Orders",
+                        )
                     },
                     cancelOrderAction = {
                         router.navigateTo(

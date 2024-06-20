@@ -15,6 +15,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.market.marketinfo.DydxMarketInfoView
+import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketAccountTabView
 import exchange.dydx.trading.feature.market.marketlist.DydxMarketAssetListView
 import exchange.dydx.trading.feature.market.search.DydxMarketSearchView
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
@@ -37,9 +38,22 @@ fun NavGraphBuilder.marketGraph(
 
     dydxComposable(
         router = appRouter,
-        route = MarketRoutes.marketInfo + "/{marketId}",
-        arguments = listOf(navArgument("marketId") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(MarketRoutes.marketInfo, "marketId", true),
+        route = MarketRoutes.marketInfo + "/{marketId}?currentSection={currentSection}",
+        arguments = listOf(
+            navArgument("marketId") {
+                type = NavType.StringType
+            },
+            navArgument("currentSection") {
+                type = NavType.StringType
+                nullable = true
+                defaultValue = DydxMarketAccountTabView.Selection.Position.name
+            },
+        ),
+        deepLinks = appRouter.deeplinks(
+            destination = MarketRoutes.marketInfo,
+            path = "marketId",
+            params = listOf("currentSection"),
+        ),
     ) { navBackStackEntry ->
         val id = navBackStackEntry.arguments?.getString("marketId")
         if (id == null) {

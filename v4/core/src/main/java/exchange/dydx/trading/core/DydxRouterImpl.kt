@@ -196,25 +196,43 @@ class DydxRouterImpl @Inject constructor(
         return routeQueue.contains(route)
     }
 
-    override fun deeplinks(path: String): List<NavDeepLink> {
-        return dydxUris.map { uri ->
-            navDeepLink {
-                uriPattern = "$uri/$path"
-            }
-        }
-    }
-
-    override fun deeplinksWithParam(
+    override fun deeplinks(
         destination: String,
-        param: String,
-        isPath: Boolean,
+        path: String?,
+        params: List<String>,
     ): List<NavDeepLink> {
         val baseLinks = dydxUris.map { uri -> "$uri/$destination" }
 
-        return if (isPath) {
-            baseLinks.map { uri -> navDeepLink { uriPattern = "$uri/{$param}" } }
+        var paramsString = ""
+        for (moreParam in params) {
+            if (paramsString.isNotEmpty()) {
+                paramsString += "&"
+            }
+            paramsString += "$moreParam={$moreParam}"
+        }
+
+        return if (path.isNullOrBlank().not()) {
+            baseLinks.map { uri ->
+                navDeepLink {
+                    uriPattern =
+                        if (paramsString.isNotEmpty()) {
+                            "$uri/{$path}?$paramsString"
+                        } else {
+                            "$uri/{$path}"
+                        }
+                }
+            }
         } else {
-            baseLinks.map { uri -> navDeepLink { uriPattern = "$uri?$param={$param}" } }
+            baseLinks.map { uri ->
+                navDeepLink {
+                    uriPattern =
+                        if (paramsString.isNotEmpty()) {
+                            "$uri?$paramsString"
+                        } else {
+                            uri
+                        }
+                }
+            }
         }
     }
 

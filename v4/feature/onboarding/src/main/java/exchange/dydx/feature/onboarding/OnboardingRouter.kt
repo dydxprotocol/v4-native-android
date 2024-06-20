@@ -47,7 +47,7 @@ fun NavGraphBuilder.loginGraph(
         router = appRouter,
         route = OnboardingRoutes.connect + "/{walletId}",
         arguments = listOf(navArgument("walletId") { type = NavType.StringType }),
-        deepLinks = appRouter.deeplinksWithParam(OnboardingRoutes.connect, "walletId"),
+        deepLinks = appRouter.deeplinks(OnboardingRoutes.connect, "walletId"),
     ) { nbse ->
         DydxOnboardConnectView.Content(Modifier)
     }

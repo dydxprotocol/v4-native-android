@@ -20,6 +20,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.PortfolioRoutes.orders
+import exchange.dydx.trading.feature.portfolio.cancelpendingposition.DydxCancelPendingPositionView.CtaButtonState
 import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptFreeCollateralView
 import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.ordercount.DydxReceiptOrderCountView
@@ -84,8 +85,8 @@ class DydxCancelPendingPositionViewModel @Inject constructor(
             localizer.localize("APP.CANCEL_ORDERS_MODAL.ONE_OPEN_ORDER")
         } else {
             localizer.localizeWithParams(
-                path = "APP.N_OPEN_ORDERS.ORDERS",
-                params = mapOf("COUNT" to "$pendingPosition.orderCount").filterNotNull(),
+                path = "APP.CANCEL_ORDERS_MODAL.N_OPEN_ORDERS",
+                params = mapOf("COUNT" to "${pendingPosition.orderCount}").filterNotNull(),
             )
         }
         return DydxCancelPendingPositionView.ViewState(
@@ -138,9 +139,21 @@ class DydxCancelPendingPositionViewModel @Inject constructor(
                 cancelOrders(selectedSubaccount, marketMap, assetMap)
             },
             ctaButtonState = if (pendingOrders.isEmpty()) {
-                DydxCancelPendingPositionView.CtaButtonState.Enabled
+                CtaButtonState.Enabled
             } else {
-                DydxCancelPendingPositionView.CtaButtonState.Disabled
+                CtaButtonState.Disabled
+            },
+            ctaButtonTitle = if (pendingOrders.isNotEmpty()) {
+                localizer.localize("APP.TRADE.CANCELING")
+            } else {
+                if (pendingPosition.orderCount == 1) {
+                    localizer.localize("APP.TRADE.CANCEL_ORDER")
+                } else {
+                    localizer.localizeWithParams(
+                        path = "APP.TRADE.CANCEL_ORDERS_COUNT",
+                        params = mapOf("COUNT" to "${pendingPosition.orderCount}").filterNotNull(),
+                    )
+                }
             },
         )
     }
@@ -165,11 +178,11 @@ class DydxCancelPendingPositionViewModel @Inject constructor(
             val ordersToCancel = pendingOrdersFlow.value.first()
 
             val sharedOrder = SharedOrderViewState.create(
-                localizer,
-                formatter,
-                ordersToCancel,
-                marketMap,
-                assetMap,
+                localizer = localizer,
+                formatter = formatter,
+                order = ordersToCancel,
+                marketMap = marketMap,
+                assetMap = assetMap,
             )
             abacusStateManager.cancelOrder(ordersToCancel.id) { result ->
                 when (result) {
