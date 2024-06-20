@@ -27,7 +27,8 @@ class DydxReceiptPositionLeverageViewModel @Inject constructor(
         abacusStateManager.marketId
             .filterNotNull()
             .flatMapLatest { marketId ->
-                abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId)}
+                abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId)
+            }
             .map {
                 createViewState(it)
             }
@@ -37,7 +38,7 @@ class DydxReceiptPositionLeverageViewModel @Inject constructor(
         position: SubaccountPosition?
     ): DydxReceiptPositionLeverageView.ViewState {
         val leverage: TradeStatesWithDoubleValues? = position?.leverage
-        val margin: TradeStatesWithDoubleValues? =  position?.marginUsage
+        val margin: TradeStatesWithDoubleValues? = position?.marginUsage
         return DydxReceiptPositionLeverageView.ViewState(
             localizer = localizer,
             before = if (leverage?.current != null) {

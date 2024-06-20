@@ -64,7 +64,7 @@ object DydxReceiptLiquidationPriceView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = state.localizer.localize("APP.GENERAL.FREE_COLLATERAL"),
+                text = state.localizer.localize("APP.TRADE.LIQUIDATION_PRICE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
