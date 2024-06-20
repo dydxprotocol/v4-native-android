@@ -124,14 +124,6 @@ object DydxMarketAssetItemView : DydxComponent {
                             .themeColor(ThemeColor.SemanticColor.text_primary),
                         maxLines = 1,
                     )
-
-                    Text(
-                        text = "USD",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.base)
-                            .themeColor(ThemeColor.SemanticColor.text_secondary),
-                        maxLines = 1,
-                    )
                 }
 
                 Text(
