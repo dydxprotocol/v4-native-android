@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.utilities.utils.toDp
 import kotlinx.coroutines.launch
 import kotlin.math.floor

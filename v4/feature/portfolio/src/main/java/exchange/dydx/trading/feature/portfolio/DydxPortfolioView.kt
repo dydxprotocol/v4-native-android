@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.portfolio
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,7 +28,9 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.compose.rememberForeverLazyListState
+import exchange.dydx.platformui.compose.rememberForeverScrollState
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioHeaderView
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
@@ -93,8 +99,6 @@ object DydxPortfolioView : DydxComponent {
             return
         }
 
-        val listState = rememberLazyListState()
-
         val positionsViewModel: DydxPortfolioPositionsViewModel = hiltViewModel()
         val positionsViewState = positionsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
@@ -116,7 +120,7 @@ object DydxPortfolioView : DydxComponent {
 
             LazyColumn(
                 modifier = Modifier,
-                state = listState,
+                state = rememberForeverLazyListState(key = "DydxPortfolioView"),
             ) {
                 item(key = "summary") {
                     DydxPortfolioChartView.Content(Modifier)

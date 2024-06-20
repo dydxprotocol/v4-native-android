@@ -36,10 +36,9 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
-import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderCtaButtonView
 import exchange.dydx.trading.feature.trade.trigger.components.DydxTriggerOrderReceiptView

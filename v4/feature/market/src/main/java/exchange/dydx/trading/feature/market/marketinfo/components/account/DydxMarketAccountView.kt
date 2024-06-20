@@ -17,7 +17,7 @@ import exchange.dydx.platformui.components.dividers.PlatformVerticalDivider
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.market.marketinfo.components.diff.DydxDiffView
 
 @Preview
