@@ -14,6 +14,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -26,18 +27,22 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
     private val platformInfo: PlatformInfo,
     private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
+    private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
     val state: Flow<DydxAdjustMarginCtaButton.ViewState?> =
         combine(
             abacusStateManager.state.adjustMarginInput.filterNotNull(),
             abacusStateManager.state.validationErrors,
-        ) { adjustMarginInput, validationErrors ->
-            createViewState(adjustMarginInput, validationErrors)
+            isSubmittingFlow,
+            ) { adjustMarginInput, validationErrors,  isSubmitting ->
+            createViewState(adjustMarginInput, validationErrors, isSubmitting)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         adjustMarginInput: AdjustIsolatedMarginInput,
         validationErrors: List<ValidationError>,
+        isSubmitting: Boolean,
     ): DydxAdjustMarginCtaButton.ViewState {
         val firstBlockingError =
             validationErrors.firstOrNull { it.type == ErrorType.required || it.type == ErrorType.error }
@@ -46,16 +51,23 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
             ctaButton = InputCtaButton.ViewState(
                 localizer = localizer,
                 ctaButtonState =
-                InputCtaButton.State.Enabled(
-                    when (adjustMarginInput.type) {
-                        IsolatedMarginAdjustmentType.Add -> {
-                            localizer.localize("APP.TRADE.ADD_MARGIN")
-                        }
-                        IsolatedMarginAdjustmentType.Remove -> {
-                            localizer.localize("APP.TRADE.REMOVE_MARGIN")
-                        }
-                    },
-                ),
+                if (isSubmitting) {
+                    InputCtaButton.State.Disabled(
+                        localizer.localize("APP.TRADE.SUBMITTING"),
+                    )
+                } else {
+                    InputCtaButton.State.Enabled(
+                        when (adjustMarginInput.type) {
+                            IsolatedMarginAdjustmentType.Add -> {
+                                localizer.localize("APP.TRADE.ADD_MARGIN")
+                            }
+
+                            IsolatedMarginAdjustmentType.Remove -> {
+                                localizer.localize("APP.TRADE.REMOVE_MARGIN")
+                            }
+                        },
+                    )
+                },
                 ctaAction = {
                     commitAdjustMargin()
                 },
@@ -64,7 +76,9 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
     }
 
     private fun commitAdjustMargin() {
+        isSubmittingFlow.value = true
         abacusStateManager.commitAdjustIsolatedMargin { status ->
+            isSubmittingFlow.value = false
             when (status) {
                 is AbacusStateManagerProtocol.SubmissionStatus.Success -> {
                     router.navigateBack()
