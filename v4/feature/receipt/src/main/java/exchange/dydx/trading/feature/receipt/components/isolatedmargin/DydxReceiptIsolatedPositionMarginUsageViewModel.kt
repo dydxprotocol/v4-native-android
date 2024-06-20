@@ -34,11 +34,8 @@ class DydxReceiptIsolatedPositionMarginUsageViewModel @Inject constructor(
                     abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
                     abacusStateManager.state.selectedSubaccountPendingPositions.map { it?.firstOrNull { it.marketId == marketId } },
                 ) { position, pendingPosition ->
-                    Pair(position, pendingPosition)
+                    createViewState(position, pendingPosition)
                 }
-            }
-            .map { (position, pendingPosition) ->
-                createViewState(position, pendingPosition)
             }
             .distinctUntilChanged()
 

@@ -2,8 +2,6 @@ package exchange.dydx.trading.feature.receipt.components.leverage
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.Subaccount
-import exchange.dydx.abacus.output.SubaccountPendingPosition
 import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.TradeStatesWithDoubleValues
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -16,7 +14,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
@@ -33,25 +30,19 @@ class DydxReceiptPositionLeverageViewModel @Inject constructor(
             .flatMapLatest { marketId ->
                 combine(
                     abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId),
-                    abacusStateManager.state.selectedSubaccountPendingPositions.map { it?.firstOrNull { it.marketId == marketId } },
-                    abacusStateManager.state.selectedSubaccount,
-                ) { position, pendingPosition, subaccount ->
-                    Triple(position, pendingPosition, subaccount)
+                    abacusStateManager.state.selectedSubaccountUnopenedPositionOfMarket(marketId),
+                ) { position, unopenedIsolatedPosition ->
+                    createViewState(position, unopenedIsolatedPosition)
                 }
-            }
-            .map { (position, pendingPosition, subaccount) ->
-                createViewState(position, pendingPosition, subaccount)
             }
             .distinctUntilChanged()
 
     private fun createViewState(
         position: SubaccountPosition?,
-        pendingPosition: SubaccountPendingPosition?,
-        subaccount: Subaccount?,
+        unopenedIsolatedPosition: SubaccountPosition?,
     ): DydxReceiptPositionLeverageView.ViewState {
-        // Need to fix the leverage for unopened isolated position
-        val leverage: TradeStatesWithDoubleValues? = position?.leverage
-        val margin: TradeStatesWithDoubleValues? = position?.marginUsage
+        val leverage: TradeStatesWithDoubleValues? = position?.leverage ?: unopenedIsolatedPosition?.leverage
+        val margin: TradeStatesWithDoubleValues? = position?.marginUsage ?: unopenedIsolatedPosition?.marginUsage
         return DydxReceiptPositionLeverageView.ViewState(
             localizer = localizer,
             before = if (leverage?.current != null) {

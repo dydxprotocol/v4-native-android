@@ -44,7 +44,7 @@ class DydxReceiptExchangeRateViewModel @Inject constructor(
         val exchangeRate = transferInput?.summary?.exchangeRate ?: return null
         val type = transferInput.type ?: return null
         val token = transferInput.token ?: return null
-        val symbol = transferInput.resources?.tokenResources?.toMap()?.get(token)?.symbol ?: return null
+        val symbol = transferInput.resources?.tokenResources?.get(token)?.symbol ?: return null
         when (type) {
             TransferType.deposit -> {
                 val converted = formatter.raw(exchangeRate, 2) ?: return null
