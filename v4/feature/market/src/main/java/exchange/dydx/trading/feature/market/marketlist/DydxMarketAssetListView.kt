@@ -148,10 +148,5 @@ object DydxMarketAssetListView : DydxComponent {
                 }
             }
         }
-
-        // First time the list is loaded, scroll to top
-        LaunchedEffect(key1 = "scrollToTop") {
-            listState.animateScrollToItem(0)
-        }
     }
 }
