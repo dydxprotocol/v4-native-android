@@ -2,6 +2,7 @@ package exchange.dydx.trading.feature.receipt.components.leverage
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.TradeStatesWithDoubleValues
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -10,6 +11,8 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.LeverageView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -22,21 +25,19 @@ class DydxReceiptPositionLeverageViewModel @Inject constructor(
 
     val state: Flow<DydxReceiptPositionLeverageView.ViewState?> =
         abacusStateManager.marketId
+            .filterNotNull()
+            .flatMapLatest { marketId ->
+                abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId)}
             .map {
                 createViewState(it)
             }
             .distinctUntilChanged()
 
     private fun createViewState(
-        marketId: String?
+        position: SubaccountPosition?
     ): DydxReceiptPositionLeverageView.ViewState {
-        val position = if (marketId != null) abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId).value else null
         val leverage: TradeStatesWithDoubleValues? = position?.leverage
-        val margin: TradeStatesWithDoubleValues? = null // position?.margin
-        /*
-        TODO: After abacus exposes Leverage, changes to next line
-        if (marketId != null) abacusStateManager.state.selectedSubaccountPositionOfMarket(marketId).value?.leverage else null
-         */
+        val margin: TradeStatesWithDoubleValues? =  position?.marginUsage
         return DydxReceiptPositionLeverageView.ViewState(
             localizer = localizer,
             before = if (leverage?.current != null) {
