@@ -29,7 +29,7 @@ fun Preview_GradientSlider() {
 object GradientSlider {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val leftRatio: Float = -1.0f,
+        val leftRatio: Float = -0.5f,
         val rightRatio: Float = 1.0f,
         val value: Float = 0.0f,
         val valueRange: ClosedFloatingPointRange<Float>,
@@ -64,13 +64,13 @@ object GradientSlider {
             )
         } else if (state.leftRatio <= 0 && state.rightRatio <= 0) {
             brush = Brush.linearGradient(
-                0.0f to GradientType.MINUS.color.color.copy(alpha = abs(left)),
-                1.0f to GradientType.MINUS.color.color.copy(alpha = abs(right)),
+                0.0f to GradientType.MINUS.color.color.copy(alpha = left),
+                1.0f to GradientType.MINUS.color.color.copy(alpha = right),
             )
         } else {
             brush = Brush.linearGradient(
-                0.0f to GradientType.PLUS.color.color.copy(alpha = abs(left)),
-                1.0f to GradientType.PLUS.color.color.copy(alpha = abs(right)),
+                0.0f to GradientType.PLUS.color.color.copy(alpha = left),
+                1.0f to GradientType.PLUS.color.color.copy(alpha = right),
             )
         }
 
