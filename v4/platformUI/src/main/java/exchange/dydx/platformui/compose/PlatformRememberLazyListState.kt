@@ -20,8 +20,7 @@ fun PlatformRememberLazyListState(
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
-        var savedValue = scrollStateMap[key]
-        savedValue?.let {
+        scrollStateMap[key]?.let {
             listState.animateScrollToItem(
                 index = it.index,
                 scrollOffset = it.scrollOffset,
