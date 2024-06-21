@@ -59,6 +59,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         val logoUrl: String? = null,
         val selectAction: ((String) -> Unit)? = null,
         val closeAction: (() -> Unit)? = null,
+        val ctaButtonAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -289,7 +290,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
             text = state?.localizer?.localize("APP.TRADE.CONFIRM_LEVERAGE"),
             state = PlatformButtonState.Primary,
         ) {
-            state?.closeAction?.invoke()
+            state?.ctaButtonAction?.invoke()
         }
     }
 }

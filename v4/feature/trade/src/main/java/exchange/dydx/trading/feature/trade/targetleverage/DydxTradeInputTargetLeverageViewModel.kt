@@ -67,20 +67,16 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
         val leverages = leverageOptions(maxLeverage)
         return DydxTradeInputTargetLeverageView.ViewState(
             localizer = localizer,
-            leverageText = targetLeverage ?: (
-                tradeInput?.targetLeverage?.let {
-                    "$it"
-                }
-                ) ?: "2.0",
+            leverageText = targetLeverage ?: formatter.raw(tradeInput?.targetLeverage, 2),
             leverageOptions = leverages,
             logoUrl = assetMap[assetId]?.resources?.imageUrl,
             selectAction = { leverage ->
                 this.targetLeverage.value = leverage
-//                abacusStateManager.adjustIsolatedMargin(
-//                    leverage.toDouble(),
-//                    AdjustIsolatedMarginInputField.
             },
             closeAction = {
+                closeView()
+            },
+            ctaButtonAction = {
                 targetLeverage.let {
                     abacusStateManager.trade("$it", TradeInputField.targetLeverage)
                 }
@@ -90,7 +86,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     }
 
     private fun leverageOptions(max: Double): List<LeverageTextAndValue> {
-        val steps = listOf(1.0, 2.0, 5.0, 10.0)
+        val steps = listOf(1.0, 2.0, 3.0, 5.0, 10.0)
         val leverages = mutableListOf<LeverageTextAndValue>()
         for (step in steps) {
             if (max > step) {
@@ -99,8 +95,8 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
         }
         leverages.add(
             LeverageTextAndValue(
-                localizer.localize("APP.GENERAL.MAX"),
-                formatter.raw(max) ?: "",
+                text = localizer.localize("APP.GENERAL.MAX"),
+                value = formatter.raw(max) ?: "",
             ),
         )
         return leverages
@@ -108,8 +104,8 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
 
     private fun leverageTextAndValue(value: Double): LeverageTextAndValue {
         return LeverageTextAndValue(
-            formatter.leverage(value, 1) ?: "",
-            formatter.raw(value) ?: "",
+            text = formatter.leverage(value, 1) ?: "",
+            value = formatter.raw(value) ?: "",
         )
     }
 
