@@ -24,6 +24,7 @@ import exchange.dydx.platformui.components.buttons.PlatformSelectionButton
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.components.tabgroups.PlatformTabGroup
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -33,7 +34,6 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.shared.views.LabeledTextInput

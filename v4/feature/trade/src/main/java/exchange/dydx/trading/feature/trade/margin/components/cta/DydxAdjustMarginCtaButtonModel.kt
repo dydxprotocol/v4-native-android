@@ -34,7 +34,7 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
             abacusStateManager.state.adjustMarginInput.filterNotNull(),
             abacusStateManager.state.validationErrors,
             isSubmittingFlow,
-            ) { adjustMarginInput, validationErrors,  isSubmitting ->
+        ) { adjustMarginInput, validationErrors, isSubmitting ->
             createViewState(adjustMarginInput, validationErrors, isSubmitting)
         }
             .distinctUntilChanged()

@@ -27,6 +27,7 @@ import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.platformui.components.charts.view.config
 import exchange.dydx.platformui.components.charts.view.update
 import exchange.dydx.platformui.components.tabgroups.PlatformPillTextGroup
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -38,7 +39,6 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 
 @Preview
 @Composable
