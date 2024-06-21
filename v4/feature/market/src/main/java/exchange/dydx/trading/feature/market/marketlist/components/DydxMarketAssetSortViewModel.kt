@@ -7,25 +7,25 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class DydxMarketAssetSortViewModel @Inject constructor(
     val localizer: LocalizerProtocol,
-    private val mutableSortActionFlow: MutableStateFlow<SortAction?>,
+    private val mutableSortActionFlow: MutableStateFlow<SortAction>,
 ) : ViewModel(), DydxViewModel {
 
     private val actions: List<SortAction>
         get() = SortAction.actions(localizer)
 
-    private val mutableState = MutableStateFlow(createViewState(0))
-
-    init {
-        mutableSortActionFlow.value = actions.first()
-    }
-
-    val state: Flow<DydxMarketAssetSortView.ViewState?> = mutableState
+    val state: Flow<DydxMarketAssetSortView.ViewState?> =
+        mutableSortActionFlow
+            .map { sortAction ->
+                createViewState(actions.indexOf(sortAction))
+            }
+            .distinctUntilChanged()
 
     private fun createViewState(selectedIndex: Int): DydxMarketAssetSortView.ViewState {
         return DydxMarketAssetSortView.ViewState(
@@ -33,7 +33,6 @@ class DydxMarketAssetSortViewModel @Inject constructor(
             contents = actions.map { it.text },
             onSelectionChanged = { index ->
                 mutableSortActionFlow.value = actions[index]
-                mutableState.value = createViewState(index)
             },
             selectedIndex = selectedIndex,
         )
