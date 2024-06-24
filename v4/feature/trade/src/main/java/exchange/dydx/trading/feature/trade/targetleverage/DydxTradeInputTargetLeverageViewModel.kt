@@ -74,7 +74,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
             leverageOptions = leverages,
             logoUrl = assetMap[assetId]?.resources?.imageUrl,
             selectAction = { leverage ->
-                this.targetLeverage.value =  leverage
+                this.targetLeverage.value = leverage
             },
             closeAction = {
                 closeView()

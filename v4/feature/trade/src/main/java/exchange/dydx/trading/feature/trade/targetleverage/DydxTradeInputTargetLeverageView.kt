@@ -13,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -219,6 +220,8 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         modifier: Modifier,
         state: ViewState?
     ) {
+        val focusManager = LocalFocusManager.current
+
         Row(
             modifier = modifier
                 .padding(
@@ -230,11 +233,11 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         ) {
             PlatformTabGroup(
                 modifier = Modifier.fillMaxWidth(),
-                scrollingEnabled = true,
                 items = state?.leverageOptions?.map {
                     { modifier ->
                         PlatformSelectionButton(
-                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
+                                .fillMaxWidth(),
                             selected = false,
                         ) {
                             Text(
@@ -252,7 +255,8 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                     { modifier ->
 
                         PlatformSelectionButton(
-                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
+                                .fillMaxWidth(),
                             selected = true,
                         ) {
                             Text(
@@ -266,7 +270,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                         }
                     }
                 } ?: listOf(),
-                equalWeight = false,
+                equalWeight = true,
                 currentSelection = state?.leverageOptions?.indexOfFirst {
                     val leverageTextValue = state.parser.asDouble(state.leverageText)
                     it.value.toDouble() == leverageTextValue
@@ -274,6 +278,8 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 onSelectionChanged = { it ->
                     state?.leverageOptions?.get(it)?.value?.let { value ->
                         state.selectAction?.invoke(value)
+
+                        focusManager.clearFocus()
                     }
                 },
             )
