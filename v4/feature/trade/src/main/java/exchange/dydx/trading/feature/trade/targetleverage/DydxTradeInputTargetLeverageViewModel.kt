@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
@@ -28,6 +29,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
+    private val parser: ParserProtocol,
     private val router: DydxRouter,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
@@ -67,11 +69,12 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
         val leverages = leverageOptions(maxLeverage)
         return DydxTradeInputTargetLeverageView.ViewState(
             localizer = localizer,
+            parser = parser,
             leverageText = targetLeverage ?: formatter.raw(tradeInput?.targetLeverage, 2),
             leverageOptions = leverages,
             logoUrl = assetMap[assetId]?.resources?.imageUrl,
             selectAction = { leverage ->
-                this.targetLeverage.value = leverage
+                this.targetLeverage.value =  leverage
             },
             closeAction = {
                 closeView()

@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.utils.Parser
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.buttons.PlatformSelectionButton
@@ -54,6 +56,7 @@ fun Preview_DydxTradeInputTargetLeverageView() {
 object DydxTradeInputTargetLeverageView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val parser: ParserProtocol,
         val leverageText: String?,
         val leverageOptions: List<LeverageTextAndValue>?,
         val logoUrl: String? = null,
@@ -64,6 +67,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                parser = Parser(),
                 leverageText = "1.0",
                 leverageOptions = listOf(
                     LeverageTextAndValue("1.0", "1.0"),
@@ -264,7 +268,8 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 } ?: listOf(),
                 equalWeight = false,
                 currentSelection = state?.leverageOptions?.indexOfFirst {
-                    it.value.toDouble() == state.leverageText?.toDouble()
+                    val leverageTextValue = state.parser.asDouble(state.leverageText)
+                    it.value.toDouble() == leverageTextValue
                 },
                 onSelectionChanged = { it ->
                     state?.leverageOptions?.get(it)?.value?.let { value ->
