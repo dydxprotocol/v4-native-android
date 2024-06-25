@@ -173,12 +173,9 @@ class AbacusStateManager @Inject constructor(
         UIImplementationsExtensions.reset(language = null, ioImplementations)
 
         val deployment: String
-        val appConfigs: AppConfigs
-        val appConfigsV2: AppConfigsV2
+        val appConfigsV2 = AppConfigsV2.forAppWithIsolatedMargins
         if (featureFlags.isFeatureEnabled(DydxFeatureFlag.force_mainnet)) {
             deployment = "MAINNET"
-            appConfigs = AppConfigs.forApp
-            appConfigsV2 = AppConfigsV2.forApp
         } else {
             val appDeployment = application.getString(R.string.app_deployment)
             deployment = if (appDeployment == "MAINNET" && DebugEnabled.enabled(preferencesStore)) {
@@ -188,19 +185,13 @@ class AbacusStateManager @Inject constructor(
             } else {
                 appDeployment
             }
-            appConfigs =
-                if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigs.forAppDebug else AppConfigs.forApp
-            appConfigsV2 =
-                if (BuildConfig.DEBUG && deployment != "MAINNET") AppConfigsV2.forAppWithIsolatedMargins else AppConfigsV2.forApp
         }
 
-        appConfigs.squidVersion = AppConfigs.SquidVersion.V2
         appConfigsV2.onboardingConfigs.squidVersion = OnboardingConfigs.SquidVersion.V2
 
         // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
         if (BuildConfig.DEBUG) {
-            appConfigs.enableLogger = false
-            appConfigsV2.enableLogger = false
+             appConfigsV2.enableLogger = false
         }
 
         AsyncAbacusStateManagerV2(
