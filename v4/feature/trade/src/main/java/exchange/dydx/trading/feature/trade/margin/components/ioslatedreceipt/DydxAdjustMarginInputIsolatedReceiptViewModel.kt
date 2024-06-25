@@ -52,12 +52,14 @@ class DydxAdjustMarginInputIsolatedReceiptViewModel @Inject constructor(
                         leverage = it,
                     )
                 },
+                reverseDirection = true, // Reverse direction for margin adjustment
             ),
             marginUsage = DydxReceiptIsolatedPositionMarginUsageView.ViewState(
                 localizer = localizer,
                 formatter = formatter,
                 before = adjustMarginInput.summary?.positionMargin,
                 after = adjustMarginInput.summary?.positionMarginUpdated,
+                reverseDirection = true, // Reverse direction for margin adjustment
             ),
         )
     }

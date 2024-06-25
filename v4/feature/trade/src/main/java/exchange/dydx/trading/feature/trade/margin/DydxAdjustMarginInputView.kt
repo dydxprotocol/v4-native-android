@@ -194,7 +194,12 @@ object DydxAdjustMarginInputView : DydxComponent {
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Text(
-                    text = state.localizer.localize("APP.GENERAL.AMOUNT"),
+                    text = state.localizer.localize(
+                        when (state.direction) {
+                            MarginDirection.Add -> "APP.GENERAL.AMOUNT_TO_ADD"
+                            MarginDirection.Remove -> "APP.GENERAL.AMOUNT_TO_REMOVE"
+                        },
+                    ),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
                         .themeFont(fontSize = ThemeFont.FontSize.mini),

@@ -82,6 +82,12 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
                 orders = stopLossOrders,
                 configsAndAsset = configsAndAsset,
             ),
+            editMarginAction = {
+                router.navigateTo(
+                    route = TradeRoutes.adjust_margin + "/$marketId",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            },
         )
     }
 
