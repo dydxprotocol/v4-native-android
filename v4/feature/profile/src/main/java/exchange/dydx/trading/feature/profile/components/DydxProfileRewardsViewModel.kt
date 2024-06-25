@@ -33,7 +33,7 @@ class DydxProfileRewardsViewModel @Inject constructor(
     private fun createViewState(account: Account?): DydxProfileRewardsView.ViewState {
         val rewards = account?.tradingRewards
         val total = rewards?.total
-        val thisWeek = rewards?.historical?.get("WEEKLY")?.lastOrNull()
+        val thisWeek = rewards?.filledHistory?.get("WEEKLY")?.lastOrNull()
         val thisWeekAmount = thisWeek?.amount
         val thisWeekStart = thisWeek?.startedAtInMilliseconds?.toLong()?.let {
             Instant.ofEpochMilli(it)

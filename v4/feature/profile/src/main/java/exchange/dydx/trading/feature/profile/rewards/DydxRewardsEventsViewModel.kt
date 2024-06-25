@@ -55,7 +55,7 @@ class DydxRewardsEventsViewModel @Inject constructor(
             title = localizer.localize("APP.GENERAL.TRADING_REWARDS"),
             periods = this.periodsText,
             selectedIndex = selectedIndex,
-            rewards = account?.tradingRewards?.historical?.get(selectedPeriodText)?.map { reward ->
+            rewards = account?.tradingRewards?.filledHistory?.get(selectedPeriodText)?.map { reward ->
                 val started = Instant.ofEpochMilli(reward.startedAtInMilliseconds.toLong())
                 val ended = reward.endedAtInMilliseconds.toLong().let {
                     Instant.ofEpochMilli(it)
