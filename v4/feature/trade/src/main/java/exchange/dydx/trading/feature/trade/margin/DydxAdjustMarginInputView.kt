@@ -198,7 +198,7 @@ object DydxAdjustMarginInputView : DydxComponent {
                         when (state.direction) {
                             MarginDirection.Add -> "APP.GENERAL.AMOUNT_TO_ADD"
                             MarginDirection.Remove -> "APP.GENERAL.AMOUNT_TO_REMOVE"
-                        }
+                        },
                     ),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
