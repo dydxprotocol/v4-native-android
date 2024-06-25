@@ -22,7 +22,6 @@ import exchange.dydx.abacus.protocols.StateNotificationProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.state.changes.StateChanges
 import exchange.dydx.abacus.state.manager.ApiState
-import exchange.dydx.abacus.state.manager.AppConfigs
 import exchange.dydx.abacus.state.manager.GasToken
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
@@ -191,7 +190,7 @@ class AbacusStateManager @Inject constructor(
 
         // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
         if (BuildConfig.DEBUG) {
-             appConfigsV2.enableLogger = false
+            appConfigsV2.enableLogger = false
         }
 
         AsyncAbacusStateManagerV2(
