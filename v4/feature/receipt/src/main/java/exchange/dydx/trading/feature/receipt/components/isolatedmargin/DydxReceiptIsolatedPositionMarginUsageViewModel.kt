@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.SubaccountPendingPosition
 import exchange.dydx.abacus.output.SubaccountPosition
-import exchange.dydx.abacus.output.TradeStatesWithDoubleValues
-import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
@@ -46,62 +44,8 @@ class DydxReceiptIsolatedPositionMarginUsageViewModel @Inject constructor(
         return DydxReceiptIsolatedPositionMarginUsageView.ViewState(
             localizer = localizer,
             formatter = formatter,
-            before = positionMarginCurrent(
-                marginMode = position?.marginMode,
-                equity = position?.equity,
-                notionalTotal = position?.notionalTotal,
-                maintenanceMarginFraction = position?.adjustedMmf?.current,
-            ) ?: positionMarginCurrent(
-                marginMode = MarginMode.Isolated,
-                equity = pendingPosition?.equity,
-                notionalTotal = null,
-                maintenanceMarginFraction = null,
-            ),
-            after = positionMarginPostOrder(
-                marginMode = position?.marginMode,
-                equity = position?.equity,
-                notionalTotal = position?.notionalTotal,
-                maintenanceMarginFraction = position?.adjustedMmf?.postOrder,
-            ) ?: positionMarginPostOrder(
-                marginMode = MarginMode.Isolated,
-                equity = pendingPosition?.equity,
-                notionalTotal = null,
-                maintenanceMarginFraction = null,
-            ),
+            before = position?.marginValue?.current ?: pendingPosition?.equity?.current,
+            after = position?.marginValue?.postOrder ?: pendingPosition?.equity?.postOrder,
         )
-    }
-
-    private fun positionMarginCurrent(
-        marginMode: MarginMode?,
-        equity: TradeStatesWithDoubleValues?,
-        notionalTotal: TradeStatesWithDoubleValues?,
-        maintenanceMarginFraction: Double?
-    ): Double? {
-        return when (marginMode) {
-            MarginMode.Cross -> return notionalTotal?.current?.let { notionalTotal ->
-                maintenanceMarginFraction?.let { maintenanceMarginFraction ->
-                    maintenanceMarginFraction * notionalTotal
-                }
-            }
-            MarginMode.Isolated -> equity?.current
-            else -> null
-        }
-    }
-
-    private fun positionMarginPostOrder(
-        marginMode: MarginMode?,
-        equity: TradeStatesWithDoubleValues?,
-        notionalTotal: TradeStatesWithDoubleValues?,
-        maintenanceMarginFraction: Double?
-    ): Double? {
-        return when (marginMode) {
-            MarginMode.Cross -> return notionalTotal?.postOrder?.let { notionalTotal ->
-                maintenanceMarginFraction?.let { maintenanceMarginFraction ->
-                    maintenanceMarginFraction * notionalTotal
-                }
-            }
-            MarginMode.Isolated -> equity?.postOrder
-            else -> null
-        }
     }
 }

@@ -162,21 +162,10 @@ data class SharedMarketPositionViewState(
                     position.liquidationPrice.current,
                     configs.displayTickSizeDecimals ?: 0,
                 ),
-                margin = when (position.marginMode) {
-                    MarginMode.Cross ->
-                        position.adjustedMmf.current?.let { maintenanceMarginFraction ->
-                            position.notionalTotal.current?.let { notionalTotal ->
-                                formatter.dollar(maintenanceMarginFraction * notionalTotal, 2)
-                            }
-                        }
-
-                    MarginMode.Isolated -> formatter.dollar(
-                        position.equity.current?.absoluteValue ?: 0.0,
-                        2,
-                    )
-
-                    else -> null
-                },
+                margin = formatter.dollar(
+                    position.marginValue.current,
+                    2,
+                ),
                 funding = SignedAmountView.ViewState(
                     text = formatter.dollar(netFunding.absoluteValue),
                     sign = netFundingSign,
