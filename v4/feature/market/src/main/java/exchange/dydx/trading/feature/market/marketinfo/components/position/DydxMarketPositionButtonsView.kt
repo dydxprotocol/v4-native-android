@@ -4,12 +4,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -32,6 +36,7 @@ import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -76,6 +81,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
         val localizer: LocalizerProtocol,
         val addTriggerAction: (() -> Unit)? = null,
         val closeAction: (() -> Unit)? = null,
+        val editMarginAction: (() -> Unit)? = null,
         val takeProfitTrigger: TriggerViewState? = null,
         val stopLossTrigger: TriggerViewState? = null,
     ) {
@@ -84,6 +90,7 @@ object DydxMarketPositionButtonsView : DydxComponent {
                 localizer = MockLocalizer(),
                 takeProfitTrigger = TriggerViewState.preview,
                 stopLossTrigger = TriggerViewState.preview,
+                editMarginAction = {},
             )
         }
     }
@@ -110,25 +117,42 @@ object DydxMarketPositionButtonsView : DydxComponent {
             var size by remember { mutableStateOf(IntSize.Zero) }
 
             if (state.takeProfitTrigger == null && state.stopLossTrigger == null) {
-                PlatformButton(
-                    text = state.localizer.localize("APP.TRADE.ADD_TP_SL"),
-                    state = PlatformButtonState.Secondary,
-                    modifier = Modifier
-                        .padding(vertical = ThemeShapes.VerticalPadding)
-                        .weight(1f),
-                    action = state.addTriggerAction ?: {},
-                )
+                if (state.editMarginAction == null) {
+                    AddTpSlButton(
+                        modifier = Modifier,
+                        state = state,
+                    )
 
-                Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
+                    Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
 
-                PlatformButton(
-                    text = state.localizer.localize("APP.TRADE.CLOSE_POSITION"),
-                    state = PlatformButtonState.Destructive,
-                    modifier = Modifier
-                        .padding(vertical = ThemeShapes.VerticalPadding)
-                        .weight(1f),
-                    action = state.closeAction ?: {},
-                )
+                    ClosePositionButton(
+                        modifier = Modifier,
+                        state = state,
+                    )
+                } else {
+                    Column {
+                        Row {
+                            AddTpSlButton(
+                                modifier = Modifier,
+                                state = state,
+                            )
+
+                            Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
+
+                            EditMarginButton(
+                                modifier = Modifier,
+                                state = state,
+                            )
+                        }
+
+                        Row {
+                            ClosePositionButton(
+                                modifier = Modifier,
+                                state = state,
+                            )
+                        }
+                    }
+                }
             } else {
                 Column(
                     modifier = Modifier,
@@ -152,7 +176,6 @@ object DydxMarketPositionButtonsView : DydxComponent {
                             text = state.localizer.localize("APP.TRADE.ADD_TAKE_PROFIT"),
                             state = PlatformButtonState.Secondary,
                             modifier = Modifier
-                                .padding(vertical = ThemeShapes.VerticalPadding)
                                 .weight(1f)
                                 .height(size.height.toDp),
                             action = state.addTriggerAction ?: {},
@@ -171,24 +194,83 @@ object DydxMarketPositionButtonsView : DydxComponent {
                             text = state.localizer.localize("APP.TRADE.ADD_STOP_LOSS"),
                             state = PlatformButtonState.Secondary,
                             modifier = Modifier
-                                .padding(vertical = ThemeShapes.VerticalPadding)
                                 .weight(1f)
                                 .height(size.height.toDp),
                             action = state.addTriggerAction ?: {},
                         )
                     }
 
-                    PlatformButton(
-                        text = state.localizer.localize("APP.TRADE.CLOSE_POSITION"),
-                        state = PlatformButtonState.Destructive,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = ThemeShapes.VerticalPadding),
-                        action = state.closeAction ?: {},
-                    )
+                    Row {
+                        ClosePositionButton(
+                            modifier = Modifier,
+                            state = state,
+                        )
+
+                        if (state.editMarginAction != null) {
+                            Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
+
+                            EditMarginButton(
+                                modifier = Modifier,
+                                state = state,
+                            )
+                        }
+                    }
                 }
             }
         }
+    }
+
+    @Composable
+    private fun RowScope.AddTpSlButton(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        PlatformButton(
+            text = state.localizer.localize("APP.TRADE.ADD_TP_SL"),
+            state = PlatformButtonState.Secondary,
+            modifier = modifier
+                .padding(vertical = ThemeShapes.VerticalPadding)
+                .weight(1f),
+            action = state.addTriggerAction ?: {},
+        )
+    }
+
+    @Composable
+    private fun RowScope.ClosePositionButton(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        PlatformButton(
+            text = state.localizer.localize("APP.TRADE.CLOSE_POSITION"),
+            state = PlatformButtonState.Destructive,
+            modifier = modifier
+                .padding(vertical = ThemeShapes.VerticalPadding)
+                .weight(1f),
+            action = state.closeAction ?: {},
+        )
+    }
+
+    @Composable
+    private fun RowScope.EditMarginButton(
+        modifier: Modifier,
+        state: ViewState,
+    ) {
+        PlatformButton(
+            text = state.localizer.localize("APP.TRADE.EDIT_MARGIN"),
+            state = PlatformButtonState.Secondary,
+            modifier = modifier
+                .padding(vertical = ThemeShapes.VerticalPadding)
+                .weight(1f),
+            action = state.editMarginAction ?: {},
+            leadingContent = {
+                Icon(
+                    painter = painterResource(id = exchange.dydx.trading.feature.shared.R.drawable.icon_edit),
+                    contentDescription = "",
+                    tint = ThemeColor.SemanticColor.text_secondary.color,
+                    modifier = Modifier.size(20.dp),
+                )
+            },
+        )
     }
 
     @Composable

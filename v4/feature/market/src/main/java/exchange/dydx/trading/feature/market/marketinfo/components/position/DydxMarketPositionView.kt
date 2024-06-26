@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.market.marketinfo.components.position
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -28,7 +29,6 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
-import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.dividers.PlatformVerticalDivider
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
@@ -371,22 +371,15 @@ object DydxMarketPositionView : DydxComponent {
                             Spacer(modifier = Modifier.weight(1f))
 
                             if (state.marginEditAction != null) {
-                                PlatformIconButton(
-                                    modifier = Modifier
-                                        .width(32.dp)
-                                        .height(32.dp),
-                                    action = state.marginEditAction,
-                                    padding = 0.dp,
-                                    shape = RoundedCornerShape(4.dp),
-                                    backgroundColor = ThemeColor.SemanticColor.layer_6,
-                                    borderColor = ThemeColor.SemanticColor.layer_7,
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = exchange.dydx.trading.feature.shared.R.drawable.icon_edit),
-                                        contentDescription = "",
-                                        tint = ThemeColor.SemanticColor.text_primary.color,
-                                    )
-                                }
+                                Icon(
+                                    painter = painterResource(id = exchange.dydx.trading.feature.shared.R.drawable.icon_edit),
+                                    contentDescription = "",
+                                    tint = ThemeColor.SemanticColor.text_secondary.color,
+                                    modifier = Modifier.size(20.dp)
+                                        .clickable {
+                                            state.marginEditAction.invoke()
+                                        },
+                                )
                             }
                         }
                     },

@@ -13,11 +13,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.utils.Parser
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.buttons.PlatformSelectionButton
@@ -54,6 +57,7 @@ fun Preview_DydxTradeInputTargetLeverageView() {
 object DydxTradeInputTargetLeverageView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val parser: ParserProtocol,
         val leverageText: String?,
         val leverageOptions: List<LeverageTextAndValue>?,
         val logoUrl: String? = null,
@@ -64,6 +68,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                parser = Parser(),
                 leverageText = "1.0",
                 leverageOptions = listOf(
                     LeverageTextAndValue("1.0", "1.0"),
@@ -215,6 +220,8 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         modifier: Modifier,
         state: ViewState?
     ) {
+        val focusManager = LocalFocusManager.current
+
         Row(
             modifier = modifier
                 .padding(
@@ -226,11 +233,11 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
         ) {
             PlatformTabGroup(
                 modifier = Modifier.fillMaxWidth(),
-                scrollingEnabled = true,
                 items = state?.leverageOptions?.map {
                     { modifier ->
                         PlatformSelectionButton(
-                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
+                                .fillMaxWidth(),
                             selected = false,
                         ) {
                             Text(
@@ -248,7 +255,8 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                     { modifier ->
 
                         PlatformSelectionButton(
-                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
+                                .fillMaxWidth(),
                             selected = true,
                         ) {
                             Text(
@@ -262,13 +270,16 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                         }
                     }
                 } ?: listOf(),
-                equalWeight = false,
+                equalWeight = true,
                 currentSelection = state?.leverageOptions?.indexOfFirst {
-                    it.value.toDouble() == state.leverageText?.toDouble()
+                    val leverageTextValue = state.parser.asDouble(state.leverageText)
+                    it.value.toDouble() == leverageTextValue
                 },
                 onSelectionChanged = { it ->
                     state?.leverageOptions?.get(it)?.value?.let { value ->
                         state.selectAction?.invoke(value)
+
+                        focusManager.clearFocus()
                     }
                 },
             )

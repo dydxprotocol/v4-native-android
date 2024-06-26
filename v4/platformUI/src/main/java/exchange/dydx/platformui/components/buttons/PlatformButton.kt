@@ -1,6 +1,7 @@
 package exchange.dydx.platformui.components.buttons
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -56,6 +57,7 @@ fun PlatformButton(
     state: PlatformButtonState = PlatformButtonState.Primary,
     text: String?,
     fontSize: ThemeFont.FontSize = ThemeFont.FontSize.medium,
+    leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     action: () -> Unit,
 ) {
@@ -67,7 +69,7 @@ fun PlatformButton(
     }
     val backgroundColor = when (state) {
         PlatformButtonState.Primary -> ThemeColor.SemanticColor.color_purple.color
-        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.layer_5.color
+        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.layer_4.color
         PlatformButtonState.Disabled -> ThemeColor.SemanticColor.layer_2.color
         PlatformButtonState.Destructive -> ThemeColor.SemanticColor.layer_4.color
     }
@@ -96,7 +98,11 @@ fun PlatformButton(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            if (leadingContent != null) {
+                leadingContent()
+            }
             if (text != null) {
                 Text(
                     style = TextStyle.dydxDefault.themeFont(fontSize = fontSize)

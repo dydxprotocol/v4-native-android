@@ -43,6 +43,8 @@ import exchange.dydx.trading.feature.shared.views.GradientSlider
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.utilities.utils.rounded
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 @Preview
 @Composable
@@ -209,7 +211,8 @@ object DydxTradeInputLeverageView : DydxComponent {
             return
         }
 
-        val positionRatio = (positionLeverage / maxLeverage).rounded(toPlaces = 1)
+        val value = (positionLeverage / maxLeverage).rounded(toPlaces = 1)
+        val positionRatio = min(1f, max(-1f, value))
 
         val sliderViewState = GradientSlider.ViewState(
             localizer = state.localizer,

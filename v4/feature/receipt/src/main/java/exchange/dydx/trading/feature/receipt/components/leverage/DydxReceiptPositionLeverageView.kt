@@ -36,6 +36,7 @@ object DydxReceiptPositionLeverageView : DydxComponent {
         val localizer: LocalizerProtocol,
         val before: LeverageView.ViewState? = null,
         val after: LeverageView.ViewState? = null,
+        val reverseDirection: Boolean = false,
     ) {
         companion object {
             val preview = ViewState(
@@ -73,28 +74,42 @@ object DydxReceiptPositionLeverageView : DydxComponent {
 
             PlatformAmountChange(
                 modifier = Modifier.weight(1f),
-                before = if (state.before != null) { {
-                    LeverageView.Content(
-                        state = state.before,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
-                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                    )
-                } } else {
+                before = if (state.before != null) {
+                    {
+                        LeverageView.Content(
+                            state = state.before,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.small,
+                                    fontType = ThemeFont.FontType.number,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                        )
+                    }
+                } else {
                     null
                 },
                 after =
-                if (state.after != null) { {
-                    LeverageView.Content(
-                        state = state.after,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
-                    )
-                } } else {
+                if (state.after != null) {
+                    {
+                        LeverageView.Content(
+                            state = state.after,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontSize = ThemeFont.FontSize.small,
+                                    fontType = ThemeFont.FontType.number,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
+                } else {
                     null
                 },
-                direction = PlatformDirection.from(state.after?.leverage, state.before?.leverage),
+                direction = if (state.reverseDirection) {
+                    PlatformDirection.from(state.before?.leverage, state.after?.leverage)
+                } else {
+                    PlatformDirection.from(state.after?.leverage, state.before?.leverage)
+                },
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

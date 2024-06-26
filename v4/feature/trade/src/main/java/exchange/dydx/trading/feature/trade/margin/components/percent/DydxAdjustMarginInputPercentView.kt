@@ -1,12 +1,14 @@
 package exchange.dydx.trading.feature.trade.margin.components.percent
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformSelectionButton
@@ -72,11 +74,11 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
 
         PlatformTabGroup(
             modifier = modifier.fillMaxWidth(),
-            scrollingEnabled = true,
             items = state.percentageOptions.map {
                 { modifier ->
                     PlatformSelectionButton(
-                        modifier = modifier,
+                        modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
+                            .fillMaxWidth(),
                         selected = false,
                     ) {
                         Text(
@@ -93,7 +95,8 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
             selectedItems = state.percentageOptions.map {
                 { modifier ->
                     PlatformSelectionButton(
-                        modifier = modifier,
+                        modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
+                            .fillMaxWidth(),
                         selected = true,
                     ) {
                         Text(
@@ -107,7 +110,7 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
                     }
                 }
             },
-            equalWeight = false,
+            equalWeight = true,
             currentSelection = state.percentageOptions.indexOfFirst {
                 it.percentage == state.percentage
             },
