@@ -12,13 +12,13 @@ import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.PlatformDialogScaffold
 import exchange.dydx.platformui.components.camera.PlatformQrScanner
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.integration.analytics.logging.ConsoleLogger
 import exchange.dydx.utilities.utils.Logging

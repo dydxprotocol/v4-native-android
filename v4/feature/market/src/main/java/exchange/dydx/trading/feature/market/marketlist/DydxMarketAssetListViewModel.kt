@@ -25,8 +25,8 @@ class DydxMarketAssetListViewModel @Inject constructor(
     val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    private val filterActionFlow: Flow<FilterAction?>,
-    private val sortActionFlow: Flow<SortAction?>,
+    private val filterActionFlow: Flow<FilterAction>,
+    private val sortActionFlow: Flow<SortAction>,
     private val router: DydxRouter,
     private val favoriteStore: DydxFavoriteStoreProtocol,
 ) : ViewModel(), DydxViewModel {
@@ -58,7 +58,8 @@ class DydxMarketAssetListViewModel @Inject constructor(
                     return@sortedWith 0
                 }
             }
-            val scrollTop = currentFilterAction != filterAction || currentSortAction != sortAction
+            val scrollTop = currentFilterAction != null && currentSortAction != null &&
+                (currentFilterAction != filterAction || currentSortAction != sortAction)
             currentFilterAction = filterAction
             currentSortAction = sortAction
             createViewState(sortedMarkets, assetMap, scrollTop)

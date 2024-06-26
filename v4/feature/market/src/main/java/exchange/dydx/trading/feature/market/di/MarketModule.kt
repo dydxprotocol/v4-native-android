@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketAccountTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarketStatsTabView
 import exchange.dydx.trading.feature.market.marketinfo.components.tiles.DydxMarketTilesView
@@ -22,24 +23,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 interface MarketListModule {
 
     @Binds fun bindFilterActionFlow(
-        mutableFlow: MutableStateFlow<FilterAction?>,
-    ): Flow<FilterAction?>
+        mutableFlow: MutableStateFlow<FilterAction>,
+    ): Flow<FilterAction>
 
     @Binds fun bindSortActionFlow(
-        mutableFlow: MutableStateFlow<SortAction?>,
-    ): Flow<SortAction?>
+        mutableFlow: MutableStateFlow<SortAction>,
+    ): Flow<SortAction>
 
     companion object {
         @Provides
         @ActivityRetainedScoped
-        fun provideMutableFilterActionFlow(): MutableStateFlow<FilterAction?> {
-            return MutableStateFlow(null)
+        fun provideMutableFilterActionFlow(localizer: LocalizerProtocol): MutableStateFlow<FilterAction> {
+            return MutableStateFlow(FilterAction.actions(localizer).first())
         }
 
         @Provides
         @ActivityRetainedScoped
-        fun provideMutableSortActionFlow(): MutableStateFlow<SortAction?> {
-            return MutableStateFlow(null)
+        fun provideMutableSortActionFlow(localizer: LocalizerProtocol): MutableStateFlow<SortAction> {
+            return MutableStateFlow(SortAction.actions(localizer).first())
         }
     }
 }

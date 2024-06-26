@@ -9,25 +9,24 @@ import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProt
 import exchange.dydx.trading.common.DydxViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class DydxMarketAssetFilterViewModel @Inject constructor(
     val localizer: LocalizerProtocol,
-    private val mutableFilterActionFlow: MutableStateFlow<FilterAction?>,
+    private val mutableFilterActionFlow: MutableStateFlow<FilterAction>,
 ) : ViewModel(), DydxViewModel {
 
     private val actions: List<FilterAction>
         get() = FilterAction.actions(localizer)
 
-    private val mutableState = MutableStateFlow(createViewState(0))
-
-    init {
-        mutableFilterActionFlow.value = actions.first()
-    }
-
-    val state: Flow<DydxMarketAssetFilterView.ViewState?> = mutableState
+    val state: Flow<DydxMarketAssetFilterView.ViewState?> = mutableFilterActionFlow
+        .map { filterAction ->
+            createViewState(actions.indexOf(filterAction))
+        }
+        .distinctUntilChanged()
 
     private fun createViewState(selectedIndex: Int): DydxMarketAssetFilterView.ViewState {
         return DydxMarketAssetFilterView.ViewState(
@@ -35,7 +34,6 @@ class DydxMarketAssetFilterViewModel @Inject constructor(
             contents = actions.map { it.content },
             onSelectionChanged = {
                 mutableFilterActionFlow.value = actions[it]
-                mutableState.value = createViewState(it)
             },
             selectedIndex = selectedIndex,
         )

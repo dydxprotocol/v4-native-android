@@ -1,4 +1,4 @@
-package exchange.dydx.trading.common.compose
+package exchange.dydx.platformui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -17,13 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.compose.PlatformRememberLazyListState
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.market.marketlist.components.DydxMarketAssetFilterView
 import exchange.dydx.trading.feature.market.marketlist.components.DydxMarketAssetItemView
 import exchange.dydx.trading.feature.market.marketlist.components.DydxMarketAssetSortView
@@ -71,7 +71,7 @@ object DydxMarketAssetListView : DydxComponent {
     fun Content(modifier: Modifier, state: ViewState?) {
         if (state == null) return
 
-        val listState = rememberLazyListState()
+        val listState = PlatformRememberLazyListState(key = "DydxMarketAssetListView")
         val scope = rememberCoroutineScope()
 
         Box(

@@ -24,6 +24,7 @@ import exchange.dydx.platformui.components.charts.presenter.LineChartView
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.platformui.components.charts.view.config
 import exchange.dydx.platformui.components.charts.view.update
+import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.negativeColor
@@ -31,7 +32,6 @@ import exchange.dydx.platformui.designSystem.theme.positiveColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.compose.collectAsStateWithLifecycle
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketViewState
 
 @Preview
