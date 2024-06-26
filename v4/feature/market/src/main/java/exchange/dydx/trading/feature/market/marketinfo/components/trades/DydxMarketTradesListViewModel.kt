@@ -52,7 +52,7 @@ class DydxMarketTradesListViewModel @Inject constructor(
         trades: List<MarketTrade>?,
         market: PerpetualMarket?,
     ): DydxMarketTradesListView.ViewState {
-        return trades?.let { it ->
+        return trades?.takeUnless { it.isEmpty() }?.let { trades ->
             val max = trades.maxOf { it.size }
             val buy = DydxMarketTradeItemView.SideState(
                 barColor = ThemeColor.SemanticColor.positiveColor.color.copy(alpha = 0.2f),
@@ -65,7 +65,7 @@ class DydxMarketTradesListViewModel @Inject constructor(
                 text = localizer.localize("APP.GENERAL.SELL"),
             )
             DydxMarketTradesListView.ViewState(
-                trades = it.map { trade ->
+                trades = trades.map { trade ->
                     val time = Instant.ofEpochMilli(trade.createdAtMilliseconds.toLong())
                     DydxMarketTradeItemView.ViewState(
                         id = trade.id!!,
