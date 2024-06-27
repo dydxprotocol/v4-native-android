@@ -73,8 +73,10 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 leverageOptions = listOf(
                     LeverageTextAndValue("1.0", "1.0"),
                     LeverageTextAndValue("2.0", "2.0"),
+                    LeverageTextAndValue("2.0", "2.0"),
                     LeverageTextAndValue("5.0", "5.0"),
                     LeverageTextAndValue("10.0", "10.0"),
+                    LeverageTextAndValue("max", "10.0"),
                 ),
             )
         }
