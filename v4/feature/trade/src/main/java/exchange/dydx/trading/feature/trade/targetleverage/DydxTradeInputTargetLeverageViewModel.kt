@@ -8,12 +8,14 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.maxLeverage
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,24 +50,26 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
 
     private var targetLeverage: MutableStateFlow<String?> = MutableStateFlow(null)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: Flow<DydxTradeInputTargetLeverageView.ViewState?> =
         combine(
             abacusStateManager.state.tradeInput,
+            abacusStateManager.state.tradeInput.mapNotNull { it?.marketId }.flatMapLatest { abacusStateManager.state.market(it) }.mapNotNull { it?.maxLeverage },
             targetLeverage,
             marketAssetId,
             abacusStateManager.state.assetMap.filterNotNull(),
-        ) { selectedSubaccountPosition, leverage, assetId, assetMap ->
-            createViewState(selectedSubaccountPosition, leverage, assetId, assetMap)
+        ) { selectedSubaccountPosition, maxLeverage, leverage, assetId, assetMap ->
+            createViewState(selectedSubaccountPosition, maxLeverage, leverage, assetId, assetMap)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         tradeInput: TradeInput?,
+        maxLeverage: Double,
         targetLeverage: String?,
         assetId: String,
         assetMap: Map<String, Asset>,
     ): DydxTradeInputTargetLeverageView.ViewState {
-        val maxLeverage = tradeInput?.options?.maxLeverage ?: 5.0
         val leverages = leverageOptions(maxLeverage)
         return DydxTradeInputTargetLeverageView.ViewState(
             localizer = localizer,
@@ -89,7 +93,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     }
 
     private fun leverageOptions(max: Double): List<LeverageTextAndValue> {
-        val steps = listOf(1.0, 2.0, 3.0, 5.0, 10.0)
+        val steps = listOf(1.0, 2.0, 5.0, 10.0)
         val leverages = mutableListOf<LeverageTextAndValue>()
         for (step in steps) {
             if (max > step) {
