@@ -1,7 +1,7 @@
 package exchange.dydx.trading.feature.trade.margin.components.percent
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -77,8 +77,7 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
             items = state.percentageOptions.map {
                 { modifier ->
                     PlatformSelectionButton(
-                        modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
-                            .fillMaxWidth(),
+                        modifier = modifier.size(width = 60.dp, height = 40.dp),
                         selected = false,
                     ) {
                         Text(
@@ -95,8 +94,7 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
             selectedItems = state.percentageOptions.map {
                 { modifier ->
                     PlatformSelectionButton(
-                        modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
-                            .fillMaxWidth(),
+                        modifier = modifier.size(width = 60.dp, height = 40.dp),
                         selected = true,
                     ) {
                         Text(
@@ -110,7 +108,7 @@ object DydxAdjustMarginInputPercentView : DydxComponent {
                     }
                 }
             },
-            equalWeight = true,
+            equalWeight = false,
             currentSelection = state.percentageOptions.indexOfFirst {
                 it.percentage == state.percentage
             },

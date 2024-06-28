@@ -36,7 +36,6 @@ object DydxReceiptPositionLeverageView : DydxComponent {
         val localizer: LocalizerProtocol,
         val before: LeverageView.ViewState? = null,
         val after: LeverageView.ViewState? = null,
-        val reverseDirection: Boolean = false,
     ) {
         companion object {
             val preview = ViewState(
@@ -105,11 +104,7 @@ object DydxReceiptPositionLeverageView : DydxComponent {
                 } else {
                     null
                 },
-                direction = if (state.reverseDirection) {
-                    PlatformDirection.from(state.before?.leverage, state.after?.leverage)
-                } else {
-                    PlatformDirection.from(state.after?.leverage, state.before?.leverage)
-                },
+                direction = PlatformDirection.from(state.after?.leverage, state.before?.leverage),
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
