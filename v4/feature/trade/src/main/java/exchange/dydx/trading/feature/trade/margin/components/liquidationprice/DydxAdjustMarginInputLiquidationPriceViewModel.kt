@@ -3,6 +3,8 @@ package exchange.dydx.trading.feature.trade.margin.components.liquidationprice
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
+import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Add
+import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Remove
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset
@@ -39,6 +41,18 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
         val configsAndAsset = abacusStateManager.marketId.value?.let {
             configsAndAssetMap?.get(it)
         }
+
+        val after = if (adjustMarginInput.amount != null) {
+            AmountText.ViewState(
+                localizer = localizer,
+                formatter = formatter,
+                amount = adjustMarginInput.summary?.liquidationPriceUpdated ?: 0.0,
+                tickSize = configsAndAsset?.configs?.tickSizeDecimals,
+            )
+        } else {
+            null
+        }
+
         return DydxAdjustMarginInputLiquidationPriceView.ViewState(
             localizer = localizer,
             before = AmountText.ViewState(
@@ -47,23 +61,14 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
                 amount = adjustMarginInput.summary?.liquidationPrice,
                 tickSize = configsAndAsset?.configs?.tickSizeDecimals,
             ),
-            after = adjustMarginInput.summary?.liquidationPriceUpdated?.let {
-                AmountText.ViewState(
-                    localizer = localizer,
-                    formatter = formatter,
-                    amount = it,
-                    tickSize = configsAndAsset?.configs?.tickSizeDecimals,
-                )
-            },
-            direction = adjustMarginInput.summary?.liquidationPrice?.let { liquidationPrice ->
-                adjustMarginInput.summary?.liquidationPriceUpdated?.let { liquidationPriceUpdated ->
-                    if (liquidationPrice < liquidationPriceUpdated) {
-                        GradientType.PLUS
-                    } else {
-                        GradientType.MINUS
-                    }
+            after = after,
+            direction = adjustMarginInput.run {
+                if (after == null) return@run GradientType.NONE
+                when (type) {
+                    Add -> GradientType.PLUS
+                    Remove -> GradientType.MINUS
                 }
-            } ?: GradientType.NONE,
+            },
         )
     }
 }

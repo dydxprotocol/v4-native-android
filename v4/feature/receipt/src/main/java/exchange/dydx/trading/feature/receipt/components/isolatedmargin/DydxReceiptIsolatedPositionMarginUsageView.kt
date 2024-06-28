@@ -37,7 +37,6 @@ object DydxReceiptIsolatedPositionMarginUsageView : DydxComponent {
         val formatter: DydxFormatter,
         val before: Double? = null,
         val after: Double? = null,
-        val reverseDirection: Boolean = false,
     ) {
         companion object {
             val preview = ViewState(
@@ -102,11 +101,7 @@ object DydxReceiptIsolatedPositionMarginUsageView : DydxComponent {
                         )
                     }
                 },
-                direction = if (state.reverseDirection) {
-                    PlatformDirection.from(state.before, state.after)
-                } else {
-                    PlatformDirection.from(state.after, state.before)
-                },
+                direction = PlatformDirection.from(state.before, state.after),
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_primary),
