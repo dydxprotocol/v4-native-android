@@ -3,16 +3,19 @@ package exchange.dydx.trading.feature.trade.margin
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
-import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
+import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Add
+import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Remove
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.maxLeverage
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -23,59 +26,60 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    private val router: DydxRouter,
     savedStateHandle: SavedStateHandle,
     private val parser: ParserProtocol,
 ) : ViewModel(), DydxViewModel {
 
-    private val marketId: String? = savedStateHandle["marketId"]
+    private val marketId: String = requireNotNull(savedStateHandle["marketId"]) { "Navigated to Adjust Margin Input without a valid marketId" }
 
     init {
-        if (marketId == null) {
-            router.navigateBack()
-        } else {
-            if (abacusStateManager.marketId.value != marketId) {
-                abacusStateManager.setMarket(marketId = marketId)
-                abacusStateManager.adjustIsolatedMargin(
-                    data = null,
-                    type = AdjustIsolatedMarginInputField.Amount,
-                )
-                abacusStateManager.adjustIsolatedMargin(
-                    data = null,
-                    type = AdjustIsolatedMarginInputField.AmountPercent,
-                )
-            }
+        if (abacusStateManager.marketId.value != marketId) {
+            abacusStateManager.setMarket(marketId = marketId)
+            abacusStateManager.adjustIsolatedMargin(
+                data = null,
+                type = AdjustIsolatedMarginInputField.Amount,
+            )
+            abacusStateManager.adjustIsolatedMargin(
+                data = null,
+                type = AdjustIsolatedMarginInputField.AmountPercent,
+            )
+        }
 
-            abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
-                it.id == marketId
-            }?.let {
-                abacusStateManager.adjustIsolatedMargin(
-                    data = parser.asString(it.childSubaccountNumber),
-                    type = AdjustIsolatedMarginInputField.ChildSubaccountNumber,
-                )
-            }
+        abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
+            it.id == marketId
+        }?.let {
+            abacusStateManager.adjustIsolatedMargin(
+                data = parser.asString(it.childSubaccountNumber),
+                type = AdjustIsolatedMarginInputField.ChildSubaccountNumber,
+            )
         }
     }
 
     val state: Flow<DydxAdjustMarginInputView.ViewState?> =
-        abacusStateManager.state.adjustMarginInput.filterNotNull()
-            .map { adjustMarginInput ->
-                createViewState(adjustMarginInput)
-            }
+        combine(
+            abacusStateManager.state.adjustMarginInput.filterNotNull(),
+            abacusStateManager.state.market(marketId),
+            abacusStateManager.state.selectedSubaccountPositions
+                .map { positions -> positions?.firstOrNull { it.id == marketId } }.filterNotNull(),
+        ) { adjustMarginInput, market, position ->
+            createViewState(adjustMarginInput, market.maxLeverage, position)
+        }
             .distinctUntilChanged()
 
     private fun createViewState(
         adjustMarginInput: AdjustIsolatedMarginInput,
+        marketMaxLeverage: Double,
+        position: SubaccountPosition,
     ): DydxAdjustMarginInputView.ViewState {
         return DydxAdjustMarginInputView.ViewState(
             localizer = localizer,
             formatter = formatter,
             amountText = formatter.raw(adjustMarginInput.amount?.toDoubleOrNull(), 2),
             direction = when (adjustMarginInput.type) {
-                IsolatedMarginAdjustmentType.Add -> DydxAdjustMarginInputView.MarginDirection.Add
-                IsolatedMarginAdjustmentType.Remove -> DydxAdjustMarginInputView.MarginDirection.Remove
+                Add -> DydxAdjustMarginInputView.MarginDirection.Add
+                Remove -> DydxAdjustMarginInputView.MarginDirection.Remove
             },
-            error = null,
+            error = validate(adjustMarginInput, marketMaxLeverage, position),
             amountEditAction = { amount ->
                 abacusStateManager.adjustIsolatedMargin(
                     data = amount,
@@ -83,5 +87,39 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                 )
             },
         )
+    }
+
+    private fun validate(
+        input: AdjustIsolatedMarginInput,
+        marketMaxLeverage: Double,
+        position: SubaccountPosition,
+    ): String? {
+        val amount = input.amount ?: return null
+        val summary = input.summary ?: return null
+        val freeCollateral = position.freeCollateral.current
+        val marginUsage = position.marginUsage.postOrder
+
+        when(input.type) {
+            Add -> {
+                if (amount.toDouble() >= summary.crossFreeCollateral!!) {
+                    return localizer.localize("APP.ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
+                }
+                if (summary.crossMarginUsage != null && summary.crossMarginUsage!! > 1.0) {
+                    return localizer.localize("APP.ERRORS.TRADE_BOX.INVALID_NEW_ACCOUNT_MARGIN_USAGE")
+                }
+            }
+            Remove -> {
+                if (summary.positionLeverageUpdated != null && summary.positionLeverageUpdated!! > marketMaxLeverage) {
+                    return localizer.localize("APP.ERRORS.TRADE_BOX.POSITION_LEVERAGE_OVER_MAX")
+                }
+                if (marginUsage != null && marginUsage > 1) {
+                    return localizer.localize("APP.ERRORS.TRADE_BOX.INVALID_NEW_ACCOUNT_MARGIN_USAGE")
+                }
+                if (freeCollateral != null && amount.toDouble() > freeCollateral) {
+                    return localizer.localize("APP.ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
+                }
+            }
+        }
+        return null
     }
 }

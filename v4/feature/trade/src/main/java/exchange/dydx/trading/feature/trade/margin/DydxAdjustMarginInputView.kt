@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.alerts.PlatformInlineAlert
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
@@ -221,10 +222,14 @@ object DydxAdjustMarginInputView : DydxComponent {
 
     @Composable
     private fun Error(
-        modifier: Modifier,
         error: String,
+        modifier: Modifier = Modifier,
     ) {
-        // TODO, implement this
+        PlatformInlineAlert(
+            text = error,
+            level = PlatformInlineAlert.Level.ERROR,
+            modifier = modifier,
+        )
     }
 
     @Composable
