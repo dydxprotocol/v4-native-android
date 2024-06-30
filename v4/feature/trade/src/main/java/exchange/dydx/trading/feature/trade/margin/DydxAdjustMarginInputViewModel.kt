@@ -99,7 +99,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
         val freeCollateral = position.freeCollateral.current
         val marginUsage = position.marginUsage.postOrder
 
-        when(input.type) {
+        when (input.type) {
             Add -> {
                 if (amount.toDouble() >= summary.crossFreeCollateral!!) {
                     return localizer.localize("APP.ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")

@@ -6,18 +6,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
-import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 
 @Preview
 @Composable
 fun Preview_DydxAdjustMarginCtaButton() {
     DydxThemedPreviewSurface {
-        DydxAdjustMarginCtaButton.Content(Modifier, DydxAdjustMarginCtaButton.ViewState.preview)
+        DydxAdjustMarginCtaButton.Content(DydxAdjustMarginCtaButton.ViewState.preview, disable = false)
     }
 }
 
-object DydxAdjustMarginCtaButton : DydxComponent {
+object DydxAdjustMarginCtaButton {
     data class ViewState(
         val ctaButton: InputCtaButton.ViewState? = null,
     ) {
@@ -29,22 +28,37 @@ object DydxAdjustMarginCtaButton : DydxComponent {
     }
 
     @Composable
-    override fun Content(modifier: Modifier) {
-        val viewModel: DydxAdjustMarginCtaButtonModel = hiltViewModel()
+    fun Content(
+        disable: Boolean,
+        modifier: Modifier
+    ) {
+        val viewModel: DydxAdjustMarginCtaButtonViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        Content(modifier, state)
+        Content(state, disable, modifier)
     }
 
     @Composable
-    fun Content(modifier: Modifier, state: ViewState?) {
+    fun Content(
+        state: ViewState?,
+        disable: Boolean,
+        modifier: Modifier = Modifier
+    ) {
         if (state == null) {
             return
         }
 
         InputCtaButton.Content(
             modifier = modifier,
-            state = state.ctaButton,
+            state = if (disable) {
+                state.ctaButton?.copy(
+                    ctaButtonState = InputCtaButton.State.Disabled(
+                        message = state.ctaButton.ctaButtonState.message,
+                    ),
+                )
+            } else {
+                state.ctaButton
+            },
         )
     }
 }

@@ -46,7 +46,7 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
             AmountText.ViewState(
                 localizer = localizer,
                 formatter = formatter,
-                amount = adjustMarginInput.summary?.liquidationPriceUpdated ?: 0.0,
+                amount = adjustMarginInput.summary?.liquidationPriceUpdated,
                 tickSize = configsAndAsset?.configs?.tickSizeDecimals,
             )
         } else {

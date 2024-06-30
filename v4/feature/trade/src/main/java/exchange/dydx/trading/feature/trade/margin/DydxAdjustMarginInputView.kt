@@ -256,7 +256,8 @@ object DydxAdjustMarginInputView : DydxComponent {
             )
 
             DydxAdjustMarginCtaButton.Content(
-                Modifier
+                disable = state.error != null,
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = ThemeShapes.VerticalPadding * 2),
             )
