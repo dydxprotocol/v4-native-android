@@ -20,7 +20,6 @@ fun PlatformAutoSizingText(
     var scaledTextStyle by remember { mutableStateOf(textStyle) }
     var readyToDraw by remember { mutableStateOf(false) }
 
-
     Text(
         text,
         modifier.drawWithContent {
@@ -34,10 +33,10 @@ fun PlatformAutoSizingText(
         onTextLayout = { textLayoutResult ->
             if (textLayoutResult.hasVisualOverflow) {
                 scaledTextStyle =
-                    scaledTextStyle.copy(fontSize = scaledTextStyle.fontSize * 0.9)
+                    scaledTextStyle.copy(fontSize = scaledTextStyle.fontSize * 0.95)
             } else {
                 readyToDraw = true
             }
-        }
+        },
     )
 }
