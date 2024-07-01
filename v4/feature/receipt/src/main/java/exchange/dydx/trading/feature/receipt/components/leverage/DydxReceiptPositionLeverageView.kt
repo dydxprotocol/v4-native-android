@@ -22,6 +22,7 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.views.LeverageView
+import kotlin.math.absoluteValue
 
 @Preview
 @Composable
@@ -104,7 +105,7 @@ object DydxReceiptPositionLeverageView : DydxComponent {
                 } else {
                     null
                 },
-                direction = PlatformDirection.from(state.after?.leverage, state.before?.leverage),
+                direction = PlatformDirection.from(state.after?.leverage?.absoluteValue, state.before?.leverage?.absoluteValue),
                 textStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

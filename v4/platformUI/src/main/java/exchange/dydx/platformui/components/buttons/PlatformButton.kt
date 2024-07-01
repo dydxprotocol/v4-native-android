@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import exchange.dydx.platformui.components.textgroups.PlatformAutoSizingText
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.color
@@ -104,11 +105,10 @@ fun PlatformButton(
                 leadingContent()
             }
             if (text != null) {
-                Text(
-                    style = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
+                PlatformAutoSizingText(
+                    textStyle = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
                         .themeColor(foreground = textColor),
                     text = text,
-                    maxLines = 1,
                 )
             }
             if (trailingContent != null) {
