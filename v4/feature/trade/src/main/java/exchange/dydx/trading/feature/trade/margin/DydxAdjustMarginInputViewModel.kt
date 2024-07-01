@@ -108,7 +108,7 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
 
         when (input.type) {
             Add -> {
-                if (amount.toDouble() >= summary.crossFreeCollateral!!) {
+                if (summary.crossFreeCollateral != null && amount.toDouble() >= summary.crossFreeCollateral!!) {
                     return localizer.localize("APP.ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
                 }
                 if (summary.crossMarginUsage != null && summary.crossMarginUsage!! > 1.0) {
