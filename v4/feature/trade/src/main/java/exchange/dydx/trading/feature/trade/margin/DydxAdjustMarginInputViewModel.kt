@@ -14,9 +14,11 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.maxLeverage
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -28,37 +30,42 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     savedStateHandle: SavedStateHandle,
     private val parser: ParserProtocol,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
-    private val marketId: String = requireNotNull(savedStateHandle["marketId"]) { "Navigated to Adjust Margin Input without a valid marketId" }
+    private val marketId: String? = savedStateHandle["marketId"]
 
     init {
-        if (abacusStateManager.marketId.value != marketId) {
-            abacusStateManager.setMarket(marketId = marketId)
-            abacusStateManager.adjustIsolatedMargin(
-                data = null,
-                type = AdjustIsolatedMarginInputField.Amount,
-            )
-            abacusStateManager.adjustIsolatedMargin(
-                data = null,
-                type = AdjustIsolatedMarginInputField.AmountPercent,
-            )
-        }
+        if (marketId == null) {
+            router.navigateBack()
+        } else {
+            if (abacusStateManager.marketId.value != marketId) {
+                abacusStateManager.setMarket(marketId = marketId)
+                abacusStateManager.adjustIsolatedMargin(
+                    data = null,
+                    type = AdjustIsolatedMarginInputField.Amount,
+                )
+                abacusStateManager.adjustIsolatedMargin(
+                    data = null,
+                    type = AdjustIsolatedMarginInputField.AmountPercent,
+                )
+            }
 
-        abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
-            it.id == marketId
-        }?.let {
-            abacusStateManager.adjustIsolatedMargin(
-                data = parser.asString(it.childSubaccountNumber),
-                type = AdjustIsolatedMarginInputField.ChildSubaccountNumber,
-            )
+            abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
+                it.id == marketId
+            }?.let {
+                abacusStateManager.adjustIsolatedMargin(
+                    data = parser.asString(it.childSubaccountNumber),
+                    type = AdjustIsolatedMarginInputField.ChildSubaccountNumber,
+                )
+            }
         }
     }
 
     val state: Flow<DydxAdjustMarginInputView.ViewState?> =
         combine(
             abacusStateManager.state.adjustMarginInput.filterNotNull(),
-            abacusStateManager.state.market(marketId),
+            marketId?.let { abacusStateManager.state.market(marketId) } ?: emptyFlow(),
             abacusStateManager.state.selectedSubaccountPositions
                 .map { positions -> positions?.firstOrNull { it.id == marketId } }.filterNotNull(),
         ) { adjustMarginInput, market, position ->
