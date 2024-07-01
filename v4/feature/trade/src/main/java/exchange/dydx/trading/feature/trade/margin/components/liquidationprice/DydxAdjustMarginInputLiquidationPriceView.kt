@@ -117,24 +117,28 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 if (state.before != null) {
+                    val beforeTextStyle = if (state.after == null) {
+                        TextStyle.dydxDefault
+                            .themeFont(
+                                fontSize = ThemeFont.FontSize.medium,
+                            )
+                            .themeColor(ThemeColor.SemanticColor.text_primary)
+                    } else {
+                        TextStyle.dydxDefault
+                            .themeFont(
+                                fontSize = ThemeFont.FontSize.small,
+                            )
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    }
+
                     state.before.amount?.let {
                         AmountText.Content(
-                            state = state.after,
-                            textStyle = TextStyle.dydxDefault
-                                .themeFont(
-                                    fontSize = ThemeFont.FontSize.medium,
-                                    fontType = ThemeFont.FontType.number,
-                                )
-                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                            state = state.before,
+                            textStyle = beforeTextStyle,
                         )
                     } ?: Text(
                         text = state.localizer.localize("APP.GENERAL.NONE"),
-                        style = TextStyle.dydxDefault
-                            .themeFont(
-                                fontSize = ThemeFont.FontSize.medium,
-                                fontType = ThemeFont.FontType.number,
-                            )
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                        style = beforeTextStyle,
                     )
                 }
 
@@ -154,7 +158,6 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
                                 textStyle = TextStyle.dydxDefault
                                     .themeFont(
                                         fontSize = ThemeFont.FontSize.medium,
-                                        fontType = ThemeFont.FontType.number,
                                     )
                                     .themeColor(ThemeColor.SemanticColor.text_primary),
                             )
@@ -163,7 +166,6 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
                             style = TextStyle.dydxDefault
                                 .themeFont(
                                     fontSize = ThemeFont.FontSize.medium,
-                                    fontType = ThemeFont.FontType.number,
                                 )
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
