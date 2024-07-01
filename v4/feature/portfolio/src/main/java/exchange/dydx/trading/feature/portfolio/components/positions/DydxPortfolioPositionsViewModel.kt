@@ -8,8 +8,6 @@ import exchange.dydx.abacus.output.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
@@ -24,7 +22,6 @@ import javax.inject.Inject
 class DydxPortfolioPositionsViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private var featureFlags: DydxFeatureFlags,
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
@@ -39,7 +36,6 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                 position = positions,
                 marketMap = marketMap,
                 assetMap = assetMap,
-                isIsolatedMarketEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.enable_isolated_market),
                 onboarded = onboarded,
             )
         }
@@ -49,7 +45,6 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
         position: List<SubaccountPosition>?,
         marketMap: Map<String, PerpetualMarket>?,
         assetMap: Map<String, Asset>?,
-        isIsolatedMarketEnabled: Boolean,
         onboarded: Boolean,
     ): DydxPortfolioPositionsView.ViewState {
         return DydxPortfolioPositionsView.ViewState(
@@ -70,7 +65,6 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                     },
                 )
             } ?: listOf(),
-            isIsolatedMarketEnabled = isIsolatedMarketEnabled,
             onPositionTapAction = { position ->
                 val market = marketMap?.get(position.id) ?: return@ViewState
                 router.navigateTo(
