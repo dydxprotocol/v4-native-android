@@ -52,6 +52,7 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
         val after: AmountText.ViewState? = null,
         val direction: GradientType = GradientType.NONE,
     ) {
+
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
@@ -116,11 +117,28 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 if (state.before != null) {
-                    AmountText.Content(
-                        state = state.before,
-                        textStyle = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number)
-                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    val beforeTextStyle = if (state.after == null) {
+                        TextStyle.dydxDefault
+                            .themeFont(
+                                fontSize = ThemeFont.FontSize.medium,
+                            )
+                            .themeColor(ThemeColor.SemanticColor.text_primary)
+                    } else {
+                        TextStyle.dydxDefault
+                            .themeFont(
+                                fontSize = ThemeFont.FontSize.small,
+                            )
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    }
+
+                    state.before.amount?.let {
+                        AmountText.Content(
+                            state = state.before,
+                            textStyle = beforeTextStyle,
+                        )
+                    } ?: Text(
+                        text = state.localizer.localize("APP.GENERAL.NONE"),
+                        style = beforeTextStyle,
                     )
                 }
 
@@ -134,12 +152,20 @@ object DydxAdjustMarginInputLiquidationPriceView : DydxComponent {
                             direction = PlatformDirection.None,
                             modifier = Modifier.size(12.dp),
                         )
-                        AmountText.Content(
-                            state = state.after,
-                            textStyle = TextStyle.dydxDefault
+                        state.after.amount?.let {
+                            AmountText.Content(
+                                state = state.after,
+                                textStyle = TextStyle.dydxDefault
+                                    .themeFont(
+                                        fontSize = ThemeFont.FontSize.medium,
+                                    )
+                                    .themeColor(ThemeColor.SemanticColor.text_primary),
+                            )
+                        } ?: Text(
+                            text = state.localizer.localize("APP.GENERAL.NONE"),
+                            style = TextStyle.dydxDefault
                                 .themeFont(
                                     fontSize = ThemeFont.FontSize.medium,
-                                    fontType = ThemeFont.FontType.number,
                                 )
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )

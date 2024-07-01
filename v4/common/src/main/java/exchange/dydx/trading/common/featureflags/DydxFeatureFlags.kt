@@ -6,7 +6,6 @@ import javax.inject.Inject
 enum class DydxFeatureFlag {
     deployment_url,
     force_mainnet,
-    enable_isolated_market,
 }
 
 class DydxFeatureFlags @Inject constructor(

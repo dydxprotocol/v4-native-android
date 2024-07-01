@@ -42,11 +42,12 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
             configsAndAssetMap?.get(it)
         }
 
-        val after = if (adjustMarginInput.amount != null) {
+        val hasAmount = adjustMarginInput.amount.let { it != null && it.toDouble() != 0.0 }
+        val after = if (hasAmount) {
             AmountText.ViewState(
                 localizer = localizer,
                 formatter = formatter,
-                amount = adjustMarginInput.summary?.liquidationPriceUpdated ?: 0.0,
+                amount = adjustMarginInput.summary?.liquidationPriceUpdated,
                 tickSize = configsAndAsset?.configs?.tickSizeDecimals,
             )
         } else {
@@ -63,7 +64,7 @@ class DydxAdjustMarginInputLiquidationPriceViewModel @Inject constructor(
             ),
             after = after,
             direction = adjustMarginInput.run {
-                if (after == null) return@run GradientType.NONE
+                if (hasAmount) return@run GradientType.NONE
                 when (type) {
                     Add -> GradientType.PLUS
                     Remove -> GradientType.MINUS

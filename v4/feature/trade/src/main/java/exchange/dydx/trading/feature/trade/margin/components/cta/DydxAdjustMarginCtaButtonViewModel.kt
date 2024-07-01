@@ -3,9 +3,7 @@ package exchange.dydx.trading.feature.trade.margin.components.cta
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
-import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
-import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
@@ -21,7 +19,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import javax.inject.Inject
 
 @HiltViewModel
-class DydxAdjustMarginCtaButtonModel @Inject constructor(
+class DydxAdjustMarginCtaButtonViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val platformInfo: PlatformInfo,
@@ -32,21 +30,16 @@ class DydxAdjustMarginCtaButtonModel @Inject constructor(
     val state: Flow<DydxAdjustMarginCtaButton.ViewState?> =
         combine(
             abacusStateManager.state.adjustMarginInput.filterNotNull(),
-            abacusStateManager.state.validationErrors,
             isSubmittingFlow,
-        ) { adjustMarginInput, validationErrors, isSubmitting ->
-            createViewState(adjustMarginInput, validationErrors, isSubmitting)
+        ) { adjustMarginInput, isSubmitting ->
+            createViewState(adjustMarginInput, isSubmitting)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         adjustMarginInput: AdjustIsolatedMarginInput,
-        validationErrors: List<ValidationError>,
         isSubmitting: Boolean,
     ): DydxAdjustMarginCtaButton.ViewState {
-        val firstBlockingError =
-            validationErrors.firstOrNull { it.type == ErrorType.required || it.type == ErrorType.error }
-
         return DydxAdjustMarginCtaButton.ViewState(
             ctaButton = InputCtaButton.ViewState(
                 localizer = localizer,

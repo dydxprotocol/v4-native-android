@@ -19,10 +19,13 @@ fun Preview_InputCtaButton() {
 }
 
 object InputCtaButton {
-    sealed class State {
-        data class Enabled(val message: String? = null) : State()
-        data class Disabled(val message: String? = null) : State()
-        object Thinking : State()
+    sealed interface State {
+        val message: String?
+        data class Enabled(override val message: String? = null) : State
+        data class Disabled(override val message: String? = null) : State
+        data object Thinking : State {
+            override val message: String? = null
+        }
     }
 
     data class ViewState(
