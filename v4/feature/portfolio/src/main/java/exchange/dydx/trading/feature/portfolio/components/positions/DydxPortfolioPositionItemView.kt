@@ -49,7 +49,6 @@ fun Preview_DydxPortfolioPositionItemView() {
             Modifier,
             MockLocalizer(),
             SharedMarketPositionViewState.preview,
-            false,
         )
     }
 }
@@ -60,7 +59,6 @@ object DydxPortfolioPositionItemView {
         modifier: Modifier,
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
-        isIsolatedMarketEnabled: Boolean,
         onTapAction: (SharedMarketPositionViewState) -> Unit = {},
     ) {
         val shape = RoundedCornerShape(10.dp)
@@ -72,7 +70,7 @@ object DydxPortfolioPositionItemView {
                     vertical = ThemeShapes.VerticalPadding,
                 )
                 .fillMaxWidth()
-                .height((if (isIsolatedMarketEnabled) 148.dp else 48.dp) + ThemeShapes.VerticalPadding * 2)
+                .height(148.dp + ThemeShapes.VerticalPadding * 2)
                 .background(
                     brush = position.gradientType.brush(ThemeColor.SemanticColor.layer_3),
                     shape = shape,
@@ -87,75 +85,53 @@ object DydxPortfolioPositionItemView {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (isIsolatedMarketEnabled) {
-                Column(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        ComposeAssetPosition(
-                            position,
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        ComposePricing(
-                            localizer,
-                            position,
-                            true,
-                        )
-                        Spacer(modifier = Modifier.weight(1.0f))
-
-                        ComposePNL(
-                            modifier = Modifier,
-                            localizer,
-                            position,
-                            true,
-                        )
-                        Spacer(modifier = Modifier.weight(1.0f))
-
-                        ComposeMargin(
-                            modifier = Modifier,
-                            localizer,
-                            position,
-                            true,
-                        )
-
-                        ComposeIsolatedMarketEditButton(
-                            position,
-                        )
-                    }
+                    ComposeAssetPosition(
+                        position,
+                    )
                 }
-            } else {
-                ComposeAssetPosition(
-                    position,
-                )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    ComposePricing(
+                        localizer,
+                        position,
+                    )
+                    Spacer(modifier = Modifier.weight(1.0f))
 
-                ComposePricing(
-                    localizer,
-                    position,
-                )
+                    ComposePNL(
+                        modifier = Modifier,
+                        localizer,
+                        position,
+                    )
+                    Spacer(modifier = Modifier.weight(1.0f))
 
-                ComposePNL(
-                    modifier = Modifier,
-                    localizer,
-                    position,
-                )
+                    ComposeMargin(
+                        modifier = Modifier,
+                        localizer,
+                        position,
+                    )
+
+                    ComposeIsolatedMarketEditButton(
+                        position,
+                    )
+                }
             }
         }
     }
@@ -230,20 +206,17 @@ object DydxPortfolioPositionItemView {
     private fun ComposePricing(
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
-        forIsolatedMarket: Boolean = false,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
+            horizontalAlignment = Alignment.Start,
         ) {
-            if (forIsolatedMarket) {
-                Text(
-                    text = localizer.localize("APP.GENERAL.INDEX_ENTRY"),
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.small)
-                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                )
-            }
+            Text(
+                text = localizer.localize("APP.GENERAL.INDEX_ENTRY"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
             Text(
                 text = position.oraclePrice ?: "",
                 style = TextStyle.dydxDefault
@@ -265,21 +238,18 @@ object DydxPortfolioPositionItemView {
         modifier: Modifier,
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
-        forIsolatedMarket: Boolean = false,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
+            horizontalAlignment = Alignment.Start,
             modifier = modifier.width(80.dp),
         ) {
-            if (forIsolatedMarket) {
-                Text(
-                    text = localizer.localize("APP.GENERAL.PROFIT_AND_LOSS"),
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.small)
-                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                )
-            }
+            Text(
+                text = localizer.localize("APP.GENERAL.PROFIT_AND_LOSS"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
 
             SignedAmountView.Content(
                 modifier = Modifier,
@@ -302,11 +272,10 @@ object DydxPortfolioPositionItemView {
         modifier: Modifier,
         localizer: LocalizerProtocol,
         position: SharedMarketPositionViewState,
-        forIsolatedMarket: Boolean = false,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = if (forIsolatedMarket) Alignment.Start else Alignment.End,
+            horizontalAlignment = Alignment.Start,
             modifier = modifier.width(80.dp),
         ) {
             Text(

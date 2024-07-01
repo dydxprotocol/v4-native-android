@@ -108,7 +108,6 @@ object DydxTradeInputView : DydxComponent {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val isIsolatedMarketEnabled: Boolean = false,
         val inputFields: List<InputField> = listOf(),
         val orderbookToggleState: OrderbookToggleState = OrderbookToggleState.Open,
         val requestedBottomSheetState: BottomSheetState? = null,
@@ -177,13 +176,7 @@ object DydxTradeInputView : DydxComponent {
                     DydxTradeSheetTipView.Content(Modifier)
                 }
 
-                if (state.isIsolatedMarketEnabled) {
-                    IsolatedMarginButtons(Modifier, state)
-                } else {
-                    DydxTradeInputOrderTypeView.Content(
-                        Modifier,
-                    )
-                }
+                IsolatedMarginButtons(Modifier, state)
 
                 PlatformDivider()
 
@@ -204,13 +197,9 @@ object DydxTradeInputView : DydxComponent {
                             DydxOrderbookGroupView.Content(Modifier.padding(start = 12.dp))
                         }
                     }
-                    if (state.isIsolatedMarketEnabled) {
-                        DydxTradeInputOrderTypeView.Content(
-                            Modifier.weight(1f),
-                        )
-                    } else {
-                        DydxTradeInputSideView.Content(Modifier.weight(1f))
-                    }
+                    DydxTradeInputOrderTypeView.Content(
+                        Modifier.weight(1f),
+                    )
                 }
 
                 Row(
