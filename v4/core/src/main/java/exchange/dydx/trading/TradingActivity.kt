@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.container.PlatformInfoContainer
 import exchange.dydx.platformui.designSystem.theme.ThemeConfig
@@ -52,8 +53,9 @@ class TradingActivity : FragmentActivity() {
     // This is the main ViewModel that the Activity will use to communicate with Compose-scoped code.
     private val viewModel: CoreViewModel by viewModels()
 
-    @Inject
-    lateinit var preferencesStore: SharedPreferencesStore
+    @Inject lateinit var preferencesStore: SharedPreferencesStore
+
+    @Inject lateinit var abacusStateManager: AbacusStateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,6 +93,16 @@ class TradingActivity : FragmentActivity() {
         // Start the workers: Note the CarteraSetupWorker must start here because
         // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        abacusStateManager.setReadyToConnect(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        abacusStateManager.setReadyToConnect(true)
     }
 
     private fun setContentWithJS(
