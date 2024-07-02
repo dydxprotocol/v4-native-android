@@ -44,20 +44,20 @@ data class SharedAccountViewState(
             return SharedAccountViewState(
                 freeCollateral = formatter.dollar(
                     number = subaccount.freeCollateral?.current,
-                    size = null,
+                    digits = 2,
                 ),
                 buyingPower = formatter.dollar(
                     number = subaccount.buyingPower?.current?.filter(
                         NumericFilter.NotNegative,
                     ),
-                    size = null,
+                    digits = 2,
                 ),
                 marginUsage = formatter.percent(
                     number = subaccount.marginUsage?.current,
                     digits = 2,
                 ),
                 leverage = formatter.leverage(number = subaccount.leverage?.current),
-                equity = formatter.dollar(number = subaccount.equity?.current, size = null),
+                equity = formatter.dollar(number = subaccount.equity?.current, digits = 2),
                 openInterest = formatter.dollarVolume(
                     number = subaccount.notionalTotal?.current,
                     digits = 2,
