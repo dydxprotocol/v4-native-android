@@ -100,6 +100,7 @@ object DydxPortfolioPositionItemView {
                     ComposeAssetPosition(
                         position,
                     )
+                    Spacer(modifier = Modifier.weight(1f))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -169,11 +170,9 @@ object DydxPortfolioPositionItemView {
                             fontType = ThemeFont.FontType.plus,
                         ),
                 )
-            }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+                Spacer(modifier = Modifier.weight(1f))
+
                 SideTextView.Content(
                     modifier = Modifier,
                     state = position.side?.copy(
@@ -199,6 +198,13 @@ object DydxPortfolioPositionItemView {
                         .themeColor(ThemeColor.SemanticColor.text_primary),
                 )
             }
+
+            Text(
+                text = position.notionalTotal ?: "-",
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.small)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
         }
     }
 
@@ -212,20 +218,20 @@ object DydxPortfolioPositionItemView {
             horizontalAlignment = Alignment.Start,
         ) {
             Text(
-                text = localizer.localize("APP.GENERAL.INDEX_ENTRY"),
+                text = localizer.localize("APP.GENERAL.LIQ_ORACLE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
             Text(
-                text = position.oraclePrice ?: "",
+                text = position.liquidationPrice ?: localizer.localize("APP.GENERAL.NONE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_primary),
             )
 
             Text(
-                text = position.entryPrice ?: "",
+                text = position.oraclePrice ?: "",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.mini)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
@@ -286,11 +292,7 @@ object DydxPortfolioPositionItemView {
             )
 
             Text(
-                /*
-                TODO: Still need to verify what the margin means here
-                text = position.margin ?: "",
-                 */
-                text = position.margin ?: "",
+                text = position.margin ?: "-",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_primary),

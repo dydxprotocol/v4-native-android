@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 private val settingsFile = "settings_theme.json"
-private val defaultTheme = "dark"
+private val defaultTheme = "classic_dark"
 
 @HiltViewModel
 class DydxThemeViewModel @Inject constructor(

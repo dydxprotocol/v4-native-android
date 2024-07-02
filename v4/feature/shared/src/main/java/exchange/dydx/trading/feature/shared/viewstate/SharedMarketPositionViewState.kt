@@ -27,6 +27,7 @@ data class SharedMarketPositionViewState(
     val liquidationPrice: String? = null,
     val side: SideTextView.ViewState? = null,
     val size: String? = null,
+    val notionalTotal: String? = null,
     val margin: String? = null,
     val token: TokenTextView.ViewState? = null,
     val logoUrl: String? = null,
@@ -68,6 +69,7 @@ data class SharedMarketPositionViewState(
         ): SharedMarketPositionViewState? {
             val configs = market.configs ?: return null
             val positionSize = position.size.current ?: 0.0
+            val notionalTotal = position.notionalTotal.current ?: 0.0
             if (positionSize == 0.0) return null
 
             val unrealizedPnlPercent = position.unrealizedPnlPercent.current ?: 0.0
@@ -109,6 +111,7 @@ data class SharedMarketPositionViewState(
                     positionSize.absoluteValue,
                     configs.displayStepSizeDecimals ?: 1,
                 ),
+                notionalTotal = formatter.dollar(notionalTotal, 2),
                 token = TokenTextView.ViewState(
                     symbol = asset?.id ?: market.assetId,
                 ),
