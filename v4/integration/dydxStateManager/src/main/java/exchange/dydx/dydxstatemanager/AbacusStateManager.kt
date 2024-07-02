@@ -484,6 +484,12 @@ class AbacusStateManager @Inject constructor(
         documentationPublisher.value = asyncStateManager.documentation
     }
 
+    fun setReadyToConnect(readyToConnect: Boolean) {
+        if (readyToConnect != asyncStateManager.readyToConnect) {
+            asyncStateManager.readyToConnect = readyToConnect
+        }
+    }
+
     // MARK: Private
 
     private fun initializeCurrentEnvironment() {
