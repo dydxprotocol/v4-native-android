@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.leverage
 
 import androidx.lifecycle.ViewModel
+import com.hoc081098.flowext.flatMapFirst
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.TradeInput
@@ -14,9 +15,8 @@ import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 private val TAG = "DydxTradeInputLeverageViewModel"
@@ -32,7 +32,11 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
     val state: Flow<DydxTradeInputLeverageView.ViewState?> =
         combine(
             abacusStateManager.state.tradeInput,
-            abacusStateManager.state.tradeInput.mapNotNull { it?.marketId }.flatMapLatest { abacusStateManager.state.market(it) }.map { it.maxLeverage },
+            abacusStateManager.state.tradeInput
+                .map { it?.marketId }
+                .filterNotNull()
+                .flatMapFirst { abacusStateManager.state.market(it) }
+                .map { it.maxLeverage },
             abacusStateManager.state.selectedSubaccountPositions,
         ) { tradeInput, maxLeverage, positions ->
             val marketId = tradeInput?.marketId ?: return@combine null
