@@ -4,12 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import exchange.dydx.platformui.components.textgroups.PlatformAutoSizingText
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
@@ -54,9 +54,9 @@ object TokenTextView {
                 .padding(horizontal = 4.dp)
                 .padding(vertical = 2.dp),
         ) {
-            Text(
+            PlatformAutoSizingText(
                 text = state.symbol,
-                style = textStyle,
+                textStyle = textStyle,
             )
         }
     }
