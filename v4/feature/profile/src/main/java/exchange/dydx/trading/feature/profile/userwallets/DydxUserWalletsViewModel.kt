@@ -42,7 +42,7 @@ class DydxUserWalletsViewModel @Inject constructor(
                 DydxUserWalletItemView.ViewState(
                     localizer = localizer,
                     iconUrl = if (folder != null) it.imageUrl(folder) else null,
-                    address = it.ethereumAddress,
+                    address = it.ethereumAddress ?: it.cosmoAddress,
                     isSelected = it.ethereumAddress == currentWallet?.ethereumAddress,
                     explorerLinkAction = {
                         val url = "https://etherscan.io/address/${it.ethereumAddress}"
