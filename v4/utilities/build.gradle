@@ -53,4 +53,6 @@ dependencies {
     // Compose
     api "androidx.compose.runtime:runtime:$composeVersion"
     implementation "androidx.compose.ui:ui-text:$composeVersion"
+
+    implementation("io.github.hoc081098:FlowExt:$flowExtVersion")
 }

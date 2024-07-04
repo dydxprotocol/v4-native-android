@@ -216,7 +216,7 @@ class AbacusStateManager @Inject constructor(
         documentation = documentationPublisher,
         abacusStateManager = asyncStateManager,
         parser = parser,
-        stateManagerScope = appScope,
+        appScope = appScope,
     )
 
     override val deploymentUri: String
