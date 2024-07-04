@@ -2,13 +2,12 @@ package exchange.dydx.trading.feature.transfer.status
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.TransferStatus
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
+import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.nativeTokenName
 import exchange.dydx.dydxstatemanager.usdcTokenName
@@ -20,78 +19,75 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.map
 import java.util.Timer
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
 
 @HiltViewModel
 class DydxTransferStatusViewModel @Inject constructor(
-    private val localizer: LocalizerProtocol,
-    private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
-    private val router: DydxRouter,
-    private val parser: ParserProtocol,
     savedStateHandle: SavedStateHandle,
     val toaster: PlatformInfo,
+    private val localizer: LocalizerProtocol,
+    private val abacusStateManager: AbacusStateManagerProtocol,
+    private val transferStateManager: DydxTransferStateManagerProtocol,
+    private val formatter: DydxFormatter,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
-    private val transactionHash: String?
+    private val transactionHash: String? = savedStateHandle["hash"]
+    private val transfer: DydxTransferInstance?
     private var timer: Timer? = null
 
     private val mintscanUrl = abacusStateManager.environment?.links?.mintscan
 
     init {
-        transactionHash = savedStateHandle["hash"]
-
         if (transactionHash == null) {
             router.navigateBack()
+            transfer = null
         } else {
-            abacusStateManager.state.transferState.take(1)
-                .onEach { transferState ->
-                    val transfer =
-                        transferState?.transfers?.firstOrNull { it.transactionHash == transactionHash }
-                    if (transfer != null) {
-                        fetchTransferStatuses(transfer)
-                    }
-                }
-                .launchIn(viewModelScope)
+            val transferState = transferStateManager.state.value
+            transfer = transferState?.transfers?.firstOrNull { it.transactionHash == transactionHash }
+            if (transfer != null) {
+                fetchTransferStatuses(transfer)
+            } else {
+                router.navigateBack()
+            }
         }
     }
 
     val state: Flow<DydxTransferStatusView.ViewState?> =
-        combine(
-            abacusStateManager.state.transferState.take(1),
-            abacusStateManager.state.transferStatuses,
-        ) { transferState, statuses ->
-            val transfer = transferState?.transfers?.firstOrNull { it.transactionHash == transactionHash }
-            when (transfer?.transferType) {
-                DydxTransferInstance.TransferType.DEPOSIT -> createDepositViewState(
-                    transfer,
-                    statuses,
-                )
+        abacusStateManager.state.transferStatuses
+            .map { statuses ->
+                when (transfer?.transferType) {
+                    DydxTransferInstance.TransferType.DEPOSIT -> createDepositViewState(
+                        transfer,
+                        statuses,
+                    )
 
-                DydxTransferInstance.TransferType.WITHDRAWAL -> createWithdrawalViewState(
-                    transfer,
-                    statuses,
-                )
+                    DydxTransferInstance.TransferType.WITHDRAWAL -> createWithdrawalViewState(
+                        transfer,
+                        statuses,
+                    )
 
-                DydxTransferInstance.TransferType.TRANSFER_OUT -> createTransferOutViewState(
-                    transfer,
-                )
+                    DydxTransferInstance.TransferType.TRANSFER_OUT -> createTransferOutViewState(
+                        transfer,
+                    )
 
-                else -> null
+                    else -> null
+                }
             }
-        }
             .distinctUntilChanged()
+
+    override fun onCleared() {
+        super.onCleared()
+        timer?.cancel()
+    }
 
     private fun fetchTransferStatuses(transfer: DydxTransferInstance) {
         timer?.cancel()
-        timer = fixedRateTimer(initialDelay = 0, period = 30000) {
+        timer = fixedRateTimer(initialDelay = 0, period = 5_000) {
             abacusStateManager.transferStatus(
                 hash = transfer.transactionHash,
                 fromChainId = transfer.fromChainId,
@@ -105,11 +101,11 @@ class DydxTransferStatusViewModel @Inject constructor(
     private fun createDepositViewState(
         transfer: DydxTransferInstance?,
         statuses: Map<String, TransferStatus>?,
-    ): DydxTransferStatusView.ViewState? {
+    ): DydxTransferStatusView.ViewState {
         val status = statuses?.get(transactionHash)
-        val routeStatus = routeStatus(transfer, statuses)
+        val routeStatus = routeStatus(statuses)
         if (routeStatus == RouteStatus.Completed && transfer != null) {
-            abacusStateManager.removeTransferInstance(transfer)
+            stopTrackingTransaction()
         }
         status?.error?.let {
             toaster.show(
@@ -200,9 +196,9 @@ class DydxTransferStatusViewModel @Inject constructor(
         statuses: Map<String, TransferStatus>?,
     ): DydxTransferStatusView.ViewState? {
         val status = statuses?.get(transactionHash)
-        val routeStatus = routeStatus(transfer, statuses)
+        val routeStatus = routeStatus(statuses)
         if (routeStatus == RouteStatus.Completed && transfer != null) {
-            abacusStateManager.removeTransferInstance(transfer)
+            stopTrackingTransaction()
         }
         status?.error?.let {
             toaster.show(
@@ -298,7 +294,7 @@ class DydxTransferStatusViewModel @Inject constructor(
 
     private fun createTransferOutViewState(
         transfer: DydxTransferInstance?
-    ): DydxTransferStatusView.ViewState? {
+    ): DydxTransferStatusView.ViewState {
         val params: Map<String, String> =
             if (transfer?.usdcSize != null) {
                 mapOf(
@@ -341,7 +337,7 @@ class DydxTransferStatusViewModel @Inject constructor(
             ),
             deleteAction = {
                 if (transfer != null) {
-                    abacusStateManager.removeTransferInstance(transfer)
+                    stopTrackingTransaction()
                 }
                 router.navigateBack()
             },
@@ -351,12 +347,18 @@ class DydxTransferStatusViewModel @Inject constructor(
         )
     }
 
+    private fun stopTrackingTransaction() {
+        if (transfer != null) {
+            transferStateManager.remove(transfer)
+        }
+        timer?.cancel()
+    }
+
     private enum class RouteStatus {
         Completed, InProgress, NoHash, Step1;
     }
 
     private fun routeStatus(
-        transfer: DydxTransferInstance?,
         statuses: Map<String, TransferStatus>?,
     ): RouteStatus {
         val status = statuses?.get(transactionHash) ?: return RouteStatus.NoHash
@@ -384,7 +386,8 @@ class DydxTransferStatusViewModel @Inject constructor(
             ellapsedTime > (1000 * 60 * 60).toLong()
         ) {
             return {
-                abacusStateManager.removeTransferInstance(transfer)
+                transferStateManager.remove(transfer)
+                timer?.cancel()
                 router.navigateBack()
             }
         } else {

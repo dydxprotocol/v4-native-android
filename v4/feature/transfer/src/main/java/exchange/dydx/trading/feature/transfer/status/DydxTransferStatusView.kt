@@ -32,7 +32,7 @@ import exchange.dydx.trading.feature.shared.views.ProgressStepView
 @Composable
 fun Preview_DydxTransferStatusView() {
     DydxThemedPreviewSurface {
-        DydxTransferStatusView.Content(Modifier, DydxTransferStatusView.ViewState.preview)
+        DydxTransferStatusView.Content(Modifier, null)
     }
 }
 

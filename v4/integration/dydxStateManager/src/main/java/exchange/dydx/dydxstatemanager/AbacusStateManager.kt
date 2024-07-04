@@ -39,7 +39,6 @@ import exchange.dydx.abacus.state.v2.supervisor.AppConfigsV2
 import exchange.dydx.abacus.state.v2.supervisor.OnboardingConfigs
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.abacus.utils.IOImplementations
-import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
@@ -103,8 +102,6 @@ interface AbacusStateManagerProtocol {
     fun closePosition(statusCallback: (SubmissionStatus) -> Unit)
     fun cancelOrder(orderId: String, statusCallback: (SubmissionStatus) -> Unit)
 
-    fun addTransferInstance(transfer: DydxTransferInstance)
-    fun removeTransferInstance(transfer: DydxTransferInstance)
     fun transferStatus(
         hash: String,
         fromChainId: String?,
@@ -218,7 +215,6 @@ class AbacusStateManager @Inject constructor(
         alerts = alertsPublisher,
         documentation = documentationPublisher,
         abacusStateManager = asyncStateManager,
-        transferState = transferStateManager.state,
         parser = parser,
         stateManagerScope = appScope,
     )
@@ -395,14 +391,6 @@ class AbacusStateManager @Inject constructor(
                 statusCallback(AbacusStateManagerProtocol.SubmissionStatus.Failed(error))
             }
         }
-    }
-
-    override fun addTransferInstance(transfer: DydxTransferInstance) {
-        transferStateManager.add(transfer)
-    }
-
-    override fun removeTransferInstance(transfer: DydxTransferInstance) {
-        transferStateManager.remove(transfer)
     }
 
     override fun transferStatus(

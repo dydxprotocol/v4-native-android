@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.newsalerts.alerts.alertprovider.providers
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
+import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.nativeTokenName
 import exchange.dydx.dydxstatemanager.usdcTokenName
@@ -22,6 +23,7 @@ import java.util.Date
 import javax.inject.Inject
 
 class DydxTransferAlertsProvider @Inject constructor(
+    transferStateManager: DydxTransferStateManagerProtocol,
     private val abacusStateManger: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val localizer: LocalizerProtocol,
@@ -31,7 +33,7 @@ class DydxTransferAlertsProvider @Inject constructor(
     override val alertType: AlertType = AlertType.Transfer
 
     override val items: Flow<List<DydxAlertsProviderItemProtocol>> =
-        abacusStateManger.state.transferState
+        transferStateManager.state
             .map {
                 createAlertItems(it?.transfers) ?: emptyList()
             }
