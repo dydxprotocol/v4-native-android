@@ -43,8 +43,6 @@ import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.responses.ParsingErrorType
 import exchange.dydx.abacus.state.manager.ApiState
 import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
-import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferState
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -66,7 +64,6 @@ class AbacusState(
     private val lastOrderPublisher: StateFlow<SubaccountOrder?>,
     val alerts: StateFlow<List<Notification>?>,
     val documentation: StateFlow<Documentation?>,
-    val transferState: StateFlow<DydxTransferState?>,
     private val abacusStateManager: SingletonAsyncAbacusStateManagerProtocol,
     private val parser: ParserProtocol,
     @CoroutineScopes.App private val stateManagerScope: CoroutineScope,
@@ -103,12 +100,6 @@ class AbacusState(
                 val subaccountNumber = subaccountNumber ?: return@map null
                 it?.get("$subaccountNumber")?.toList()
             }
-            .stateIn(stateManagerScope, SharingStarted.Lazily, null)
-    }
-
-    fun transferInstance(transactionHash: String?): StateFlow<DydxTransferInstance?> {
-        return transferState
-            .map { it?.transfers?.first { it.transactionHash == transactionHash } }
             .stateIn(stateManagerScope, SharingStarted.Lazily, null)
     }
 

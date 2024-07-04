@@ -1,11 +1,10 @@
 package exchange.dydx.trading.feature.transfer.utils
 
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.TransferType
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferInstance
+import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
 import java.time.Instant
 import javax.inject.Inject
 
@@ -13,9 +12,8 @@ interface DydxTransferInstanceStoring {
     fun addTransferHash(hash: String, fromChainName: String?, toChainName: String?, transferInput: TransferInput)
 }
 
-@ActivityRetainedScoped
 class DydxTransferInstanceStore @Inject constructor(
-    private val abacusStateManager: AbacusStateManagerProtocol,
+    private val transferStateManager: DydxTransferStateManagerProtocol,
     private val parser: ParserProtocol,
 ) : DydxTransferInstanceStoring {
     override fun addTransferHash(
@@ -42,24 +40,24 @@ class DydxTransferInstanceStore @Inject constructor(
             isCctp = transferInput.isCctp,
             requestId = transferInput.requestPayload?.requestId,
         )
-        abacusStateManager.addTransferInstance(transfer)
+        transferStateManager.add(transfer)
     }
 }
 
 val TransferInput.chainName: String?
     get() {
-        if (chain != null) {
-            return resources?.chainResources?.get(chain)?.chainName
+        return if (chain != null) {
+            resources?.chainResources?.get(chain)?.chainName
         } else {
-            return null
+            null
         }
     }
 
 val TransferInput.networkName: String?
     get() {
-        if (chain != null) {
-            return resources?.chainResources?.get(chain)?.networkName
+        return if (chain != null) {
+            resources?.chainResources?.get(chain)?.networkName
         } else {
-            return null
+            null
         }
     }

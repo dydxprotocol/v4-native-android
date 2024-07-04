@@ -3,8 +3,12 @@ package exchange.dydx.dydxstatemanager.clientState.transfers
 import android.os.Build
 import androidx.annotation.RequiresApi
 import exchange.dydx.dydxstatemanager.clientState.DydxClientState
+import exchange.dydx.trading.common.di.CoroutineScopes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import java.time.Instant
 import javax.inject.Inject
@@ -20,6 +24,7 @@ interface DydxTransferStateManagerProtocol {
 @Singleton
 class DydxTransferStateManager @Inject constructor(
     private val clientState: DydxClientState,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : DydxTransferStateManagerProtocol {
     companion object {
         private const val storeKey = "AbacusStateManager.TransferState"
@@ -31,18 +36,21 @@ class DydxTransferStateManager @Inject constructor(
     init {
         val state: DydxTransferState? = clientState.load(storeKey, storeType)
         mutableState.value = state
+
+        appScope.launch {
+            mutableState.collectLatest {
+                clientState.store(it ?: DydxTransferState(), storeKey)
+            }
+        }
     }
 
     override val state: StateFlow<DydxTransferState?> = mutableState
 
     override fun add(transfer: DydxTransferInstance) {
         val current = mutableState.value ?: DydxTransferState()
-        val isEmpty = current.transfers.isNullOrEmpty()
+        val isEmpty = current.transfers.isEmpty()
         if (isEmpty || !current.transfers.contains(transfer)) {
-            val transfers = current.transfers.toMutableList()
-            transfers.add(transfer)
-            current.transfers = transfers
-            clientState.store(current, storeKey)
+            mutableState.value = current.withUpdates { add(transfer) }
         }
     }
 
@@ -50,23 +58,22 @@ class DydxTransferStateManager @Inject constructor(
         val current = mutableState.value
         val index = current?.transfers?.indexOfFirst { it == transfer }
         if (index != null && index != -1) {
-            val transfers = current.transfers.toMutableList()
-            transfers.removeAt(index)
-            current.transfers = transfers
-            clientState.store(current, storeKey)
+            mutableState.value = current.withUpdates { removeAt(index) }
         }
     }
 
     override fun clear() {
-        val current = mutableState.value ?: DydxTransferState()
-        current.transfers = emptyList()
-        clientState.store(current, storeKey)
+        mutableState.value = DydxTransferState(emptyList())
     }
+}
+
+private fun DydxTransferState.withUpdates(block: MutableList<DydxTransferInstance>.() -> Unit): DydxTransferState {
+    return copy(transfers = transfers.toMutableList().apply { block() }.toList())
 }
 
 @Serializable
 data class DydxTransferState(
-    var transfers: List<DydxTransferInstance> = emptyList(),
+    val transfers: List<DydxTransferInstance> = emptyList(),
 )
 
 @Serializable
