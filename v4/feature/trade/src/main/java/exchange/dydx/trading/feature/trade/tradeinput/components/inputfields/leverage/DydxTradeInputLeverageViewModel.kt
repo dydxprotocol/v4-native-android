@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.leverage
 
 import androidx.lifecycle.ViewModel
-import com.hoc081098.flowext.flatMapFirst
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.TradeInput
@@ -15,8 +14,6 @@ import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private val TAG = "DydxTradeInputLeverageViewModel"
@@ -32,33 +29,28 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
     val state: Flow<DydxTradeInputLeverageView.ViewState?> =
         combine(
             abacusStateManager.state.tradeInput,
-            abacusStateManager.state.tradeInput
-                .map { it?.marketId }
-                .filterNotNull()
-                .flatMapFirst { abacusStateManager.state.market(it) }
-                .map { it.maxLeverage },
             abacusStateManager.state.selectedSubaccountPositions,
-        ) { tradeInput, maxLeverage, positions ->
+        ) { tradeInput, positions ->
             val marketId = tradeInput?.marketId ?: return@combine null
             val position = positions?.firstOrNull { it.id == marketId }
-            createViewState(tradeInput, maxLeverage, position?.leverage?.current)
+            createViewState(tradeInput, position?.leverage?.current)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         tradeInput: TradeInput?,
-        maxLeverage: Double,
         positionLeverage: Double?
-    ): DydxTradeInputLeverageView.ViewState {
-        if ((positionLeverage ?: 0.0) > maxLeverage) {
+    ): DydxTradeInputLeverageView.ViewState? {
+        if ((positionLeverage ?: 0.0) > tradeInput?.options?.maxLeverage ?: 0.0) {
             logger.e(TAG, "Position leverage is greater than max leverage")
+            return null
         }
         return DydxTradeInputLeverageView.ViewState(
             localizer = localizer,
             formatter = formatter,
             leverage = tradeInput?.size?.leverage ?: 0.0,
             positionLeverage = positionLeverage,
-            maxLeverage = maxLeverage,
+            maxLeverage = tradeInput?.options?.maxLeverage,
             side = when (tradeInput?.side) {
                 OrderSide.Buy -> DydxTradeInputLeverageView.OrderSide.Buy
                 OrderSide.Sell -> DydxTradeInputLeverageView.OrderSide.Sell
