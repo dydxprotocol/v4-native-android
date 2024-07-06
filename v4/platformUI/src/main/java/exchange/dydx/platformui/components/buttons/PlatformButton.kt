@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarDefaults.backgroundColor
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +58,7 @@ fun PlatformButton(
     state: PlatformButtonState = PlatformButtonState.Primary,
     text: String?,
     fontSize: ThemeFont.FontSize = ThemeFont.FontSize.medium,
+    fitText: Boolean = false,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     action: () -> Unit,
@@ -104,11 +106,19 @@ fun PlatformButton(
                 leadingContent()
             }
             if (text != null) {
-                PlatformAutoSizingText(
-                    textStyle = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
-                        .themeColor(foreground = textColor),
-                    text = text,
-                )
+                if (fitText) {
+                    PlatformAutoSizingText(
+                        textStyle = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
+                            .themeColor(foreground = textColor),
+                        text = text,
+                    )
+                } else {
+                    Text(
+                        text = text,
+                        style = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
+                            .themeColor(foreground = textColor),
+                    )
+                }
             }
             if (trailingContent != null) {
                 trailingContent()
