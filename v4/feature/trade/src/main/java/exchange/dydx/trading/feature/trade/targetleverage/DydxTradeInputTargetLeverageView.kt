@@ -73,7 +73,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 leverageOptions = listOf(
                     LeverageTextAndValue("1.0", "1.0"),
                     LeverageTextAndValue("2.0", "2.0"),
-                    LeverageTextAndValue("2.0", "2.0"),
+                    LeverageTextAndValue("3.0", "3.0"),
                     LeverageTextAndValue("5.0", "5.0"),
                     LeverageTextAndValue("10.0", "10.0"),
                     LeverageTextAndValue("max", "10.0"),
@@ -238,8 +238,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                 items = state?.leverageOptions?.map {
                     { modifier ->
                         PlatformSelectionButton(
-                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
-                                .fillMaxWidth(),
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
                             selected = false,
                         ) {
                             Text(
@@ -257,8 +256,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                     { modifier ->
 
                         PlatformSelectionButton(
-                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp)
-                                .fillMaxWidth(),
+                            modifier = modifier.sizeIn(minWidth = 48.dp, minHeight = 40.dp),
                             selected = true,
                         ) {
                             Text(
@@ -272,7 +270,7 @@ object DydxTradeInputTargetLeverageView : DydxComponent {
                         }
                     }
                 } ?: listOf(),
-                equalWeight = true,
+                equalWeight = false,
                 currentSelection = state?.leverageOptions?.indexOfFirst {
                     val leverageTextValue = state.parser.asDouble(state.leverageText)
                     it.value.toDouble() == leverageTextValue

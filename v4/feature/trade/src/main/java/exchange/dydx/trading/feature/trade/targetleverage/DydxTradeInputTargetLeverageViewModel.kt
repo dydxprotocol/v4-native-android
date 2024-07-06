@@ -93,7 +93,7 @@ class DydxTradeInputTargetLeverageViewModel @Inject constructor(
     }
 
     private fun leverageOptions(max: Double): List<LeverageTextAndValue> {
-        val steps = listOf(1.0, 2.0, 5.0, 10.0)
+        val steps = listOf(1.0, 2.0, 3.0, 5.0, 10.0)
         val leverages = mutableListOf<LeverageTextAndValue>()
         for (step in steps) {
             if (max > step) {

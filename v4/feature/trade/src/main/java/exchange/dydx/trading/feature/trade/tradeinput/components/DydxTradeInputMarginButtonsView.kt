@@ -85,6 +85,7 @@ object DydxTradeInputMarginButtonsView : DydxComponent {
                         .fillMaxWidth(),
                     state = PlatformButtonState.Secondary,
                     text = state.isolatedMarketTargetLeverageText,
+                    fitText = true,
                 ) {
                     state.onTargetLeverage()
                 }
