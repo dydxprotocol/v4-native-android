@@ -49,9 +49,7 @@ import exchange.dydx.utilities.utils.mapState
 import exchange.dydx.utilities.utils.mapStateWithThrottle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AbacusState(
@@ -59,7 +57,7 @@ class AbacusState(
     private val perpetualState: StateFlow<PerpetualState?>,
     private val apiPerpetualState: StateFlow<ApiState?>,
     private val errorsPerpetualState: StateFlow<List<ParsingError>?>,
-    private val lastOrderPublisher: StateFlow<SubaccountOrder?>,
+    val lastOrder: StateFlow<SubaccountOrder?>,
     val alerts: StateFlow<List<Notification>?>,
     val documentation: StateFlow<Documentation?>,
     private val abacusStateManager: SingletonAsyncAbacusStateManagerProtocol,
@@ -421,14 +419,6 @@ class AbacusState(
     val validationErrors: StateFlow<List<ValidationError>> by lazy {
         perpetualState
             .mapStateWithThrottle(appScope) { it?.input?.errors ?: emptyList() }
-    }
-
-    /**
-     Last Order
-     */
-    val lastOrder: StateFlow<SubaccountOrder?> by lazy {
-        lastOrderPublisher
-            .stateIn(appScope, SharingStarted.Lazily, null)
     }
 
     /**
