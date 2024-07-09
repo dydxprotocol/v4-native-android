@@ -328,7 +328,7 @@ class AbacusState(
     val marketMap: StateFlow<Map<String, PerpetualMarket>?> by lazy {
         marketSummary
             .mapState(appScope) {
-                it?.markets
+                it?.markets?.toMap()
             }
     }
 
