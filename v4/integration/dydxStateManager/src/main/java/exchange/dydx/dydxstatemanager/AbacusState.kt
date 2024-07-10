@@ -102,7 +102,9 @@ class AbacusState(
      **/
     val transferStatuses: StateFlow<Map<String, TransferStatus>> by lazy {
         perpetualState
-            .mapState(appScope) { it?.transferStatuses ?: emptyMap() }
+            .mapState(appScope) {
+                it?.transferStatuses?.toMap() ?: emptyMap()
+            }
     }
 
     /**
@@ -243,7 +245,9 @@ class AbacusState(
      **/
     val historicalFundingsMap: StateFlow<Map<String, List<MarketHistoricalFunding>>?> by lazy {
         perpetualState
-            .mapState(appScope) { it?.historicalFundings }
+            .mapState(appScope) {
+                it?.historicalFundings?.toMap()
+            }
     }
 
     /**
@@ -269,7 +273,9 @@ class AbacusState(
      **/
     val candlesMap: StateFlow<Map<String, MarketCandles>?> by lazy {
         perpetualState
-            .mapState(appScope) { it?.candles }
+            .mapState(appScope) {
+                it?.candles?.toMap()
+            }
     }
 
     /**
@@ -285,8 +291,8 @@ class AbacusState(
      **/
     val orderbooksMap: StateFlow<Map<String, MarketOrderbook>?> by lazy {
         perpetualState
-            .mapState(appScope) {
-                it?.orderbooks
+            .mapStateWithThrottle(appScope) {
+                it?.orderbooks?.toMap()
             }
     }
 
@@ -303,7 +309,9 @@ class AbacusState(
      **/
     val tradesMap: StateFlow<Map<String, List<MarketTrade>>?> by lazy {
         perpetualState
-            .mapState(appScope) { it?.trades }
+            .mapState(appScope) {
+                it?.trades?.toMap()
+            }
     }
 
     /**
@@ -328,7 +336,7 @@ class AbacusState(
     val marketMap: StateFlow<Map<String, PerpetualMarket>?> by lazy {
         marketSummary
             .mapState(appScope) {
-                it?.markets
+                it?.markets?.toMap()
             }
     }
 
@@ -362,7 +370,9 @@ class AbacusState(
      **/
     val assetMap: StateFlow<Map<String, Asset>?> by lazy {
         perpetualState
-            .mapState(appScope) { it?.assets }
+            .mapState(appScope) {
+                it?.assets?.toMap()
+            }
     }
 
     /**
