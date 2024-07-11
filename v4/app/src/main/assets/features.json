@@ -32,6 +32,26 @@
                         }
                     ]
                 }
+            },
+            {
+                "title":{
+                    "text":"Abacus Static Typing"
+                },
+                "field":{
+                    "field":"abacus_static_typing",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }

@@ -6,6 +6,7 @@ import javax.inject.Inject
 enum class DydxFeatureFlag {
     deployment_url,
     force_mainnet,
+    abacus_static_typing,
 }
 
 class DydxFeatureFlags @Inject constructor(

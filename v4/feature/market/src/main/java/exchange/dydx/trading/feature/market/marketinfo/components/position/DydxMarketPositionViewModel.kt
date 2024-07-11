@@ -50,7 +50,6 @@ class DydxMarketPositionViewModel @Inject constructor(
         marketAndAsset: MarketAndAsset,
         pendingPosition: SubaccountPendingPosition?
     ): DydxMarketPositionView.ViewState {
-        val isSlTpEnabled = abacusStateManager.environment?.featureFlags?.isSlTpEnabled ?: true
         return DydxMarketPositionView.ViewState(
             localizer = localizer,
             shareAction = {},
@@ -85,7 +84,6 @@ class DydxMarketPositionViewModel @Inject constructor(
                     },
                 )
             },
-            enableTrigger = isSlTpEnabled,
             pendingPosition = pendingPosition?.let { position ->
                 DydxPortfolioPendingPositionItemView.ViewState(
                     localizer = localizer,
