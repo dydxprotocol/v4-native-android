@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -28,8 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
-import exchange.dydx.platformui.components.buttons.PlatformButton
-import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.dividers.PlatformVerticalDivider
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
