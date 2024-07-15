@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -28,8 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
-import exchange.dydx.platformui.components.buttons.PlatformButton
-import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.dividers.PlatformVerticalDivider
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
@@ -68,7 +65,6 @@ object DydxMarketPositionView : DydxComponent {
         val closeAction: (() -> Unit)? = null,
         val marginEditAction: (() -> Unit)? = null,
         val sharedMarketPositionViewState: SharedMarketPositionViewState? = null,
-        val enableTrigger: Boolean = false,
         val pendingPosition: DydxPortfolioPendingPositionItemView.ViewState? = null,
     ) {
         companion object {
@@ -77,7 +73,6 @@ object DydxMarketPositionView : DydxComponent {
                 shareAction = {},
                 closeAction = {},
                 sharedMarketPositionViewState = SharedMarketPositionViewState.preview,
-                enableTrigger = true,
                 pendingPosition = DydxPortfolioPendingPositionItemView.ViewState.preview,
             )
         }
@@ -107,11 +102,7 @@ object DydxMarketPositionView : DydxComponent {
                 // Show position details
                 CreateCollection(Modifier, state)
 
-                if (state.enableTrigger) {
-                    DydxMarketPositionButtonsView.Content(Modifier)
-                } else {
-                    CreateButtons(Modifier, state)
-                }
+                DydxMarketPositionButtonsView.Content(Modifier)
 
                 CreateList(Modifier, state)
             }
@@ -131,35 +122,6 @@ object DydxMarketPositionView : DydxComponent {
                     state = it,
                 )
             }
-        }
-    }
-
-    @Composable
-    private fun CreateButtons(modifier: Modifier, state: ViewState) {
-        Row(
-            modifier = modifier
-                .padding(horizontal = ThemeShapes.HorizontalPadding),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            PlatformButton(
-                text = state.localizer.localize("APP.GENERAL.SHARE"),
-                state = PlatformButtonState.Disabled,
-                modifier = Modifier
-                    .padding(vertical = ThemeShapes.VerticalPadding)
-                    .weight(1f),
-                action = state.shareAction ?: {},
-            )
-
-            Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
-
-            PlatformButton(
-                text = state.localizer.localize("APP.TRADE.CLOSE_POSITION"),
-                state = PlatformButtonState.Destructive,
-                modifier = Modifier
-                    .padding(vertical = ThemeShapes.VerticalPadding)
-                    .weight(1f),
-                action = state.closeAction ?: {},
-            )
         }
     }
 

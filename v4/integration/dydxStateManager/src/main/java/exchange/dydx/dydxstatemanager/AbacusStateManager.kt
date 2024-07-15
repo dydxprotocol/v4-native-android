@@ -190,6 +190,8 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
+        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing)
+
         AsyncAbacusStateManagerV2(
             deploymentUri = deploymentUri,
             deployment = deployment,
