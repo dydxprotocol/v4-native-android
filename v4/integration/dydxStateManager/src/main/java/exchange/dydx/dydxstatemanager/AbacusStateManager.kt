@@ -213,7 +213,7 @@ class AbacusStateManager @Inject constructor(
         perpetualState = perpetualStatePublisher,
         apiPerpetualState = apiStatePublisher,
         errorsPerpetualState = errorsStatePublisher,
-        lastOrderPublisher = lastOrderPublisher,
+        lastOrder = lastOrderPublisher,
         alerts = alertsPublisher,
         documentation = documentationPublisher,
         abacusStateManager = asyncStateManager,
