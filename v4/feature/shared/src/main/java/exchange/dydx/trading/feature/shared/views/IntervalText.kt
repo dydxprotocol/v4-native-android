@@ -82,15 +82,14 @@ class IntervalTextViewModel @Inject constructor(
 ) : ViewModel() {
     val dateText: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    private val timer = Timer()
+    private var timer: Timer? = null
 
     private var date: Instant? = null
     private var direction: IntervalText.Direction = IntervalText.Direction.COUNT_UP
     private var format: IntervalText.Format = IntervalText.Format.SHORT
 
     override fun onCleared() {
-        timer.cancel()
-        timer.purge()
+        stopTimer()
     }
 
     fun start(date: Instant?, direction: IntervalText.Direction, format: IntervalText.Format) {
@@ -118,7 +117,9 @@ class IntervalTextViewModel @Inject constructor(
 
         timerInterval?.let {
             displayDate()
-            timer.scheduleAtFixedRate(delay = 0, period = it) {
+            stopTimer()
+            timer = Timer()
+            timer?.scheduleAtFixedRate(delay = 0, period = it) {
                 val now = Instant.now()
                 if (direction == IntervalText.Direction.COUNT_DOWN_TO_HOUR && now > date) {
                     date = now.truncatedTo(ChronoUnit.HOURS).plusSeconds(3600)
@@ -126,6 +127,12 @@ class IntervalTextViewModel @Inject constructor(
                 displayDate()
             }
         }
+    }
+
+    private fun stopTimer() {
+        timer?.cancel()
+        timer?.purge()
+        timer = null
     }
 
     private fun displayDate() {
