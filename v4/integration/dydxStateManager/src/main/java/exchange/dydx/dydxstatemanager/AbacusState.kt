@@ -383,7 +383,7 @@ class AbacusState(
             appScope,
         ) { marketMap: Map<String, PerpetualMarket>?, assetMap: Map<String, Asset>? ->
             val output = mutableMapOf<String, MarketConfigsAndAsset>()
-            marketMap?.forEach { (marketId, market) ->
+            marketMap?.entries?.forEach { (marketId, market) ->
                 output[marketId] =
                     MarketConfigsAndAsset(market.configs, assetMap?.get(market.assetId), market.assetId)
             }
