@@ -7,23 +7,18 @@ import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.maxLeverage
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
-
-private val TAG = "DydxTradeInputLeverageViewModel"
 
 @HiltViewModel
 class DydxTradeInputLeverageViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    private val logger: Logging,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTradeInputLeverageView.ViewState?> =
@@ -40,16 +35,21 @@ class DydxTradeInputLeverageViewModel @Inject constructor(
     private fun createViewState(
         tradeInput: TradeInput?,
         positionLeverage: Double?
-    ): DydxTradeInputLeverageView.ViewState? {
-        if ((positionLeverage ?: 0.0) > tradeInput?.options?.maxLeverage ?: 0.0) {
-            logger.e(TAG, "Position leverage is greater than max leverage")
-            return null
+    ): DydxTradeInputLeverageView.ViewState {
+        var cappedPositionLeverage = positionLeverage
+        if (cappedPositionLeverage != null) {
+            val maxLeverage = tradeInput?.options?.maxLeverage ?: 0.0
+            if (cappedPositionLeverage < -maxLeverage) {
+                cappedPositionLeverage = -maxLeverage
+            } else if (cappedPositionLeverage > maxLeverage) {
+                cappedPositionLeverage = maxLeverage
+            }
         }
         return DydxTradeInputLeverageView.ViewState(
             localizer = localizer,
             formatter = formatter,
             leverage = tradeInput?.size?.leverage ?: 0.0,
-            positionLeverage = positionLeverage,
+            positionLeverage = cappedPositionLeverage,
             maxLeverage = tradeInput?.options?.maxLeverage,
             side = when (tradeInput?.side) {
                 OrderSide.Buy -> DydxTradeInputLeverageView.OrderSide.Buy
