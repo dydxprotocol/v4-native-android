@@ -37,8 +37,6 @@ class DydxTransferSubaccountWorker(
 
     override var isStarted = false
 
-    private val inDepositState = MutableStateFlow(false)
-
     override fun start() {
         if (!isStarted) {
             isStarted = true
@@ -50,9 +48,7 @@ class DydxTransferSubaccountWorker(
                     },
                 abacusStateManager.state.currentWallet.mapNotNull { it },
                 abacusStateManager.state.selectedSubaccount.mapNotNull { it?.subaccountNumber },
-                inDepositState,
-            ) { balance, wallet, subaccountNumber, inDeposit ->
-                if (inDeposit) return@combine
+            ) { balance, wallet, subaccountNumber ->
                 val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
                 if (depositAmount <= 0) return@combine
                 val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
@@ -75,7 +71,6 @@ class DydxTransferSubaccountWorker(
         subaccountNumber: Int,
         wallet: DydxWalletInstance,
     ) {
-        inDepositState.value = true
         val payload: Map<String, Any> = mapOf(
             "subaccountNumber" to subaccountNumber,
             "amount" to amountString,
@@ -85,7 +80,6 @@ class DydxTransferSubaccountWorker(
             functionName = "deposit",
             paramsInJson = paramsInJson,
             completion = { response ->
-                inDepositState.value = false
                 val trackingData = mutableMapOf(
                     "amount" to amountString,
                     "address" to wallet.cosmoAddress,
