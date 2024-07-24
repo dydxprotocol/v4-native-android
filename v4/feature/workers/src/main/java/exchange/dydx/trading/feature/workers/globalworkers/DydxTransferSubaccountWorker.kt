@@ -29,7 +29,7 @@ class DydxTransferSubaccountWorker(
 ) : WorkerProtocol {
 
     companion object {
-        const val balanceRetainAmount = 0.25
+        const val balanceRetainAmount = 0.5
     }
 
     override var isStarted = false
@@ -44,9 +44,8 @@ class DydxTransferSubaccountWorker(
                         balance != null && balance > balanceRetainAmount
                     },
                 abacusStateManager.state.currentWallet.mapNotNull { it },
-                abacusStateManager.state.selectedSubaccount,
-            ) { balance, wallet, selectedSubaccount ->
-                val subaccountNumber: Int = selectedSubaccount?.subaccountNumber ?: 0
+                abacusStateManager.state.selectedSubaccount.mapNotNull { it?.subaccountNumber },
+            ) { balance, wallet, subaccountNumber ->
                 val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
                 if (depositAmount <= 0) return@combine
                 val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
