@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
+import androidx.compose.runtime.mutableStateOf
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -13,6 +14,8 @@ import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -29,10 +32,12 @@ class DydxTransferSubaccountWorker(
 ) : WorkerProtocol {
 
     companion object {
-        const val balanceRetainAmount = 0.25
+        const val balanceRetainAmount = 0.5
     }
 
     override var isStarted = false
+
+    private val inDepositState = MutableStateFlow(false)
 
     override fun start() {
         if (!isStarted) {
@@ -44,9 +49,10 @@ class DydxTransferSubaccountWorker(
                         balance != null && balance > balanceRetainAmount
                     },
                 abacusStateManager.state.currentWallet.mapNotNull { it },
-                abacusStateManager.state.selectedSubaccount,
-            ) { balance, wallet, selectedSubaccount ->
-                val subaccountNumber: Int = selectedSubaccount?.subaccountNumber ?: 0
+                abacusStateManager.state.selectedSubaccount.mapNotNull { it?.subaccountNumber },
+                inDepositState,
+            ) { balance, wallet, subaccountNumber, inDeposit ->
+                if (inDeposit) return@combine
                 val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
                 if (depositAmount <= 0) return@combine
                 val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
@@ -69,6 +75,7 @@ class DydxTransferSubaccountWorker(
         subaccountNumber: Int,
         wallet: DydxWalletInstance,
     ) {
+        inDepositState.value = true
         val payload: Map<String, Any> = mapOf(
             "subaccountNumber" to subaccountNumber,
             "amount" to amountString,
@@ -78,6 +85,7 @@ class DydxTransferSubaccountWorker(
             functionName = "deposit",
             paramsInJson = paramsInJson,
             completion = { response ->
+                inDepositState.value = false
                 val trackingData = mutableMapOf(
                     "amount" to amountString,
                     "address" to wallet.cosmoAddress,
