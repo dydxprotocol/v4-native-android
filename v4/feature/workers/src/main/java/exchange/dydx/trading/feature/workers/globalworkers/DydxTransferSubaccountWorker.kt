@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
-import androidx.compose.runtime.mutableStateOf
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -14,8 +13,6 @@ import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
