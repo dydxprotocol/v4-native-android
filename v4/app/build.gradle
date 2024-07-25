@@ -62,8 +62,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
             debuggable = true
-            enableUnitTestCoverage true
-            enableAndroidTestCoverage true
         }
 
         release {
