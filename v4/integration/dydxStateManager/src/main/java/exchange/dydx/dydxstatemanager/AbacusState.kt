@@ -1,6 +1,5 @@
 package exchange.dydx.dydxstatemanager
 
-import exchange.dydx.abacus.output.Account
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.Compliance
 import exchange.dydx.abacus.output.ComplianceStatus
@@ -17,18 +16,19 @@ import exchange.dydx.abacus.output.Notification
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.output.PerpetualState
-import exchange.dydx.abacus.output.PositionSide
 import exchange.dydx.abacus.output.Restriction
-import exchange.dydx.abacus.output.Subaccount
-import exchange.dydx.abacus.output.SubaccountFill
-import exchange.dydx.abacus.output.SubaccountFundingPayment
-import exchange.dydx.abacus.output.SubaccountHistoricalPNL
-import exchange.dydx.abacus.output.SubaccountOrder
-import exchange.dydx.abacus.output.SubaccountPendingPosition
-import exchange.dydx.abacus.output.SubaccountPosition
-import exchange.dydx.abacus.output.SubaccountTransfer
 import exchange.dydx.abacus.output.TransferStatus
 import exchange.dydx.abacus.output.User
+import exchange.dydx.abacus.output.account.Account
+import exchange.dydx.abacus.output.account.PositionSide
+import exchange.dydx.abacus.output.account.Subaccount
+import exchange.dydx.abacus.output.account.SubaccountFill
+import exchange.dydx.abacus.output.account.SubaccountFundingPayment
+import exchange.dydx.abacus.output.account.SubaccountHistoricalPNL
+import exchange.dydx.abacus.output.account.SubaccountOrder
+import exchange.dydx.abacus.output.account.SubaccountPendingPosition
+import exchange.dydx.abacus.output.account.SubaccountPosition
+import exchange.dydx.abacus.output.account.SubaccountTransfer
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.output.input.ClosePositionInput
 import exchange.dydx.abacus.output.input.ReceiptLine

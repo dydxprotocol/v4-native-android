@@ -3,7 +3,7 @@ package exchange.dydx.trading.feature.transfer.transferout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.Subaccount
+import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.ValidationError

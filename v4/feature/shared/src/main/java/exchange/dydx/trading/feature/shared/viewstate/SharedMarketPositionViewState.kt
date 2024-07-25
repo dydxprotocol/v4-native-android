@@ -3,7 +3,7 @@ package exchange.dydx.trading.feature.shared.viewstate
 import androidx.compose.ui.unit.dp
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
-import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.account.SubaccountPosition
 import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformUISign

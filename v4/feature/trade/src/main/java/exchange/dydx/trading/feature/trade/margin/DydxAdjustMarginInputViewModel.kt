@@ -3,7 +3,7 @@ package exchange.dydx.trading.feature.trade.margin
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.account.SubaccountPosition
 import exchange.dydx.abacus.output.input.AdjustIsolatedMarginInput
 import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Add
 import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Remove

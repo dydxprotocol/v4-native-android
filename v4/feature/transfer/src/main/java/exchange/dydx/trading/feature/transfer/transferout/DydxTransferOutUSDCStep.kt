@@ -1,6 +1,6 @@
 package exchange.dydx.trading.feature.transfer.transferout
 
-import exchange.dydx.abacus.output.Subaccount
+import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol

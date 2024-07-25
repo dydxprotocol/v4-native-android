@@ -2,7 +2,7 @@ package exchange.dydx.trading.feature.portfolio.components.pendingpositions
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.SubaccountPendingPosition
+import exchange.dydx.abacus.output.account.SubaccountPendingPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.MarketConfigsAndAsset

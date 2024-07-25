@@ -2,8 +2,8 @@ package exchange.dydx.trading.feature.receipt.components.buyingpower
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.SubaccountPendingPosition
-import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.account.SubaccountPendingPosition
+import exchange.dydx.abacus.output.account.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
