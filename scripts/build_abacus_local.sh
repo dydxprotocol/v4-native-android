@@ -9,8 +9,8 @@
 # The script will update both the v4-abacus and v4-native-android repositories, so please make sure
 # you clean-up/revert the changes after you are done with the local testing
 
-ABACUS_DIR=~/v4-abacus
-ANDROID_DIR=~/v4-native-android
+ANDROID_DIR=$(pwd)
+ABACUS_DIR=$(pwd)/../v4-abacus
 
 # Create a random version number
 NEW_VERSION="local.$(date +%s)"
