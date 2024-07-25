@@ -2,7 +2,7 @@ package exchange.dydx.trading.feature.shared.viewstate
 
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
-import exchange.dydx.abacus.output.SubaccountFill
+import exchange.dydx.abacus.output.account.SubaccountFill
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.theme.MockLocalizer

@@ -2,7 +2,7 @@ package exchange.dydx.trading.feature.profile.rewards
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.Account
+import exchange.dydx.abacus.output.account.Account
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol

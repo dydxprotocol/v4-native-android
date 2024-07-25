@@ -1,7 +1,7 @@
 package exchange.dydx.dydxstatemanager
 
-import exchange.dydx.abacus.output.PositionSide
-import exchange.dydx.abacus.output.SubaccountOrder
+import exchange.dydx.abacus.output.account.PositionSide
+import exchange.dydx.abacus.output.account.SubaccountOrder
 import exchange.dydx.abacus.output.input.OrderSide
 import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.output.input.OrderType

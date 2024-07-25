@@ -6,8 +6,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.Subaccount
-import exchange.dydx.abacus.output.SubaccountHistoricalPNL
+import exchange.dydx.abacus.output.account.Subaccount
+import exchange.dydx.abacus.output.account.SubaccountHistoricalPNL
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol

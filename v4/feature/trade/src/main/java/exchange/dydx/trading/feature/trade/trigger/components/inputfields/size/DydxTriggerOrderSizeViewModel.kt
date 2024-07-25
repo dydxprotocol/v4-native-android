@@ -2,7 +2,7 @@ package exchange.dydx.trading.feature.trade.trigger.components.inputfields.size
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.account.SubaccountPosition
 import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.output.input.ValidationError

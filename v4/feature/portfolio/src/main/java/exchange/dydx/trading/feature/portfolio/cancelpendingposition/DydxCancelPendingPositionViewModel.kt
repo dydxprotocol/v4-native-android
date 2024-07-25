@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
-import exchange.dydx.abacus.output.Subaccount
-import exchange.dydx.abacus.output.SubaccountOrder
-import exchange.dydx.abacus.output.SubaccountPendingPosition
+import exchange.dydx.abacus.output.account.Subaccount
+import exchange.dydx.abacus.output.account.SubaccountOrder
+import exchange.dydx.abacus.output.account.SubaccountPendingPosition
 import exchange.dydx.abacus.output.input.OrderStatus
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.utils.filterNotNull

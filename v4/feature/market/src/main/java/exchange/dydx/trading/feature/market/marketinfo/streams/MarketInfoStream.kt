@@ -3,8 +3,8 @@ package exchange.dydx.trading.feature.market.marketinfo.streams
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
-import exchange.dydx.abacus.output.PositionSide
-import exchange.dydx.abacus.output.SubaccountPosition
+import exchange.dydx.abacus.output.account.PositionSide
+import exchange.dydx.abacus.output.account.SubaccountPosition
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol

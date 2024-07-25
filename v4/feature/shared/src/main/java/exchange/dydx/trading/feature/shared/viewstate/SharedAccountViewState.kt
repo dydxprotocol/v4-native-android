@@ -1,6 +1,6 @@
 package exchange.dydx.trading.feature.shared.viewstate
 
-import exchange.dydx.abacus.output.Subaccount
+import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.LeverageRiskView
