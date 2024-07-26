@@ -4,10 +4,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
@@ -62,7 +62,7 @@ object IntervalText {
             return
         }
 
-        val viewModel: IntervalTextViewModel = hiltViewModel()
+        val viewModel = remember { IntervalTextViewModel(formatter = DydxFormatter()) }
         LaunchedEffect(Unit) {
             viewModel.start(state.date, state.direction, state.format)
         }
