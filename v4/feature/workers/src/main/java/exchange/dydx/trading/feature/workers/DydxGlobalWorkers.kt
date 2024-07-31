@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.workers
 
+import android.app.Application
 import android.content.Context
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
@@ -18,6 +19,7 @@ import exchange.dydx.trading.feature.workers.globalworkers.DydxUserTrackingWorke
 import exchange.dydx.trading.integration.analytics.logging.CompositeLogging
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.trading.integration.statsig.StatsigInitWorker
 import exchange.dydx.utilities.utils.CachedFileLoader
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import exchange.dydx.utilities.utils.WorkerProtocol
@@ -37,6 +39,8 @@ class DydxGlobalWorkers(
     private val tracker: Tracking,
     private val logger: CompositeLogging,
     private val preferencesStore: SharedPreferencesStore,
+    application: Application,
+    statSigApiKey: String,
 ) : WorkerProtocol {
 
     private val workers = listOf(
@@ -48,6 +52,7 @@ class DydxGlobalWorkers(
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
         DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
         DydxGasTokenWorker(preferencesStore, abacusStateManager, logger),
+        StatsigInitWorker(scope, application, statSigApiKey),
     )
 
     override var isStarted = false
