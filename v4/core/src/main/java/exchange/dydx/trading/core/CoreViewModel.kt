@@ -1,5 +1,6 @@
 package exchange.dydx.trading.core
 
+import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.logger.DydxLogger
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -41,6 +43,7 @@ class CoreViewModel @Inject constructor(
     val logger: CompositeLogging,
     val compositeTracking: CompositeTracking,
     private val preferencesStore: SharedPreferencesStore,
+    application: Application,
 ) : ViewModel() {
     private var globalWorkers: DydxGlobalWorkers? = null
 
@@ -59,6 +62,8 @@ class CoreViewModel @Inject constructor(
             tracker = tracker,
             logger = logger,
             preferencesStore = preferencesStore,
+            application = application,
+            statSigApiKey = application.getString(R.string.statsig_api_key),
         )
     }
 

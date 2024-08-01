@@ -32,6 +32,7 @@
             <option value="$PROJECT_DIR$/v4/integration/dydxStateManager" />
             <option value="$PROJECT_DIR$/v4/integration/javascript" />
             <option value="$PROJECT_DIR$/v4/integration/starkex" />
+            <option value="$PROJECT_DIR$/v4/integration/statsig" />
             <option value="$PROJECT_DIR$/v4/integration/web3" />
             <option value="$PROJECT_DIR$/v4/platformUI" />
             <option value="$PROJECT_DIR$/v4/utilities" />

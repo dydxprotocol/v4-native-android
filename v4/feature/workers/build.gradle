@@ -42,10 +42,11 @@ android {
 dependencies {
     implementation project(':v4:common')
     implementation project(':v4:utilities')
-    implementation project(path: ':v4:integration:dydxStateManager')
-    implementation project(path: ':v4:integration:analytics')
-    implementation project(path: ':v4:platformUI')
-    implementation project(path: ':v4:feature:shared')
+    implementation project(':v4:integration:dydxStateManager')
+    implementation project(':v4:integration:analytics')
+    implementation project(':v4:integration:statsig')
+    implementation project(':v4:platformUI')
+    implementation project(':v4:feature:shared')
     api project(':v4:integration:cosmos')
 
     /* Local Dependencies */
