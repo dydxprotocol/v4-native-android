@@ -38,7 +38,7 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
             season = season,
             points = points,
             aboutAction = {
-                router.navigateTo("https://dydx.exchange/blog/v4-full-trading")
+                router.navigateTo("https://dydx.forum/t/launch-of-season-5-of-the-launch-incentive-program/2725")
             },
             leaderboardAction = {
                 router.navigateTo("https://community.chaoslabs.xyz/dydx-v4/risk/leaderboard")
