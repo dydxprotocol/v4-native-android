@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -38,6 +39,10 @@ dependencies {
 
     // Statsig
     implementation 'com.github.statsig-io:android-sdk:4.34.0'
-
     implementation project(':v4:utilities')
+    implementation project(':v4:common')
+
+    // Hilt
+    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    api "com.google.dagger:hilt-core:$hiltVersion"
 }
