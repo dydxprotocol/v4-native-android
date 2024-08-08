@@ -2,6 +2,10 @@ package exchange.dydx.trading.integration.statsig
 
 import com.statsig.androidsdk.EvaluationReason
 import com.statsig.androidsdk.Statsig
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 interface StatsigFlags {
     fun isEnabled(name: String, default: Boolean = false): Boolean
@@ -10,7 +14,7 @@ interface StatsigFlags {
 object RealStatsigFlags : StatsigFlags {
 
     // Cache first accessed value to ensure single value through lifetime of app.
-    val firstAccessCache = mutableMapOf<String, Boolean>()
+    private val firstAccessCache = mutableMapOf<String, Boolean>()
 
     override fun isEnabled(name: String, default: Boolean): Boolean {
         return firstAccessCache[name] ?: run {
@@ -37,4 +41,10 @@ object RealStatsigFlags : StatsigFlags {
             flagValue
         }
     }
+}
+
+@InstallIn(SingletonComponent::class)
+@Module
+object StatsigModule {
+    @Provides fun bindStatsigFlags(): StatsigFlags = RealStatsigFlags
 }

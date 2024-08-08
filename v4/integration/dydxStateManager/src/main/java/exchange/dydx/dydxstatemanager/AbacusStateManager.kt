@@ -27,6 +27,7 @@ import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.abacus.state.manager.OrderbookGrouping
 import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
+import exchange.dydx.abacus.state.manager.StatsigConfig
 import exchange.dydx.abacus.state.manager.TokenInfo
 import exchange.dydx.abacus.state.manager.V4Environment
 import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
@@ -49,6 +50,8 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
+import exchange.dydx.trading.integration.statsig.StatsigFlags
+import exchange.dydx.trading.integration.statsig.StatsigInitWorker
 import exchange.dydx.utilities.utils.DebugEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.CoroutineScope
@@ -156,6 +159,8 @@ class AbacusStateManager @Inject constructor(
     @CoroutineScopes.App private val appScope: CoroutineScope,
     parser: ParserProtocol,
     private val presentationProtocol: PresentationProtocol,
+    private val statsigFlags: StatsigFlags,
+    private val statsigInitWorker: StatsigInitWorker,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -166,6 +171,8 @@ class AbacusStateManager @Inject constructor(
     private val documentationPublisher: MutableStateFlow<Documentation?> = MutableStateFlow(null)
 
     private val asyncStateManager: SingletonAsyncAbacusStateManagerProtocol by lazy {
+        statsigInitWorker.start() // Need to ensure statsig is initialized before we access flags.
+
         UIImplementationsExtensions.reset(language = null, ioImplementations)
 
         val deployment: String
@@ -191,6 +198,8 @@ class AbacusStateManager @Inject constructor(
         }
 
         appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing)
+        appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
+        StatsigConfig.useSkip = statsigFlags.isEnabled("ff_skip_migration", default = true)
 
         AsyncAbacusStateManagerV2(
             deploymentUri = deploymentUri,

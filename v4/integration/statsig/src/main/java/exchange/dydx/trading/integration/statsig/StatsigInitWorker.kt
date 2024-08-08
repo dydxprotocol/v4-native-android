@@ -3,26 +3,28 @@ package exchange.dydx.trading.integration.statsig
 import android.app.Application
 import com.statsig.androidsdk.Statsig
 import com.statsig.androidsdk.StatsigUser
+import exchange.dydx.trading.common.R
 import exchange.dydx.utilities.utils.WorkerProtocol
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class StatsigInitWorker(
-    val scope: CoroutineScope,
+/**
+ * Needs to be initialized before Abacus
+ */
+@Singleton
+class StatsigInitWorker @Inject constructor(
     val application: Application,
-    val sdkKey: String,
 ) : WorkerProtocol {
+
     override fun start() {
         if (isStarted) return
 
         isStarted = true
-        scope.launch {
-            Statsig.initialize(
-                application = application,
-                sdkKey = sdkKey,
-                user = StatsigUser(Statsig.getStableID()),
-            )
-        }
+        Statsig.initializeAsync(
+            application = application,
+            sdkKey = application.getString(R.string.statsig_api_key),
+            user = StatsigUser(),
+        )
     }
 
     override fun stop() = Unit
