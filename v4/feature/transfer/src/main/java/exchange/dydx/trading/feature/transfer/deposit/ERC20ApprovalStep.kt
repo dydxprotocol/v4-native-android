@@ -48,7 +48,7 @@ class ERC20ApprovalStep(
             val gasPrice = (gasPriceEvent as? AsyncEvent.Result)?.result
             val gasEstimate = (gasEstimateEvent as? AsyncEvent.Result)?.result
             val nonce = (nonceEvent as? AsyncEvent.Result)?.result
-            if (gasPrice != null && gasEstimate != null && nonce != null) {
+            if (gasPrice != null && nonce != null) {
                 return@combine Triple(gasPrice, gasEstimate, nonce)
             } else {
                 return@combine null
