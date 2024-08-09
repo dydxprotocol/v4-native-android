@@ -15,6 +15,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
@@ -25,7 +26,7 @@ import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
-import exchange.dydx.utilities.utils.AsyncEvent
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +48,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val transferAnalytics: TransferAnalytics,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
     private val carteraProvider: CarteraProvider = CarteraProvider(context)
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -141,43 +144,41 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         val chainRpc = transferInput.resources?.chainResources?.get(chain)?.rpc ?: return
         val tokenAddress = transferInput.resources?.tokenResources?.get(token)?.address ?: return
 
-        DydxTransferDepositStep(
-            transferInput = transferInput,
-            provider = carteraProvider,
-            walletAddress = walletAddress,
-            walletId = wallet.walletId,
-            chainRpc = chainRpc,
-            tokenAddress = tokenAddress,
-            context = context,
-        )
-            .run()
-            .onEach { event ->
-                val eventResult = event as? AsyncEvent.Result ?: return@onEach
-                isSubmittingFlow.value = false
-                val hash = eventResult.result
-                val error = eventResult.error
-                if (hash != null) {
-                    sendOnboardingAnalytics()
-                    transferAnalytics.logDeposit(transferInput)
-                    abacusStateManager.resetTransferInputFields()
-                    transferInstanceStore.addTransferHash(
-                        hash = hash,
-                        fromChainName = transferInput.chainName ?: transferInput.networkName,
-                        toChainName = abacusStateManager.environment?.chainName,
-                        transferInput = transferInput,
-                    )
-                    router.navigateBack()
-                    router.navigateTo(
-                        route = TransferRoutes.transfer_status + "/$hash",
-                        presentation = DydxRouter.Presentation.Modal,
-                    )
-                } else if (error != null) {
-                    errorFlow.value = DydxTransferError(
-                        message = error.localizedMessage ?: "",
-                    )
-                }
+        appScope.launch {
+            val event = DydxTransferDepositStep(
+                transferInput = transferInput,
+                provider = carteraProvider,
+                walletAddress = walletAddress,
+                walletId = wallet.walletId,
+                chainRpc = chainRpc,
+                tokenAddress = tokenAddress,
+                context = context,
+            )
+                .run()
+
+            isSubmittingFlow.value = false
+            val hash = event.getOrNull()
+            if (hash != null) {
+                sendOnboardingAnalytics()
+                transferAnalytics.logDeposit(transferInput)
+                abacusStateManager.resetTransferInputFields()
+                transferInstanceStore.addTransferHash(
+                    hash = hash,
+                    fromChainName = transferInput.chainName ?: transferInput.networkName,
+                    toChainName = abacusStateManager.environment?.chainName,
+                    transferInput = transferInput,
+                )
+                router.navigateBack()
+                router.navigateTo(
+                    route = TransferRoutes.transfer_status + "/$hash",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            } else {
+                errorFlow.value = DydxTransferError(
+                    message = event.exceptionOrNull()?.message ?: "Transfer error",
+                )
             }
-            .launchIn(viewModelScope)
+        }
     }
 
     private fun sendOnboardingAnalytics() {
