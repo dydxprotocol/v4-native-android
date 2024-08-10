@@ -518,7 +518,7 @@ class AbacusState(
             .mapStateWithThrottle(appScope) { it?.input?.adjustIsolatedMargin }
     }
 
-    private val subaccountNumber: Int?
+    val subaccountNumber: Int?
         get() = parser.asInt(abacusStateManager.subaccountNumber)
 }
 
