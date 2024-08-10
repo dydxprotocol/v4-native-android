@@ -44,14 +44,13 @@ class DydxTransferSubaccountWorker(
                         balance != null && balance > balanceRetainAmount
                     },
                 abacusStateManager.state.currentWallet.mapNotNull { it },
-                abacusStateManager.state.selectedSubaccount.mapNotNull { it?.subaccountNumber },
-            ) { balance, wallet, subaccountNumber ->
+            ) { balance, wallet ->
                 val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
                 if (depositAmount <= 0) return@combine
                 val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
                     ?: return@combine
 
-                depositToSubaccount(amountString, subaccountNumber, wallet)
+                depositToSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
             }
                 .launchIn(scope)
         }
