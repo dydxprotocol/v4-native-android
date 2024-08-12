@@ -29,6 +29,7 @@ import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.utilities.utils.runWithLogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -167,7 +168,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
                 destinationAddress = destinationAddress,
                 transferInput = transferInput,
                 abacusStateManager = abacusStateManager,
-            ).run()
+            ).runWithLogs()
 
             val result = eventResult.getOrNull()
             screenResultFlow.value = result
@@ -182,7 +183,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
                                 cosmosClient = cosmosClient,
                                 parser = parser,
                                 localizer = localizer,
-                            ).run()
+                            ).runWithLogs()
 
                         abacusStateManager.nativeTokenKey ->
                             DydxTransferOutDYDXStep(
@@ -191,7 +192,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
                                 cosmosClient = cosmosClient,
                                 parser = parser,
                                 localizer = localizer,
-                            ).run()
+                            ).runWithLogs()
 
                         else -> {
                             isSubmittingFlow.value = false

@@ -6,8 +6,7 @@ import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
 import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
 import exchange.dydx.utilities.utils.AsyncStep
-import exchange.dydx.web3.EthereumInteractor
-import exchange.dydx.web3.steps.EthGetNonceStep
+import exchange.dydx.utilities.utils.runWithLogs
 import java.math.BigInteger
 import kotlin.math.pow
 
@@ -39,21 +38,11 @@ class DydxTransferDepositStep(
             chainId = chainId,
             provider = provider,
             context = context,
-        ).run()
+        ).runWithLogs()
 
         val approved = approveERC20Result.getOrNull()
         if (approveERC20Result.isFailure || approved == false) {
             return errorEvent(approveERC20Result.exceptionOrNull()?.message ?: "Token not enabled")
-        }
-
-        val nonceStep = EthGetNonceStep(
-            address = walletAddress,
-            ethereumInteractor = EthereumInteractor(chainRpc),
-        ).run()
-
-        val nonce = nonceStep.getOrNull()
-        if (nonceStep.isFailure || nonce == null) {
-            return errorEvent(nonceStep.exceptionOrNull()?.message ?: "Invalid Nonce")
         }
 
         val transaction = EthereumTransactionRequest(
@@ -61,7 +50,7 @@ class DydxTransferDepositStep(
             toAddress = targetAddress,
             weiValue = value.toBigInteger(),
             data = requestPayload.data ?: "0x0",
-            nonce = nonce?.toInt(),
+            nonce = null,
             gasPriceInWei = requestPayload.gasPrice?.toBigInteger(),
             maxFeePerGas = requestPayload.maxFeePerGas?.toBigInteger(),
             maxPriorityFeePerGas = requestPayload.maxPriorityFeePerGas?.toBigInteger(),
@@ -76,7 +65,7 @@ class DydxTransferDepositStep(
             walletId = walletId,
             context = context,
             provider = provider,
-        ).run()
+        ).runWithLogs()
     }
 }
 

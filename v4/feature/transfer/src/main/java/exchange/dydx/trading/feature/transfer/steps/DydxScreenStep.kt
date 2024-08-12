@@ -5,6 +5,7 @@ import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.utilities.utils.AsyncStep
+import exchange.dydx.utilities.utils.runWithLogs
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlin.coroutines.resume
@@ -35,14 +36,14 @@ class DydxTransferScreenStep(
                 DydxScreenStep(
                     address = originationAddress,
                     abacusStateManager = abacusStateManager,
-                ).run()
+                ).runWithLogs()
             }
 
             val destinationScreenAsync = async {
                 DydxScreenStep(
                     address = destinationAddress,
                     abacusStateManager = abacusStateManager,
-                ).run()
+                ).runWithLogs()
             }
 
             val originationScreen = originationScreenAsync.await()

@@ -26,6 +26,7 @@ import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.utilities.utils.runWithLogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -161,7 +162,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
                 destinationAddress = destinationAddress,
                 transferInput = transferInput,
                 abacusStateManager = abacusStateManager,
-            ).run()
+            ).runWithLogs()
             val result = transferScreenResult.getOrNull()
             screenResultFlow.value = result
             val withdrawResult = when (result) {
@@ -173,7 +174,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
                         parser = parser,
                         localizer = localizer,
                         abacusStateManager = abacusStateManager,
-                    ).run()
+                    ).runWithLogs()
                 }
 
                 else -> {

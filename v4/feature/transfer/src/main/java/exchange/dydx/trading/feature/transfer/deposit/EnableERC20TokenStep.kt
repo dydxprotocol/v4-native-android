@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.transfer.deposit
 import android.content.Context
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.utilities.utils.AsyncStep
+import exchange.dydx.utilities.utils.runWithLogs
 import exchange.dydx.web3.EthereumInteractor
 import exchange.dydx.web3.steps.EthGetERC20AllowanceStep
 import java.math.BigInteger
@@ -29,7 +30,7 @@ class EnableERC20TokenStep(
             tokenAddress = tokenAddress,
             ethereumAddress = ethereumAddress,
             spenderAddress = spenderAddress,
-        ).run()
+        ).runWithLogs()
 
         if (event.isFailure) return errorEvent(event.exceptionOrNull()?.message ?: "unknown error")
 
@@ -47,7 +48,7 @@ class EnableERC20TokenStep(
                 chainId = chainId,
                 provider = provider,
                 context = context,
-            ).run()
+            ).runWithLogs()
         }
     }
 }

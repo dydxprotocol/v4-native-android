@@ -26,6 +26,7 @@ import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
+import exchange.dydx.utilities.utils.runWithLogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -145,16 +146,16 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         val tokenAddress = transferInput.resources?.tokenResources?.get(token)?.address ?: return
 
         appScope.launch {
-            val event = DydxTransferDepositStep(
-                transferInput = transferInput,
-                provider = carteraProvider,
-                walletAddress = walletAddress,
-                walletId = wallet.walletId,
-                chainRpc = chainRpc,
-                tokenAddress = tokenAddress,
-                context = context,
-            )
-                .run()
+            val event =
+                DydxTransferDepositStep(
+                    transferInput = transferInput,
+                    provider = carteraProvider,
+                    walletAddress = walletAddress,
+                    walletId = wallet.walletId,
+                    chainRpc = chainRpc,
+                    tokenAddress = tokenAddress,
+                    context = context,
+                ).runWithLogs()
 
             isSubmittingFlow.value = false
             val hash = event.getOrNull()

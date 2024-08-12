@@ -1,6 +1,7 @@
 package exchange.dydx.dydxCartera.steps
 
 import android.content.Context
+import android.util.Log
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
@@ -28,14 +29,15 @@ class WalletSendTransactionStep(
             chainId = chainId,
             context = context,
         )
-        val transaction = WalletTransactionRequest(
+        val transactionRequest = WalletTransactionRequest(
             walletRequest = walletRequest,
             ethereum = transaction,
         )
 
         return suspendCoroutine { continuation ->
+            Log.d("AsyncStep", "Sending $transaction")
             provider.send(
-                request = transaction,
+                request = transactionRequest,
                 connected = { info ->
                     if (info == null) {
                         continuation.resume(errorEvent("Wallet not connected"))
