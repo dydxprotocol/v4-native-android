@@ -7,15 +7,9 @@ import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.runWithLogs
 import exchange.dydx.web3.ABIEncoder
-import exchange.dydx.web3.EthereumInteractor
-import exchange.dydx.web3.steps.EthEstimateGasStep
-import exchange.dydx.web3.steps.EthGetGasPriceStep
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import java.math.BigInteger
 
 class ERC20ApprovalStep(
-    private val chainRpc: String,
     private val tokenAddress: String,
     private val ethereumAddress: String,
     private val spenderAddress: String,
@@ -26,23 +20,7 @@ class ERC20ApprovalStep(
     private val context: Context,
 ) : AsyncStep<Boolean> {
 
-    private val ethereumInteractor = EthereumInteractor(chainRpc)
-
-    override suspend fun run(): Result<Boolean> = coroutineScope {
-        val gasPriceAsync = async {
-            EthGetGasPriceStep(
-                ethereumInteractor = ethereumInteractor,
-            ).runWithLogs()
-        }
-        val gasEstimateAsync = async {
-            EthEstimateGasStep(
-                ethereumInteractor = ethereumInteractor,
-            ).runWithLogs()
-        }
-
-        val gasPrice = gasPriceAsync.await().getOrNull() ?: return@coroutineScope errorEvent("gasPrice is null")
-        val gasEstimate = gasEstimateAsync.await().getOrNull()
-
+    override suspend fun run(): Result<Boolean> {
         val function = if (desiredAmount != null) {
             ABIEncoder.encodeERC20ApproveFunction(
                 spenderAddress = spenderAddress,
@@ -60,14 +38,14 @@ class ERC20ApprovalStep(
             weiValue = BigInteger.valueOf(0),
             data = function,
             nonce = null,
-            gasPriceInWei = gasPrice,
+            gasPriceInWei = null,
             maxFeePerGas = null,
             maxPriorityFeePerGas = null,
-            gasLimit = gasEstimate,
+            gasLimit = null,
             chainId = chainId,
         )
 
-        return@coroutineScope WalletSendTransactionStep(
+        return WalletSendTransactionStep(
             transaction = transaction,
             chainId = chainId,
             walletAddress = ethereumAddress,

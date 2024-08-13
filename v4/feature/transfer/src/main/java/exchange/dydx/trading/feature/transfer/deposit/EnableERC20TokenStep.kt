@@ -39,7 +39,6 @@ class EnableERC20TokenStep(
             return Result.success(true)
         } else {
             return ERC20ApprovalStep(
-                chainRpc = chainRpc,
                 tokenAddress = tokenAddress,
                 ethereumAddress = ethereumAddress,
                 spenderAddress = spenderAddress,
