@@ -13,6 +13,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
@@ -25,17 +26,17 @@ import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
-import exchange.dydx.utilities.utils.AsyncEvent
+import exchange.dydx.utilities.utils.runWithLogs
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,6 +50,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val transferInstanceStore: DydxTransferInstanceStoring,
     private val transferAnalytics: TransferAnalytics,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -154,62 +156,55 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
         val destinationAddress = transferInput.address ?: return
         val originationAddress = wallet?.cosmoAddress ?: return
 
-        DydxTransferScreenStep(
-            originationAddress = originationAddress,
-            destinationAddress = destinationAddress,
-            transferInput = transferInput,
-            abacusStateManager = abacusStateManager,
-        ).run()
-            .take(1)
-            .flatMapLatest { event ->
-                val eventResult = event as? AsyncEvent.Result ?: return@flatMapLatest flowOf()
-                val result = eventResult.result
-                screenResultFlow.value = result
-                when (result) {
-                    DydxScreenResult.NoRestriction -> {
-                        DydxWithdrawToIBCStep(
-                            transferInput = transferInput,
-                            selectedSubaccount = selectedSubaccount,
-                            cosmosClient = cosmosClient,
-                            parser = parser,
-                            localizer = localizer,
-                            abacusStateManager = abacusStateManager,
-                        ).run()
-                    }
-
-                    else -> {
-                        isSubmittingFlow.value = false
-                        flowOf()
-                    }
-                }
-            }
-            .onEach { event ->
-                val eventResult = event as? AsyncEvent.Result ?: return@onEach
-                val hash = eventResult.result
-                val error = eventResult.error
-
-                if (hash != null) {
-                    transferAnalytics.logWithdrawal(transferInput)
-                    transferInstanceStore.addTransferHash(
-                        hash = hash,
-                        fromChainName = abacusStateManager.environment?.chainName,
-                        toChainName = transferInput.chainName ?: transferInput.networkName,
+        appScope.launch {
+            val transferScreenResult = DydxTransferScreenStep(
+                originationAddress = originationAddress,
+                destinationAddress = destinationAddress,
+                transferInput = transferInput,
+                abacusStateManager = abacusStateManager,
+            ).runWithLogs()
+            val result = transferScreenResult.getOrNull()
+            screenResultFlow.value = result
+            val withdrawResult = when (result) {
+                DydxScreenResult.NoRestriction -> {
+                    DydxWithdrawToIBCStep(
                         transferInput = transferInput,
-                    )
-                    abacusStateManager.resetTransferInputFields()
-                    router.navigateBack()
-                    router.navigateTo(
-                        route = TransferRoutes.transfer_status + "/$hash",
-                        presentation = DydxRouter.Presentation.Modal,
-                    )
-                } else if (error != null) {
-                    errorFlow.value = DydxTransferError(
-                        message = error.localizedMessage ?: "",
-                    )
+                        selectedSubaccount = selectedSubaccount,
+                        cosmosClient = cosmosClient,
+                        parser = parser,
+                        localizer = localizer,
+                        abacusStateManager = abacusStateManager,
+                    ).runWithLogs()
                 }
 
-                isSubmittingFlow.value = false
+                else -> {
+                    isSubmittingFlow.value = false
+                    return@launch
+                }
             }
-            .launchIn(viewModelScope)
+
+            val hash = withdrawResult.getOrNull()
+            if (hash != null) {
+                transferAnalytics.logWithdrawal(transferInput)
+                transferInstanceStore.addTransferHash(
+                    hash = hash,
+                    fromChainName = abacusStateManager.environment?.chainName,
+                    toChainName = transferInput.chainName ?: transferInput.networkName,
+                    transferInput = transferInput,
+                )
+                abacusStateManager.resetTransferInputFields()
+                router.navigateBack()
+                router.navigateTo(
+                    route = TransferRoutes.transfer_status + "/$hash",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            } else {
+                errorFlow.value = DydxTransferError(
+                    message = withdrawResult.exceptionOrNull()?.localizedMessage ?: "",
+                )
+            }
+
+            isSubmittingFlow.value = false
+        }
     }
 }

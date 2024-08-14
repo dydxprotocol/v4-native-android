@@ -17,6 +17,7 @@ import exchange.dydx.dydxstatemanager.nativeTokenKey
 import exchange.dydx.dydxstatemanager.usdcTokenDenom
 import exchange.dydx.dydxstatemanager.usdcTokenKey
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
@@ -28,17 +29,17 @@ import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
-import exchange.dydx.utilities.utils.AsyncEvent
+import exchange.dydx.utilities.utils.runWithLogs
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import org.web3j.tuples.generated.Tuple4
 import javax.inject.Inject
 
@@ -52,6 +53,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val transferInstanceStore: DydxTransferInstanceStoring,
+    @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
@@ -160,79 +162,72 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
         val destinationAddress = transferInput.address ?: return
         val originationAddress = wallet.cosmoAddress ?: return
 
-        DydxTransferScreenStep(
-            originationAddress = originationAddress,
-            destinationAddress = destinationAddress,
-            transferInput = transferInput,
-            abacusStateManager = abacusStateManager,
-        ).run()
-            .take(1)
-            .flatMapLatest { event ->
-                val emptyFlow = flowOf<Flow<AsyncEvent<Unit, String>>>()
-                val eventResult = event as? AsyncEvent.Result ?: return@flatMapLatest emptyFlow
-                val result = eventResult.result
-                screenResultFlow.value = result
-                when (result) {
-                    DydxScreenResult.NoRestriction -> {
-                        when (transferInput.token) {
-                            abacusStateManager.usdcTokenKey ->
-                                DydxTransferOutUSDCStep(
-                                    transferInput = transferInput,
-                                    selectedSubaccount = selectedSubaccount,
-                                    usdcTokenAmount = usdcTokenAmount,
-                                    cosmosClient = cosmosClient,
-                                    parser = parser,
-                                    localizer = localizer,
-                                ).run()
+        appScope.launch {
+            val eventResult = DydxTransferScreenStep(
+                originationAddress = originationAddress,
+                destinationAddress = destinationAddress,
+                transferInput = transferInput,
+                abacusStateManager = abacusStateManager,
+            ).runWithLogs()
 
-                            abacusStateManager.nativeTokenKey ->
-                                DydxTransferOutDYDXStep(
-                                    transferInput = transferInput,
-                                    nativeTokenAmount = nativeTokenAmount,
-                                    cosmosClient = cosmosClient,
-                                    parser = parser,
-                                    localizer = localizer,
-                                ).run()
+            val result = eventResult.getOrNull()
+            screenResultFlow.value = result
+            val transferResult = when (result) {
+                DydxScreenResult.NoRestriction -> {
+                    when (transferInput.token) {
+                        abacusStateManager.usdcTokenKey ->
+                            DydxTransferOutUSDCStep(
+                                transferInput = transferInput,
+                                selectedSubaccount = selectedSubaccount,
+                                usdcTokenAmount = usdcTokenAmount,
+                                cosmosClient = cosmosClient,
+                                parser = parser,
+                                localizer = localizer,
+                            ).runWithLogs()
 
-                            else -> {
-                                isSubmittingFlow.value = false
-                                emptyFlow
-                            }
+                        abacusStateManager.nativeTokenKey ->
+                            DydxTransferOutDYDXStep(
+                                transferInput = transferInput,
+                                nativeTokenAmount = nativeTokenAmount,
+                                cosmosClient = cosmosClient,
+                                parser = parser,
+                                localizer = localizer,
+                            ).runWithLogs()
+
+                        else -> {
+                            isSubmittingFlow.value = false
+                            return@launch
                         }
                     }
-
-                    else -> {
-                        isSubmittingFlow.value = false
-                        emptyFlow
-                    }
-                }
-            }
-            .onEach { event ->
-                val event = event as? AsyncEvent.Result<String> ?: return@onEach
-                val hash = event.result
-                val error = event.error
-
-                if (hash != null) {
-                    abacusStateManager.resetTransferInputFields()
-                    transferInstanceStore.addTransferHash(
-                        hash = hash,
-                        fromChainName = abacusStateManager.environment?.chainName,
-                        toChainName = transferInput.chainName ?: transferInput.networkName,
-                        transferInput = transferInput,
-                    )
-                    router.navigateBack()
-                    router.navigateTo(
-                        route = TransferRoutes.transfer_status + "/$hash",
-                        presentation = DydxRouter.Presentation.Modal,
-                    )
-                } else if (error != null) {
-                    errorFlow.value = DydxTransferError(
-                        message = error.localizedMessage ?: "",
-                    )
                 }
 
-                isSubmittingFlow.value = false
+                else -> {
+                    isSubmittingFlow.value = false
+                    return@launch
+                }
             }
-            .launchIn(viewModelScope)
+
+            val hash = transferResult.getOrNull()
+            if (hash != null) {
+                abacusStateManager.resetTransferInputFields()
+                transferInstanceStore.addTransferHash(
+                    hash = hash,
+                    fromChainName = abacusStateManager.environment?.chainName,
+                    toChainName = transferInput.chainName ?: transferInput.networkName,
+                    transferInput = transferInput,
+                )
+                router.navigateBack()
+                router.navigateTo(
+                    route = TransferRoutes.transfer_status + "/$hash",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            } else {
+                errorFlow.value = DydxTransferError(
+                    message = transferResult.exceptionOrNull()?.localizedMessage ?: "",
+                )
+            }
+
+            isSubmittingFlow.value = false
+        }
     }
 }

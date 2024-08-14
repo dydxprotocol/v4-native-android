@@ -1,28 +1,19 @@
 package exchange.dydx.utilities.utils
 
-import kotlinx.coroutines.flow.Flow
-
-// Sealed class to represent async events
-sealed class AsyncEvent<out ProgressType, out ResultType> {
-    data class Progress<ProgressType>(val progress: ProgressType) : AsyncEvent<ProgressType, Nothing>()
-    data class Result<ResultType>(val result: ResultType?, val error: Throwable?) : AsyncEvent<Nothing, ResultType>()
-
-    val isProgress: Boolean
-        get() = this is Progress
-
-    val isResult: Boolean
-        get() = this is Result
-}
+import android.util.Log
 
 // Interface representing an asynchronous step
-interface AsyncStep<ProgressType, ResultType> {
-    fun run(): Flow<AsyncEvent<ProgressType, ResultType>>
+interface AsyncStep<ResultType> {
+    suspend fun run(): Result<ResultType>
 
-    val invalidInputEvent: AsyncEvent.Result<ResultType>
+    val invalidInputEvent: Result<ResultType>
         get() = errorEvent("Invalid input")
 
-    fun errorEvent(error: String): AsyncEvent.Result<ResultType> = AsyncEvent.Result<ResultType>(
-        result = null,
-        error = Throwable(error),
-    )
+    fun errorEvent(error: String) = Result.failure<ResultType>(Throwable(error))
+}
+
+suspend inline fun <T, reified A : AsyncStep<T>> A.runWithLogs(): Result<T> {
+    val name = A::class.java.simpleName
+    Log.d("AsyncStep", "Starting $name")
+    return run().also { Log.d("AsyncStep", "Got result for $name: $it") }
 }

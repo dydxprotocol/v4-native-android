@@ -5,14 +5,8 @@ import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
 import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
-import exchange.dydx.utilities.utils.AsyncEvent
 import exchange.dydx.utilities.utils.AsyncStep
-import exchange.dydx.web3.EthereumInteractor
-import exchange.dydx.web3.steps.EthGetNonceStep
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import exchange.dydx.utilities.utils.runWithLogs
 import java.math.BigInteger
 import kotlin.math.pow
 
@@ -24,18 +18,17 @@ class DydxTransferDepositStep(
     private val chainRpc: String,
     private val tokenAddress: String,
     private val context: Context,
-) : AsyncStep<Unit, String> {
+) : AsyncStep<String> {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun run(): Flow<AsyncEvent<Unit, String>> {
-        val requestPayload = transferInput.requestPayload ?: return flowOf(invalidInputEvent)
-        val targetAddress = requestPayload.targetAddress ?: return flowOf(invalidInputEvent)
-        val tokenSize = transferInput.tokenSize ?: return flowOf(invalidInputEvent)
-        val walletId = walletId ?: return flowOf(invalidInputEvent)
-        val chainId = transferInput.chain ?: return flowOf(invalidInputEvent)
-        val value = requestPayload.value ?: return flowOf(invalidInputEvent)
+    override suspend fun run(): Result<String> {
+        val requestPayload = transferInput.requestPayload ?: return invalidInputEvent
+        val targetAddress = requestPayload.targetAddress ?: return invalidInputEvent
+        val tokenSize = transferInput.tokenSize ?: return invalidInputEvent
+        val walletId = walletId ?: return invalidInputEvent
+        val chainId = transferInput.chain ?: return invalidInputEvent
+        val value = requestPayload.value ?: return invalidInputEvent
 
-        return EnableERC20TokenStep(
+        val approveERC20Result = EnableERC20TokenStep(
             chainRpc = chainRpc,
             tokenAddress = tokenAddress,
             ethereumAddress = walletAddress,
@@ -45,51 +38,34 @@ class DydxTransferDepositStep(
             chainId = chainId,
             provider = provider,
             context = context,
-        ).run()
-            .flatMapLatest { event ->
-                val eventResult =
-                    event as? AsyncEvent.Result ?: return@flatMapLatest flowOf()
-                val approved = eventResult.result
-                val error = eventResult.error
-                if (error != null || approved == false) {
-                    return@flatMapLatest flowOf(errorEvent(error?.message ?: "Token not enabled"))
-                }
+        ).runWithLogs()
 
-                EthGetNonceStep(
-                    address = walletAddress,
-                    ethereumInteractor = EthereumInteractor(chainRpc),
-                ).run()
-            }
-            .flatMapLatest { event ->
-                val eventResult =
-                    event as? AsyncEvent.Result ?: return@flatMapLatest flowOf()
-                val nonce = eventResult.result as? BigInteger
-                val error = eventResult.error
-                if (error != null || nonce == null) {
-                    return@flatMapLatest flowOf(errorEvent(error?.message ?: "Invalid Nonce"))
-                }
+        val approved = approveERC20Result.getOrNull()
+        if (approveERC20Result.isFailure || approved == false) {
+            return errorEvent(approveERC20Result.exceptionOrNull()?.message ?: "Token not enabled")
+        }
 
-                val transaction = EthereumTransactionRequest(
-                    fromAddress = walletAddress,
-                    toAddress = targetAddress,
-                    weiValue = value.toBigInteger(),
-                    data = requestPayload.data ?: "0x0",
-                    nonce = nonce?.toInt(),
-                    gasPriceInWei = requestPayload.gasPrice?.toBigInteger(),
-                    maxFeePerGas = requestPayload.maxFeePerGas?.toBigInteger(),
-                    maxPriorityFeePerGas = requestPayload.maxPriorityFeePerGas?.toBigInteger(),
-                    gasLimit = requestPayload.gasLimit?.toBigInteger(),
-                    chainId = chainId,
-                )
-                WalletSendTransactionStep(
-                    transaction = transaction,
-                    chainId = chainId,
-                    walletAddress = walletAddress,
-                    walletId = walletId,
-                    context = context,
-                    provider = provider,
-                ).run()
-            }
+        val transaction = EthereumTransactionRequest(
+            fromAddress = walletAddress,
+            toAddress = targetAddress,
+            weiValue = value.toBigInteger(),
+            data = requestPayload.data ?: "0x0",
+            nonce = null,
+            gasPriceInWei = requestPayload.gasPrice?.toBigInteger(),
+            maxFeePerGas = requestPayload.maxFeePerGas?.toBigInteger(),
+            maxPriorityFeePerGas = requestPayload.maxPriorityFeePerGas?.toBigInteger(),
+            gasLimit = requestPayload.gasLimit?.toBigInteger(),
+            chainId = chainId,
+        )
+
+        return WalletSendTransactionStep(
+            transaction = transaction,
+            chainId = chainId,
+            walletAddress = walletAddress,
+            walletId = walletId,
+            context = context,
+            provider = provider,
+        ).runWithLogs()
     }
 }
 

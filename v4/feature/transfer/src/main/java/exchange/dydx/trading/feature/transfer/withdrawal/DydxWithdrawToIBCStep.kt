@@ -6,12 +6,11 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
-import exchange.dydx.utilities.utils.AsyncEvent
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.jsonStringToMap
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class DydxWithdrawToIBCStep(
     private val transferInput: TransferInput,
@@ -20,50 +19,49 @@ class DydxWithdrawToIBCStep(
     private val parser: ParserProtocol,
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-) : AsyncStep<Unit, String> {
+) : AsyncStep<String> {
 
-    private val eventFlow: MutableStateFlow<AsyncEvent<Unit, String>> =
-        MutableStateFlow(AsyncEvent.Progress(Unit))
-
-    override fun run(): Flow<AsyncEvent<Unit, String>> {
-        val amount = transferInput.size?.usdcSize ?: return flowOf(invalidInputEvent)
+    override suspend fun run(): Result<String> {
+        val amount = transferInput.size?.usdcSize ?: return invalidInputEvent
         val amountDecimal = parser.asDouble(amount) ?: 0.0
         if (amountDecimal <= 0.0) {
-            return flowOf(invalidInputEvent)
+            return invalidInputEvent
         }
-        val data = transferInput.requestPayload?.data ?: return flowOf(invalidInputEvent)
+        val data = transferInput.requestPayload?.data ?: return invalidInputEvent
 
-        if (transferInput.isCctp) {
-            abacusStateManager.commitCCTPWithdraw { success, parsingError, data ->
-                if (success) {
-                    val response = data as? String
-                    if (response != null) {
-                        postTransaction(response)
+        return if (transferInput.isCctp) {
+            suspendCoroutine { continuation ->
+                abacusStateManager.commitCCTPWithdraw { success, parsingError, data ->
+                    if (success) {
+                        val response = data as? String
+                        if (response != null) {
+                            postTransaction(response, continuation)
+                        } else {
+                            continuation.resume(errorEvent(localizer.localize("APP.GENERAL.UNKNOWN_ERROR")))
+                        }
                     } else {
-                        eventFlow.value = errorEvent(localizer.localize("APP.GENERAL.UNKNOWN_ERROR"))
+                        continuation.resume(errorEvent(parsingError?.message ?: localizer.localize("APP.GENERAL.UNKNOWN_ERROR")))
                     }
-                } else {
-                    eventFlow.value = errorEvent(parsingError?.message ?: localizer.localize("APP.GENERAL.UNKNOWN_ERROR"))
                 }
             }
         } else {
-            cosmosClient.withdrawToIBC(
-                subaccount = selectedSubaccount.subaccountNumber,
-                amount = amount,
-                payload = data,
-                completion = { response ->
-                    postTransaction(response)
-                },
-            )
+            suspendCoroutine { continuation ->
+                cosmosClient.withdrawToIBC(
+                    subaccount = selectedSubaccount.subaccountNumber,
+                    amount = amount,
+                    payload = data,
+                    completion = { response ->
+                        postTransaction(response, continuation)
+                    },
+                )
+            }
         }
-
-        return eventFlow
     }
 
-    private fun postTransaction(response: String?) {
+    private fun postTransaction(response: String?, continuation: Continuation<Result<String>>) {
         val result = response?.jsonStringToMap()
         if (result == null) {
-            eventFlow.value = errorEvent(localizer.localize("APP.GENERAL.UNKNOWN_ERROR"))
+            continuation.resume(errorEvent(localizer.localize("APP.GENERAL.UNKNOWN_ERROR")))
             return
         }
 
@@ -71,14 +69,13 @@ class DydxWithdrawToIBCStep(
         val transactionHash = parser.asString(result["transactionHash"])
         val hash = parser.asString(result["hash"])
         if (error != null) {
-            eventFlow.value = errorEvent(error["message"] as? String ?: "Unknown error")
+            continuation.resume(errorEvent(error["message"] as? String ?: "Unknown error"))
         } else if (transactionHash != null) {
-            eventFlow.value =
-                AsyncEvent.Result(result = "0x$transactionHash", error = null)
+            continuation.resume(Result.success("0x$transactionHash"))
         } else if (hash != null) {
-            eventFlow.value = AsyncEvent.Result(result = "0x$hash", error = null)
+            continuation.resume(Result.success("0x$hash"))
         } else {
-            eventFlow.value = errorEvent(localizer.localize("APP.V4.NO_HASH"))
+            continuation.resume(errorEvent(localizer.localize("APP.V4.NO_HASH")))
         }
     }
 }
