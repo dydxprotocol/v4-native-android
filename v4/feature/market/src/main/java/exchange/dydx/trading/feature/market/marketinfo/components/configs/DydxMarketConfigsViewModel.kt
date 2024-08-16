@@ -41,7 +41,7 @@ class DydxMarketConfigsViewModel @Inject constructor(
         val items: List<DydxMarketConfigsView.Item> = listOf(
             DydxMarketConfigsView.Item(
                 title = localizer.localize("APP.GENERAL.MARKET_NAME"),
-                value = market?.id ?: "-",
+                value = market?.displayId ?: "-",
             ),
             DydxMarketConfigsView.Item(
                 title = localizer.localize("APP.GENERAL.TICK_SIZE"),

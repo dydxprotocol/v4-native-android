@@ -219,7 +219,7 @@ class DydxMarketDepthViewModel @Inject constructor(
             config,
             asksData,
             bidsData,
-            market?.id,
+            market?.displayId,
             orderbook?.midPrice?.toFloat(),
             lastBidsWithin2pct(bids),
             lastAsksWithin2pct(asks),

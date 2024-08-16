@@ -276,7 +276,6 @@ class DydxMarketPricesViewModel @Inject constructor(
         return DydxMarketPricesView.ViewState(
             localizer = localizer,
             config = config(market, candlesPeriod),
-            market = market?.id,
             candles = CandleDataSet(candles, "candles"),
             volumes = BarDataSet(volumes, "volumes"),
             prices = LineChartDataSet(lines, "lines"),

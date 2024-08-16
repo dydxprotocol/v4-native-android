@@ -85,7 +85,6 @@ object DydxMarketPricesView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val config: CombinedChartConfig,
-        val market: String?,
         val candles: CandleChartDataSet?,
         val volumes: BarDataSet?,
         val prices: LineChartDataSet?,
@@ -98,7 +97,6 @@ object DydxMarketPricesView : DydxComponent {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 config = CombinedChartConfig.default(),
-                market = "BTC-USD",
                 CandleChartDataSet(
                     listOf(
                         CandleEntry(0f, 0f, 0f, 0f, 0f),

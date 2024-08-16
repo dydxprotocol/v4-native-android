@@ -57,7 +57,7 @@ data class SharedMarketViewState(
             favoriteStore: DydxFavoriteStoreProtocol,
         ): SharedMarketViewState {
             val viewModel = SharedMarketViewState(
-                id = market.id,
+                id = market.displayId,
                 tokenSymbol = asset?.id ?: market.assetId,
                 tokenFullName = asset?.name ?: market.assetId,
                 logoUrl = asset?.resources?.imageUrl,
