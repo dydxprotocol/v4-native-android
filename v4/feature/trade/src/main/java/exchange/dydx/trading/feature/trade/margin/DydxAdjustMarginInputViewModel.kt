@@ -51,6 +51,8 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
                 )
             }
 
+            abacusStateManager.adjustIsolatedMargin(data = marketId, type = AdjustIsolatedMarginInputField.Market)
+
             abacusStateManager.state.selectedSubaccountPositions.value?.firstOrNull {
                 it.id == marketId
             }?.let {
