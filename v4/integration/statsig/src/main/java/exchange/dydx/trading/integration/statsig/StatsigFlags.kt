@@ -18,14 +18,25 @@ object RealStatsigFlags : StatsigFlags {
 
     override fun isEnabled(name: String, default: Boolean): Boolean {
         return firstAccessCache[name] ?: run {
-            val gate = Statsig.getFeatureGate(name)
-            val flagValue = when (gate.getEvaluationDetails().reason) {
+            val (gateReason, gateValue) = try {
+                val gate = Statsig.getFeatureGate(name)
+                gate.getEvaluationDetails().reason to gate.getValue()
+            } catch (e: IllegalStateException) {
+                // Catch uninitialized SDK error.
+                if (BuildConfig.DEBUG) {
+                    throw e
+                } else {
+                    EvaluationReason.Uninitialized to default
+                }
+            }
+
+            val flagValue = when (gateReason) {
                 EvaluationReason.Network,
                 EvaluationReason.NetworkNotModified,
                 EvaluationReason.Cache,
                 EvaluationReason.Sticky,
                 EvaluationReason.LocalOverride,
-                EvaluationReason.Bootstrap -> gate.getValue()
+                EvaluationReason.Bootstrap -> gateValue
 
                 EvaluationReason.Unrecognized,
                 EvaluationReason.InvalidBootstrap,
