@@ -18,4 +18,12 @@ class CompositeLogger @Inject constructor(
     override fun e(tag: String, message: String) {
         loggers.forEach { it.e(tag, message) }
     }
+
+    override fun e(tag: String, message: String, context: Map<String, Any>?, error: Error?) {
+        loggers.forEach { it.e(tag, message) }
+    }
+
+    override fun ddInfo(tag: String, message: String, context: Map<String, Any>?) {
+        // no-op for now
+    }
 }
