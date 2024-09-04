@@ -43,11 +43,11 @@ class DydxRestrictionsWorker(
                         FIRST_STRIKE,
                         FIRST_STRIKE_CLOSE_ONLY,
                         CLOSE_ONLY -> {
-                            val params = mapOf("DATE" to compliance.expiresAt.orEmpty(), "EMAIL" to abacusStateManager.environment?.links?.complianceSupportEmail.orEmpty())
+                            val params = mapOf("DATE" to compliance.expiresAt.orEmpty(), "HELP_LINK" to abacusStateManager.environment?.links?.help.orEmpty())
                             localizer.localize("APP.COMPLIANCE.CLOSE_ONLY_TITLE") to localizer.localizeWithParams("APP.COMPLIANCE.CLOSE_ONLY_BODY", params)
                         }
                         BLOCKED -> {
-                            val params = mapOf("EMAIL" to abacusStateManager.environment?.links?.complianceSupportEmail.orEmpty())
+                            val params = mapOf("HELP_LINK" to abacusStateManager.environment?.links?.help.orEmpty())
                             localizer.localize("APP.COMPLIANCE.PERMANENTLY_BLOCKED_TITLE") to localizer.localizeWithParams("APP.COMPLIANCE.PERMANENTLY_BLOCKED_BODY", params)
                         }
                     }
