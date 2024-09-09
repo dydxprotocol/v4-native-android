@@ -1,7 +1,7 @@
 buildscript {
     ext.ktlintVersion = '0.48.0'
     ext.kotlinVersion = '1.9.20'
-    ext.androidApplicationVersion = '8.5.1'
+    ext.androidApplicationVersion = '8.6.0'
 
     repositories {
         google()

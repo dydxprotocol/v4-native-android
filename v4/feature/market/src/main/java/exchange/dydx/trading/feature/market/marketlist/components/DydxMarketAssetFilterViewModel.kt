@@ -46,6 +46,13 @@ enum class MarketFiltering {
     LAYER1,
     LAYER2,
     DEFI,
+    NEW,
+    AI,
+    NFT,
+    GAMING,
+    MEME,
+    RWA,
+    ENT,
 }
 
 data class FilterAction(
@@ -71,6 +78,14 @@ data class FilterAction(
                 ),
 
                 FilterAction(
+                    type = MarketFiltering.FAVORITED,
+                    content = localizer.localize("APP.GENERAL.RECENTLY_LISTED"),
+                    action = { market, _, _ ->
+                        market.perpetual?.isNew ?: false
+                    },
+                ),
+
+                FilterAction(
                     type = MarketFiltering.LAYER1,
                     content = localizer.localize("APP.GENERAL.LAYER_1"),
                     action = { market, assetMap, _ ->
@@ -79,10 +94,66 @@ data class FilterAction(
                 ),
 
                 FilterAction(
+                    type = MarketFiltering.LAYER1,
+                    content = localizer.localize("APP.GENERAL.LAYER_2"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("Layer 2") ?: false
+                    },
+                ),
+
+                FilterAction(
                     type = MarketFiltering.DEFI,
                     content = localizer.localize("APP.GENERAL.DEFI"),
                     action = { market, assetMap, _ ->
                         assetMap[market.assetId]?.tags?.contains("Defi") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.NEW,
+                    content = localizer.localize("APP.GENERAL.AI"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("AI") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.NFT,
+                    content = localizer.localize("APP.GENERAL.NFT"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("NFT") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.GAMING,
+                    content = localizer.localize("APP.GENERAL.GAMING"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("Gaming") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.MEME,
+                    content = localizer.localize("APP.GENERAL.MEME"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("Meme") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.RWA,
+                    content = localizer.localize("APP.GENERAL.REAL_WORLD_ASSET_SHORT"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("RWA") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.ENT,
+                    content = localizer.localize("APP.GENERAL.ENTERTAINMENT"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("Ent") ?: false
                     },
                 ),
             )

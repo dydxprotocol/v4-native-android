@@ -197,7 +197,7 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
-        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing)
+        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing, default = true)
         appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
         StatsigConfig.useSkip = statsigFlags.isEnabled("ff_skip_migration", default = true)
         StatsigConfig.ff_enable_evm_swaps = statsigFlags.isEnabled("ff_enable_evm_swaps", default = true)
