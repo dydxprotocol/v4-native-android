@@ -78,7 +78,7 @@ data class FilterAction(
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.FAVORITED,
+                    type = MarketFiltering.NEW,
                     content = localizer.localize("APP.GENERAL.RECENTLY_LISTED"),
                     action = { market, _, _ ->
                         market.perpetual?.isNew ?: false
@@ -94,7 +94,7 @@ data class FilterAction(
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.LAYER1,
+                    type = MarketFiltering.LAYER2,
                     content = localizer.localize("APP.GENERAL.LAYER_2"),
                     action = { market, assetMap, _ ->
                         assetMap[market.assetId]?.tags?.contains("Layer 2") ?: false
@@ -110,7 +110,7 @@ data class FilterAction(
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.NEW,
+                    type = MarketFiltering.AI,
                     content = localizer.localize("APP.GENERAL.AI"),
                     action = { market, assetMap, _ ->
                         assetMap[market.assetId]?.tags?.contains("AI") ?: false

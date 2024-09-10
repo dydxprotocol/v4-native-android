@@ -43,20 +43,16 @@ class DydxMarketAssetListViewModel @Inject constructor(
             favoriteStore.state,
         ) { markets, assetMap, filterAction, sortAction, _ ->
             val filteredMarkets = markets?.filter { market ->
-                val action = filterAction?.action
-                if (action != null && assetMap != null) {
+                val action = filterAction.action
+                if (assetMap != null) {
                     return@filter action(market, assetMap, favoriteStore)
                 } else {
                     return@filter true
                 }
             }
             val sortedMarkets = filteredMarkets?.sortedWith { market1, market2 ->
-                val action = sortAction?.action
-                if (action != null) {
-                    return@sortedWith action(market1, market2)
-                } else {
-                    return@sortedWith 0
-                }
+                val action = sortAction.action
+                return@sortedWith action(market1, market2)
             }
             val scrollTop = currentFilterAction != null && currentSortAction != null &&
                 (currentFilterAction != filterAction || currentSortAction != sortAction)
