@@ -155,6 +155,7 @@ dependencies {
     // Module dependencies
     implementation project(':v4:common')
     implementation project(':v4:integration:cosmos')
+    implementation project(':v4:integration:fcm')
     implementation project(':v4:core')
     implementation project(path: ':v4:integration:dydxStateManager')
     implementation project(path: ':v4:utilities')
