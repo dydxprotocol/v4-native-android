@@ -44,12 +44,12 @@ fun Preview_DydxProfileView() {
 object DydxProfileView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val alerts: Boolean,
+        val hasAlerts: Boolean,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                alerts = true,
+                hasAlerts = true,
             )
         }
     }
@@ -84,7 +84,7 @@ object DydxProfileView : DydxComponent {
                 item(key = "buttons") {
                     DydxProfileButtonsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                 }
-                if (state?.alerts == true) {
+                if (state?.hasAlerts == true) {
                     item(key = "vault") {
                         DydxProfileAlertsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                     }

@@ -21,7 +21,7 @@ class DydxProfileViewModel @Inject constructor(
     private fun createViewState(): DydxProfileView.ViewState {
         return DydxProfileView.ViewState(
             localizer = localizer,
-            alerts = featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled, default = false),
+            hasAlerts = featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled, default = false),
         )
     }
 }
