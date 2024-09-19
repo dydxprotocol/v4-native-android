@@ -50,6 +50,7 @@ dependencies {
     implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:feature:shared')
     implementation project(path: ':v4:feature:portfolio')
+    implementation project(path: ':v4:feature:newsalerts')
 
     /* Local Dependencies */
 

@@ -7,6 +7,7 @@ enum class DydxFeatureFlag {
     deployment_url,
     force_mainnet,
     abacus_static_typing,
+    vault_enabled,
 }
 
 class DydxFeatureFlags @Inject constructor(

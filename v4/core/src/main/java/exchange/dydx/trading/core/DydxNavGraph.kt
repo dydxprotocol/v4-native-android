@@ -17,6 +17,7 @@ import exchange.dydx.trading.feature.profile.profileGraph
 import exchange.dydx.trading.feature.trade.tradeGraph
 import exchange.dydx.trading.feature.transfer.transferGraph
 import exchange.dydx.utilities.utils.Logging
+import exchange.dydx.vault.vaultGraph
 
 private const val TAG = "DydxNavGraph"
 
@@ -78,6 +79,11 @@ fun DydxNavGraph(
         )
 
         transferGraph(
+            appRouter = appRouter,
+            logger = logger,
+        )
+
+        vaultGraph(
             appRouter = appRouter,
             logger = logger,
         )

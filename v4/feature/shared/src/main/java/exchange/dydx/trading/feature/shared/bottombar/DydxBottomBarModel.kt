@@ -5,11 +5,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.common.navigation.NewsAlertsRoutes
 import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.common.navigation.ProfileRoutes
+import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.feature.shared.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +23,7 @@ class DydxBottomBarModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxBottomBar.ViewState?> = MutableStateFlow(createViewState())
@@ -29,7 +33,11 @@ class DydxBottomBarModel @Inject constructor(
             portfolioItem(router),
             marketItem(router),
             centerButton(router),
-            newsAlertsItem(router),
+            if (featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled, default = false)) {
+                vaultItem(router)
+            } else {
+                newsAlertsItem(router)
+            },
             profileItem(router),
         )
         return DydxBottomBar.ViewState(
@@ -87,6 +95,16 @@ class DydxBottomBarModel @Inject constructor(
         selected = router.routeIsInBackStack(ProfileRoutes.main),
         onTapAction = {
             router.tabTo(ProfileRoutes.main)
+        },
+    )
+
+    private fun vaultItem(router: DydxRouter) = BottomBarItem(
+        route = NewsAlertsRoutes.main,
+        label = "APP.GENERAL.EARN_SHORT",
+        icon = R.drawable.ic_tab_vault,
+        selected = router.routeIsInBackStack(VaultRoutes.main),
+        onTapAction = {
+            router.tabTo(VaultRoutes.main)
         },
     )
 }
