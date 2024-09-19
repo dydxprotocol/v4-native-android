@@ -9,6 +9,7 @@ import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.trade.streams.MutableTradeStreaming
+import exchange.dydx.trading.integration.fcm.PushPermissionRequester
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -20,6 +21,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
     private val router: DydxRouter,
     private val tradeStream: MutableTradeStreaming,
     private val savedStateHandle: SavedStateHandle,
+    private val pushPermissionRequester: PushPermissionRequester,
 ) : ViewModel(), DydxViewModel {
 
     private enum class TradeType {
@@ -57,6 +59,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonState = PlatformButtonState.Secondary,
                     ctaButtonAction = {
                         router.navigateBack()
+                        pushPermissionRequester.requestPushPermission()
                     },
                 )
             is AbacusStateManagerProtocol.SubmissionStatus.Failed ->

@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.views.SettingsView
+import exchange.dydx.trading.integration.fcm.FCMRegistrar
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ class DydxLanguageViewModel @Inject constructor(
     val localizer: AbacusLocalizerProtocol,
     private val preferencesStore: SharedPreferencesStore,
     private val router: DydxRouter,
+    private val fcmRegistrar: FCMRegistrar,
 ) : ViewModel(), DydxViewModel {
 
     private val mutableState = MutableStateFlow(createViewState())
@@ -49,6 +51,7 @@ class DydxLanguageViewModel @Inject constructor(
                 preferencesStore.save(value, PreferenceKeys.Language)
                 localizer.language = value
                 mutableState.value = createViewState()
+                fcmRegistrar.registerToken() // need to pass up language for push notifs to be translated.
 
                 router.tabTo(MarketRoutes.marketList)
             },

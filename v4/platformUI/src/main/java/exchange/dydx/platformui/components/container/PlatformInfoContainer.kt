@@ -103,12 +103,14 @@ fun PlatformInfoContainer(
                                     .themeFont(fontSize = ThemeFont.FontSize.base, fontType = ThemeFont.FontType.plus),
                             )
                         }
-                        Text(
-                            text = message,
-                            color = type.foregroundColor,
-                            style = TextStyle.dydxDefault
-                                .themeFont(fontSize = ThemeFont.FontSize.small),
-                        )
+                        message?.let {
+                            Text(
+                                text = message,
+                                color = type.foregroundColor,
+                                style = TextStyle.dydxDefault
+                                    .themeFont(fontSize = ThemeFont.FontSize.small),
+                            )
+                        }
                     }
                     buttonTitle?.let {
                         val shape = RoundedCornerShape(6.dp)
@@ -138,7 +140,7 @@ fun PlatformInfoContainer(
 
 data class Toast(
     val title: String? = null,
-    val message: String,
+    val message: String?,
     val buttonTitle: String? = null,
     val type: Type = Type.Info,
     val duration: Duration,
@@ -202,7 +204,7 @@ class PlatformInfo @Inject constructor(
 
     fun show(
         title: String? = null,
-        message: String,
+        message: String? = null,
         buttonTitle: String? = null,
         type: Toast.Type = Toast.Type.Info,
         duration: Toast.Duration = Toast.Duration.Short,

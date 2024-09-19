@@ -36,7 +36,6 @@ import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
 import exchange.dydx.abacus.state.v2.manager.AsyncAbacusStateManagerV2
 import exchange.dydx.abacus.state.v2.supervisor.AppConfigsV2
-import exchange.dydx.abacus.state.v2.supervisor.OnboardingConfigs
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
@@ -138,6 +137,8 @@ interface AbacusStateManagerProtocol {
             triggerOrders(null, field)
         }
     }
+
+    fun registerPushToken(token: String, language: String)
 }
 
 // Temporary location, should probably make a separate dagger-qualifiers module.
@@ -188,8 +189,6 @@ class AbacusStateManager @Inject constructor(
                 appDeployment
             }
         }
-
-        appConfigsV2.onboardingConfigs.squidVersion = OnboardingConfigs.SquidVersion.V2
 
         // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
         if (BuildConfig.DEBUG) {
@@ -450,6 +449,10 @@ class AbacusStateManager @Inject constructor(
 
     override fun setGasToken(gasToken: GasToken) {
         asyncStateManager.gasToken = gasToken
+    }
+
+    override fun registerPushToken(token: String, language: String) {
+        asyncStateManager.registerPushNotification(token, language)
     }
 
     // MARK: StateNotificationProtocol
