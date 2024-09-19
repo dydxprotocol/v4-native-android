@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.workers
 
+import android.app.Application
 import android.content.Context
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
@@ -37,6 +38,7 @@ class DydxGlobalWorkers(
     private val tracker: Tracking,
     private val logger: CompositeLogging,
     private val preferencesStore: SharedPreferencesStore,
+    application: Application,
 ) : WorkerProtocol {
 
     private val workers = listOf(
@@ -46,7 +48,7 @@ class DydxGlobalWorkers(
         DydxRestrictionsWorker(scope, abacusStateManager, localizer, toaster),
         DydxCarteraConfigWorker(abacusStateManager, cachedFileLoader, context, logger),
         DydxTransferSubaccountWorker(scope, abacusStateManager, cosmosClient, formatter, parser, tracker, logger),
-        DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker),
+        DydxUserTrackingWorker(scope, abacusStateManager, localizer, tracker, application),
         DydxGasTokenWorker(preferencesStore, abacusStateManager, logger),
     )
 

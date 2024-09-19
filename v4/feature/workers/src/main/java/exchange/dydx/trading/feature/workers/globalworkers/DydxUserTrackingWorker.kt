@@ -1,5 +1,9 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
+import android.Manifest
+import android.app.Application
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -18,6 +22,7 @@ class DydxUserTrackingWorker(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     private val tracker: Tracking,
+    private val application: Application,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -64,6 +69,14 @@ class DydxUserTrackingWorker(
             tracker.setUserProperties(
                 mapOf(
                     UserProperty.selectedLocale.rawValue to localizer.language,
+                ),
+            )
+
+            val pushEnabled = ContextCompat.checkSelfPermission(application, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            tracker.setUserProperties(
+                mapOf(
+                    "pushNotificationsEnabled" to pushEnabled.toString(),
                 ),
             )
         }

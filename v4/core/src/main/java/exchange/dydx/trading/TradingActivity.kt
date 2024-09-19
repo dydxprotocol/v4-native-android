@@ -34,6 +34,7 @@ import exchange.dydx.trading.core.biometric.DydxBiometricPrompt
 import exchange.dydx.trading.core.biometric.DydxBiometricView
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.analytics.AnalyticsEvent
+import exchange.dydx.trading.integration.fcm.PushPermissionRequester
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -57,9 +58,11 @@ class TradingActivity : FragmentActivity() {
 
     @Inject lateinit var abacusStateManager: AbacusStateManager
 
+    @Inject lateinit var pushPermissionRequester: PushPermissionRequester
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        pushPermissionRequester.takeActivity(this)
         viewModel.logger.d(TAG, "TradingActivity#onCreate")
 
         CarteraSetup.run(this, viewModel.logger)
@@ -103,6 +106,11 @@ class TradingActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
         abacusStateManager.setReadyToConnect(true)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        pushPermissionRequester.dropActivity(this)
     }
 
     private fun setContentWithJS(
@@ -165,13 +173,12 @@ class TradingActivity : FragmentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent != null) {
-            viewModel.router.handleIntent(intent)
-        }
+        viewModel.router.handleIntent(intent)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
