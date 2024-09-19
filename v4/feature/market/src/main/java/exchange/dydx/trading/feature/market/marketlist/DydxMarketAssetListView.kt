@@ -41,6 +41,9 @@ fun Preview_DydxMarketAssetListView() {
 }
 
 object DydxMarketAssetListView : DydxComponent {
+
+    private var firstTime = true
+
     data class ViewState(
         val localizer: LocalizerProtocol,
         val items: List<DydxMarketAssetItemView.ViewState>,
@@ -139,7 +142,10 @@ object DydxMarketAssetListView : DydxComponent {
                         )
                     }
 
-                    if (state.scrollToTop) {
+                    if (state.scrollToTop || firstTime) {
+                        if (firstTime) {
+                            firstTime = false
+                        }
                         scope.launch {
                             listState.animateScrollToItem(0)
                         }

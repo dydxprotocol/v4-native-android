@@ -47,6 +47,7 @@ dependencies {
     implementation project(':v4:common')
     implementation project(path: ':v4:utilities')
     implementation project(path: ':v4:integration:dydxStateManager')
+    implementation project(path: ':v4:integration:fcm')
     implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:feature:shared')
     implementation project(path: ':v4:feature:receipt')

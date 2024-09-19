@@ -49,6 +49,7 @@ dependencies {
     api project(':v4:integration:analytics')
 
     implementation project(':v4:integration:dydxStateManager')
+    implementation project(':v4:integration:fcm')
     implementation project(':v4:utilities')
     implementation project(':v4:feature:onboarding')
     implementation project(':v4:feature:profile')
