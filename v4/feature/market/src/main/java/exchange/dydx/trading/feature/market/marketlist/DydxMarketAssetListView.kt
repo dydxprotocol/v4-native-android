@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +42,9 @@ fun Preview_DydxMarketAssetListView() {
 }
 
 object DydxMarketAssetListView : DydxComponent {
+
+    private var firstTime = true
+
     data class ViewState(
         val localizer: LocalizerProtocol,
         val items: List<DydxMarketAssetItemView.ViewState>,
@@ -139,7 +143,10 @@ object DydxMarketAssetListView : DydxComponent {
                         )
                     }
 
-                    if (state.scrollToTop) {
+                    if (state.scrollToTop || firstTime) {
+                        if (firstTime) {
+                            firstTime = false
+                        }
                         scope.launch {
                             listState.animateScrollToItem(0)
                         }
