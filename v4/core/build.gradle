@@ -58,6 +58,7 @@ dependencies {
     implementation project(':v4:feature:newsalerts')
     implementation project(':v4:feature:workers')
     implementation project(':v4:feature:transfer')
+    implementation project(':v4:feature:vault')
 
     /* Local Dependencies */
     implementation "androidx.core:core:$androidKtxVersion"

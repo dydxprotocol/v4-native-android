@@ -41,6 +41,7 @@ object ProfileRoutes {
     const val debug_enable = "action/debug/enable"
     const val report_issue = "settings/report_issue"
     const val notifications = "settings/notifications"
+    const val alerts = "settings/alerts"
 }
 
 object NewsAlertsRoutes {
@@ -66,4 +67,8 @@ object TransferRoutes {
     const val transfer = "transfer"
     const val transfer_search = "transfer/search"
     const val transfer_status = "transfer/status"
+}
+
+object VaultRoutes {
+    const val main = "vault"
 }

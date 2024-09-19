@@ -93,12 +93,12 @@ object DydxHistoryView : DydxComponent {
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.GENERAL.HISTORY"),
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 backAction = state.backButtionAction,
             )
 
             SelectionBar.Content(
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 state = state.selectionBarViewState,
             )
 

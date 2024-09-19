@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -11,6 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DydxProfileViewModel @Inject constructor(
     val localizer: LocalizerProtocol,
+    val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxProfileView.ViewState?> = flowOf(createViewState())
@@ -18,6 +21,7 @@ class DydxProfileViewModel @Inject constructor(
     private fun createViewState(): DydxProfileView.ViewState {
         return DydxProfileView.ViewState(
             localizer = localizer,
+            alerts = featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled, default = false),
         )
     }
 }

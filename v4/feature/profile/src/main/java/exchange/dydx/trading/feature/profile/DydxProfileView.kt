@@ -24,6 +24,7 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.feature.profile.components.DydxProfileAlertsView
 import exchange.dydx.trading.feature.profile.components.DydxProfileBalancesView
 import exchange.dydx.trading.feature.profile.components.DydxProfileButtonsView
 import exchange.dydx.trading.feature.profile.components.DydxProfileFeesView
@@ -43,10 +44,12 @@ fun Preview_DydxProfileView() {
 object DydxProfileView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val alerts: Boolean,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                alerts = true,
             )
         }
     }
@@ -80,6 +83,11 @@ object DydxProfileView : DydxComponent {
                 }
                 item(key = "buttons") {
                     DydxProfileButtonsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                }
+                if (state?.alerts == true) {
+                    item(key = "vault") {
+                        DydxProfileAlertsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
+                    }
                 }
                 item(key = "balances") {
                     DydxProfileBalancesView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
