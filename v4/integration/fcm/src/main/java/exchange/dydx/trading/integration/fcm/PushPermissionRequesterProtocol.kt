@@ -22,19 +22,21 @@ import exchange.dydx.utilities.utils.SharedPreferencesStore
 import javax.inject.Inject
 
 @ActivityRetainedScoped
-class RealPushPermissionRequester @Inject constructor(
+class PushPermissionRequester @Inject constructor(
     private val platformDialog: PlatformDialog,
     private val platformInfo: PlatformInfo,
     private val abacusLocalizerImp: AbacusLocalizerImp,
     private val sharedPreferencesStore: SharedPreferencesStore,
-) : PushPermissionRequester {
+) : PushPermissionRequesterProtocol {
 
     var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
     override var activity: Activity? = null
         set(value) {
             field = value
-            (field as ActivityResultCaller).registerForActivityResult(
+
+            requestPermissionLauncher?.unregister()
+            requestPermissionLauncher = (field as ActivityResultCaller).registerForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { isGranted: Boolean ->
                 if (isGranted) {
@@ -81,14 +83,14 @@ class RealPushPermissionRequester @Inject constructor(
     }
 }
 
-interface PushPermissionRequester : ActivityDelegate {
+interface PushPermissionRequesterProtocol : ActivityDelegate {
     fun requestPushPermission()
 }
 
 @InstallIn(ActivityRetainedComponent::class)
 @Module
 interface PushPermissionRequesterModule {
-    @Binds fun bindPushPermissionRequester(real: RealPushPermissionRequester): PushPermissionRequester
+    @Binds fun bindPushPermissionRequester(real: PushPermissionRequester): PushPermissionRequesterProtocol
 }
 
 private const val PRIMER_SHOWN_KEY = "push_primer_shown"

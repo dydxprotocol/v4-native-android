@@ -34,7 +34,7 @@ import exchange.dydx.trading.core.biometric.DydxBiometricPrompt
 import exchange.dydx.trading.core.biometric.DydxBiometricView
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.analytics.AnalyticsEvent
-import exchange.dydx.trading.integration.fcm.PushPermissionRequester
+import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,7 +58,7 @@ class TradingActivity : FragmentActivity() {
 
     @Inject lateinit var abacusStateManager: AbacusStateManager
 
-    @Inject lateinit var pushPermissionRequester: PushPermissionRequester
+    @Inject lateinit var pushPermissionRequester: PushPermissionRequesterProtocol
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
