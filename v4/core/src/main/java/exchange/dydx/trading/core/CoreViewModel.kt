@@ -1,5 +1,6 @@
 package exchange.dydx.trading.core
 
+import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,6 +42,7 @@ class CoreViewModel @Inject constructor(
     val logger: CompositeLogging,
     val compositeTracking: CompositeTracking,
     private val preferencesStore: SharedPreferencesStore,
+    application: Application,
 ) : ViewModel() {
     private var globalWorkers: DydxGlobalWorkers? = null
 
@@ -59,6 +61,7 @@ class CoreViewModel @Inject constructor(
             tracker = tracker,
             logger = logger,
             preferencesStore = preferencesStore,
+            application = application,
         )
     }
 
