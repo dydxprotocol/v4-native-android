@@ -1,4 +1,4 @@
-package exchange.dydx.trading.integration.fcm
+package exchange.dydx.utilities.utils
 
 import android.app.Activity
 

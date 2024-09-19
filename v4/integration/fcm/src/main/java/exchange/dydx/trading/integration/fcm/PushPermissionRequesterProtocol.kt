@@ -18,6 +18,7 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusLocalizerImp
 import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.utilities.utils.ActivityDelegate
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class PushPermissionRequester @Inject constructor(
     private val sharedPreferencesStore: SharedPreferencesStore,
 ) : PushPermissionRequesterProtocol {
 
-    var requestPermissionLauncher: ActivityResultLauncher<String>? = null
+    private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
     override var activity: Activity? = null
         set(value) {
