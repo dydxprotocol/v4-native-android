@@ -85,7 +85,7 @@ object DydxProfileView : DydxComponent {
                     DydxProfileButtonsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                 }
                 if (state?.hasAlerts == true) {
-                    item(key = "vault") {
+                    item(key = "alerts") {
                         DydxProfileAlertsView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                     }
                 }
