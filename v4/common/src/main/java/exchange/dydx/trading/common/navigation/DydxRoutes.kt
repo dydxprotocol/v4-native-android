@@ -71,4 +71,6 @@ object TransferRoutes {
 
 object VaultRoutes {
     const val main = "vault"
+    const val deposit = "vault/deposit"
+    const val withdraw = "vault/withdraw"
 }

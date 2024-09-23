@@ -1,16 +1,16 @@
 package exchange.dydx.trading.feature.vault
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.compose.PlatformRememberLazyListState
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -23,6 +23,8 @@ import exchange.dydx.trading.feature.vault.components.DydxVaultButtonsView
 import exchange.dydx.trading.feature.vault.components.DydxVaultChartView
 import exchange.dydx.trading.feature.vault.components.DydxVaultHeaderView
 import exchange.dydx.trading.feature.vault.components.DydxVaultInfoView
+import exchange.dydx.trading.feature.vault.components.DydxVaultPositionItemView
+import exchange.dydx.trading.feature.vault.components.DydxVaultPositionsHeaderView
 
 @Preview
 @Composable
@@ -35,12 +37,12 @@ fun Preview_DydxVaultView() {
 object DydxVaultView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val text: String?,
+        val positionCount: Int = 0,
+        val items: List<DydxVaultPositionItemView.ViewState> = listOf(),
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                text = "1.0M",
             )
         }
     }
@@ -66,14 +68,15 @@ object DydxVaultView : DydxComponent {
                 .fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {
-                DydxVaultHeaderView.Content(modifier = Modifier)
+            DydxVaultHeaderView.Content(modifier = Modifier)
 
-                ScrollingContent(modifier = Modifier.weight(1f), state = state)
+            ScrollingContent(modifier = Modifier.weight(1f), state = state)
 
-                DydxVaultButtonsView.Content(modifier = Modifier)
+            DydxVaultButtonsView.Content(modifier = Modifier)
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun ScrollingContent(modifier: Modifier, state: ViewState) {
         val listState = PlatformRememberLazyListState(key = "ScrollingContent")
@@ -87,6 +90,16 @@ object DydxVaultView : DydxComponent {
             }
             item(key = "chart") {
                 DydxVaultChartView.Content(Modifier)
+                PlatformDivider()
+            }
+            stickyHeader(key = "positions_header") {
+                DydxVaultPositionsHeaderView.Content(Modifier)
+            }
+            items(items = state.items, key = { it.id }) { item ->
+                DydxVaultPositionItemView.Content(Modifier, item)
+                if (state.items.last() !== item) {
+                    PlatformDivider()
+                }
             }
         }
     }

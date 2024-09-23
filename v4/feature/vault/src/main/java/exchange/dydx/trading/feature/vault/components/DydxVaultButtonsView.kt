@@ -117,4 +117,3 @@ object DydxVaultButtonsView : DydxComponent {
         }
     }
 }
-

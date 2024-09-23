@@ -21,6 +21,7 @@ import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
@@ -73,7 +74,7 @@ object DydxVaultInfoView : DydxComponent {
 
         Column(
             modifier = modifier,
-        ){
+        ) {
             Row(
                 modifier = Modifier
                     .padding(16.dp)
@@ -84,12 +85,12 @@ object DydxVaultInfoView : DydxComponent {
                 TopRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.YOUR_VAULT_BALANCE"),
-                    value = state.balance
+                    value = state.balance,
                 )
                 TopRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.YOUR_ALL_TIME_PNL"),
-                    value = state.pnl
+                    value = state.pnl,
                 )
             }
 
@@ -110,6 +111,8 @@ object DydxVaultInfoView : DydxComponent {
                             SignedAmountView.Content(
                                 modifier = Modifier,
                                 state = state.apr,
+                                textStyle = TextStyle.dydxDefault
+                                    .themeFont(fontSize = ThemeFont.FontSize.medium),
                             )
                         } else {
                             Text(
@@ -120,7 +123,7 @@ object DydxVaultInfoView : DydxComponent {
                                     .themeColor(ThemeColor.SemanticColor.text_primary),
                             )
                         }
-                    }
+                    },
                 )
                 BottomRowItem(
                     modifier = Modifier.weight(1f),
@@ -133,7 +136,7 @@ object DydxVaultInfoView : DydxComponent {
                                 .themeFont(fontSize = ThemeFont.FontSize.medium)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
-                    }
+                    },
                 )
             }
 
@@ -153,6 +156,7 @@ object DydxVaultInfoView : DydxComponent {
                 )
                 .clip(shape)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
         ) {
             Text(
                 text = title,
@@ -173,9 +177,10 @@ object DydxVaultInfoView : DydxComponent {
     }
 
     @Composable
-    private fun BottomRowItem(modifier: Modifier, title: String, valueComposable:  @Composable (Modifier) -> Unit) {
+    private fun BottomRowItem(modifier: Modifier, title: String, valueComposable: @Composable (Modifier) -> Unit) {
         Column(
             modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
         ) {
             Text(
                 text = title,
@@ -188,4 +193,3 @@ object DydxVaultInfoView : DydxComponent {
         }
     }
 }
-

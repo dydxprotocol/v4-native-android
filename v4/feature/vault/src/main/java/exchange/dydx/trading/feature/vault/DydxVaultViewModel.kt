@@ -7,10 +7,11 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.vault.DydxVaultView
+import exchange.dydx.trading.feature.vault.components.DydxVaultPositionItemView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,10 +28,14 @@ class DydxVaultViewModel @Inject constructor(
         .distinctUntilChanged()
 
     private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxVaultView.ViewState {
-        val volume = formatter.dollarVolume(marketSummary?.volume24HUSDC)
         return DydxVaultView.ViewState(
             localizer = localizer,
-            text = volume,
+            items = listOf(
+                DydxVaultPositionItemView.ViewState.preview.copy(id = UUID.randomUUID().toString(), side = DydxVaultPositionItemView.ViewState.preview.side?.copy(localizer = localizer)),
+                DydxVaultPositionItemView.ViewState.preview.copy(id = UUID.randomUUID().toString(), side = DydxVaultPositionItemView.ViewState.preview.side?.copy(localizer = localizer)),
+                DydxVaultPositionItemView.ViewState.preview.copy(id = UUID.randomUUID().toString(), side = DydxVaultPositionItemView.ViewState.preview.side?.copy(localizer = localizer)),
+                DydxVaultPositionItemView.ViewState.preview.copy(id = UUID.randomUUID().toString(), side = DydxVaultPositionItemView.ViewState.preview.side?.copy(localizer = localizer)),
+            ),
         )
     }
 }

@@ -2,12 +2,13 @@ package exchange.dydx.trading.feature.vault.components
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -19,22 +20,34 @@ class DydxVaultChartViewModel @Inject constructor(
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxVaultChartView.ViewState?> = abacusStateManager.state.marketSummary
-        .map {
-            createViewState(it)
-        }
-        .distinctUntilChanged()
+    private val typeIndex = MutableStateFlow(0)
+    private val resolutionIndex = MutableStateFlow(0)
 
-    private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxVaultChartView.ViewState {
-        val volume = formatter.dollarVolume(marketSummary?.volume24HUSDC)
+    val state: Flow<DydxVaultChartView.ViewState?> =
+        combine(
+            typeIndex,
+            resolutionIndex,
+        ) { typeIndex, resolutionIndex ->
+            createViewState(typeIndex, resolutionIndex)
+        }
+            .distinctUntilChanged()
+
+    private fun createViewState(
+        currentTypeIndex: Int,
+        currentResolutionIndex: Int,
+    ): DydxVaultChartView.ViewState {
         return DydxVaultChartView.ViewState(
             localizer = localizer,
             typeTitles = ChartType.allTypes.map { it.title(localizer) },
-            typeIndex = 0,
-            onTypeChanged = {},
+            typeIndex = currentTypeIndex,
+            onTypeChanged = {
+                typeIndex.value = it
+            },
             resolutionTitles = ChartResolution.allResolutions.map { it.title(localizer) },
-            resolutionIndex = 0,
-            onResolutionChanged = {},
+            resolutionIndex = currentResolutionIndex,
+            onResolutionChanged = {
+                resolutionIndex.value = it
+            },
         )
     }
 }

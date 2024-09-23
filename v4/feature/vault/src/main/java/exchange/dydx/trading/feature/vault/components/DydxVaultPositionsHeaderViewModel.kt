@@ -11,18 +11,17 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
-class DydxVaultHeaderViewModel @Inject constructor(
+class DydxVaultPositionsHeaderViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxVaultHeaderView.ViewState?> = flowOf(createViewState())
+    val state: Flow<DydxVaultPositionsHeaderView.ViewState?> = flowOf(createViewState())
 
-    private fun createViewState(): DydxVaultHeaderView.ViewState {
-        return DydxVaultHeaderView.ViewState(
+    private fun createViewState(): DydxVaultPositionsHeaderView.ViewState {
+        return DydxVaultPositionsHeaderView.ViewState(
             localizer = localizer,
-            dydxChainLogoUrl = abacusStateManager.environment?.chainLogo,
         )
     }
 }

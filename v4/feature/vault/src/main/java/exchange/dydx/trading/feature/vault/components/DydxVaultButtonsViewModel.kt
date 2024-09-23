@@ -7,7 +7,9 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.vault.components.DydxVaultButtonsView
+import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.DydxRouter.Presentation
+import exchange.dydx.trading.common.navigation.VaultRoutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -18,6 +20,7 @@ class DydxVaultButtonsViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxVaultButtonsView.ViewState?> = abacusStateManager.state.marketSummary
@@ -30,6 +33,12 @@ class DydxVaultButtonsViewModel @Inject constructor(
         val volume = formatter.dollarVolume(marketSummary?.volume24HUSDC)
         return DydxVaultButtonsView.ViewState(
             localizer = localizer,
+            depositAction = {
+                router.navigateTo(route = VaultRoutes.deposit, presentation = Presentation.Modal)
+            },
+            withdrawAction = {
+                router.navigateTo(route = VaultRoutes.withdraw, presentation = Presentation.Modal)
+            },
         )
     }
 }

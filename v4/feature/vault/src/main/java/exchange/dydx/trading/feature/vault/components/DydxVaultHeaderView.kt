@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.vault.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -110,16 +109,15 @@ object DydxVaultHeaderView : DydxComponent {
                         .themeFont(
                             fontSize = ThemeFont.FontSize.medium,
                         )
-                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
                 )
 
                 PlatformImage(
                     modifier = Modifier.size(18.dp),
                     icon = R.drawable.icon_external_link,
-                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_tertiary.color),
+                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_secondary.color),
                 )
             }
         }
     }
 }
-

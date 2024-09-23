@@ -7,6 +7,7 @@ import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
 import exchange.dydx.trading.feature.vault.DydxVaultView
+import exchange.dydx.trading.feature.vault.depositwithdraw.DydxVaultDepositWithdrawView
 import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.vaultGraph(
@@ -20,6 +21,26 @@ fun NavGraphBuilder.vaultGraph(
     ) { navBackStackEntry ->
         DydxBottomBarScaffold(Modifier) {
             DydxVaultView.Content(Modifier)
+        }
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = VaultRoutes.deposit,
+        deepLinks = appRouter.deeplinks(VaultRoutes.deposit),
+    ) { navBackStackEntry ->
+        DydxBottomBarScaffold(Modifier) {
+            DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.DEPOSIT)
+        }
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = VaultRoutes.withdraw,
+        deepLinks = appRouter.deeplinks(VaultRoutes.withdraw),
+    ) { navBackStackEntry ->
+        DydxBottomBarScaffold(Modifier) {
+            DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.WITHDRAW)
         }
     }
 }

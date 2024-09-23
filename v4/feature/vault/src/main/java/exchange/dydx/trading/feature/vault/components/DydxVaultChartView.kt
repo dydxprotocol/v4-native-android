@@ -81,8 +81,10 @@ object DydxVaultChartView : DydxComponent {
                 .padding(horizontal = ThemeShapes.HorizontalPadding, vertical = ThemeShapes.VerticalPadding),
         ) {
             TopSelectorContent(
-                modifier = Modifier.padding(vertical =  ThemeShapes.VerticalPadding),
-                state = state)
+                modifier = Modifier.padding(vertical = ThemeShapes.VerticalPadding),
+                state = state,
+            )
+
             Spacer(modifier = Modifier.height(200.dp))
         }
     }
@@ -146,4 +148,3 @@ object DydxVaultChartView : DydxComponent {
         }
     }
 }
-
