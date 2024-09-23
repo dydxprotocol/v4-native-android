@@ -101,7 +101,7 @@ object DydxVaultHeaderView : DydxComponent {
                     .clickable {
                         state.learnMoreAction()
                     },
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = state.localizer.localize("APP.GENERAL.LEARN_MORE"),
@@ -113,7 +113,7 @@ object DydxVaultHeaderView : DydxComponent {
                 )
 
                 PlatformImage(
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
                     icon = R.drawable.icon_external_link,
                     colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_secondary.color),
                 )

@@ -93,7 +93,13 @@ object DydxVaultView : DydxComponent {
                 PlatformDivider()
             }
             stickyHeader(key = "positions_header") {
-                DydxVaultPositionsHeaderView.Content(Modifier)
+                DydxVaultPositionsHeaderView.Content(
+                    Modifier,
+                    DydxVaultPositionsHeaderView.ViewState(
+                        localizer = state.localizer,
+                        positionCount = state.items.count(),
+                    ),
+                )
             }
             items(items = state.items, key = { it.id }) { item ->
                 DydxVaultPositionItemView.Content(Modifier, item)
