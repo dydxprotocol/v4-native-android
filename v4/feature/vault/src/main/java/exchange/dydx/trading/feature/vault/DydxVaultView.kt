@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.compose.PlatformRememberLazyListState
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
@@ -19,7 +20,9 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
 import exchange.dydx.trading.feature.vault.components.DydxVaultButtonsView
+import exchange.dydx.trading.feature.vault.components.DydxVaultChartView
 import exchange.dydx.trading.feature.vault.components.DydxVaultHeaderView
+import exchange.dydx.trading.feature.vault.components.DydxVaultInfoView
 
 @Preview
 @Composable
@@ -65,9 +68,26 @@ object DydxVaultView : DydxComponent {
         ) {
                 DydxVaultHeaderView.Content(modifier = Modifier)
 
-                Spacer(modifier = Modifier.weight(1f))
+                ScrollingContent(modifier = Modifier.weight(1f), state = state)
 
                 DydxVaultButtonsView.Content(modifier = Modifier)
+        }
+    }
+
+    @Composable
+    private fun ScrollingContent(modifier: Modifier, state: ViewState) {
+        val listState = PlatformRememberLazyListState(key = "ScrollingContent")
+
+        LazyColumn(
+            modifier = modifier,
+            state = listState,
+        ) {
+            item(key = "info") {
+                DydxVaultInfoView.Content(Modifier)
+            }
+            item(key = "chart") {
+                DydxVaultChartView.Content(Modifier)
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.vault.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,7 @@ import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -75,12 +78,12 @@ object DydxVaultHeaderView : DydxComponent {
                 .padding(vertical = ThemeShapes.VerticalPadding)
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
+            horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
         ) {
             PlatformImage(
                 icon = state.dydxChainLogoUrl,
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(40.dp)
                     .clip(CircleShape),
             )
 
@@ -94,21 +97,28 @@ object DydxVaultHeaderView : DydxComponent {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+            Row(
+                modifier = Modifier.align(Alignment.CenterVertically)
+                    .clickable {
+                        state.learnMoreAction()
+                    },
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 Text(
                     text = state.localizer.localize("APP.GENERAL.LEARN_MORE"),
                     style = TextStyle.dydxDefault
                         .themeFont(
-                            fontSize = ThemeFont.FontSize.small,
+                            fontSize = ThemeFont.FontSize.medium,
                         )
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
-            }
 
-//
-//            if (state.displayContent == DisplayContent.Overview || state.displayContent == DisplayContent.Transfers) {
-//                DydxPortfolioHeaderView.Content(modifier)
-//            }
+                PlatformImage(
+                    modifier = Modifier.size(18.dp),
+                    icon = R.drawable.icon_external_link,
+                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_tertiary.color),
+                )
+            }
         }
     }
 }
