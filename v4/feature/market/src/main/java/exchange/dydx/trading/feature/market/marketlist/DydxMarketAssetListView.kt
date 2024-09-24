@@ -105,7 +105,6 @@ object DydxMarketAssetListView : DydxComponent {
                         ) {
                             DydxMarketAssetFilterView.Content(
                                 Modifier.padding(
-                                    horizontal = ThemeShapes.HorizontalPadding,
                                     vertical = 8.dp,
                                 ),
                             )

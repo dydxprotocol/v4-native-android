@@ -81,6 +81,7 @@ object DydxMarketAssetFilterView : DydxComponent {
                 selectedItemStyle = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_primary),
+                scrollingEnabled = true,
             )
         }
     }
