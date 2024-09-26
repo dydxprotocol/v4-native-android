@@ -56,7 +56,7 @@ object DydxVaultPositionItemView : DydxComponent {
         val side: SideTextView.ViewState? = null,
         val leverage: String? = null,
         val notionalValue: String? = null,
-        val positionSize: AmountText.ViewState? = null,
+        val positionSize: String? = null,
         val token: TokenTextView.ViewState? = null,
         val pnlAmount: SignedAmountView.ViewState? = null,
         val pnlPercentage: String? = null,
@@ -74,7 +74,7 @@ object DydxVaultPositionItemView : DydxComponent {
                 ),
                 leverage = "2.0x",
                 notionalValue = "$100.0",
-                positionSize = AmountText.ViewState.preview,
+                positionSize = "200.0",
                 token = TokenTextView.ViewState.preview,
                 pnlAmount = SignedAmountView.ViewState.preview.copy(
                     sign = PlatformUISign.Plus,
@@ -191,13 +191,13 @@ object DydxVaultPositionItemView : DydxComponent {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                AmountText.Content(
-                    modifier = Modifier,
-                    state = state.positionSize,
-                    textStyle = TextStyle.dydxDefault
+                Text(
+                    text = state.positionSize ?: "",
+                    style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.mini)
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
+
                 TokenTextView.Content(
                     modifier = Modifier,
                     state = state.token,
