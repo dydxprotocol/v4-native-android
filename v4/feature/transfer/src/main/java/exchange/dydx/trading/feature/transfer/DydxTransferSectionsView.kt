@@ -82,6 +82,7 @@ object DydxTransferSectionsView : DydxComponent {
                 .themeColor(ThemeColor.SemanticColor.text_primary)
                 .themeFont(fontType = ThemeFont.FontType.book, fontSize = ThemeFont.FontSize.large),
             currentSelection = state.selections.indexOf(state.currentSelection),
+            scrollingEnabled = true,
             onSelectionChanged = { index ->
                 state.onSelectionChanged(state.selections[index])
             },

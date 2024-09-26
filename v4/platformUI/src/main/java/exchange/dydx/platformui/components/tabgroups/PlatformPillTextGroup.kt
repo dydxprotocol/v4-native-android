@@ -23,6 +23,7 @@ fun PlatformPillTextGroup(
         .themeColor(ThemeColor.SemanticColor.text_primary)
         .themeFont(fontType = ThemeFont.FontType.plus, fontSize = ThemeFont.FontSize.extra),
     currentSelection: Int? = null,
+    scrollingEnabled: Boolean = false,
     onSelectionChanged: (Int) -> Unit = {},
 ) {
     PlatformTabGroup(
@@ -57,5 +58,6 @@ fun PlatformPillTextGroup(
         },
         currentSelection = currentSelection,
         onSelectionChanged = onSelectionChanged,
+        scrollingEnabled = scrollingEnabled,
     )
 }

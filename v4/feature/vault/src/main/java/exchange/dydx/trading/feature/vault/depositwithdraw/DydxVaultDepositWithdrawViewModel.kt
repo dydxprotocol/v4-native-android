@@ -1,4 +1,4 @@
-package exchange.dydx.vault
+package exchange.dydx.trading.feature.vault.depositwithdraw
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,21 +13,22 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
-class DydxVaultViewModel @Inject constructor(
+class DydxVaultDepositWithdrawViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxVaultView.ViewState?> = abacusStateManager.state.marketSummary
-        .map {
-            createViewState(it)
-        }
-        .distinctUntilChanged()
+    val state: Flow<DydxVaultDepositWithdrawView.ViewState?> =
+        abacusStateManager.state.marketSummary
+            .map {
+                createViewState(it)
+            }
+            .distinctUntilChanged()
 
-    private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxVaultView.ViewState {
+    private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxVaultDepositWithdrawView.ViewState {
         val volume = formatter.dollarVolume(marketSummary?.volume24HUSDC)
-        return DydxVaultView.ViewState(
+        return DydxVaultDepositWithdrawView.ViewState(
             localizer = localizer,
             text = volume,
         )

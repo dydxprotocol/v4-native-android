@@ -1,4 +1,4 @@
-package exchange.dydx.vault
+package exchange.dydx.trading.feature.vault.depositwithdraw
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,13 +13,21 @@ import exchange.dydx.trading.common.component.DydxComponent
 
 @Preview
 @Composable
-fun Preview_DydxVaultView() {
+fun Preview_dydxVaultDepositWithdrawView() {
     DydxThemedPreviewSurface {
-        DydxVaultView.Content(Modifier, DydxVaultView.ViewState.preview)
+        DydxVaultDepositWithdrawView.Content(
+            Modifier,
+            DydxVaultDepositWithdrawView.ViewState.preview,
+        )
     }
 }
 
-object DydxVaultView : DydxComponent {
+object DydxVaultDepositWithdrawView : DydxComponent {
+    enum class DepositWithdrawType {
+        DEPOSIT,
+        WITHDRAW
+    }
+
     data class ViewState(
         val localizer: LocalizerProtocol,
         val text: String?,
@@ -34,7 +42,12 @@ object DydxVaultView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxVaultViewModel = hiltViewModel()
+        Content(modifier, type = DepositWithdrawType.DEPOSIT)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, type: DepositWithdrawType) {
+        val viewModel: DydxVaultDepositWithdrawViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
