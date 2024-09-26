@@ -8,7 +8,6 @@ import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import dagger.Binds
 import dagger.Module
@@ -34,9 +33,10 @@ class PushPermissionRequester @Inject constructor(
 
     override var activity: Activity? = null
         set(value) {
-            field = value
-
             requestPermissionLauncher?.unregister()
+            field = value
+            if (field == null) return
+
             requestPermissionLauncher = (field as ActivityResultCaller).registerForActivityResult(
                 ActivityResultContracts.RequestPermission(),
             ) { isGranted: Boolean ->
@@ -61,7 +61,7 @@ class PushPermissionRequester @Inject constructor(
             ) {
                 // Permission granted already. Do nothing
                 return
-            } else if (shouldShowRequestPermissionRationale(localActivity, Manifest.permission.POST_NOTIFICATIONS) && sharedPreferencesStore.read(PRIMER_SHOWN_KEY) != "true") {
+            } else if (sharedPreferencesStore.read(PRIMER_SHOWN_KEY) != "true") {
                 // Show primer if needed.
                 platformDialog.showMessage(
                     title = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_TITLE"),
@@ -71,9 +71,6 @@ class PushPermissionRequester @Inject constructor(
                     confirmAction = ::request,
                 )
                 sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
-            } else {
-                // Directly ask for the permission
-                request()
             }
         }
     }

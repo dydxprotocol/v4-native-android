@@ -1,11 +1,13 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.usdcTokenDecimal
 import exchange.dydx.dydxstatemanager.usdcTokenDenom
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
@@ -17,9 +19,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
+import javax.inject.Inject
 
-class DydxTransferSubaccountWorker(
-    private val scope: CoroutineScope,
+@ActivityRetainedScoped
+class DydxTransferSubaccountWorker @Inject constructor(
+    @CoroutineScopes.App private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val formatter: DydxFormatter,
