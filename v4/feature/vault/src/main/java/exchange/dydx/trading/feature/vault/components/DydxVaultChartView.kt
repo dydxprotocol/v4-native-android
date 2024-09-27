@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
@@ -32,6 +33,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.feature.shared.views.SparklineView
 
 @Preview
 @Composable
@@ -50,6 +52,7 @@ object DydxVaultChartView : DydxComponent {
         val resolutionTitles: List<String>? = null,
         val resolutionIndex: Int? = null,
         val onResolutionChanged: (Int) -> Unit = {},
+        val sparkline: SparklineView.ViewState? = null
     ) {
         companion object {
             val preview = ViewState(
@@ -58,6 +61,7 @@ object DydxVaultChartView : DydxComponent {
                 typeIndex = 0,
                 resolutionTitles = listOf("1d", "7d", "30d"),
                 resolutionIndex = 0,
+                sparkline = SparklineView.ViewState.preview,
             )
         }
     }
@@ -77,15 +81,22 @@ object DydxVaultChartView : DydxComponent {
         }
 
         Column(
-            modifier = modifier
-                .padding(horizontal = ThemeShapes.HorizontalPadding, vertical = ThemeShapes.VerticalPadding),
+            modifier = modifier,
         ) {
             TopSelectorContent(
-                modifier = Modifier.padding(vertical = ThemeShapes.VerticalPadding),
+                modifier = Modifier
+                    .padding(horizontal = ThemeShapes.HorizontalPadding)
+                    .padding(top = 16.dp, bottom = 8.dp),
                 state = state,
             )
-
-            Spacer(modifier = Modifier.height(200.dp))
+            SparklineView.Content(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(vertical = 0.dp)
+                    .padding(horizontal = 0.dp),
+                state = state.sparkline,
+            )
         }
     }
 

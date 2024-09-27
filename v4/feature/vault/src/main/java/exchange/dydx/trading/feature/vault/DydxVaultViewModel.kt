@@ -5,14 +5,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultPosition
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
@@ -20,9 +18,8 @@ import exchange.dydx.trading.feature.vault.components.DydxVaultPositionItemView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 @HiltViewModel
 class DydxVaultViewModel @Inject constructor(
@@ -36,10 +33,10 @@ class DydxVaultViewModel @Inject constructor(
             abacusStateManager.state.vault,
             abacusStateManager.state.marketMap,
             abacusStateManager.state.assetMap,
-          ) { vault, marketMap, assetMap ->
+        ) { vault, marketMap, assetMap ->
             createViewState(vault, marketMap, assetMap)
         }
-        .distinctUntilChanged()
+            .distinctUntilChanged()
 
     private fun createViewState(
         vault: Vault?,
@@ -73,7 +70,7 @@ class DydxVaultViewModel @Inject constructor(
                 localizer = localizer,
                 side = position.side,
             ),
-            leverage = formatter.raw(position.currentLeverageMultiple, digits = 2),
+            leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2),
             notionalValue = formatter.dollar(position.currentPosition?.usdc, digits = 0),
             positionSize = formatter.raw(position.currentPosition?.asset, digits = 2),
             token = TokenTextView.ViewState(
@@ -82,10 +79,13 @@ class DydxVaultViewModel @Inject constructor(
             pnlAmount = if (position.thirtyDayPnl?.absolute != null) {
                 SignedAmountView.ViewState(
                     sign = position.pnlSign,
-                    text = formatter.dollar(position.thirtyDayPnl?.absolute, digits = 0),
+                    text = formatter.dollar(position.thirtyDayPnl?.absolute, digits = 0) ?: "-",
                 )
             } else {
-                null
+                SignedAmountView.ViewState(
+                    sign = PlatformUISign.None,
+                    text = "-",
+                )
             },
             pnlPercentage = formatter.percent(position.thirtyDayPnl?.percent, digits = 2),
         )
@@ -94,7 +94,7 @@ class DydxVaultViewModel @Inject constructor(
 
 private val VaultPosition.side: SideTextView.Side
     get() = run {
-        val size = this.currentPosition?.asset ?:  return SideTextView.Side.None
+        val size = this.currentPosition?.asset ?: return SideTextView.Side.None
         return if (size > 0) {
             SideTextView.Side.Long
         } else if (size < 0) {

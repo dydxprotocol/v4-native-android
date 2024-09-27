@@ -38,6 +38,24 @@ object SignedAmountView {
             val preview = ViewState(
                 text = "1.0M",
             )
+
+            fun fromDouble(value: Double?, formatting: ((Double?) -> String)): ViewState {
+                if (value == null) {
+                    return ViewState(
+                        text = "-",
+                    )
+                } else {
+                    val sign = when (sign(value)) {
+                        1.0 -> PlatformUISign.Plus
+                        -1.0 -> PlatformUISign.Minus
+                        else -> PlatformUISign.None
+                    }
+                    return ViewState(
+                        text = formatting(value),
+                        sign = sign,
+                    )
+                }
+            }
         }
     }
 

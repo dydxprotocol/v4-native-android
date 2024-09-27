@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
-import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -30,9 +29,9 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
+import exchange.dydx.trading.feature.shared.views.SparklineView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 import java.util.UUID
 
@@ -46,6 +45,7 @@ fun Preview_DydxVaultPositionItemView() {
 
 object DydxVaultPositionItemView : DydxComponent {
     val marketSectionWidth = 130.dp
+    val chartWidth = 38.dp
 
     data class ViewState(
         val localizer: LocalizerProtocol,
@@ -60,7 +60,7 @@ object DydxVaultPositionItemView : DydxComponent {
         val token: TokenTextView.ViewState? = null,
         val pnlAmount: SignedAmountView.ViewState? = null,
         val pnlPercentage: String? = null,
-        val sparklineValues: LineChartDataSet? = null
+        val sparkline: SparklineView.ViewState? = null
     ) {
         companion object {
             val preview = ViewState(
@@ -81,7 +81,7 @@ object DydxVaultPositionItemView : DydxComponent {
                     coloringOption = SignedAmountView.ColoringOption.AllText,
                 ),
                 pnlPercentage = "10%",
-                sparklineValues = null,
+                sparkline = SparklineView.ViewState.preview,
             )
         }
     }
@@ -123,6 +123,15 @@ object DydxVaultPositionItemView : DydxComponent {
                 modifier = Modifier,
                 state = state,
             )
+
+            Column(
+                modifier = Modifier.width(chartWidth),
+            ) {
+                SparklineView.Content(
+                    modifier = Modifier.size(chartWidth, 23.dp),
+                    state = state.sparkline,
+                )
+            }
         }
     }
 
@@ -223,7 +232,7 @@ object DydxVaultPositionItemView : DydxComponent {
 
             Text(
                 modifier = Modifier.align(Alignment.End),
-                text = state.pnlPercentage ?: "",
+                text = state.pnlPercentage ?: "-",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.mini)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

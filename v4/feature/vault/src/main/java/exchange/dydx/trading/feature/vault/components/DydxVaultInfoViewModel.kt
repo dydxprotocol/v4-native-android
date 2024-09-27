@@ -2,11 +2,9 @@ package exchange.dydx.trading.feature.vault.components
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
@@ -29,31 +27,16 @@ class DydxVaultInfoViewModel @Inject constructor(
         .distinctUntilChanged()
 
     private fun createViewState(vault: Vault?): DydxVaultInfoView.ViewState {
-        val thirtyDayReturnPercent = vault?.details?.thirtyDayReturnPercent
-        val apr = if (thirtyDayReturnPercent != null) {
-            val text = formatter.percent(thirtyDayReturnPercent, 2)
-            if (thirtyDayReturnPercent > 0) {
-                SignedAmountView.ViewState(
-                    sign = PlatformUISign.Plus,
-                    coloringOption = SignedAmountView.ColoringOption.AllText,
-                    text = text,
-                )
-            } else if (thirtyDayReturnPercent < 0) {
-                SignedAmountView.ViewState(
-                    sign = PlatformUISign.Minus,
-                    coloringOption = SignedAmountView.ColoringOption.AllText,
-                    text = text,
-                )
-            } else {
-                null
-            }
-        } else {
-            null
+        val pnl = SignedAmountView.ViewState.fromDouble(vault?.account?.allTimeReturnUsdc) {
+            formatter.dollar(it) ?: "-"
+        }
+        val apr = SignedAmountView.ViewState.fromDouble(vault?.details?.thirtyDayReturnPercent) {
+            formatter.percent(it, 2) ?: "-"
         }
         return DydxVaultInfoView.ViewState(
             localizer = localizer,
-            balance = "$1.0M",
-            pnl = "$100.0",
+            balance = formatter.dollar(vault?.account?.balanceUsdc),
+            pnl = pnl,
             apr = apr,
             tvl = formatter.dollar(vault?.details?.totalValue),
         )

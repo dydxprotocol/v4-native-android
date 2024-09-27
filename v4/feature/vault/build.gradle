@@ -65,6 +65,7 @@ dependencies {
     /* Standard Dependencies */
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation project(':v4:integration:cosmos')
 
 
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"

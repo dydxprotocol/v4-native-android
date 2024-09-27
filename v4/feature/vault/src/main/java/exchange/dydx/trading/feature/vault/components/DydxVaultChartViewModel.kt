@@ -1,11 +1,16 @@
 package exchange.dydx.trading.feature.vault.components
 
 import androidx.lifecycle.ViewModel
+import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.functional.vault.VaultHistoryEntry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.utils.IList
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.feature.shared.views.SparklineView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -25,14 +30,18 @@ class DydxVaultChartViewModel @Inject constructor(
 
     val state: Flow<DydxVaultChartView.ViewState?> =
         combine(
+            abacusStateManager.state.vault.map {
+                it?.details?.history
+            }.distinctUntilChanged(),
             typeIndex,
             resolutionIndex,
-        ) { typeIndex, resolutionIndex ->
-            createViewState(typeIndex, resolutionIndex)
+        ) { history, typeIndex, resolutionIndex ->
+            createViewState(history, typeIndex, resolutionIndex)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
+        history: IList<VaultHistoryEntry>?,
         currentTypeIndex: Int,
         currentResolutionIndex: Int,
     ): DydxVaultChartView.ViewState {
@@ -48,6 +57,19 @@ class DydxVaultChartViewModel @Inject constructor(
             onResolutionChanged = {
                 resolutionIndex.value = it
             },
+            sparkline = SparklineView.ViewState(
+                sparkline = LineChartDataSet(
+                    listOf(
+                        Entry(0f, 0f),
+                        Entry(1f, 1f),
+                        Entry(2f, 2f),
+                        Entry(3f, 3f),
+                        Entry(4f, 4f),
+                    ),
+                    "Sparkline",
+                ),
+                lineWidth = 3.0,
+            ),
         )
     }
 }

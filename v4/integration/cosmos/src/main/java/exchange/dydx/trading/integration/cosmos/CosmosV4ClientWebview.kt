@@ -96,6 +96,42 @@ class CosmosV4ClientWebview @Inject constructor(
         )
     }
 
+    override fun depositToMegavault(
+        subaccountNumber: Int,
+        amountUsdc: Double,
+        completion: JavascriptCompletion
+    ) {
+        callNativeClient(
+            functionName = "depositToMegavault",
+            params = listOf(subaccountNumber, amountUsdc),
+            completion = completion,
+        )
+    }
+
+    override fun withdrawFromMegavault(
+        subaccountNumber: Int,
+        shares: Long,
+        minAmount: Long,
+        completion: JavascriptCompletion
+    ) {
+        callNativeClient(
+            functionName = "withdrawFromMegavault",
+            params = listOf(subaccountNumber, shares, minAmount),
+            completion = completion,
+        )
+    }
+
+    override fun getMegavaultWithdrawalInfo(
+        shares: Long,
+        completion: JavascriptCompletion
+    ) {
+        callNativeClient(
+            functionName = "getMegavaultWithdrawalInfo",
+            params = listOf(shares),
+            completion = completion,
+        )
+    }
+
     private fun callNativeClient(
         functionName: String,
         params: List<Any>,

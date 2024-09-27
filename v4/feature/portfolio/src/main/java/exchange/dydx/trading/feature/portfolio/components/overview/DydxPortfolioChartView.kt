@@ -5,27 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.mikephil.charting.data.Entry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.charts.config.LineChartConfig
-import exchange.dydx.platformui.components.charts.presenter.LineChartView
-import exchange.dydx.platformui.components.charts.view.LineChartDataSet
-import exchange.dydx.platformui.components.charts.view.config
-import exchange.dydx.platformui.components.charts.view.update
 import exchange.dydx.platformui.components.tabgroups.PlatformTextTabGroup
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -33,14 +22,13 @@ import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
-import exchange.dydx.platformui.designSystem.theme.negativeColor
-import exchange.dydx.platformui.designSystem.theme.positiveColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
+import exchange.dydx.trading.feature.shared.views.SparklineView
 
 @Preview
 @Composable
@@ -53,9 +41,7 @@ fun Preview_DydxPortfolioChartView() {
 object DydxPortfolioChartView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val config: LineChartConfig,
-        val chartData: LineChartDataSet,
-        val positive: Boolean,
+        var sparkline: SparklineView.ViewState? = null,
         val resolutionTitles: List<String>?,
         val resolutionIndex: Int? = null,
         val onResolutionChanged: (Int) -> Unit = {},
@@ -67,18 +53,9 @@ object DydxPortfolioChartView : DydxComponent {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                config = LineChartConfig.default(),
-                chartData = LineChartDataSet(
-                    listOf(
-                        Entry(0f, 0f),
-                        Entry(2f, 2f),
-                        Entry(3f, 3f),
-                    ),
-                    "test",
-                ),
-                true,
-                listOf("1D", "1W", "1M", "3M", "6M", "1Y", "ALL"),
-                0,
+                sparkline = SparklineView.ViewState.preview,
+                resolutionTitles = listOf("1D", "1W", "1M", "3M", "6M", "1Y", "ALL"),
+                resolutionIndex = 0,
                 {},
             )
         }
@@ -115,29 +92,10 @@ object DydxPortfolioChartView : DydxComponent {
 
     @Composable
     private fun ChartContent(modifier: Modifier, state: ViewState) {
-        val context = LocalContext.current
-        // Create a reference to the regular Android View
-        val regularView = remember {
-            LineChartView(context).apply {
-                config(state.config)
-            }
-        }
-        val color = if (state.positive) {
-            ThemeColor.SemanticColor.positiveColor.color
-        } else {
-            ThemeColor.SemanticColor.negativeColor.color
-        }
-        regularView.update(state.chartData, state.config, color.toArgb())
-
-        Column {
-            // Embed regular Android View using AndroidView composable
-            AndroidView(
-                factory = { regularView },
-                modifier = modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-            )
-        }
+        SparklineView.Content(
+            modifier = modifier,
+            state = state.sparkline,
+        )
     }
 
     @Composable

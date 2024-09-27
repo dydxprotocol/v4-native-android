@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -29,7 +28,7 @@ class DydxVaultHeaderViewModel @Inject constructor(
                 if (url != null) {
                     router.navigateTo(url)
                 }
-            }
+            },
         )
     }
 }

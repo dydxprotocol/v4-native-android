@@ -525,7 +525,7 @@ class AbacusState(
         perpetualState
             .mapState(appScope) { it?.vault }
     }
-    
+
     val subaccountNumber: Int?
         get() = parser.asInt(abacusStateManager.subaccountNumber)
 }
