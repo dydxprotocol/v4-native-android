@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 @HiltViewModel
 class DydxVaultInfoViewModel @Inject constructor(
@@ -28,10 +29,10 @@ class DydxVaultInfoViewModel @Inject constructor(
 
     private fun createViewState(vault: Vault?): DydxVaultInfoView.ViewState {
         val pnl = SignedAmountView.ViewState.fromDouble(vault?.account?.allTimeReturnUsdc) {
-            formatter.dollar(it) ?: "-"
+            formatter.dollar(it?.absoluteValue, 2) ?: "-"
         }
         val apr = SignedAmountView.ViewState.fromDouble(vault?.details?.thirtyDayReturnPercent) {
-            formatter.percent(it, 2) ?: "-"
+            formatter.percent(it?.absoluteValue, 2) ?: "-"
         }
         return DydxVaultInfoView.ViewState(
             localizer = localizer,

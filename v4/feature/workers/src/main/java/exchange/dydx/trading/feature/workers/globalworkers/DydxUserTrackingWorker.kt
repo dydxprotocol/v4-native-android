@@ -4,9 +4,11 @@ import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.analytics.UserProperty
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.WorkerProtocol
@@ -16,9 +18,11 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class DydxUserTrackingWorker(
-    private val scope: CoroutineScope,
+@ActivityRetainedScoped
+class DydxUserTrackingWorker @Inject constructor(
+    @CoroutineScopes.App private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: AbacusLocalizerProtocol,
     private val tracker: Tracking,

@@ -1,8 +1,10 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
-import android.content.Context
+import android.app.Application
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.state.manager.V4Environment
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.ProfileRoutes
 import exchange.dydx.utilities.utils.Logging
@@ -16,15 +18,17 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 private const val TAG = "DydxUpdateWorker"
 
-class DydxUpdateWorker(
-    private val scope: CoroutineScope,
+@ActivityRetainedScoped
+class DydxUpdateWorker @Inject constructor(
+    @CoroutineScopes.App private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
-    private val context: Context,
+    private val application: Application,
     private val logger: Logging,
 ) : WorkerProtocol {
     override var isStarted = false
@@ -62,7 +66,7 @@ class DydxUpdateWorker(
 
     private fun update(environment: V4Environment) {
         val desired = environment.apps?.android?.build ?: return
-        val mine = VersionUtils.versionCode(context) ?: return
+        val mine = VersionUtils.versionCode(application) ?: return
         if (desired > mine) {
             router.navigateToRoot(excludeRoot = true)
             router.navigateTo(ProfileRoutes.update)
