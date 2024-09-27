@@ -29,6 +29,10 @@ class PushPermissionRequester @Inject constructor(
     private val sharedPreferencesStore: SharedPreferencesStore,
 ) : PushPermissionRequesterProtocol {
 
+    init {
+        sharedPreferencesStore.save("false", PRIMER_SHOWN_KEY)
+    }
+
     private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
     override var activity: Activity? = null
@@ -56,27 +60,29 @@ class PushPermissionRequester @Inject constructor(
         val localActivity = activity ?: return
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(localActivity, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            val permissionStatus = ContextCompat.checkSelfPermission(localActivity, Manifest.permission.POST_NOTIFICATIONS)
+            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted already. Do nothing
                 return
             } else if (sharedPreferencesStore.read(PRIMER_SHOWN_KEY) != "true") {
                 // Show primer if needed.
-                platformDialog.showMessage(
-                    title = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_TITLE"),
-                    message = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_MESSAGE"),
-                    confirmTitle = abacusLocalizerImp.localize("APP.GENERAL.OK"),
-                    cancelTitle = abacusLocalizerImp.localize("APP.GENERAL.NOT_NOW"),
-                    confirmAction = ::request,
-                )
+
+                // this currently doesn't work, leaving here to figure out later.
+//                platformDialog.showMessage(
+//                    title = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_TITLE"),
+//                    message = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_MESSAGE"),
+//                    confirmTitle = abacusLocalizerImp.localize("APP.GENERAL.OK"),
+//                    cancelTitle = abacusLocalizerImp.localize("APP.GENERAL.NOT_NOW"),
+//                    confirmAction = ::doRequest,
+//                )
+                doRequest()
                 sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun request() {
+    private fun doRequest() {
         requestPermissionLauncher?.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 }
