@@ -1,6 +1,7 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import android.os.AsyncTask
+import android.util.Log
 import exchange.dydx.abacus.protocols.RestCallback
 import exchange.dydx.abacus.protocols.RestProtocol
 import exchange.dydx.abacus.utils.IMap
@@ -103,7 +104,7 @@ class AbacusRestImp @Inject constructor(
 
     private fun run(request: Request, callback: RestCallback) {
         beginBackgroundTask()
-        // Log.d(TAG, "AbacusRestImp Requesting ${request.url}")
+        Log.d(TAG, "AbacusRestImp Requesting $request")
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
                 logger.e(TAG, "AbacusRestImp Request Failed ${request.url}, ${e.message}")

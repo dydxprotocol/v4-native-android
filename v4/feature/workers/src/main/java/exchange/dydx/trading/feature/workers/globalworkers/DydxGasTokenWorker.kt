@@ -1,15 +1,18 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.state.manager.GasToken
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import exchange.dydx.utilities.utils.WorkerProtocol
+import javax.inject.Inject
 
 private const val TAG = "DydxGasTokenWorker"
 
-class DydxGasTokenWorker(
+@ActivityRetainedScoped
+class DydxGasTokenWorker @Inject constructor(
     private val preferencesStore: SharedPreferencesStore,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val logger: Logging,

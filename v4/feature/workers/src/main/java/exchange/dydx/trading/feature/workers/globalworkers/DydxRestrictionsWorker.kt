@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.ComplianceStatus.BLOCKED
 import exchange.dydx.abacus.output.ComplianceStatus.CLOSE_ONLY
 import exchange.dydx.abacus.output.ComplianceStatus.COMPLIANT
@@ -11,14 +12,17 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-class DydxRestrictionsWorker(
-    private val scope: CoroutineScope,
+@ActivityRetainedScoped
+class DydxRestrictionsWorker @Inject constructor(
+    @CoroutineScopes.App private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val localizer: LocalizerProtocol,
     private val toaster: PlatformInfo,

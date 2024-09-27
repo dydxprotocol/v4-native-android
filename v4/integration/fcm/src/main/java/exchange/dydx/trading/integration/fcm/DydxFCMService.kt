@@ -13,7 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusLocalizerImp
 import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.utilities.utils.WorkerProtocol
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @AndroidEntryPoint
 class DydxFCMService : FirebaseMessagingService() {
@@ -22,11 +24,6 @@ class DydxFCMService : FirebaseMessagingService() {
 
     @Inject internal lateinit var platformInfo: PlatformInfo
 
-    override fun onCreate() {
-        super.onCreate()
-        fcmRegistrar.registerToken()
-    }
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         fcmRegistrar.registerToken(token)
@@ -34,6 +31,7 @@ class DydxFCMService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        Log.d("FCMService", "${message.notification?.title} ${message.notification?.body}")
         message.notification?.let { notification ->
             platformInfo.show(
                 title = notification.title,
@@ -63,11 +61,25 @@ class FCMRegistrar @Inject constructor(
 
     fun registerToken(token: String) {
         // Only register token if permission has been granted.
-        if (ContextCompat.checkSelfPermission(application, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("FCMRegistrar", "registering token: $token")
+        val permissionStatus = ContextCompat.checkSelfPermission(application, Manifest.permission.POST_NOTIFICATIONS)
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
             abacusStateManager.registerPushToken(token, abacusLocalizerImp.language ?: "en")
         }
     }
+}
+
+@Singleton
+class FCMTokenWorker @Inject constructor(
+    private val fcmRegistrar: FCMRegistrar
+) : WorkerProtocol {
+
+    override fun start() {
+        Log.d("FCMTokenWorker", "registering token")
+        fcmRegistrar.registerToken()
+    }
+
+    override fun stop() {
+    }
+
+    override var isStarted: Boolean = false
 }
