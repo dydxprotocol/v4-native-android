@@ -42,7 +42,7 @@ class DydxReceiptTransferDurationViewModel @Inject constructor(
     private fun createTransferDurationString(
         transferInput: TransferInput?
     ): String? {
-        val transferDuration = transferInput?.summary?.estimatedRouteDuration ?: return null
+        val transferDuration = transferInput?.summary?.estimatedRouteDurationSeconds ?: return null
         val minutes = parser.asString(ceil(transferDuration / 60).toInt()) ?: return null
 
         return localizer.localizeWithParams(

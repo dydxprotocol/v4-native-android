@@ -28,7 +28,7 @@ class TransferAnalytics @Inject constructor(
             "gasFee" to transferInput.summary?.gasFee.toString(),
             "bridgeFee" to transferInput.summary?.bridgeFee.toString(),
             "exchangeRate" to transferInput.summary?.exchangeRate.toString(),
-            "estimatedRouteDuration" to transferInput.summary?.estimatedRouteDuration.toString(),
+            "estimatedRouteDuration" to transferInput.summary?.estimatedRouteDurationSeconds.toString(),
             "toAmount" to transferInput.summary?.toAmount.toString(),
             "toAmountMin" to transferInput.summary?.toAmountMin.toString(),
         ).filterNotNull()
