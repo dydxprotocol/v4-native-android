@@ -1,10 +1,12 @@
 package exchange.dydx.trading.feature.vault.components
 
+import android.util.Half.toFloat
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultHistoryEntry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
@@ -16,6 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
+import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +27,7 @@ class DydxVaultChartViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    private val parser: ParserProtocol,
 ) : ViewModel(), DydxViewModel {
 
     private val typeIndex = MutableStateFlow(0)
@@ -58,19 +63,44 @@ class DydxVaultChartViewModel @Inject constructor(
                 resolutionIndex.value = it
             },
             sparkline = SparklineView.ViewState(
-                sparkline = LineChartDataSet(
-                    listOf(
-                        Entry(0f, 0f),
-                        Entry(1f, 1f),
-                        Entry(2f, 2f),
-                        Entry(3f, 3f),
-                        Entry(4f, 4f),
-                    ),
-                    "Sparkline",
+                sparkline = createSparkline(
+                    history = history,
+                    type = ChartType.allTypes[currentTypeIndex],
+                    resolution = ChartResolution.allResolutions[currentResolutionIndex],
                 ),
                 lineWidth = 3.0,
             ),
         )
+    }
+
+    private fun createSparkline(
+        history: IList<VaultHistoryEntry>?,
+        type: ChartType,
+        resolution: ChartResolution
+    ): LineChartDataSet {
+        val filtered = history?.filter { entry ->
+            val now = Clock.System.now()
+            val then = parser.asDatetime(entry.date) ?: return@filter false
+            val diff = now.toEpochMilliseconds() - then.toEpochMilliseconds()
+            when (resolution) {
+                ChartResolution.DAY -> diff <= Duration.ofDays(1).toMillis()
+                ChartResolution.WEEK -> diff <= Duration.ofDays(7).toMillis()
+                ChartResolution.MONTH -> diff <= Duration.ofDays(30).toMillis()
+            }
+        }
+        val entries = filtered?.map { entry ->
+            val data = parser.asDatetime(entry.date)
+            val x = entry.date?.toFloat()
+            val y = when (type) {
+                ChartType.PNL -> entry.totalPnl
+                ChartType.EQUITY -> entry.equity
+            }?.toFloat()
+            if (x == null || y == null) {
+                return@map null
+            }
+            Entry(x, y)
+        } ?: emptyList()
+        return LineChartDataSet(entries, type.title(localizer))
     }
 }
 

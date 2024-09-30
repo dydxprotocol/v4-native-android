@@ -123,6 +123,7 @@ ext {
     junitExtVersion = '1.1.3'
     kaspressoVersion = '1.5.2'
     kotlinxSerializationVersion='1.5.0'
+    kotlinxDatetimeVersion='0.4.0'
     ktorVersion = '2.0.3'
     mpAndroidChartVersion ='v3.1.0'
     okhttpVersion = '4.11.0'

@@ -1,7 +1,9 @@
 package exchange.dydx.trading.feature.vault
 
 import androidx.lifecycle.ViewModel
+import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.functional.vault.ThirtyDayPnl
 import exchange.dydx.abacus.functional.vault.VaultPosition
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
@@ -9,10 +11,12 @@ import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
+import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
+import exchange.dydx.trading.feature.shared.views.SparklineView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
 import exchange.dydx.trading.feature.vault.components.DydxVaultPositionItemView
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 @HiltViewModel
 class DydxVaultViewModel @Inject constructor(
@@ -71,8 +76,8 @@ class DydxVaultViewModel @Inject constructor(
                 side = position.side,
             ),
             leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2),
-            notionalValue = formatter.dollar(position.currentPosition?.usdc, digits = 0),
-            positionSize = formatter.raw(position.currentPosition?.asset, digits = 2),
+            notionalValue = formatter.dollar(position.currentPosition?.usdc?.absoluteValue, digits = 0),
+            positionSize = formatter.raw(position.currentPosition?.asset?.absoluteValue, digits = 2),
             token = TokenTextView.ViewState(
                 symbol = asset.id,
             ),
@@ -88,7 +93,26 @@ class DydxVaultViewModel @Inject constructor(
                 )
             },
             pnlPercentage = formatter.percent(position.thirtyDayPnl?.percent, digits = 2),
+            sparkline = createSparkline(position.thirtyDayPnl),
         )
+    }
+
+    private fun createSparkline(pnl: ThirtyDayPnl?): SparklineView.ViewState? {
+        val pnl = pnl ?: return null
+        var x = -1
+        val lines = pnl.sparklinePoints?.map {
+            x += 1
+            Entry(x.toFloat(), it.toFloat())
+        } ?: emptyList()
+        return if (lines.isNotEmpty()) {
+            val total = pnl.absolute ?: 0.0
+            SparklineView.ViewState(
+                sparkline = LineChartDataSet(lines, "Sparkline"),
+                sign = if (total >= 0.0) PlatformUISign.Plus else PlatformUISign.Minus,
+            )
+        } else {
+            null
+        }
     }
 }
 

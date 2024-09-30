@@ -175,7 +175,7 @@ object DydxVaultPositionItemView : DydxComponent {
                             .themeColor(ThemeColor.SemanticColor.text_tertiary),
                     )
                     Text(
-                        text = state.leverage ?: "",
+                        text = state.leverage ?: "-",
                         style = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.mini),
                     )
@@ -191,7 +191,7 @@ object DydxVaultPositionItemView : DydxComponent {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = state.notionalValue ?: "",
+                text = state.notionalValue ?: "-",
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small),
             )
@@ -201,7 +201,7 @@ object DydxVaultPositionItemView : DydxComponent {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = state.positionSize ?: "",
+                    text = state.positionSize ?: "-",
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.mini)
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),

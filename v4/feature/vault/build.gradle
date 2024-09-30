@@ -53,6 +53,7 @@ dependencies {
 
     api "exchange.dydx.abacus:v4-abacus-jvm:$abacusVersion"
 
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion"
 
     api "androidx.compose.foundation:foundation:$composeVersion"
     api "androidx.compose.runtime:runtime:$composeVersion"
