@@ -2,10 +2,9 @@ package exchange.dydx.trading.feature.vault.components
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
+import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 @HiltViewModel
 class DydxVaultInfoViewModel @Inject constructor(
@@ -21,23 +21,25 @@ class DydxVaultInfoViewModel @Inject constructor(
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxVaultInfoView.ViewState?> = abacusStateManager.state.marketSummary
+    val state: Flow<DydxVaultInfoView.ViewState?> = abacusStateManager.state.vault
         .map {
             createViewState(it)
         }
         .distinctUntilChanged()
 
-    private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxVaultInfoView.ViewState {
-        val volume = formatter.dollarVolume(marketSummary?.volume24HUSDC)
+    private fun createViewState(vault: Vault?): DydxVaultInfoView.ViewState {
+        val pnl = SignedAmountView.ViewState.fromDouble(vault?.account?.allTimeReturnUsdc) {
+            formatter.dollar(it?.absoluteValue, 2) ?: "-"
+        }
+        val apr = SignedAmountView.ViewState.fromDouble(vault?.details?.thirtyDayReturnPercent) {
+            formatter.percent(it?.absoluteValue, 2) ?: "-"
+        }
         return DydxVaultInfoView.ViewState(
             localizer = localizer,
-            balance = "$1.0M",
-            pnl = "$100.0",
-            apr = SignedAmountView.ViewState.preview.copy(
-                sign = PlatformUISign.Plus,
-                coloringOption = SignedAmountView.ColoringOption.AllText,
-            ),
-            tvl = "$1.0M",
+            balance = formatter.dollar(vault?.account?.balanceUsdc),
+            pnl = pnl,
+            apr = apr,
+            tvl = formatter.dollar(vault?.details?.totalValue),
         )
     }
 }

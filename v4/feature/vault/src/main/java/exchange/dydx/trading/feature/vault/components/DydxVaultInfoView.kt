@@ -43,7 +43,7 @@ object DydxVaultInfoView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val balance: String? = null,
-        val pnl: String? = null,
+        val pnl: SignedAmountView.ViewState? = null,
         val apr: SignedAmountView.ViewState? = null,
         val tvl: String? = null,
     ) {
@@ -51,7 +51,7 @@ object DydxVaultInfoView : DydxComponent {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 balance = "$1.0M",
-                pnl = "$100.0",
+                pnl = SignedAmountView.ViewState.preview,
                 apr = SignedAmountView.ViewState.preview,
                 tvl = "$1.0M",
             )
@@ -85,12 +85,27 @@ object DydxVaultInfoView : DydxComponent {
                 TopRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.YOUR_VAULT_BALANCE"),
-                    value = state.balance,
+                    valueComposable = {
+                        Text(
+                            text = state.balance ?: "-",
+                            modifier = Modifier,
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.medium)
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+                    },
                 )
                 TopRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.YOUR_ALL_TIME_PNL"),
-                    value = state.pnl,
+                    valueComposable = {
+                        SignedAmountView.Content(
+                            modifier = Modifier,
+                            state = state.pnl,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.medium),
+                        )
+                    },
                 )
             }
 
@@ -145,7 +160,7 @@ object DydxVaultInfoView : DydxComponent {
     }
 
     @Composable
-    private fun TopRowItem(modifier: Modifier, title: String, value: String?) {
+    private fun TopRowItem(modifier: Modifier, title: String, valueComposable: @Composable (Modifier) -> Unit) {
         val shape = RoundedCornerShape(size = 10.dp)
         Column(
             modifier = modifier
@@ -166,13 +181,7 @@ object DydxVaultInfoView : DydxComponent {
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
 
-            Text(
-                text = value ?: "-",
-                modifier = Modifier,
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.medium)
-                    .themeColor(ThemeColor.SemanticColor.text_primary),
-            )
+            valueComposable(Modifier)
         }
     }
 

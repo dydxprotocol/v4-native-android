@@ -518,6 +518,14 @@ class AbacusState(
             .mapStateWithThrottle(appScope) { it?.input?.adjustIsolatedMargin }
     }
 
+    /**
+     * Vault
+     */
+    val vault: StateFlow<exchange.dydx.abacus.output.Vault?> by lazy {
+        perpetualState
+            .mapState(appScope) { it?.vault }
+    }
+
     val subaccountNumber: Int?
         get() = parser.asInt(abacusStateManager.subaccountNumber)
 }

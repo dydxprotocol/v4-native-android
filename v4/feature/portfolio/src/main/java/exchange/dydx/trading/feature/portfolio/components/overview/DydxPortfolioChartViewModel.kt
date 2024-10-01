@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.portfolio.components.overview
 
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
@@ -13,16 +12,11 @@ import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.PlatformUISign
-import exchange.dydx.platformui.components.charts.config.AxisConfig
-import exchange.dydx.platformui.components.charts.config.DrawingConfig
-import exchange.dydx.platformui.components.charts.config.InteractionConfig
-import exchange.dydx.platformui.components.charts.config.LineChartConfig
-import exchange.dydx.platformui.components.charts.config.LineChartDrawingConfig
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
-import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
+import exchange.dydx.trading.feature.shared.views.SparklineView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,6 +24,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import java.time.Instant
 import javax.inject.Inject
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 @HiltViewModel
 class DydxPortfolioChartViewModel @Inject constructor(
@@ -40,26 +35,6 @@ class DydxPortfolioChartViewModel @Inject constructor(
     private val resolutionTitles = listOf("1d", "7d", "30d", "90d")
     private val resolutionIndex = MutableStateFlow(1)
     private val selectedPnl = MutableStateFlow<SubaccountHistoricalPNL?>(null)
-
-    private val config: LineChartConfig = LineChartConfig(
-        lineDrawing = LineChartDrawingConfig(
-            2.0f,
-            exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.text_primary.color.toArgb(),
-            null,
-            true,
-        ),
-        drawing = DrawingConfig(
-            null,
-            true,
-            null,
-        ),
-        interaction = InteractionConfig.default.copy(
-            selectionListener = this,
-        ),
-        xAxis = AxisConfig(false, false, null),
-        leftAxis = AxisConfig(false, false, null),
-        rightAxis = null,
-    )
 
     val state: Flow<DydxPortfolioChartView.ViewState?> =
         combine(
@@ -109,9 +84,11 @@ class DydxPortfolioChartViewModel @Inject constructor(
         }
         return DydxPortfolioChartView.ViewState(
             localizer = localizer,
-            config = config,
-            chartData = dataset,
-            positive = positive,
+            sparkline = SparklineView.ViewState(
+                sparkline = dataset,
+                sign = if (positive) PlatformUISign.Plus else PlatformUISign.Minus,
+                lineWidth = 3.0,
+            ),
             resolutionTitles = resolutionTitles,
             resolutionIndex = resolutionIndex,
             onResolutionChanged = { index ->

@@ -39,6 +39,24 @@ interface CosmosV4ClientProtocol {
         payload: String,
         completion: JavascriptCompletion
     )
+
+    fun depositToMegavault(
+        subaccountNumber: Int,
+        amountUsdc: Double,
+        completion: JavascriptCompletion
+    )
+
+    fun withdrawFromMegavault(
+        subaccountNumber: Int,
+        shares: Long,
+        minAmount: Long,
+        completion: JavascriptCompletion
+    )
+
+    fun getMegavaultWithdrawalInfo(
+        shares: Long,
+        completion: JavascriptCompletion
+    )
 }
 
 @kotlinx.serialization.Serializable

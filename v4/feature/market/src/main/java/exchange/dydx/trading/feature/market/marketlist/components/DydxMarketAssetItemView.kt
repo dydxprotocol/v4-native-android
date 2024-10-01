@@ -33,6 +33,7 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
+import exchange.dydx.trading.feature.shared.views.SparklineView
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketViewState
 import java.util.UUID
 
@@ -134,11 +135,14 @@ object DydxMarketAssetItemView : DydxComponent {
                 )
             }
 
-            DydxMarketSparklineView.Content(
-                modifier = Modifier,
-                state = DydxMarketSparklineView.ViewState(
-                    localizer = state.localizer,
-                    sharedMarketViewState = state.sharedMarketViewState,
+            SparklineView.Content(
+                modifier = Modifier
+                    .width(48.dp)
+                    .padding(vertical = 0.dp)
+                    .padding(horizontal = 0.dp),
+                state = SparklineView.ViewState(
+                    sparkline = state.sharedMarketViewState?.sparkline,
+                    sign = state.sharedMarketViewState?.priceChangePercent24H?.sign,
                 ),
             )
 
