@@ -67,7 +67,7 @@ object DydxVaultWithdrawView : DydxComponent {
                 .fillMaxSize(),
         ) {
             LazyColumn(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
                     .padding(vertical = 16.dp)
