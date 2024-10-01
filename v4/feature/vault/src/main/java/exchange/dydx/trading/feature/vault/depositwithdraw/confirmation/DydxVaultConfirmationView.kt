@@ -1,6 +1,5 @@
-package exchange.dydx.trading.feature.vault.depositwithdraw.withdraw
+package exchange.dydx.trading.feature.vault.depositwithdraw.confirmation
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,40 +7,50 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
+import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
 import exchange.dydx.trading.feature.vault.receipt.DydxVaultReceiptView
 
 @Preview
 @Composable
-fun Preview_DydxVaultWithdrawView() {
+fun Preview_DydxVaultConfirmationView() {
     DydxThemedPreviewSurface {
-        DydxVaultWithdrawView.Content(Modifier, DydxVaultWithdrawView.ViewState.preview)
+        DydxVaultConfirmationView.Content(Modifier, DydxVaultConfirmationView.ViewState.preview)
     }
 }
 
-object DydxVaultWithdrawView : DydxComponent {
+object DydxVaultConfirmationView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val transferAmount: VaultAmountBox.ViewState? = null,
+        val headerTitle: String? = null,
+        val sourceLabel: String? = null,
+        val sourceValue: String? = null,
+        val destinationValue: String? = null,
         val ctaButton: InputCtaButton.ViewState? = null,
+        val backAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                transferAmount = VaultAmountBox.ViewState.preview,
+                headerTitle = "Confirm Deposit",
+                sourceLabel = "Amount to deposit",
+                sourceValue = "$1,000.00",
+                destinationValue = "Vault",
                 ctaButton = InputCtaButton.ViewState.preview,
             )
         }
@@ -49,13 +58,12 @@ object DydxVaultWithdrawView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxVaultWithdrawViewModel = hiltViewModel()
+        val viewModel: DydxVaultConfirmationViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Content(modifier: Modifier, state: ViewState?) {
         if (state == null) {
@@ -66,6 +74,13 @@ object DydxVaultWithdrawView : DydxComponent {
             modifier = modifier
                 .fillMaxSize(),
         ) {
+            HeaderView(
+                title = state.headerTitle ?: "",
+                backAction = state.backAction,
+            )
+
+            PlatformDivider()
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,16 +89,16 @@ object DydxVaultWithdrawView : DydxComponent {
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item {
-                    VaultAmountBox.Content(
-                        modifier = Modifier.animateItemPlacement(),
-                        state = state.transferAmount,
-                    )
-                }
-
-                item {
-                    DydxValidationView.Content(Modifier.animateItemPlacement())
-                }
+//                item {
+//                    VaultAmountBox.Content(
+//                        modifier = Modifier.animateItemPlacement(),
+//                        state = state.transferAmount,
+//                    )
+//                }
+//
+//                item {
+//                    DydxValidationView.Content(Modifier.animateItemPlacement())
+//                }
             }
 
             DydxVaultReceiptView.Content(
@@ -100,3 +115,4 @@ object DydxVaultWithdrawView : DydxComponent {
         }
     }
 }
+

@@ -84,7 +84,7 @@ object DydxVaultDepositWithdrawView : DydxComponent {
                 .themeColor(ThemeColor.SemanticColor.layer_3),
         ) {
             Row(
-                modifier
+                Modifier
                     .fillMaxWidth()
                     .padding(vertical = ThemeShapes.VerticalPadding),
                 verticalAlignment = Alignment.CenterVertically,
