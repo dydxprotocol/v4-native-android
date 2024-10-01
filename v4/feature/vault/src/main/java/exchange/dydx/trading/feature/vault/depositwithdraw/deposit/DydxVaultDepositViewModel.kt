@@ -77,7 +77,7 @@ class DydxVaultDepositViewModel @Inject constructor(
                 ctaAction = {
                     cosmosClient.depositToMegavault(
                         subaccountNumber = 0,
-                        amountUsdc = 1.0,
+                        amountUsdc = 20.0,
                         completion = { response ->
                             print(response)
                         },
