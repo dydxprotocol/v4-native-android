@@ -69,7 +69,7 @@ object DydxReceiptView : DydxComponent {
         TransferDuration,
         Slippage,
         PositionMargin,
-        LiquidationPrice;
+        LiquidationPrice,
     }
 
     data class ViewState(

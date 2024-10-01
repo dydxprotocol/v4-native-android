@@ -29,9 +29,7 @@ fun NavGraphBuilder.vaultGraph(
         route = VaultRoutes.deposit,
         deepLinks = appRouter.deeplinks(VaultRoutes.deposit),
     ) { navBackStackEntry ->
-        DydxBottomBarScaffold(Modifier) {
-            DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.DEPOSIT)
-        }
+        DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.DEPOSIT)
     }
 
     dydxComposable(
@@ -39,8 +37,6 @@ fun NavGraphBuilder.vaultGraph(
         route = VaultRoutes.withdraw,
         deepLinks = appRouter.deeplinks(VaultRoutes.withdraw),
     ) { navBackStackEntry ->
-        DydxBottomBarScaffold(Modifier) {
-            DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.WITHDRAW)
-        }
+        DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.WITHDRAW)
     }
 }

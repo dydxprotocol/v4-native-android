@@ -7,7 +7,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.trading.common.navigation.VaultRoutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -18,7 +18,6 @@ class DydxVaultButtonsViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
-    private val cosmosClient: CosmosV4WebviewClientProtocol,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxVaultButtonsView.ViewState?> = flowOf(createViewState())
@@ -27,31 +26,10 @@ class DydxVaultButtonsViewModel @Inject constructor(
         return DydxVaultButtonsView.ViewState(
             localizer = localizer,
             depositAction = {
-                cosmosClient.depositToMegavault(
-                    subaccountNumber = 0,
-                    amountUsdc = 1.0,
-                    completion = { response ->
-                        print(response)
-                    },
-                )
-                //  router.navigateTo(route = VaultRoutes.deposit, presentation = Presentation.Modal)
+                router.navigateTo(route = VaultRoutes.deposit, presentation = DydxRouter.Presentation.Modal)
             },
             withdrawAction = {
-                cosmosClient.getMegavaultWithdrawalInfo(
-                    shares = 2,
-                    completion = { response ->
-                        print(response)
-                    },
-                )
-//                cosmosClient.withdrawFromMegavault(
-//                    subaccountNumber = 0,
-//                    shares = 2,
-//                    minAmount = 0,
-//                    completion = { response ->
-//                        print(response)
-//                    }
-//                )
-                //  router.navigateTo(route = VaultRoutes.withdraw, presentation = Presentation.Modal)
+                router.navigateTo(route = VaultRoutes.withdraw, presentation = DydxRouter.Presentation.Modal)
             },
         )
     }

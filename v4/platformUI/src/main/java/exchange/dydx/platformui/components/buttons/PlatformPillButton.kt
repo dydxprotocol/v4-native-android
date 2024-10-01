@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -47,6 +48,7 @@ fun PlatformPillItem(
     modifier: Modifier = Modifier,
     backgroundColor: ThemeColor.SemanticColor = ThemeColor.SemanticColor.layer_5,
     borderColor: ThemeColor.SemanticColor = ThemeColor.SemanticColor.layer_6,
+    padding: PaddingValues = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
     content: @Composable () -> Unit
 ) {
     val shape = RoundedCornerShape(50)
@@ -62,7 +64,7 @@ fun PlatformPillItem(
             )
             .clip(shape)
             .then(modifier)
-            .padding(horizontal = 10.dp, vertical = 8.dp),
+            .padding(padding),
 
     ) {
         content()

@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.transfer
+package exchange.dydx.trading.feature.vault.depositwithdraw
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -21,22 +21,23 @@ import exchange.dydx.trading.common.component.DydxComponent
 
 @Preview
 @Composable
-fun Preview_DydxTransferSectionsView() {
+fun Preview_DydxVaultDepositWithdrawSelectionView() {
     DydxThemedPreviewSurface {
-        DydxTransferSectionsView.Content(Modifier, DydxTransferSectionsView.ViewState.preview)
+        DydxVaultDepositWithdrawSelectionView.Content(
+            Modifier,
+            DydxVaultDepositWithdrawSelectionView.ViewState.preview,
+        )
     }
 }
 
-object DydxTransferSectionsView : DydxComponent {
+object DydxVaultDepositWithdrawSelectionView : DydxComponent {
     enum class Selection {
-        Deposit, Withdrawal, TransferOut, Faucet;
+        Deposit, Withdrawal;
 
         val stringKey: String
             get() = when (this) {
                 Deposit -> "APP.GENERAL.DEPOSIT"
                 Withdrawal -> "APP.GENERAL.WITHDRAW"
-                TransferOut -> "APP.GENERAL.TRANSFER"
-                Faucet -> "Faucet"
             }
     }
 
@@ -45,7 +46,6 @@ object DydxTransferSectionsView : DydxComponent {
         val selections: List<Selection> = listOf(
             Selection.Deposit,
             Selection.Withdrawal,
-            Selection.TransferOut,
         ),
         val currentSelection: Selection = Selection.Deposit,
         val onSelectionChanged: (Selection) -> Unit = {},
@@ -59,7 +59,7 @@ object DydxTransferSectionsView : DydxComponent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxTransferSectionsViewModel = hiltViewModel()
+        val viewModel: DydxVaultDepositWithdrawSelectionViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
