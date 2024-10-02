@@ -11,6 +11,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
@@ -20,12 +21,14 @@ import exchange.dydx.trading.feature.vault.VaultInputStage
 import exchange.dydx.trading.feature.vault.VaultInputState
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
-import kotlin.concurrent.schedule
-import kotlin.math.abs
 
 @HiltViewModel
 class DydxVaultWithdrawViewModel @Inject constructor(
@@ -36,6 +39,7 @@ class DydxVaultWithdrawViewModel @Inject constructor(
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val inputState: VaultInputState,
     private val router: DydxRouter,
+    @CoroutineScopes.ViewModel private val coroutineScope: CoroutineScope
 ) : ViewModel(), DydxViewModel {
 
     private var slippageRequestTimer: Timer? = null
@@ -48,6 +52,8 @@ class DydxVaultWithdrawViewModel @Inject constructor(
         ) { subaccount, vault, result ->
             createViewState(subaccount, vault, result)
         }
+
+    private var slippageDebounce: Job? = null
 
     private fun createViewState(
         subaccount: Subaccount?,
@@ -100,14 +106,8 @@ class DydxVaultWithdrawViewModel @Inject constructor(
         value: Double?,
         vaultAccount: VaultAccount?
     ) {
-        val currentValue = inputState.amount.value
-        val significantChange = if (currentValue != null && value != null) {
-            abs(currentValue - value) > 0.1
-        } else {
-            true
-        }
         val shareValue = vaultAccount?.shareValue
-        if (significantChange && value != null && shareValue != null && shareValue > 0) {
+        if (value != null && shareValue != null && shareValue > 0) {
             val shares = value / shareValue
             requestSlippage(shares.toLong())
         }
@@ -115,8 +115,9 @@ class DydxVaultWithdrawViewModel @Inject constructor(
     }
 
     private fun requestSlippage(shares: Long) {
-        slippageRequestTimer = Timer()
-        slippageRequestTimer?.schedule(delay = 1000L) {
+        slippageDebounce?.cancel()
+        slippageDebounce = coroutineScope.launch {
+            delay(500L)
             cosmosClient.getMegavaultWithdrawalInfo(
                 shares = shares,
                 completion = { response ->
