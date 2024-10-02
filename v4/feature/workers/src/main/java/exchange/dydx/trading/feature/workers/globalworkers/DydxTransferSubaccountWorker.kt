@@ -16,7 +16,7 @@ import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
@@ -45,33 +45,24 @@ class DydxTransferSubaccountWorker @Inject constructor(
 
             combine(
                 abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
-                    .filter { balance ->
-                        balance != null && balance > balanceRetainAmount
-                    },
+                    .filterNotNull(),
                 abacusStateManager.state.currentWallet.mapNotNull { it },
             ) { balance, wallet ->
-                val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
-                if (depositAmount <= 0) return@combine
-                val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
-                    ?: return@combine
+                if (balance > balanceRetainAmount) {
+                    val depositAmount = balance.minus(balanceRetainAmount)
+                    if (depositAmount <= 0) return@combine
+                    val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
+                        ?: return@combine
 
-                depositToSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
-            }
-                .launchIn(scope)
+                    depositToSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                } else if (balance < rebalanceThreshold) {
+                    val withdrawAmount = balanceRetainAmount.minus(balance)
+                    if (withdrawAmount <= 0) return@combine
+                    val amountString = formatter.decimalLocaleAgnostic(withdrawAmount, abacusStateManager.usdcTokenDecimal)
+                        ?: return@combine
 
-            combine(
-                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
-                    .filter { balance ->
-                        balance != null && balance < rebalanceThreshold
-                    },
-                abacusStateManager.state.currentWallet.mapNotNull { it },
-            ) { balance, wallet ->
-                val withdrawAmount = rebalanceThreshold.minus(balance ?: 0.0)
-                if (withdrawAmount <= 0) return@combine
-                val amountString = formatter.decimalLocaleAgnostic(withdrawAmount, abacusStateManager.usdcTokenDecimal)
-                    ?: return@combine
-
-                withdrawFromSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                    withdrawFromSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                }
             }
                 .launchIn(scope)
         }
