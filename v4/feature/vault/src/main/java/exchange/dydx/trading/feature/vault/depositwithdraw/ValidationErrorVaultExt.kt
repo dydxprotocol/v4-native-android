@@ -5,7 +5,7 @@ import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
 
-internal  fun ValidationError.createViewModel(
+internal fun ValidationError.createViewModel(
     localizer: LocalizerProtocol
 ): DydxValidationView.ViewState {
     return DydxValidationView.ViewState(
