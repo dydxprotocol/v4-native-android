@@ -140,6 +140,7 @@ interface AbacusStateManagerProtocol {
     }
 
     fun registerPushToken(token: String, language: String)
+    fun refreshVaultAccount()
 }
 
 // Temporary location, should probably make a separate dagger-qualifiers module.
@@ -459,6 +460,10 @@ class AbacusStateManager @Inject constructor(
 
     override fun registerPushToken(token: String, language: String) {
         asyncStateManager.registerPushNotification(token, language)
+    }
+
+    override fun refreshVaultAccount() {
+        asyncStateManager.refreshVaultAccount()
     }
 
     // MARK: StateNotificationProtocol

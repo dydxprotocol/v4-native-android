@@ -11,11 +11,16 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
+import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
 import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.VaultInputStage
 import exchange.dydx.trading.feature.vault.VaultInputState
+import exchange.dydx.trading.feature.vault.canDeposit
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
+import exchange.dydx.trading.feature.vault.depositwithdraw.createViewModel
+import exchange.dydx.trading.feature.vault.displayedError
+import exchange.dydx.trading.feature.vault.hasBlockingError
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -75,9 +80,14 @@ class DydxVaultDepositViewModel @Inject constructor(
                     inputState.amount.value = parser.asDouble(amount)
                 },
             ),
+            validation =  result?.displayedError?.createViewModel(localizer),
             ctaButton = InputCtaButton.ViewState(
                 localizer = localizer,
-                ctaButtonState = InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT")),
+                ctaButtonState = if (result?.hasBlockingError == true || inputState.amount.value == null) {
+                    InputCtaButton.State.Disabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
+                } else {
+                     InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
+                },
                 ctaAction = {
                     inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)
