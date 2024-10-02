@@ -1,15 +1,31 @@
 package exchange.dydx.trading.feature.vault.depositwithdraw
 
-import androidx.compose.material.Text
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.navigation.DydxAnimation
+import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
+import exchange.dydx.trading.feature.vault.depositwithdraw.deposit.DydxVaultDepositView
+import exchange.dydx.trading.feature.vault.depositwithdraw.withdraw.DydxVaultWithdrawView
 
 @Preview
 @Composable
@@ -30,12 +46,12 @@ object DydxVaultDepositWithdrawView : DydxComponent {
 
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val text: String?,
+        val closeAction: (() -> Unit)? = null,
+        val selection: DydxVaultDepositWithdrawSelectionView.Selection? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                text = "1.0M",
             )
         }
     }
@@ -48,6 +64,9 @@ object DydxVaultDepositWithdrawView : DydxComponent {
     @Composable
     fun Content(modifier: Modifier, type: DepositWithdrawType) {
         val viewModel: DydxVaultDepositWithdrawViewModel = hiltViewModel()
+        LaunchedEffect(Unit) {
+            viewModel.type = type
+        }
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
@@ -58,6 +77,46 @@ object DydxVaultDepositWithdrawView : DydxComponent {
         if (state == null) {
             return
         }
-        Text(text = state?.text ?: "")
+        Column(
+            modifier = modifier
+                .animateContentSize()
+                .fillMaxSize()
+                .themeColor(ThemeColor.SemanticColor.layer_3),
+        ) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = ThemeShapes.VerticalPadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                DydxVaultDepositWithdrawSelectionView.Content(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = ThemeShapes.VerticalPadding),
+                )
+
+                HeaderViewCloseBotton(
+                    closeAction = state.closeAction,
+                )
+            }
+
+            PlatformDivider()
+
+            DydxAnimation.AnimateFadeInOut(
+                visible = state.selection == DydxVaultDepositWithdrawSelectionView.Selection.Deposit,
+            ) {
+                DydxVaultDepositView.Content(
+                    modifier = Modifier,
+                )
+            }
+            DydxAnimation.AnimateFadeInOut(
+                visible = state.selection == DydxVaultDepositWithdrawSelectionView.Selection.Withdrawal,
+            ) {
+                DydxVaultWithdrawView.Content(
+                    modifier = Modifier,
+                )
+            }
+        }
     }
 }

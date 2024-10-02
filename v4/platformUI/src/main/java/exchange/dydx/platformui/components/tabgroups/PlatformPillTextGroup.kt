@@ -1,9 +1,11 @@
 package exchange.dydx.platformui.components.tabgroups
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import exchange.dydx.platformui.components.buttons.PlatformPillItem
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -22,6 +24,7 @@ fun PlatformPillTextGroup(
     selectedItemStyle: TextStyle = TextStyle.dydxDefault
         .themeColor(ThemeColor.SemanticColor.text_primary)
         .themeFont(fontType = ThemeFont.FontType.plus, fontSize = ThemeFont.FontSize.extra),
+    padding: PaddingValues = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
     currentSelection: Int? = null,
     scrollingEnabled: Boolean = false,
     onSelectionChanged: (Int) -> Unit = {},
@@ -33,6 +36,7 @@ fun PlatformPillTextGroup(
                 PlatformPillItem(
                     modifier = modifier,
                     backgroundColor = ThemeColor.SemanticColor.layer_5,
+                    padding = padding,
                 ) {
                     Text(
                         text = item,
@@ -47,6 +51,7 @@ fun PlatformPillTextGroup(
                 PlatformPillItem(
                     modifier = modifier,
                     backgroundColor = ThemeColor.SemanticColor.layer_2,
+                    padding = padding,
                 ) {
                     Text(
                         text = item,

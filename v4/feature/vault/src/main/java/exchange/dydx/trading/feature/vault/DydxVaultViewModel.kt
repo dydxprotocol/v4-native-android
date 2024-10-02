@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 @HiltViewModel
 class DydxVaultViewModel @Inject constructor(

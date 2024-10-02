@@ -11,13 +11,14 @@ import exchange.dydx.platformui.designSystem.theme.negativeColor
 import exchange.dydx.platformui.designSystem.theme.positiveColor
 
 enum class PlatformDirection {
-    Up, Down, None;
+    Up, Down, None, Hide;
 
     companion object {
         fun from(value1: Double?, value2: Double?): PlatformDirection {
             return when {
-                (value1 ?: 0.0) > (value2 ?: 0.0) -> Down
-                (value1 ?: 0.0) < (value2 ?: 0.0) -> Up
+                value1 == null || value2 == null -> Hide
+                value1 > value2 -> Down
+                value1 < value2 -> Up
                 else -> None
             }
         }
@@ -29,6 +30,7 @@ fun PlatformDirectionArrow(
     modifier: Modifier = Modifier,
     direction: PlatformDirection = PlatformDirection.None,
 ) {
+    if (direction == PlatformDirection.Hide) return
     PlatformImage(
         icon = R.drawable.icon_arrow,
         modifier = modifier,
@@ -36,6 +38,7 @@ fun PlatformDirectionArrow(
             PlatformDirection.Up -> ColorFilter.tint(color = ThemeColor.SemanticColor.positiveColor.color)
             PlatformDirection.Down -> ColorFilter.tint(color = ThemeColor.SemanticColor.negativeColor.color)
             PlatformDirection.None -> ColorFilter.tint(color = ThemeColor.SemanticColor.text_tertiary.color)
+            else -> null
         },
     )
 }
