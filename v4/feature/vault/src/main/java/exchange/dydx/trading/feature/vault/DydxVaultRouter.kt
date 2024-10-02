@@ -4,10 +4,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
+import exchange.dydx.trading.common.navigation.VaultRoutes.confirmation
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
 import exchange.dydx.trading.feature.vault.DydxVaultView
 import exchange.dydx.trading.feature.vault.depositwithdraw.DydxVaultDepositWithdrawView
+import exchange.dydx.trading.feature.vault.depositwithdraw.confirmation.DydxVaultConfirmationView
 import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.vaultGraph(
@@ -38,5 +40,13 @@ fun NavGraphBuilder.vaultGraph(
         deepLinks = appRouter.deeplinks(VaultRoutes.withdraw),
     ) { navBackStackEntry ->
         DydxVaultDepositWithdrawView.Content(Modifier, type = DydxVaultDepositWithdrawView.DepositWithdrawType.WITHDRAW)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = VaultRoutes.confirmation,
+        deepLinks = appRouter.deeplinks(VaultRoutes.confirmation),
+    ) { navBackStackEntry ->
+        DydxVaultConfirmationView.Content(Modifier)
     }
 }

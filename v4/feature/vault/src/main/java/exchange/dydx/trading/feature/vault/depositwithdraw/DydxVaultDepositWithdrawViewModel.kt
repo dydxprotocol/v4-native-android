@@ -27,16 +27,14 @@ class DydxVaultDepositWithdrawViewModel @Inject constructor(
 
     var type: DepositWithdrawType? = null
         set(value) {
-            field = value
-            if (value != null) {
+            if (value != null && inputState.type.value == null) {
+                inputState.reset()
                 inputState.type.value = when (value) {
                     DepositWithdrawType.DEPOSIT -> VaultInputType.DEPOSIT
                     DepositWithdrawType.WITHDRAW -> VaultInputType.WITHDRAW
                 }
-
-                inputState.amount.value = null
-                inputState.slippageAcked.value = false
             }
+            field = value
         }
 
     val state: Flow<DydxVaultDepositWithdrawView.ViewState?> = inputState.type
