@@ -13,6 +13,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
+import exchange.dydx.trading.feature.vault.VaultInputStage
 import exchange.dydx.trading.feature.vault.VaultInputState
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
@@ -78,14 +79,7 @@ class DydxVaultDepositViewModel @Inject constructor(
                 localizer = localizer,
                 ctaButtonState = InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT")),
                 ctaAction = {
-//                    cosmosClient.depositToMegavault(
-//                        subaccountNumber = 0,
-//                        amountUsdc = 20.0,
-//                        completion = { response ->
-//                            print(response)
-//                        },
-//                    )
-
+                    inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)
                 },
             ),

@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.vault.depositwithdraw.withdraw
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultAccount
+import exchange.dydx.abacus.functional.vault.VaultDepositWithdrawFormValidator
 import exchange.dydx.abacus.functional.vault.VaultFormValidationResult
 import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.output.account.Subaccount
@@ -15,6 +16,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
+import exchange.dydx.trading.feature.vault.VaultInputStage
 import exchange.dydx.trading.feature.vault.VaultInputState
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
@@ -22,8 +24,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.util.Timer
 import javax.inject.Inject
-import kotlin.math.abs
 import kotlin.concurrent.schedule
+import kotlin.math.abs
 
 @HiltViewModel
 class DydxVaultWithdrawViewModel @Inject constructor(
@@ -80,21 +82,14 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                     requiresPositive = true,
                 ),
                 onEditAction = { amount ->
-                    updateAmount(value = parser.asDouble(amount), vaultAccount =  vault?.account)
+                    updateAmount(value = parser.asDouble(amount), vaultAccount = vault?.account)
                 },
             ),
             ctaButton = InputCtaButton.ViewState(
                 localizer = localizer,
                 ctaButtonState = InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_WITHDRAW")),
                 ctaAction = {
-//                cosmosClient.withdrawFromMegavault(
-//                    subaccountNumber = 0,
-//                    shares = 2,
-//                    minAmount = 0,
-//                    completion = { response ->
-//                        print(response)
-//                    }
-//                )
+                    inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)
                 },
             ),
@@ -112,7 +107,7 @@ class DydxVaultWithdrawViewModel @Inject constructor(
             true
         }
         val shareValue = vaultAccount?.shareValue
-        if (significantChange && value != null &&  shareValue != null && shareValue > 0) {
+        if (significantChange && value != null && shareValue != null && shareValue > 0) {
             val shares = value / shareValue
             requestSlippage(shares.toLong())
         }
@@ -125,7 +120,11 @@ class DydxVaultWithdrawViewModel @Inject constructor(
             cosmosClient.getMegavaultWithdrawalInfo(
                 shares = shares,
                 completion = { response ->
-                    print(response)
+                    if (response != null) {
+                        inputState.slippageResponse.value = VaultDepositWithdrawFormValidator.getVaultDepositWithdrawSlippageResponse(response)
+                    } else {
+                        inputState.slippageResponse.value = null
+                    }
                 },
             )
         }

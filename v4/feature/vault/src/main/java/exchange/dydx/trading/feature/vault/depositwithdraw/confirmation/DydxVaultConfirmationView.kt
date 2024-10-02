@@ -1,29 +1,42 @@
 package exchange.dydx.trading.feature.vault.depositwithdraw.confirmation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
+import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.designSystem.theme.themeColor
+import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
+import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
-import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
 import exchange.dydx.trading.feature.vault.receipt.DydxVaultReceiptView
 
 @Preview
@@ -35,14 +48,20 @@ fun Preview_DydxVaultConfirmationView() {
 }
 
 object DydxVaultConfirmationView : DydxComponent {
+    enum class Direction {
+        Deposit,
+        Withdraw
+    }
     data class ViewState(
         val localizer: LocalizerProtocol,
         val headerTitle: String? = null,
         val sourceLabel: String? = null,
         val sourceValue: String? = null,
         val destinationValue: String? = null,
+        val destinationIcon: Any? = null,
         val ctaButton: InputCtaButton.ViewState? = null,
         val backAction: (() -> Unit)? = null,
+        val direction: Direction? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -52,6 +71,7 @@ object DydxVaultConfirmationView : DydxComponent {
                 sourceValue = "$1,000.00",
                 destinationValue = "Vault",
                 ctaButton = InputCtaButton.ViewState.preview,
+                direction = Direction.Deposit,
             )
         }
     }
@@ -81,25 +101,39 @@ object DydxVaultConfirmationView : DydxComponent {
 
             PlatformDivider()
 
-            LazyColumn(
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ThemeShapes.HorizontalPadding)
-                    .padding(vertical = 16.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-//                item {
-//                    VaultAmountBox.Content(
-//                        modifier = Modifier.animateItemPlacement(),
-//                        state = state.transferAmount,
-//                    )
-//                }
-//
-//                item {
-//                    DydxValidationView.Content(Modifier.animateItemPlacement())
-//                }
+                ItemContent(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(ThemeShapes.HorizontalPadding),
+                    label = state.sourceLabel,
+                    value = state.sourceValue,
+                    icon = R.drawable.vault_usdc_token,
+                )
+
+                PlatformImage(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .size(28.dp),
+                    icon = R.drawable.icon_right_arrow_2,
+                )
+
+                ItemContent(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(ThemeShapes.HorizontalPadding),
+                    label = state.localizer.localize("APP.GENERAL.DESTINATION"),
+                    value = state.destinationValue,
+                    icon = state.destinationIcon,
+                )
             }
+
+            Spacer(modifier = Modifier.weight(1f))
 
             DydxVaultReceiptView.Content(
                 modifier = Modifier.offset(y = ThemeShapes.VerticalPadding),
@@ -114,5 +148,42 @@ object DydxVaultConfirmationView : DydxComponent {
             )
         }
     }
-}
 
+    @Composable
+    private fun ItemContent(modifier: Modifier, label: String?, value: String?, icon: Any?) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
+        ) {
+            Text(
+                text = label ?: "-",
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+
+            val shape = RoundedCornerShape(10.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = ThemeColor.SemanticColor.layer_4.color, shape = shape)
+                    .clip(shape)
+                    .padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
+            ) {
+                PlatformImage(
+                    modifier = Modifier
+                        .size(32.dp),
+                    icon = icon,
+                )
+                Text(
+                    text = value ?: "-",
+                    style = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_secondary),
+                )
+            }
+        }
+    }
+}

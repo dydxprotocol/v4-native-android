@@ -8,8 +8,8 @@ import exchange.dydx.trading.common.navigation.VaultRoutes.confirmation
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
 import exchange.dydx.trading.feature.vault.DydxVaultView
-import exchange.dydx.trading.feature.vault.depositwithdraw.confirmation.DydxVaultConfirmationView
 import exchange.dydx.trading.feature.vault.depositwithdraw.DydxVaultDepositWithdrawView
+import exchange.dydx.trading.feature.vault.depositwithdraw.confirmation.DydxVaultConfirmationView
 import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.vaultGraph(

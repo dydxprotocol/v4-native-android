@@ -94,8 +94,10 @@ object DydxVaultView : DydxComponent {
             }
             stickyHeader(key = "positions_header") {
                 DydxVaultPositionsHeaderView.Content(
-                    Modifier,
-                    DydxVaultPositionsHeaderView.ViewState(
+                    modifier = Modifier
+                        .fillParentMaxWidth()
+                        .themeColor(ThemeColor.SemanticColor.layer_2),
+                    state = DydxVaultPositionsHeaderView.ViewState(
                         localizer = state.localizer,
                         positionCount = state.items.count(),
                     ),
