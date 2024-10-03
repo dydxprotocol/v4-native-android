@@ -114,7 +114,7 @@ object SparklineView {
             lineColor = when (sign) {
                 PlatformUISign.Plus -> ThemeColor.SemanticColor.positiveColor.color.toArgb()
                 PlatformUISign.Minus -> ThemeColor.SemanticColor.negativeColor.color.toArgb()
-                PlatformUISign.None -> ThemeColor.SemanticColor.text_primary.color.toArgb()
+                PlatformUISign.None -> ThemeColor.SemanticColor.text_tertiary.color.toArgb()
             },
         )
         // Embed regular Android View using AndroidView composable

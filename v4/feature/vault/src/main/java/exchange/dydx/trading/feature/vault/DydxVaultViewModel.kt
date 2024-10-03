@@ -83,7 +83,7 @@ class DydxVaultViewModel @Inject constructor(
             pnlAmount = if (position.thirtyDayPnl?.absolute != null) {
                 SignedAmountView.ViewState(
                     sign = position.pnlSign,
-                    text = formatter.dollar(position.thirtyDayPnl?.absolute, digits = 0) ?: "-",
+                    text = formatter.dollar(position.thirtyDayPnl?.absolute?.absoluteValue, digits = 0) ?: "-",
                 )
             } else {
                 SignedAmountView.ViewState(
@@ -107,7 +107,7 @@ class DydxVaultViewModel @Inject constructor(
             val total = pnl.absolute ?: 0.0
             SparklineView.ViewState(
                 sparkline = LineChartDataSet(lines, "Sparkline"),
-                sign = if (total >= 0.0) PlatformUISign.Plus else PlatformUISign.Minus,
+                sign = PlatformUISign.from(total),
             )
         } else {
             null
