@@ -35,7 +35,7 @@ class DydxPortfolioVaultViewModel @Inject constructor(
         val apr = vault?.details?.thirtyDayReturnPercent
         return DydxPortfolioVaultView.ViewState(
             localizer = localizer,
-            balance = formatter.dollar(account.balanceUsdc),
+            balance = formatter.dollar(account.balanceUsdc, digits = 2),
             apr = SignedAmountView.ViewState(
                 text = formatter.percent(apr, digits = 2),
                 sign = if ((apr ?: 0.0) > 0) {
