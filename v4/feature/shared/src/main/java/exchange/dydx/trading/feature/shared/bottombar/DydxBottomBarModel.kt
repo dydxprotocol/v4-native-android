@@ -100,7 +100,7 @@ class DydxBottomBarModel @Inject constructor(
 
     private fun vaultItem(router: DydxRouter) = BottomBarItem(
         route = NewsAlertsRoutes.main,
-        label = "APP.GENERAL.EARN_SHORT",
+        label = "APP.VAULTS.VAULT",
         icon = R.drawable.ic_tab_vault,
         selected = router.routeIsInBackStack(VaultRoutes.main),
         onTapAction = {

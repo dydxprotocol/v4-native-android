@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +39,7 @@ import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxP
 import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxPortfolioPendingPositionsViewModel
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.positionsListContent
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsViewModel
+import exchange.dydx.trading.feature.portfolio.components.vault.DydxPortfolioVaultView
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
 
 @Preview
@@ -153,6 +155,10 @@ object DydxPortfolioView : DydxComponent {
 
                     else -> {
                     }
+                }
+
+                item(key = "vault") {
+                    DydxPortfolioVaultView.Content(Modifier)
                 }
             }
         }
