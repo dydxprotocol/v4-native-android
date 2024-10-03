@@ -104,7 +104,7 @@ object DydxVaultButtonsView : DydxComponent {
                                 PlatformImage(
                                     modifier = Modifier.size(20.dp),
                                     icon = R.drawable.icon_transfer_deposit,
-                                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_primary.color),
+                                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.color_white.color),
                                 )
                             },
                             state = PlatformButtonState.Primary,

@@ -74,4 +74,5 @@ object VaultRoutes {
     const val deposit = "vault/deposit"
     const val withdraw = "vault/withdraw"
     const val confirmation = "vault/confirmation"
+    const val history = "vault/history"
 }
