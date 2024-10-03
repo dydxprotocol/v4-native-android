@@ -103,7 +103,7 @@ class DydxVaultChartViewModel @Inject constructor(
                 return@map null
             }
             Entry(x, y)
-        } ?: emptyList()
+        }
         return LineChartDataSet(entries, type.title(localizer))
     }
 }
