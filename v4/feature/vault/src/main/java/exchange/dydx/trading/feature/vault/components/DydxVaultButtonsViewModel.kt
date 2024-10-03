@@ -8,6 +8,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
+import exchange.dydx.trading.feature.vault.VaultInputState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -18,6 +19,7 @@ class DydxVaultButtonsViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
+    private val inputState: VaultInputState,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxVaultButtonsView.ViewState?> = flowOf(createViewState())
@@ -26,9 +28,11 @@ class DydxVaultButtonsViewModel @Inject constructor(
         return DydxVaultButtonsView.ViewState(
             localizer = localizer,
             depositAction = {
+                inputState.reset()
                 router.navigateTo(route = VaultRoutes.deposit, presentation = DydxRouter.Presentation.Modal)
             },
             withdrawAction = {
+                inputState.reset()
                 router.navigateTo(route = VaultRoutes.withdraw, presentation = DydxRouter.Presentation.Modal)
             },
         )
