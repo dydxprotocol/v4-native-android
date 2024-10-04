@@ -211,10 +211,14 @@ class DydxFormatter @Inject constructor() {
         }
     }
 
-    fun dateTime(time: Instant?, timeZone: ZoneId = ZoneId.systemDefault()): String? {
+    fun dateTime(
+        time: Instant?,
+        timeZone: ZoneId = ZoneId.systemDefault(),
+        formatter: DateTimeFormatter = dateTimeFormatter
+    ): String? {
         return if (time != null) {
             val ldt: LocalDateTime = time.atZone(timeZone).toLocalDateTime()
-            dateTimeFormatter.format(ldt)
+            formatter.format(ldt)
         } else {
             null
         }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +26,7 @@ import exchange.dydx.trading.feature.vault.components.DydxVaultHeaderView
 import exchange.dydx.trading.feature.vault.components.DydxVaultInfoView
 import exchange.dydx.trading.feature.vault.components.DydxVaultPositionItemView
 import exchange.dydx.trading.feature.vault.components.DydxVaultPositionsHeaderView
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -46,6 +48,8 @@ object DydxVaultView : DydxComponent {
             )
         }
     }
+
+    private var firstTime = true
 
     @Composable
     override fun Content(modifier: Modifier) {
@@ -80,6 +84,7 @@ object DydxVaultView : DydxComponent {
     @Composable
     private fun ScrollingContent(modifier: Modifier, state: ViewState) {
         val listState = PlatformRememberLazyListState(key = "ScrollingContent")
+        val scope = rememberCoroutineScope()
 
         LazyColumn(
             modifier = modifier,
@@ -107,6 +112,13 @@ object DydxVaultView : DydxComponent {
                 DydxVaultPositionItemView.Content(Modifier, item)
                 if (state.items.last() !== item) {
                     PlatformDivider()
+                }
+            }
+
+            if (firstTime) {
+                firstTime = false
+                scope.launch {
+                    listState.animateScrollToItem(0)
                 }
             }
         }

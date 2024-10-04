@@ -109,6 +109,12 @@ object DydxVaultInfoView : DydxComponent {
                 )
             }
 
+            DydxVaultTransferButtonView.Content(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+            )
+
             PlatformDivider()
 
             Row(
