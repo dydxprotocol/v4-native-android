@@ -47,10 +47,10 @@ class DydxTransferSubaccountWorker @Inject constructor(
 
             combine(
                 timerFlow(20.seconds),
-                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
-                    .filterNotNull(),
+                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom),
                 abacusStateManager.state.currentWallet.mapNotNull { it },
             ) { _, balance, wallet ->
+                val balance = balance ?: 0.0
                 if (balance > balanceRetainAmount) {
                     val depositAmount = balance.minus(balanceRetainAmount)
                     if (depositAmount <= 0) return@combine
