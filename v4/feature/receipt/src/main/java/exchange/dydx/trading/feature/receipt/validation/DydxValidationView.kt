@@ -111,6 +111,10 @@ object DydxValidationView : DydxComponent {
         modifier: Modifier,
         viewState: ViewState
     ) {
+        if (viewState.title.isNullOrEmpty() && viewState.message.isNullOrEmpty()) {
+            return
+        }
+
         var size by remember { mutableStateOf(IntSize.Zero) }
 
         val shape = RoundedCornerShape(8.dp)

@@ -6,6 +6,9 @@ import exchange.dydx.abacus.functional.vault.VaultFormAccountData
 import exchange.dydx.abacus.functional.vault.VaultFormAction
 import exchange.dydx.abacus.functional.vault.VaultFormData
 import exchange.dydx.abacus.functional.vault.VaultFormValidationResult
+import exchange.dydx.abacus.output.input.ErrorType
+import exchange.dydx.abacus.output.input.ValidationError
+import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import indexer.models.chain.OnChainVaultDepositWithdrawSlippageResponse
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +32,7 @@ enum class VaultInputStage {
 @ActivityRetainedScoped
 class VaultInputState @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
+    private val localizer: LocalizerProtocol,
 ) {
     val type: MutableStateFlow<VaultInputType?> = MutableStateFlow(null)
     val amount: MutableStateFlow<Double?> = MutableStateFlow(null)
@@ -81,6 +85,7 @@ class VaultInputState @Inject constructor(
                 accountData = accountData,
                 vaultAccount = account,
                 slippageResponse = slippageResponse,
+                localizer = localizer,
             )
         }
             .distinctUntilChanged()
@@ -93,3 +98,21 @@ class VaultInputState @Inject constructor(
         slippageResponse.value = null
     }
 }
+
+val VaultFormValidationResult.firstError: ValidationError?
+    get() = errors.firstOrNull() { it.type == ErrorType.error }
+
+val VaultFormValidationResult.firstWarning: ValidationError?
+    get() = errors.firstOrNull() { it.type == ErrorType.warning }
+
+val VaultFormValidationResult.displayedError: ValidationError?
+    get() = firstError ?: firstWarning
+
+val VaultFormValidationResult.hasBlockingError: Boolean
+    get() = firstError != null
+
+val VaultFormValidationResult.canDeposit: Boolean
+    get() = submissionData?.deposit != null
+
+val VaultFormValidationResult.canWithdraw: Boolean
+    get() = submissionData?.withdraw != null

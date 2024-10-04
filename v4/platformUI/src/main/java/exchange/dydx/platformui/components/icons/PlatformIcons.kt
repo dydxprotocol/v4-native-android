@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -113,13 +114,14 @@ fun PlatformSelectedIcon(
     size: Dp = 20.dp,
     padding: Dp = 4.dp,
 ) {
+    val shape = RoundedCornerShape(7.dp)
     Image(
         painter = painterResource(id = R.drawable.icon_check),
         contentDescription = "",
         modifier = Modifier
-            .background(backgroundColor.color, CircleShape)
-            .border(1.dp, borderColor.color, CircleShape)
-            .clip(CircleShape)
+            .background(backgroundColor.color, shape)
+            .border(1.dp, borderColor.color, shape)
+            .clip(shape)
             .size(size)
             .padding(padding),
         colorFilter = ColorFilter
@@ -135,10 +137,11 @@ fun PlatformUnselectedIcon(
     size: Dp = 20.dp,
     padding: Dp = 4.dp,
 ) {
+    val shape = RoundedCornerShape(7.dp)
     Canvas(
         modifier = Modifier
-            .border(1.dp, borderColor.color, CircleShape)
-            .clip(CircleShape)
+            .border(1.dp, borderColor.color, shape)
+            .clip(shape)
             .size(size),
     ) {
         drawCircle(color = backgroundColor.color)

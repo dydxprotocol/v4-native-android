@@ -20,6 +20,9 @@ import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.VaultInputStage
 import exchange.dydx.trading.feature.vault.VaultInputState
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmountBox
+import exchange.dydx.trading.feature.vault.depositwithdraw.createViewModel
+import exchange.dydx.trading.feature.vault.displayedError
+import exchange.dydx.trading.feature.vault.hasBlockingError
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -91,9 +94,14 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                     updateAmount(value = parser.asDouble(amount), vaultAccount = vault?.account)
                 },
             ),
+            validation = result?.displayedError?.createViewModel(localizer),
             ctaButton = InputCtaButton.ViewState(
                 localizer = localizer,
-                ctaButtonState = InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_WITHDRAW")),
+                ctaButtonState = if (result?.hasBlockingError == true || inputState.amount.value == null) {
+                    InputCtaButton.State.Disabled(localizer.localize("APP.VAULTS.PREVIEW_WITHDRAW"))
+                } else {
+                    InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_WITHDRAW"))
+                },
                 ctaAction = {
                     inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)

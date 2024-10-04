@@ -36,12 +36,14 @@ object DydxVaultDepositView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val transferAmount: VaultAmountBox.ViewState? = null,
+        val validation: DydxValidationView.ViewState? = null,
         val ctaButton: InputCtaButton.ViewState? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 transferAmount = VaultAmountBox.ViewState.preview,
+                validation = DydxValidationView.ViewState.preview,
                 ctaButton = InputCtaButton.ViewState.preview,
             )
         }
@@ -81,8 +83,13 @@ object DydxVaultDepositView : DydxComponent {
                     )
                 }
 
-                item {
-                    DydxValidationView.Content(Modifier.animateItemPlacement())
+                if (state.validation != null) {
+                    item {
+                        DydxValidationView.Content(
+                            modifier = Modifier.animateItemPlacement(),
+                            state = state.validation,
+                        )
+                    }
                 }
             }
 
