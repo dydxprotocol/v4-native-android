@@ -81,10 +81,10 @@ fun LineChartView.update(
         val lineColor = lineColors?.getOrNull(i)
 
         set.update(
-            config.lineDrawing,
-            config.drawing,
-            config.interaction,
-            lineColor,
+            lineDrawing = config.lineDrawing,
+            drawing = config.drawing,
+            interaction = config.interaction,
+            lineColor = lineColor,
         )
     }
 

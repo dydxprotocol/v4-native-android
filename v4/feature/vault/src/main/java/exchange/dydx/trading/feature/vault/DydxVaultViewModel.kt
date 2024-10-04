@@ -5,6 +5,7 @@ import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.ThirtyDayPnl
 import exchange.dydx.abacus.functional.vault.VaultPosition
+import exchange.dydx.abacus.functional.vault.VaultPositions
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
 import exchange.dydx.abacus.output.Vault
@@ -47,7 +48,7 @@ class DydxVaultViewModel @Inject constructor(
         marketMap: Map<String, PerpetualMarket>?,
         assetMap: Map<String, Asset>?,
     ): DydxVaultView.ViewState {
-        val items: List<DydxVaultPositionItemView.ViewState> = vault?.positions?.positions?.mapNotNull { position ->
+        val items: List<DydxVaultPositionItemView.ViewState> = vault?.positions?.sortedBySize?.mapNotNull { position ->
             val marketId = position.marketId ?: return@mapNotNull null
             val market = marketMap?.get(marketId) ?: return@mapNotNull null
             val asset = assetMap?.get(market.assetId) ?: return@mapNotNull null
@@ -75,15 +76,15 @@ class DydxVaultViewModel @Inject constructor(
                 side = position.side,
             ),
             leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2),
-            notionalValue = formatter.dollar(position.currentPosition?.usdc?.absoluteValue, digits = 0),
-            positionSize = formatter.raw(position.currentPosition?.asset?.absoluteValue, digits = 2),
+            notionalValue = formatter.dollar((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 0),
+            positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
             token = TokenTextView.ViewState(
                 symbol = asset.id,
             ),
             pnlAmount = if (position.thirtyDayPnl?.absolute != null) {
                 SignedAmountView.ViewState(
                     sign = position.pnlSign,
-                    text = formatter.dollar(position.thirtyDayPnl?.absolute, digits = 0) ?: "-",
+                    text = formatter.dollar(position.thirtyDayPnl?.absolute?.absoluteValue, digits = 0) ?: "-",
                 )
             } else {
                 SignedAmountView.ViewState(
@@ -107,7 +108,7 @@ class DydxVaultViewModel @Inject constructor(
             val total = pnl.absolute ?: 0.0
             SparklineView.ViewState(
                 sparkline = LineChartDataSet(lines, "Sparkline"),
-                sign = if (total >= 0.0) PlatformUISign.Plus else PlatformUISign.Minus,
+                sign = PlatformUISign.from(total),
             )
         } else {
             null
@@ -136,5 +137,16 @@ private val VaultPosition.pnlSign: PlatformUISign
             PlatformUISign.Minus
         } else {
             PlatformUISign.None
+        }
+    }
+
+private val VaultPositions.sortedBySize: List<VaultPosition>?
+    get() = this.positions?.sortedWith { p1, p2 ->
+        val size1 = p1.currentPosition?.usdc ?: 0.0
+        val size2 = p2.currentPosition?.usdc ?: 0.0
+        if (size1 == size2) {
+            p2.thirtyDayPnl?.absolute?.compareTo(p1.thirtyDayPnl?.absolute ?: 0.0) ?: 0
+        } else {
+            size2.compareTo(size1)
         }
     }
