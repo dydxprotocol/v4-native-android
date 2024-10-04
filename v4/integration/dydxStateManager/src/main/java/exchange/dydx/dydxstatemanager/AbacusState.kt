@@ -20,6 +20,7 @@ import exchange.dydx.abacus.output.Restriction
 import exchange.dydx.abacus.output.TransferStatus
 import exchange.dydx.abacus.output.User
 import exchange.dydx.abacus.output.account.Account
+import exchange.dydx.abacus.output.account.AccountBalance
 import exchange.dydx.abacus.output.account.PositionSide
 import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.output.account.SubaccountFill
@@ -133,6 +134,13 @@ class AbacusState(
         return perpetualState
             .mapState(appScope) { state: PerpetualState? ->
                 state?.account?.stakingBalances?.get(tokenDenom)?.amount?.toDoubleOrNull()
+            }
+    }
+
+    fun accountBalances(): StateFlow<Map<String, AccountBalance>?> {
+        return perpetualState
+            .mapState(appScope) { state: PerpetualState? ->
+                state?.account?.balances
             }
     }
 

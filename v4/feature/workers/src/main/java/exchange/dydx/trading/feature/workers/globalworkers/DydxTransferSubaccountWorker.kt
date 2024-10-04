@@ -16,6 +16,7 @@ import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
@@ -44,10 +45,10 @@ class DydxTransferSubaccountWorker @Inject constructor(
             isStarted = true
 
             combine(
-                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
-                    .filterNotNull(),
+                abacusStateManager.state.accountBalances().filterNotNull(),
                 abacusStateManager.state.currentWallet.mapNotNull { it },
-            ) { balance, wallet ->
+            ) { balances, wallet ->
+                val balance =  balances[abacusStateManager.usdcTokenDenom]?.amount?.toDoubleOrNull() ?: 0.0
                 if (balance > balanceRetainAmount) {
                     val depositAmount = balance.minus(balanceRetainAmount)
                     if (depositAmount <= 0) return@combine
