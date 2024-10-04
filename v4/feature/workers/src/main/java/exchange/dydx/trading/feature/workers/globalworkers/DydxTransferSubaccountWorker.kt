@@ -16,7 +16,7 @@ import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
@@ -33,7 +33,8 @@ class DydxTransferSubaccountWorker @Inject constructor(
 ) : WorkerProtocol {
 
     companion object {
-        const val balanceRetainAmount = 0.5
+        const val balanceRetainAmount = 1.25
+        const val rebalanceThreshold = 1.0
     }
 
     override var isStarted = false
@@ -44,17 +45,24 @@ class DydxTransferSubaccountWorker @Inject constructor(
 
             combine(
                 abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
-                    .filter { balance ->
-                        balance != null && balance > balanceRetainAmount
-                    },
+                    .filterNotNull(),
                 abacusStateManager.state.currentWallet.mapNotNull { it },
             ) { balance, wallet ->
-                val depositAmount = balance?.minus(balanceRetainAmount) ?: 0.0
-                if (depositAmount <= 0) return@combine
-                val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
-                    ?: return@combine
+                if (balance > balanceRetainAmount) {
+                    val depositAmount = balance.minus(balanceRetainAmount)
+                    if (depositAmount <= 0) return@combine
+                    val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
+                        ?: return@combine
 
-                depositToSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                    depositToSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                } else if (balance < rebalanceThreshold) {
+                    val withdrawAmount = balanceRetainAmount.minus(balance)
+                    if (withdrawAmount <= 0) return@combine
+                    val amountString = formatter.decimalLocaleAgnostic(withdrawAmount, abacusStateManager.usdcTokenDecimal)
+                        ?: return@combine
+
+                    withdrawFromSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                }
             }
                 .launchIn(scope)
         }
@@ -98,6 +106,43 @@ class DydxTransferSubaccountWorker @Inject constructor(
                         data = trackingData.also { it["error"] = response },
                     )
                     logger.e("DydxTransferSubaccountWorker", "depositToSubaccount: $error")
+                }
+            },
+        )
+    }
+
+    private fun withdrawFromSubaccount(
+        amountString: String,
+        subaccountNumber: Int,
+        wallet: DydxWalletInstance,
+    ) {
+        val payload: Map<String, Any> = mapOf(
+            "subaccountNumber" to subaccountNumber,
+            "amount" to amountString,
+        )
+        val paramsInJson = payload.toJson()
+        cosmosClient.call(
+            functionName = "withdraw",
+            paramsInJson = paramsInJson,
+            completion = { response ->
+                val trackingData = mutableMapOf(
+                    "amount" to amountString,
+                    "address" to wallet.cosmoAddress,
+                )
+                val result = response?.jsonStringToMap() ?: return@call
+                val error = result["error"] as? Map<String, Any>
+                val hash = parser.asString(result["hash"])
+                if (hash != null) {
+                    tracker.log(
+                        event = "SubaccountWithdraw",
+                        data = trackingData,
+                    )
+                } else {
+                    tracker.log(
+                        event = "SubaccountWithdraw_Failed",
+                        data = trackingData.also { it["error"] = response },
+                    )
+                    logger.e("DydxTransferSubaccountWorker", "withdrawToSubaccount: $error")
                 }
             },
         )
