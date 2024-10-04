@@ -89,6 +89,7 @@ ext {
 
     // App dependencies
     abacusVersion = '1.12.17'
+    carteraVersion = '0.1.15'
     kollectionsVersion = '2.0.16'
 
     accompanistVersion = '0.23.1'
