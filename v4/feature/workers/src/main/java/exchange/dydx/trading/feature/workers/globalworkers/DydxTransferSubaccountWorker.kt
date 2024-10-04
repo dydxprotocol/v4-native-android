@@ -14,12 +14,14 @@ import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
+import exchange.dydx.utilities.utils.timerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @ActivityRetainedScoped
 class DydxTransferSubaccountWorker @Inject constructor(
@@ -44,10 +46,11 @@ class DydxTransferSubaccountWorker @Inject constructor(
             isStarted = true
 
             combine(
+                timerFlow(20.seconds),
                 abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
                     .filterNotNull(),
                 abacusStateManager.state.currentWallet.mapNotNull { it },
-            ) { balance, wallet ->
+            ) { _, balance, wallet ->
                 if (balance > balanceRetainAmount) {
                     val depositAmount = balance.minus(balanceRetainAmount)
                     if (depositAmount <= 0) return@combine
