@@ -12,7 +12,7 @@ import exchange.dydx.dydxCartera.imageUrl
 import exchange.dydx.dydxCartera.v4.DydxV4WalletSetup
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
@@ -106,7 +106,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
                     val message = error.message ?: localizer.localize("APP.GENERAL.ERROR")
                     toaster.show(
                         message = message,
-                        type = Toast.Type.Error,
+                        type = PlatformInfoViewModel.Type.Error,
                     )
                 }
 

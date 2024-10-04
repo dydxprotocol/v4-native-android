@@ -15,7 +15,7 @@ import exchange.dydx.dydxstatemanager.canCancel
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -274,18 +274,18 @@ class DydxOrderDetailsViewModel @Inject constructor(
                                 "MARKET" to order.marketId,
                             ),
                         ),
-                        type = Toast.Type.Info,
+                        type = PlatformInfoViewModel.Type.Info,
                         buttonTitle = localizer.localize("APP.GENERAL.OK"),
                         buttonAction = {
                             router.navigateBack()
                         },
-                        duration = Toast.Duration.Indefinite,
+                        duration = PlatformInfoViewModel.Duration.Indefinite,
                     )
                 }
                 is AbacusStateManagerProtocol.SubmissionStatus.Failed -> {
                     toaster.show(
                         message = result.error?.localizedString(localizer) ?: "",
-                        type = Toast.Type.Error,
+                        type = PlatformInfoViewModel.Type.Error,
                     )
                 }
                 else -> {}

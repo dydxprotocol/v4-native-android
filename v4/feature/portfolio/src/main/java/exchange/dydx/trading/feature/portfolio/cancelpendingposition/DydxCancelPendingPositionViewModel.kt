@@ -15,11 +15,10 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.common.navigation.PortfolioRoutes.orders
 import exchange.dydx.trading.feature.portfolio.cancelpendingposition.DydxCancelPendingPositionView.CtaButtonState
 import exchange.dydx.trading.feature.receipt.components.buyingpower.DydxReceiptFreeCollateralView
 import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
@@ -31,8 +30,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 private const val TAG = "DydxCancelPendingPositionViewModel"
@@ -196,19 +193,19 @@ class DydxCancelPendingPositionViewModel @Inject constructor(
                                     "MARKET" to ordersToCancel.marketId,
                                 ),
                             ),
-                            type = Toast.Type.Info,
+                            type = PlatformInfoViewModel.Type.Info,
                             buttonTitle = localizer.localize("APP.GENERAL.OK"),
                             buttonAction = {
                                 router.navigateBack()
                             },
-                            duration = Toast.Duration.Indefinite,
+                            duration = PlatformInfoViewModel.Duration.Indefinite,
                         )
                     }
 
                     is AbacusStateManagerProtocol.SubmissionStatus.Failed -> {
                         platformInfo.show(
                             message = result.error?.localizedString(localizer) ?: "",
-                            type = Toast.Type.Error,
+                            type = PlatformInfoViewModel.Type.Error,
                         )
                     }
 

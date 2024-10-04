@@ -6,11 +6,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultDepositData
 import exchange.dydx.abacus.functional.vault.VaultFormValidationResult
 import exchange.dydx.abacus.functional.vault.VaultWithdrawData
-import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
+import exchange.dydx.platformui.components.container.PlatformInfo
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -23,6 +24,9 @@ import exchange.dydx.trading.feature.vault.canDeposit
 import exchange.dydx.trading.feature.vault.canWithdraw
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultSlippageCheckbox
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import indexer.models.chain.ChainError
+import indexer.models.chain.OnChainTransactionErrorResponse
+import indexer.models.chain.OnChainTransactionSuccessResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -39,23 +43,22 @@ class DydxVaultConfirmationViewModel @Inject constructor(
     private val inputState: VaultInputState,
     private val router: DydxRouter,
     private val parser: ParserProtocol,
+    private val platformInfo: PlatformInfo,
 ) : ViewModel(), DydxViewModel {
 
     private val isSubmitting: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val state: Flow<DydxVaultConfirmationView.ViewState?> =
         combine(
-            abacusStateManager.state.vault,
             inputState.amount,
             inputState.type.filterNotNull(),
             inputState.result,
             isSubmitting,
-        ) { vault, amount, type, result, isSubmitting ->
-            createViewState(vault, amount, type, result, isSubmitting)
+        ) { amount, type, result, isSubmitting ->
+            createViewState(amount, type, result, isSubmitting)
         }
 
     private fun createViewState(
-        vault: Vault?,
         amount: Double?,
         type: VaultInputType,
         result: VaultFormValidationResult?,
@@ -162,10 +165,7 @@ class DydxVaultConfirmationViewModel @Inject constructor(
             subaccountNumber = parser.asInt(depositData.subaccountFrom) ?: 0,
             amountUsdc = depositData.amount,
             completion = { response ->
-                print(response)
-                abacusStateManager.refreshVaultAccount()
-                inputState.reset()
-                routeToVault()
+                handleResponse(response, type = VaultInputType.DEPOSIT)
             },
         )
     }
@@ -178,12 +178,45 @@ class DydxVaultConfirmationViewModel @Inject constructor(
             shares = withdrawData.shares.toLong(),
             minAmount = withdrawData.minAmount.toLong(),
             completion = { response ->
-                print(response)
-                abacusStateManager.refreshVaultAccount()
-                inputState.reset()
-                routeToVault()
+                handleResponse(response, type = VaultInputType.WITHDRAW)
             },
         )
+    }
+
+    private fun handleResponse(response: String?, type: VaultInputType) {
+        val success = OnChainTransactionSuccessResponse.fromPayload(response)
+        if (success != null) {
+            abacusStateManager.refreshVaultAccount()
+            inputState.reset()
+            routeToVault()
+            platformInfo.show(
+                title = when (type) {
+                    VaultInputType.DEPOSIT -> localizer.localize("APP.V4_DEPOSIT.COMPLETED_TITLE")
+                    VaultInputType.WITHDRAW -> localizer.localize("APP.V4_WITHDRAWAL.COMPLETED_TITLE")
+                },
+                message = when (type) {
+                    VaultInputType.DEPOSIT -> localizer.localize("APP.V4_DEPOSIT.COMPLETED_TEXT_SHORT")
+                    VaultInputType.WITHDRAW -> localizer.localize("APP.V4_WITHDRAWAL.COMPLETED_TEXT")
+                },
+            )
+        } else {
+            val error = OnChainTransactionErrorResponse.fromPayload(response)
+            val errorMessage = error?.error?.message
+            if (errorMessage != null) {
+                platformInfo.show(
+                    title = localizer.localize("APP.GENERAL.FAILED"),
+                    message = errorMessage,
+                    type = PlatformInfoViewModel.Type.Error,
+                )
+            } else {
+                platformInfo.show(
+                    title = localizer.localize("APP.GENERAL.FAILED"),
+                    message = ChainError.unknownError.message,
+                    type = PlatformInfoViewModel.Type.Error,
+                )
+            }
+            isSubmitting.value = false
+        }
     }
 
     private fun routeToVault() {

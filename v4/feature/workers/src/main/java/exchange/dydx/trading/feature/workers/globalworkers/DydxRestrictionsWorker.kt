@@ -11,7 +11,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.utilities.utils.WorkerProtocol
@@ -59,8 +59,8 @@ class DydxRestrictionsWorker @Inject constructor(
                     toaster.show(
                         title = title,
                         message = body.orEmpty(),
-                        type = Toast.Type.Error,
-                        duration = Toast.Duration.Indefinite,
+                        type = PlatformInfoViewModel.Type.Error,
+                        duration = PlatformInfoViewModel.Duration.Indefinite,
                         cancellable = compliance.status != BLOCKED,
                     )
                     abacusStateManager.replaceCurrentWallet()

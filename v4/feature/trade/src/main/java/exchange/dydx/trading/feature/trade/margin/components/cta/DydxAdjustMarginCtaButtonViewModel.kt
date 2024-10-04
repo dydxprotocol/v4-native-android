@@ -7,7 +7,7 @@ import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
@@ -80,7 +80,7 @@ class DydxAdjustMarginCtaButtonViewModel @Inject constructor(
                     platformInfo.show(
                         title = localizer.localize("ERRORS.GENERAL.SOMETHING_WENT_WRONG"),
                         message = status.error?.message ?: "",
-                        type = Toast.Type.Error,
+                        type = PlatformInfoViewModel.Type.Error,
                     )
                 }
             }

@@ -4,7 +4,7 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.NotificationEnabled
@@ -82,9 +82,9 @@ class DydxAlertsWorker @Inject constructor(
     }
 }
 
-private val exchange.dydx.abacus.output.NotificationType.infoType: Toast.Type
+private val exchange.dydx.abacus.output.NotificationType.infoType: PlatformInfoViewModel.Type
     get() = when (this) {
-        exchange.dydx.abacus.output.NotificationType.INFO -> Toast.Type.Info
-        exchange.dydx.abacus.output.NotificationType.WARNING -> Toast.Type.Warning
-        exchange.dydx.abacus.output.NotificationType.ERROR -> Toast.Type.Error
+        exchange.dydx.abacus.output.NotificationType.INFO -> PlatformInfoViewModel.Type.Info
+        exchange.dydx.abacus.output.NotificationType.WARNING -> PlatformInfoViewModel.Type.Warning
+        exchange.dydx.abacus.output.NotificationType.ERROR -> PlatformInfoViewModel.Type.Error
     }

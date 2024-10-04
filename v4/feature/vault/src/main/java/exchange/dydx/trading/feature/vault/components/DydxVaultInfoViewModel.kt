@@ -36,10 +36,10 @@ class DydxVaultInfoViewModel @Inject constructor(
         }
         return DydxVaultInfoView.ViewState(
             localizer = localizer,
-            balance = formatter.dollar(vault?.account?.balanceUsdc),
+            balance = formatter.dollar(vault?.account?.balanceUsdc, digits = 2),
             pnl = pnl,
             apr = apr,
-            tvl = formatter.dollar(vault?.details?.totalValue),
+            tvl = formatter.dollar(vault?.details?.totalValue, digits = 2),
         )
     }
 }
