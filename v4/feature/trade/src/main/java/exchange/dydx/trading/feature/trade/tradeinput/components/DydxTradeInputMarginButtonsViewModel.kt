@@ -8,7 +8,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -54,7 +54,7 @@ class DydxTradeInputMarginButtonsViewModel @Inject constructor(
                                 "MARKET" to market,
                             ),
                         ),
-                        type = Toast.Type.Warning,
+                        type = PlatformInfoViewModel.Type.Warning,
                     )
                 } else {
                     router.navigateTo(

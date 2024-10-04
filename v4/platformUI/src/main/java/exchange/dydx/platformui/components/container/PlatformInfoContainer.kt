@@ -138,7 +138,7 @@ fun PlatformInfoContainer(
     }
 }
 
-data class Toast(
+data class PlatformInfoViewModel(
     val title: String? = null,
     val message: String?,
     val buttonTitle: String? = null,
@@ -195,10 +195,10 @@ data class Toast(
 class PlatformInfo @Inject constructor(
     @CoroutineScopes.App val appScope: CoroutineScope,
 ) {
-    private val _toasts = MutableStateFlow<Toast?>(null)
+    private val _toasts = MutableStateFlow<PlatformInfoViewModel?>(null)
     val toasts = _toasts.asStateFlow()
 
-    private val toastQueue = ArrayDeque<Toast>()
+    private val toastQueue = ArrayDeque<PlatformInfoViewModel>()
 
     private var currentJob: Job? = null
 
@@ -206,13 +206,13 @@ class PlatformInfo @Inject constructor(
         title: String? = null,
         message: String? = null,
         buttonTitle: String? = null,
-        type: Toast.Type = Toast.Type.Info,
-        duration: Toast.Duration = Toast.Duration.Short,
+        type: PlatformInfoViewModel.Type = PlatformInfoViewModel.Type.Info,
+        duration: PlatformInfoViewModel.Duration = PlatformInfoViewModel.Duration.Short,
         cancellable: Boolean = true,
         buttonAction: (() -> Unit)? = null,
     ) {
         toastQueue.add(
-            Toast(
+            PlatformInfoViewModel(
                 title = title,
                 message = message,
                 buttonTitle = buttonTitle,

@@ -7,7 +7,7 @@ import exchange.dydx.abacus.state.manager.ApiStatus
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.container.PlatformInfo
-import exchange.dydx.platformui.components.container.Toast
+import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +58,7 @@ class DydxApiStatusWorker @Inject constructor(
                 toaster.show(
                     message = localizer.localize("APP.V4.INDEXER_DOWN"),
                     buttonTitle = buttonTitle,
-                    type = Toast.Type.Error,
+                    type = PlatformInfoViewModel.Type.Error,
                     buttonAction = buttonAction,
                 )
             }
@@ -66,7 +66,7 @@ class DydxApiStatusWorker @Inject constructor(
                 toaster.show(
                     message = localizer.localizeWithParams("APP.V4.INDEXER_HALTED", mapOf("HALTED_BLOCK" to (apiState.haltedBlock ?: 0).toString())) ?: "",
                     buttonTitle = buttonTitle,
-                    type = Toast.Type.Warning,
+                    type = PlatformInfoViewModel.Type.Warning,
                     buttonAction = buttonAction,
                 )
             }
@@ -74,7 +74,7 @@ class DydxApiStatusWorker @Inject constructor(
                 toaster.show(
                     message = localizer.localizeWithParams("APP.V4.INDEXER_TRAILING", mapOf("TRAILING_BLOCKS" to (apiState.trailingBlocks ?: 0).toString())) ?: "",
                     buttonTitle = buttonTitle,
-                    type = Toast.Type.Warning,
+                    type = PlatformInfoViewModel.Type.Warning,
                     buttonAction = buttonAction,
                 )
             }
@@ -82,7 +82,7 @@ class DydxApiStatusWorker @Inject constructor(
                 toaster.show(
                     message = localizer.localize("APP.V4.VALIDATOR_DOWN"),
                     buttonTitle = buttonTitle,
-                    type = Toast.Type.Error,
+                    type = PlatformInfoViewModel.Type.Error,
                     buttonAction = buttonAction,
                 )
             }
@@ -90,7 +90,7 @@ class DydxApiStatusWorker @Inject constructor(
                 toaster.show(
                     message = localizer.localizeWithParams("APP.V4.VALIDATOR_HALTED", mapOf("HALTED_BLOCK" to (apiState.haltedBlock ?: 0).toString())) ?: "",
                     buttonTitle = buttonTitle,
-                    type = Toast.Type.Warning,
+                    type = PlatformInfoViewModel.Type.Warning,
                     buttonAction = buttonAction,
                 )
             }

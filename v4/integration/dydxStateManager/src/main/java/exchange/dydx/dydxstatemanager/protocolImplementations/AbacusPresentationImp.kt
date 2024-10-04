@@ -16,9 +16,9 @@ class AbacusPresentationImp @Inject constructor(
             title = toast.title,
             message = toast.text ?: "",
             type = when (toast.type) {
-                ToastType.Info -> exchange.dydx.platformui.components.container.Toast.Type.Info
-                ToastType.Warning -> exchange.dydx.platformui.components.container.Toast.Type.Warning
-                ToastType.Error -> exchange.dydx.platformui.components.container.Toast.Type.Error
+                ToastType.Info -> exchange.dydx.platformui.components.container.PlatformInfoViewModel.Type.Info
+                ToastType.Warning -> exchange.dydx.platformui.components.container.PlatformInfoViewModel.Type.Warning
+                ToastType.Error -> exchange.dydx.platformui.components.container.PlatformInfoViewModel.Type.Error
             },
         )
     }
