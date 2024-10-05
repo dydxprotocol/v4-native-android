@@ -17,7 +17,6 @@ import exchange.dydx.utilities.utils.jsonStringToMap
 import exchange.dydx.utilities.utils.timerFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
@@ -49,7 +48,13 @@ class DydxTransferSubaccountWorker @Inject constructor(
                 timerFlow(20.seconds),
                 abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom),
                 abacusStateManager.state.currentWallet.mapNotNull { it },
-            ) { _, balance, wallet ->
+            ) { _, balance, wallet, ->
+                if (abacusStateManager.state.isMainNet && balance == null) {
+                    // If we are on mainnet and we don't have an account balance, that means user hasn't deposited yet.
+                    // But on testnet, user might use faucet to get fund without having a balance in the account,
+                    // in which case we should still do withdrawal to the account.
+                    return@combine
+                }
                 val balance = balance ?: 0.0
                 if (balance > balanceRetainAmount) {
                     val depositAmount = balance.minus(balanceRetainAmount)
