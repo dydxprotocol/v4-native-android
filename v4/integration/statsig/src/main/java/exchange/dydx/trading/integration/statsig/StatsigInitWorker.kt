@@ -20,10 +20,12 @@ class StatsigInitWorker @Inject constructor(
         if (isStarted) return
 
         isStarted = true
+        val user = StatsigUser()
+        user.customIDs = mapOf("isNativeApp" to "true")
         Statsig.initializeAsync(
             application = application,
             sdkKey = application.getString(R.string.statsig_api_key),
-            user = StatsigUser(),
+            user = user,
         )
     }
 
