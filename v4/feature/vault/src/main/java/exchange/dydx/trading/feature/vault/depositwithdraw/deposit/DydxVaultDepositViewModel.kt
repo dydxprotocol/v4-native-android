@@ -21,9 +21,9 @@ import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultAmoun
 import exchange.dydx.trading.feature.vault.depositwithdraw.createViewModel
 import exchange.dydx.trading.feature.vault.displayedError
 import exchange.dydx.trading.feature.vault.hasBlockingError
-import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import java.math.RoundingMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +32,6 @@ class DydxVaultDepositViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val parser: ParserProtocol,
-    private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val inputState: VaultInputState,
     private val router: DydxRouter,
     private val vaultAnalytics: VaultAnalytics,
@@ -59,7 +58,8 @@ class DydxVaultDepositViewModel @Inject constructor(
                 value = parser.asString(inputState.amount.value),
                 maxAmount = subaccount?.freeCollateral?.current,
                 maxAction = {
-                    inputState.amount.value = subaccount?.freeCollateral?.current
+                    val amount = formatter.raw(subaccount?.freeCollateral?.current, digits = 2, rounding = RoundingMode.DOWN)
+                    inputState.amount.value = parser.asDouble(amount)
                 },
                 title = localizer.localize("APP.VAULTS.ENTER_AMOUNT_TO_DEPOSIT"),
                 footer = localizer.localize("APP.GENERAL.CROSS_FREE_COLLATERAL"),

@@ -31,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.math.RoundingMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,7 +70,8 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                 value = parser.asString(inputState.amount.value),
                 maxAmount = vault?.account?.withdrawableUsdc,
                 maxAction = {
-                    updateAmount(value = vault?.account?.withdrawableUsdc, vaultAccount = vault?.account)
+                    val amount = formatter.raw(vault?.account?.withdrawableUsdc, digits = 2, rounding = RoundingMode.DOWN)
+                    updateAmount(value = parser.asDouble(amount), vaultAccount = vault?.account)
                 },
                 title = localizer.localize("APP.VAULTS.ENTER_AMOUNT_TO_WITHDRAW"),
                 footer = localizer.localize("APP.VAULTS.YOUR_VAULT_BALANCE"),
