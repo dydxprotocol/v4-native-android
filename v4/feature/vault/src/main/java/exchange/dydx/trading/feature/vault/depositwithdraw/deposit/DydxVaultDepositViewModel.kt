@@ -11,6 +11,8 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
+import exchange.dydx.trading.feature.shared.analytics.VaultAnalytics
+import exchange.dydx.trading.feature.shared.analytics.VaultAnalyticsInputType
 import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.VaultInputStage
@@ -33,6 +35,7 @@ class DydxVaultDepositViewModel @Inject constructor(
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val inputState: VaultInputState,
     private val router: DydxRouter,
+    private val vaultAnalytics: VaultAnalytics,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxVaultDepositView.ViewState?> =
@@ -89,6 +92,11 @@ class DydxVaultDepositViewModel @Inject constructor(
                 ctaAction = {
                     inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)
+
+                    vaultAnalytics.logPreview(
+                        type = VaultAnalyticsInputType.DEPOSIT,
+                        amount = inputState.amount.value ?: 0.0,
+                    )
                 },
             ),
         )

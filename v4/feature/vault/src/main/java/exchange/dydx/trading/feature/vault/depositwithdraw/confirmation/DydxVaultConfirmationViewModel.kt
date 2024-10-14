@@ -16,6 +16,8 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.R
+import exchange.dydx.trading.feature.shared.analytics.VaultAnalytics
+import exchange.dydx.trading.feature.shared.analytics.VaultAnalyticsInputType
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.VaultInputStage
 import exchange.dydx.trading.feature.vault.VaultInputState
@@ -33,6 +35,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.abs
 
 @HiltViewModel
 class DydxVaultConfirmationViewModel @Inject constructor(
@@ -44,6 +47,7 @@ class DydxVaultConfirmationViewModel @Inject constructor(
     private val router: DydxRouter,
     private val parser: ParserProtocol,
     private val platformInfo: PlatformInfo,
+    private val vaultAnalytics: VaultAnalytics,
 ) : ViewModel(), DydxViewModel {
 
     private val isSubmitting: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -135,7 +139,15 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                         InputCtaButton.State.Disabled(ctaButtonTitle)
                     },
                     ctaAction = {
-                        submitDeposit(result?.submissionData?.deposit)
+                        vaultAnalytics.logOperationAttempt(
+                            type = VaultAnalyticsInputType.DEPOSIT,
+                            amount = result?.submissionData?.deposit?.amount,
+                            slippage = null,
+                        )
+                        submitDeposit(
+                            depositData = result?.submissionData?.deposit,
+                            amount = result?.submissionData?.deposit?.amount,
+                        )
                     },
                 )
             }
@@ -151,26 +163,38 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                         InputCtaButton.State.Disabled(ctaButtonTitle)
                     },
                     ctaAction = {
-                        submitWithdraw(result?.submissionData?.withdraw)
+                        vaultAnalytics.logOperationAttempt(
+                            type = VaultAnalyticsInputType.WITHDRAW,
+                            amount = result?.summaryData?.estimatedAmountReceived,
+                            slippage = result?.summaryData?.estimatedSlippage,
+                        )
+                        submitWithdraw(
+                            withdrawData = result?.submissionData?.withdraw,
+                            amount = result?.summaryData?.estimatedAmountReceived,
+                        )
                     },
                 )
             }
         }
     }
 
-    private fun submitDeposit(depositData: VaultDepositData?) {
+    private fun submitDeposit(depositData: VaultDepositData?, amount: Double?) {
         val depositData = depositData ?: return
         isSubmitting.value = true
         cosmosClient.depositToMegavault(
             subaccountNumber = parser.asInt(depositData.subaccountFrom) ?: 0,
             amountUsdc = depositData.amount,
             completion = { response ->
-                handleResponse(response, type = VaultInputType.DEPOSIT)
+                handleResponse(
+                    response = response,
+                    type = VaultInputType.DEPOSIT,
+                    amount = amount,
+                )
             },
         )
     }
 
-    private fun submitWithdraw(withdrawData: VaultWithdrawData?) {
+    private fun submitWithdraw(withdrawData: VaultWithdrawData?, amount: Double?) {
         val withdrawData = withdrawData ?: return
         isSubmitting.value = true
         cosmosClient.withdrawFromMegavault(
@@ -178,12 +202,20 @@ class DydxVaultConfirmationViewModel @Inject constructor(
             shares = withdrawData.shares.toLong(),
             minAmount = withdrawData.minAmount.toLong(),
             completion = { response ->
-                handleResponse(response, type = VaultInputType.WITHDRAW)
+                handleResponse(
+                    response = response,
+                    type = VaultInputType.WITHDRAW,
+                    amount = amount,
+                )
             },
         )
     }
 
-    private fun handleResponse(response: String?, type: VaultInputType) {
+    private fun handleResponse(
+        response: String?,
+        type: VaultInputType,
+        amount: Double?
+    ) {
         val success = OnChainTransactionSuccessResponse.fromPayload(response)
         if (success != null) {
             abacusStateManager.refreshVaultAccount()
@@ -197,6 +229,18 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                 message = when (type) {
                     VaultInputType.DEPOSIT -> localizer.localize("APP.V4_DEPOSIT.COMPLETED_TEXT_SHORT")
                     VaultInputType.WITHDRAW -> localizer.localize("APP.V4_WITHDRAWAL.COMPLETED_TEXT")
+                },
+            )
+
+            vaultAnalytics.logOperationSuccess(
+                type = when (type) {
+                    VaultInputType.DEPOSIT -> VaultAnalyticsInputType.DEPOSIT
+                    VaultInputType.WITHDRAW -> VaultAnalyticsInputType.WITHDRAW
+                },
+                amount = amount,
+                amountDiff = when (type) {
+                    VaultInputType.DEPOSIT -> null
+                    VaultInputType.WITHDRAW -> abs((success.actualWithdrawalAmount ?: 0.0) - (amount ?: 0.0))
                 },
             )
         } else {
@@ -216,6 +260,13 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                 )
             }
             isSubmitting.value = false
+
+            vaultAnalytics.logOperationFailure(
+                type = when (type) {
+                    VaultInputType.DEPOSIT -> VaultAnalyticsInputType.DEPOSIT
+                    VaultInputType.WITHDRAW -> VaultAnalyticsInputType.WITHDRAW
+                },
+            )
         }
     }
 

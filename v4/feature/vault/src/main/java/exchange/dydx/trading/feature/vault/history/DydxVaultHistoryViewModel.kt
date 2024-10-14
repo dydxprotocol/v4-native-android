@@ -59,7 +59,7 @@ class DydxVaultHistoryViewModel @Inject constructor(
             time = formatter.dateTime(dateInstant, formatter = timeFormater),
             action = when (item.type) {
                 VaultTransferType.DEPOSIT -> localizer.localize("APP.GENERAL.DEPOSIT")
-                VaultTransferType.WITHDRAWAL -> localizer.localize("APP.GENERAL.WITHDRAWAL")
+                VaultTransferType.WITHDRAWAL -> localizer.localize("APP.GENERAL.WITHDRAW")
                 else -> null
             },
             amount = formatter.dollar(item.amountUsdc, digits = 2),
