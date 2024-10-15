@@ -88,6 +88,7 @@ class DydxPortfolioChartViewModel @Inject constructor(
                 sparkline = dataset,
                 sign = if (positive) PlatformUISign.Plus else PlatformUISign.Minus,
                 lineWidth = 3.0,
+                selectionListener = this,
             ),
             resolutionTitles = resolutionTitles,
             resolutionIndex = resolutionIndex,

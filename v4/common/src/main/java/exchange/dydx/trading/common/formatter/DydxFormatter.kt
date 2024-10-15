@@ -280,7 +280,12 @@ class DydxFormatter @Inject constructor() {
     /*
      xxxxxx,yyyyy or xxxxx.yyyyy
      */
-    fun raw(number: Double?, digits: Int?, locale: Locale = Locale.getDefault()): String? {
+    fun raw(
+        number: Double?,
+        digits: Int?,
+        locale: Locale = Locale.getDefault(),
+        rounding: RoundingMode = RoundingMode.HALF_UP
+    ): String? {
         return number?.let { value ->
             if (value.isFinite()) {
                 if (digits != null) {
@@ -288,7 +293,7 @@ class DydxFormatter @Inject constructor() {
                     val rawFormatter = DecimalFormat.getInstance(locale).apply {
                         minimumFractionDigits = maxOf(digits, 0)
                         maximumFractionDigits = maxOf(digits, 0)
-                        roundingMode = RoundingMode.HALF_UP
+                        roundingMode = rounding
                         isGroupingUsed = false
                     }
                     val formatted = rawFormatter.format(rounded)

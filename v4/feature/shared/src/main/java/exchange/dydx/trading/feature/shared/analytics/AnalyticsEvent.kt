@@ -37,7 +37,13 @@ enum class AnalyticsEvent(val rawValue: String) {
     TRADE_CANCEL_ORDER_CONFIRMED("TradeCancelOrderConfirmed"),
 
     // Notification
-    NOTIFICATION_ACTION("NotificationAction")
+    NOTIFICATION_ACTION("NotificationAction"),
+
+    // Vault
+    VaultFormPreviewStep("VaultFormPreviewStep"),
+    AttemptVaultOperation("AttemptVaultOperation"),
+    SuccessfulVaultOperation("SuccessfulVaultOperation"),
+    VaultOperationProtocolError("VaultOperationProtocolError"),
 }
 
 //

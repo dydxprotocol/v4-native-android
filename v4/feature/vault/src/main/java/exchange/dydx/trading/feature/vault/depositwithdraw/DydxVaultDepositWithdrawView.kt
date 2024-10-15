@@ -22,7 +22,6 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.vault.depositwithdraw.deposit.DydxVaultDepositView
 import exchange.dydx.trading.feature.vault.depositwithdraw.withdraw.DydxVaultWithdrawView
@@ -103,19 +102,21 @@ object DydxVaultDepositWithdrawView : DydxComponent {
 
             PlatformDivider()
 
-            DydxAnimation.AnimateFadeInOut(
-                visible = state.selection == DydxVaultDepositWithdrawSelectionView.Selection.Deposit,
-            ) {
-                DydxVaultDepositView.Content(
-                    modifier = Modifier,
-                )
-            }
-            DydxAnimation.AnimateFadeInOut(
-                visible = state.selection == DydxVaultDepositWithdrawSelectionView.Selection.Withdrawal,
-            ) {
-                DydxVaultWithdrawView.Content(
-                    modifier = Modifier,
-                )
+            when (state.selection) {
+                DydxVaultDepositWithdrawSelectionView.Selection.Deposit -> {
+                    DydxVaultDepositView.Content(
+                        modifier = Modifier,
+                    )
+                }
+                DydxVaultDepositWithdrawSelectionView.Selection.Withdrawal -> {
+                    DydxVaultWithdrawView.Content(
+                        modifier = Modifier,
+                    )
+                }
+
+                null -> {
+                    // Do nothing
+                }
             }
         }
     }

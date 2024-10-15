@@ -6,12 +6,10 @@ import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultHistoryEntry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SparklineView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,12 +25,10 @@ import javax.inject.Inject
 class DydxVaultChartViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
-    private val parser: ParserProtocol,
 ) : ViewModel(), DydxViewModel {
 
     private val typeIndex = MutableStateFlow(0)
-    private val resolutionIndex = MutableStateFlow(0)
+    private val resolutionIndex = MutableStateFlow(1)
 
     val state: Flow<DydxVaultChartView.ViewState?> =
         combine(

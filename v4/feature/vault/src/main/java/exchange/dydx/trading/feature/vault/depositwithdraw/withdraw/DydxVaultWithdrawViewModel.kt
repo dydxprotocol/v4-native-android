@@ -6,7 +6,6 @@ import exchange.dydx.abacus.functional.vault.VaultAccount
 import exchange.dydx.abacus.functional.vault.VaultDepositWithdrawFormValidator
 import exchange.dydx.abacus.functional.vault.VaultFormValidationResult
 import exchange.dydx.abacus.output.Vault
-import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -15,6 +14,8 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.VaultRoutes
+import exchange.dydx.trading.feature.shared.analytics.VaultAnalytics
+import exchange.dydx.trading.feature.shared.analytics.VaultAnalyticsInputType
 import exchange.dydx.trading.feature.shared.views.AmountText
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.VaultInputStage
@@ -30,7 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.util.Timer
+import java.math.RoundingMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,24 +43,21 @@ class DydxVaultWithdrawViewModel @Inject constructor(
     private val cosmosClient: CosmosV4WebviewClientProtocol,
     private val inputState: VaultInputState,
     private val router: DydxRouter,
-    @CoroutineScopes.ViewModel private val coroutineScope: CoroutineScope
+    @CoroutineScopes.ViewModel private val coroutineScope: CoroutineScope,
+    private val vaultAnalytics: VaultAnalytics,
 ) : ViewModel(), DydxViewModel {
-
-    private var slippageRequestTimer: Timer? = null
 
     val state: Flow<DydxVaultWithdrawView.ViewState?> =
         combine(
-            abacusStateManager.state.selectedSubaccount,
             abacusStateManager.state.vault,
             inputState.result,
-        ) { subaccount, vault, result ->
-            createViewState(subaccount, vault, result)
+        ) { vault, result ->
+            createViewState(vault, result)
         }
 
     private var slippageDebounce: Job? = null
 
     private fun createViewState(
-        subaccount: Subaccount?,
         vault: Vault?,
         result: VaultFormValidationResult?
     ): DydxVaultWithdrawView.ViewState {
@@ -72,7 +70,8 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                 value = parser.asString(inputState.amount.value),
                 maxAmount = vault?.account?.withdrawableUsdc,
                 maxAction = {
-                    updateAmount(value = vault?.account?.withdrawableUsdc, vaultAccount = vault?.account)
+                    val amount = formatter.raw(vault?.account?.withdrawableUsdc, digits = 2, rounding = RoundingMode.DOWN)
+                    updateAmount(value = parser.asDouble(amount), vaultAccount = vault?.account)
                 },
                 title = localizer.localize("APP.VAULTS.ENTER_AMOUNT_TO_WITHDRAW"),
                 footer = localizer.localize("APP.VAULTS.YOUR_VAULT_BALANCE"),
@@ -105,6 +104,11 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                 ctaAction = {
                     inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)
+
+                    vaultAnalytics.logPreview(
+                        type = VaultAnalyticsInputType.WITHDRAW,
+                        amount = inputState.amount.value ?: 0.0,
+                    )
                 },
             ),
         )
