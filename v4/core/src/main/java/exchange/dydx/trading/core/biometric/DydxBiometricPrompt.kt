@@ -40,7 +40,8 @@ object DydxBiometricPrompt {
         when (status) {
             BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED,
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED,
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE,
+            BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
                 processSuccess(true, null)
                 return
             }
@@ -48,8 +49,7 @@ object DydxBiometricPrompt {
                 processSuccess(false, "BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED")
                 return
             }
-            BiometricManager.BIOMETRIC_SUCCESS,
-            BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
                 // Fall through
             }
         }
