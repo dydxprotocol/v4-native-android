@@ -98,6 +98,7 @@ object BuySellView {
                     .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.plus)
                     .themeColor(foreground = state.color),
                 text = state.text ?: "",
+                maxLines = 1,
             )
         }
     }

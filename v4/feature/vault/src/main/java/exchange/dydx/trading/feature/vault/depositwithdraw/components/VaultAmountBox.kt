@@ -177,6 +177,7 @@ object VaultAmountBox {
                 style = TextStyle.dydxDefault
                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                     .themeFont(fontSize = ThemeFont.FontSize.small),
+                maxLines = 1,
             )
 
             Spacer(modifier = Modifier.weight(1f))
