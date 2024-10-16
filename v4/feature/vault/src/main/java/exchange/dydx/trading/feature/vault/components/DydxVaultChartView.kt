@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.vault.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -108,24 +110,27 @@ object DydxVaultChartView : DydxComponent {
 
         Row(
             modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            PlatformPillTextGroup(
-                modifier = Modifier,
-                items = state.typeTitles ?: emptyList(),
-                selectedItems = state.typeTitles ?: emptyList(),
-                currentSelection = state.typeIndex ?: 0,
-                onSelectionChanged = { index ->
-                    state.onTypeChanged(index)
-                },
-                itemStyle = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.mini)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                selectedItemStyle = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.mini)
-                    .themeColor(ThemeColor.SemanticColor.text_primary),
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                modifier = Modifier.weight(1f),
+            ) {
+                PlatformPillTextGroup(
+                    modifier = Modifier,
+                    items = state.typeTitles ?: emptyList(),
+                    selectedItems = state.typeTitles ?: emptyList(),
+                    currentSelection = state.typeIndex ?: 0,
+                    onSelectionChanged = { index ->
+                        state.onTypeChanged(index)
+                    },
+                    itemStyle = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.mini)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    selectedItemStyle = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.mini)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+            }
 
             Box {
                 PlatformPillItem(

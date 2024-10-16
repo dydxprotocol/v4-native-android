@@ -2,8 +2,10 @@ package exchange.dydx.trading.feature.vault.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -79,16 +81,15 @@ object DydxVaultInfoView : DydxComponent {
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 TopRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.YOUR_VAULT_BALANCE"),
-                    valueComposable = {
+                    valueComposable = { modifier ->
                         Text(
                             text = state.balance ?: "-",
-                            modifier = Modifier,
+                            modifier = modifier,
                             style = TextStyle.dydxDefault
                                 .themeFont(fontSize = ThemeFont.FontSize.medium)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
@@ -98,9 +99,9 @@ object DydxVaultInfoView : DydxComponent {
                 TopRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.YOUR_ALL_TIME_PNL"),
-                    valueComposable = {
+                    valueComposable = { modifier ->
                         SignedAmountView.Content(
-                            modifier = Modifier,
+                            modifier = modifier,
                             state = state.pnl,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(fontSize = ThemeFont.FontSize.medium),
@@ -127,10 +128,10 @@ object DydxVaultInfoView : DydxComponent {
                 BottomRowItem(
                     modifier = Modifier,
                     title = state.localizer.localize("APP.VAULTS.VAULT_THIRTY_DAY_APR"),
-                    valueComposable = {
+                    valueComposable = { modifier ->
                         if (state.apr != null) {
                             SignedAmountView.Content(
-                                modifier = Modifier,
+                                modifier = modifier,
                                 state = state.apr,
                                 textStyle = TextStyle.dydxDefault
                                     .themeFont(fontSize = ThemeFont.FontSize.medium),
@@ -138,7 +139,7 @@ object DydxVaultInfoView : DydxComponent {
                         } else {
                             Text(
                                 text = "-",
-                                modifier = Modifier,
+                                modifier = modifier,
                                 style = TextStyle.dydxDefault
                                     .themeFont(fontSize = ThemeFont.FontSize.medium)
                                     .themeColor(ThemeColor.SemanticColor.text_primary),
@@ -149,10 +150,10 @@ object DydxVaultInfoView : DydxComponent {
                 BottomRowItem(
                     modifier = Modifier.weight(1f),
                     title = state.localizer.localize("APP.VAULTS.TVL"),
-                    valueComposable = {
+                    valueComposable = { modifier ->
                         Text(
                             text = state.tvl ?: "-",
-                            modifier = Modifier,
+                            modifier = modifier,
                             style = TextStyle.dydxDefault
                                 .themeFont(fontSize = ThemeFont.FontSize.medium)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
@@ -186,8 +187,7 @@ object DydxVaultInfoView : DydxComponent {
                     .themeFont(fontSize = ThemeFont.FontSize.base)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
-
-            valueComposable(Modifier)
+            valueComposable(Modifier.padding(top = 1.dp))
         }
     }
 
@@ -204,7 +204,7 @@ object DydxVaultInfoView : DydxComponent {
                     .themeFont(fontSize = ThemeFont.FontSize.base)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
-            valueComposable(Modifier)
+            valueComposable(Modifier.padding(top = 1.dp))
         }
     }
 }

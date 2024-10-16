@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.zIndex
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
@@ -177,6 +178,7 @@ object VaultAmountBox {
                 style = TextStyle.dydxDefault
                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                     .themeFont(fontSize = ThemeFont.FontSize.small),
+                maxLines = 1,
             )
 
             Spacer(modifier = Modifier.weight(1f))

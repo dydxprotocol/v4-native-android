@@ -64,11 +64,13 @@ object DydxTradeInputMarginButtonsView : DydxComponent {
             PlatformButton(
                 modifier = if (state.isIsolatedMarketSelected) {
                     Modifier
+                        .weight(1f)
                 } else {
                     Modifier
                         .fillMaxWidth()
                 },
                 state = PlatformButtonState.Secondary,
+                fitText = true,
                 text = state.localizer.localize(
                     if (state.isIsolatedMarketSelected) {
                         "APP.GENERAL.ISOLATED"
@@ -81,8 +83,7 @@ object DydxTradeInputMarginButtonsView : DydxComponent {
             }
             if (state.isIsolatedMarketSelected) {
                 PlatformButton(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier,
                     state = PlatformButtonState.Secondary,
                     text = state.isolatedMarketTargetLeverageText,
                     fitText = true,

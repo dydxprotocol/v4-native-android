@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.textgroups.PlatformAutoSizingText
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.color
@@ -98,6 +99,7 @@ object BuySellView {
                     .themeFont(fontSize = ThemeFont.FontSize.medium, fontType = ThemeFont.FontType.plus)
                     .themeColor(foreground = state.color),
                 text = state.text ?: "",
+                maxLines = 1,
             )
         }
     }
