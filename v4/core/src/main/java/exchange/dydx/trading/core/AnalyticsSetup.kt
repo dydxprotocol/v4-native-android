@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentActivity
 import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
 import com.amplitude.android.DefaultTrackingOptions
+import com.amplitude.core.ServerZone
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import exchange.dydx.trading.common.R
@@ -30,6 +31,7 @@ object AnalyticsSetup {
                     apiKey = activity.applicationContext.getString(R.string.amplitude_api_key),
                     context = activity.applicationContext,
                     defaultTracking = DefaultTrackingOptions.ALL,
+                    serverZone = ServerZone.EU,
                 ),
             )
             compositeTracking.addTracker(AmplitudeTracker(amplitude))
