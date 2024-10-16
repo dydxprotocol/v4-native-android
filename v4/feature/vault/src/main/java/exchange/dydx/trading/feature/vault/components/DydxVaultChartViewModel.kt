@@ -1,8 +1,9 @@
 package exchange.dydx.trading.feature.vault.components
 
-import android.util.Half.toFloat
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultHistoryEntry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -17,15 +18,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import java.time.Duration
+import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
 class DydxVaultChartViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-) : ViewModel(), DydxViewModel {
+    private val selectedChartEntry: MutableStateFlow<VaultHistoryEntry?>,
+    private val vaultHistory: MutableStateFlow<List<VaultHistoryEntry>?>,
+    private val chartType: MutableStateFlow<ChartType?>,
+) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
 
     private val typeIndex = MutableStateFlow(0)
     private val resolutionIndex = MutableStateFlow(1)
@@ -42,6 +46,10 @@ class DydxVaultChartViewModel @Inject constructor(
         }
             .distinctUntilChanged()
 
+    init {
+        chartType.value = ChartType.allTypes[typeIndex.value]
+    }
+
     private fun createViewState(
         history: IList<VaultHistoryEntry>?,
         currentTypeIndex: Int,
@@ -53,6 +61,7 @@ class DydxVaultChartViewModel @Inject constructor(
             typeIndex = currentTypeIndex,
             onTypeChanged = {
                 typeIndex.value = it
+                chartType.value = ChartType.allTypes[it]
             },
             resolutionTitles = ChartResolution.allResolutions.map { it.title(localizer) },
             resolutionIndex = currentResolutionIndex,
@@ -66,6 +75,7 @@ class DydxVaultChartViewModel @Inject constructor(
                     resolution = ChartResolution.allResolutions[currentResolutionIndex],
                 ),
                 lineWidth = 3.0,
+                selectionListener = this,
             ),
         )
     }
@@ -78,13 +88,14 @@ class DydxVaultChartViewModel @Inject constructor(
         val filtered = history?.filter { entry ->
             val now = Clock.System.now()
             val then = entry.dateInstance ?: return@filter false
-            val diff = now.toEpochMilliseconds() - then.toEpochMilliseconds()
+            val diff = now.toEpochMilliseconds() - then.toEpochMilli()
             when (resolution) {
                 ChartResolution.DAY -> diff <= Duration.ofDays(1).toMillis()
                 ChartResolution.WEEK -> diff <= Duration.ofDays(7).toMillis()
                 ChartResolution.MONTH -> diff <= Duration.ofDays(30).toMillis()
             }
         }?.reversed()
+        vaultHistory.value = filtered
         if (filtered.isNullOrEmpty()) {
             return LineChartDataSet(emptyList(), type.title(localizer))
         }
@@ -98,16 +109,24 @@ class DydxVaultChartViewModel @Inject constructor(
             if (x == null || y == null) {
                 return@map null
             }
-            Entry(x, y)
+            Entry(x, y, entry)
         }
         return LineChartDataSet(entries, type.title(localizer))
     }
+
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+        selectedChartEntry.value = e?.data as? VaultHistoryEntry
+    }
+
+    override fun onNothingSelected() {
+        selectedChartEntry.value = null
+    }
 }
 
-private val VaultHistoryEntry.dateInstance: Instant?
-    get() = date?.let { Instant.fromEpochMilliseconds(it.toLong()) }
+internal val VaultHistoryEntry.dateInstance: Instant?
+    get() = date?.let { Instant.ofEpochMilli(it.toLong()) }
 
-private enum class ChartType {
+enum class ChartType {
     PNL,
     EQUITY;
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -46,6 +47,7 @@ object DydxVaultInfoView : DydxComponent {
         val pnl: SignedAmountView.ViewState? = null,
         val apr: SignedAmountView.ViewState? = null,
         val tvl: String? = null,
+        val chartEntrySelected: Boolean = false,
     ) {
         companion object {
             val preview = ViewState(
@@ -117,50 +119,63 @@ object DydxVaultInfoView : DydxComponent {
             PlatformDivider()
 
             Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.height(96.dp).padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                BottomRowItem(
-                    modifier = Modifier,
-                    title = state.localizer.localize("APP.VAULTS.VAULT_THIRTY_DAY_APR"),
-                    valueComposable = { modifier ->
-                        if (state.apr != null) {
-                            SignedAmountView.Content(
-                                modifier = modifier,
-                                state = state.apr,
-                                textStyle = TextStyle.dydxDefault
-                                    .themeFont(fontSize = ThemeFont.FontSize.medium),
-                            )
-                        } else {
-                            Text(
-                                text = "-",
-                                modifier = modifier,
-                                style = TextStyle.dydxDefault
-                                    .themeFont(fontSize = ThemeFont.FontSize.medium)
-                                    .themeColor(ThemeColor.SemanticColor.text_primary),
-                            )
-                        }
-                    },
-                )
-                BottomRowItem(
-                    modifier = Modifier.weight(1f),
-                    title = state.localizer.localize("APP.VAULTS.TVL"),
-                    valueComposable = { modifier ->
+                if (state.chartEntrySelected) {
+                    DydxVaultChartSelectedInfoView.Content(Modifier)
+                } else {
+                    VaultInfoContent(Modifier, state)
+                }
+            }
+
+            PlatformDivider()
+        }
+    }
+
+    @Composable
+    private fun VaultInfoContent(modifier: Modifier, state: ViewState) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            BottomRowItem(
+                modifier = Modifier,
+                title = state.localizer.localize("APP.VAULTS.VAULT_THIRTY_DAY_APR"),
+                valueComposable = { modifier ->
+                    if (state.apr != null) {
+                        SignedAmountView.Content(
+                            modifier = modifier,
+                            state = state.apr,
+                            textStyle = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.medium),
+                        )
+                    } else {
                         Text(
-                            text = state.tvl ?: "-",
+                            text = "-",
                             modifier = modifier,
                             style = TextStyle.dydxDefault
                                 .themeFont(fontSize = ThemeFont.FontSize.medium)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
-                    },
-                )
-            }
-
-            PlatformDivider()
+                    }
+                },
+            )
+            BottomRowItem(
+                modifier = Modifier.weight(1f),
+                title = state.localizer.localize("APP.VAULTS.TVL"),
+                valueComposable = { modifier ->
+                    Text(
+                        text = state.tvl ?: "-",
+                        modifier = modifier,
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.medium)
+                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                    )
+                },
+            )
         }
     }
 
