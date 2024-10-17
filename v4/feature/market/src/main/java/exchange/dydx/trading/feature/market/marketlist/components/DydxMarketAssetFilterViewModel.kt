@@ -43,6 +43,7 @@ class DydxMarketAssetFilterViewModel @Inject constructor(
 enum class MarketFiltering {
     ALL,
     FAVORITED,
+    PREDICTION,
     LAYER1,
     LAYER2,
     DEFI,
@@ -82,6 +83,14 @@ data class FilterAction(
                     content = localizer.localize("APP.GENERAL.RECENTLY_LISTED"),
                     action = { market, _, _ ->
                         market.perpetual?.isNew ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.PREDICTION,
+                    content = localizer.localize("APP.GENERAL.PREDICTION_MARKET"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("Prediction Market") ?: false
                     },
                 ),
 
