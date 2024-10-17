@@ -172,7 +172,7 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                 value = agreementText,
                 key = "{LINK}",
                 replacement = localizer.localize("APP.VAULTS.MEGAVAULT_TERMS_LINK_TEXT"),
-                link = "https://google.com", // state.tosUrl,
+                link = abacusStateManager.environment?.links?.vaultTos,
                 linkColor = ThemeColor.SemanticColor.color_purple.color,
             )
             append(newString)
