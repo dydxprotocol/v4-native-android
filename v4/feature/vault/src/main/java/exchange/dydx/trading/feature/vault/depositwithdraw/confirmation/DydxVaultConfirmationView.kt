@@ -38,6 +38,7 @@ import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultSlippageCheckbox
+import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultTosCheckbox
 import exchange.dydx.trading.feature.vault.receipt.DydxVaultReceiptView
 
 @Preview
@@ -64,6 +65,7 @@ object DydxVaultConfirmationView : DydxComponent {
         val backAction: (() -> Unit)? = null,
         val direction: Direction? = null,
         val slippage: VaultSlippageCheckbox.ViewState? = null,
+        val tos: VaultTosCheckbox.ViewState? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -75,6 +77,7 @@ object DydxVaultConfirmationView : DydxComponent {
                 ctaButton = InputCtaButton.ViewState.preview,
                 direction = Direction.Deposit,
                 slippage = VaultSlippageCheckbox.ViewState.preview,
+                tos = VaultTosCheckbox.ViewState.preview,
             )
         }
     }
@@ -146,6 +149,13 @@ object DydxVaultConfirmationView : DydxComponent {
                 VaultSlippageCheckbox.Content(
                     modifier = Modifier.padding(ThemeShapes.HorizontalPadding),
                     state = state.slippage,
+                )
+            }
+
+            if (state.tos != null) {
+                VaultTosCheckbox.Content(
+                    modifier = Modifier.padding(ThemeShapes.HorizontalPadding),
+                    state = state.tos,
                 )
             }
 

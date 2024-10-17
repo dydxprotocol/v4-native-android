@@ -38,6 +38,7 @@ class VaultInputState @Inject constructor(
     val amount: MutableStateFlow<Double?> = MutableStateFlow(null)
     val stage: MutableStateFlow<VaultInputStage> = MutableStateFlow(VaultInputStage.EDIT)
     val slippageAcked: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val tosAcked: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val slippageResponse: MutableStateFlow<OnChainVaultDepositWithdrawSlippageResponse?> = MutableStateFlow(null)
 
     private val vaultFormData: Flow<VaultFormData?> =
@@ -46,7 +47,8 @@ class VaultInputState @Inject constructor(
             amount,
             stage,
             slippageAcked,
-        ) { type, amount, stage, slippageAcked ->
+            tosAcked,
+        ) { type, amount, stage, slippageAcked, tosAcked ->
             val type = type ?: return@combine null
             val amount = amount ?: return@combine null
             VaultFormData(
@@ -57,6 +59,7 @@ class VaultInputState @Inject constructor(
                 amount = amount,
                 acknowledgedSlippage = slippageAcked,
                 inConfirmationStep = stage == VaultInputStage.CONFIRM,
+                acknowledgedTerms = tosAcked,
             )
         }
             .distinctUntilChanged()

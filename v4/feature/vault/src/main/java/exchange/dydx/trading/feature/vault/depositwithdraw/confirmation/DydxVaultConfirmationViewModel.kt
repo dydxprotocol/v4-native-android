@@ -1,7 +1,9 @@
 package exchange.dydx.trading.feature.vault.depositwithdraw.confirmation
 
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hoc081098.flowext.combine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.functional.vault.VaultDepositData
 import exchange.dydx.abacus.functional.vault.VaultFormValidationResult
@@ -12,9 +14,12 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.PlatformInfoViewModel
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.analytics.VaultAnalytics
 import exchange.dydx.trading.feature.shared.analytics.VaultAnalyticsInputType
@@ -25,13 +30,15 @@ import exchange.dydx.trading.feature.vault.VaultInputType
 import exchange.dydx.trading.feature.vault.canDeposit
 import exchange.dydx.trading.feature.vault.canWithdraw
 import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultSlippageCheckbox
+import exchange.dydx.trading.feature.vault.depositwithdraw.components.VaultTosCheckbox
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.utilities.utils.SharedPreferencesStore
+import exchange.dydx.utilities.utils.applyLink
 import indexer.models.chain.ChainError
 import indexer.models.chain.OnChainTransactionErrorResponse
 import indexer.models.chain.OnChainTransactionSuccessResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,25 +55,36 @@ class DydxVaultConfirmationViewModel @Inject constructor(
     private val parser: ParserProtocol,
     private val platformInfo: PlatformInfo,
     private val vaultAnalytics: VaultAnalytics,
+    private val sharedPreferencesStore: SharedPreferencesStore,
 ) : ViewModel(), DydxViewModel {
 
     private val isSubmitting: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isDepositTosAccepted: Boolean =
+        sharedPreferencesStore.read(PreferenceKeys.VaultTosAccepted, defaultValue = "false") == "true"
 
     val state: Flow<DydxVaultConfirmationView.ViewState?> =
         combine(
             inputState.amount,
             inputState.type.filterNotNull(),
             inputState.result,
+            inputState.slippageAcked,
             isSubmitting,
-        ) { amount, type, result, isSubmitting ->
-            createViewState(amount, type, result, isSubmitting)
+            inputState.tosAcked,
+        ) { amount, type, result, slippageAcked, isSubmitting, isDepositTosChecked ->
+            createViewState(amount, type, result, slippageAcked, isSubmitting, isDepositTosChecked)
         }
+
+    init {
+        inputState.tosAcked.value = isDepositTosAccepted
+    }
 
     private fun createViewState(
         amount: Double?,
         type: VaultInputType,
         result: VaultFormValidationResult?,
+        slippageAcked: Boolean,
         isSubmitting: Boolean,
+        isDepositTosChecked: Boolean,
     ): DydxVaultConfirmationView.ViewState {
         return DydxVaultConfirmationView.ViewState(
             localizer = localizer,
@@ -95,14 +113,33 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                 router.navigateBack()
                 inputState.stage.value = VaultInputStage.EDIT
             },
-            ctaButton = createInputCtaButton(type, result, isSubmitting),
-            slippage = createSlippage(type, result),
+            ctaButton = createInputCtaButton(
+                type,
+                result = result,
+                isSubmitting = isSubmitting,
+                isDepositTosChecked = isDepositTosChecked,
+                slippageAcked = slippageAcked,
+            ),
+            slippage = createSlippage(
+                type = type,
+                result = result,
+                slippageAcked = slippageAcked,
+            ),
+            tos = if (!isDepositTosAccepted) {
+                createTos(
+                    type = type,
+                    isDepositTosChecked = isDepositTosChecked,
+                )
+            } else {
+                null
+            },
         )
     }
 
     private fun createSlippage(
         type: VaultInputType,
-        result: VaultFormValidationResult?
+        result: VaultFormValidationResult?,
+        slippageAcked: Boolean,
     ): VaultSlippageCheckbox.ViewState? {
         if (type == VaultInputType.WITHDRAW && result?.summaryData?.needSlippageAck == true) {
             val slippage = formatter.percent(result?.summaryData?.estimatedSlippage, digits = 2) ?: ""
@@ -113,7 +150,7 @@ class DydxVaultConfirmationViewModel @Inject constructor(
             return VaultSlippageCheckbox.ViewState(
                 localizer = localizer,
                 text = slippageText,
-                checked = inputState.slippageAcked.value,
+                checked = slippageAcked,
                 onCheckedChange = { inputState.slippageAcked.value = it },
             )
         } else {
@@ -121,18 +158,62 @@ class DydxVaultConfirmationViewModel @Inject constructor(
         }
     }
 
+    private fun createTos(
+        type: VaultInputType,
+        isDepositTosChecked: Boolean,
+    ): VaultTosCheckbox.ViewState? {
+        val ctaButtonTitle = ctaButtonTitle(type)
+        val agreementText = localizer.localizeWithParams(
+            "APP.VAULTS.MEGAVAULT_TERMS_TEXT",
+            mapOf("CONFIRM_BUTTON_TEXT" to ctaButtonTitle),
+        )
+        val value = buildAnnotatedString {
+            val newString = applyLink(
+                value = agreementText,
+                key = "{LINK}",
+                replacement = localizer.localize("APP.VAULTS.MEGAVAULT_TERMS_LINK_TEXT"),
+                link = "https://google.com", // state.tosUrl,
+                linkColor = ThemeColor.SemanticColor.color_purple.color,
+            )
+            append(newString)
+        }
+        return if (type == VaultInputType.DEPOSIT) {
+            VaultTosCheckbox.ViewState(
+                localizer = localizer,
+                text = value,
+                checked = isDepositTosChecked,
+                onCheckedChange = { checked ->
+                    inputState.tosAcked.value = checked
+                    sharedPreferencesStore.save(if (checked) "true" else "false", PreferenceKeys.VaultTosAccepted)
+                },
+                linkAction = {
+                    val url = abacusStateManager.environment?.links?.vaultTos
+                    if (url != null) {
+                        router.navigateTo(url)
+                    }
+                },
+            )
+        } else {
+            null
+        }
+    }
+
     private fun createInputCtaButton(
         type: VaultInputType,
         result: VaultFormValidationResult?,
         isSubmitting: Boolean,
+        isDepositTosChecked: Boolean,
+        slippageAcked: Boolean,
     ): InputCtaButton.ViewState {
+        val ctaButtonTitle = ctaButtonTitle(type)
         when (type) {
             VaultInputType.DEPOSIT -> {
-                val ctaButtonTitle = localizer.localize("APP.VAULTS.CONFIRM_DEPOSIT_CTA")
                 return InputCtaButton.ViewState(
                     localizer = localizer,
                     ctaButtonState = if (isSubmitting) {
                         InputCtaButton.State.Disabled(localizer.localize("APP.TRADE.SUBMITTING"))
+                    } else if (!isDepositTosChecked) {
+                        InputCtaButton.State.Disabled(localizer.localize("APP.VAULTS.ACKNOWLEDGE_MEGAVAULT_TERMS"))
                     } else if (result?.canDeposit == true) {
                         InputCtaButton.State.Enabled(ctaButtonTitle)
                     } else {
@@ -152,11 +233,12 @@ class DydxVaultConfirmationViewModel @Inject constructor(
                 )
             }
             VaultInputType.WITHDRAW -> {
-                val ctaButtonTitle = localizer.localize("APP.VAULTS.CONFIRM_WITHDRAW_CTA")
                 return InputCtaButton.ViewState(
                     localizer = localizer,
                     ctaButtonState = if (isSubmitting) {
                         InputCtaButton.State.Disabled(localizer.localize("APP.TRADE.SUBMITTING"))
+                    } else if (result?.summaryData?.needSlippageAck == true && !slippageAcked) {
+                        InputCtaButton.State.Disabled(localizer.localize("APP.VAULTS.ACKNOWLEDGE_HIGH_SLIPPAGE"))
                     } else if (result?.canWithdraw == true) {
                         InputCtaButton.State.Enabled(ctaButtonTitle)
                     } else {
@@ -178,8 +260,17 @@ class DydxVaultConfirmationViewModel @Inject constructor(
         }
     }
 
+    private fun ctaButtonTitle(type: VaultInputType): String {
+        return when (type) {
+            VaultInputType.DEPOSIT -> localizer.localize("APP.VAULTS.CONFIRM_DEPOSIT_CTA")
+            VaultInputType.WITHDRAW -> localizer.localize("APP.VAULTS.CONFIRM_WITHDRAW_CTA")
+        }
+    }
+
     private fun submitDeposit(depositData: VaultDepositData?, amount: Double?) {
-        val depositData = depositData ?: return
+        if (depositData == null) {
+            return
+        }
         isSubmitting.value = true
         cosmosClient.depositToMegavault(
             subaccountNumber = parser.asInt(depositData.subaccountFrom) ?: 0,
@@ -195,7 +286,9 @@ class DydxVaultConfirmationViewModel @Inject constructor(
     }
 
     private fun submitWithdraw(withdrawData: VaultWithdrawData?, amount: Double?) {
-        val withdrawData = withdrawData ?: return
+        if (withdrawData == null) {
+            return
+        }
         isSubmitting.value = true
         cosmosClient.withdrawFromMegavault(
             subaccountNumber = parser.asInt(withdrawData.subaccountTo) ?: 0,

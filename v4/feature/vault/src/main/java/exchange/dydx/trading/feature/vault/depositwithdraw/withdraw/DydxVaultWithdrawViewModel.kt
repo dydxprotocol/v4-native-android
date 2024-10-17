@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.math.RoundingMode
 import javax.inject.Inject
+import kotlin.math.round
 
 @HiltViewModel
 class DydxVaultWithdrawViewModel @Inject constructor(
@@ -120,7 +121,7 @@ class DydxVaultWithdrawViewModel @Inject constructor(
     ) {
         val shareValue = vaultAccount?.shareValue
         if (value != null && shareValue != null && shareValue > 0) {
-            val shares = value / shareValue
+            val shares = round(value / shareValue)
             requestSlippage(shares.toLong())
         }
         inputState.amount.value = value
