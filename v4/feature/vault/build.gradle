@@ -115,4 +115,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
 
     implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
+
+    implementation("io.github.hoc081098:FlowExt:$flowExtVersion")
 }

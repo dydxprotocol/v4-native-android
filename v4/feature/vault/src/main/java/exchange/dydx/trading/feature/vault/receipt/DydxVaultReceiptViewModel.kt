@@ -6,7 +6,6 @@ import exchange.dydx.abacus.functional.vault.VaultFormValidationResult
 import exchange.dydx.abacus.output.Vault
 import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -29,7 +28,6 @@ class DydxVaultReceiptViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val inputState: VaultInputState,
-    private val parser: ParserProtocol,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxVaultReceiptView.ViewState?> =

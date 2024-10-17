@@ -17,23 +17,24 @@ import exchange.dydx.platformui.theme.MockLocalizer
 
 @Preview
 @Composable
-fun Preview_VaultSlippageCheckbox() {
+fun Preview_VaultTosCheckbox() {
     DydxThemedPreviewSurface {
-        VaultSlippageCheckbox.Content(Modifier, VaultSlippageCheckbox.ViewState.preview)
+        VaultTosCheckbox.Content(Modifier, VaultTosCheckbox.ViewState.preview)
     }
 }
 
-object VaultSlippageCheckbox {
+object VaultTosCheckbox {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val text: String,
+        val text: AnnotatedString,
         val checked: Boolean = false,
         val onCheckedChange: (Boolean) -> Unit = {},
+        val linkAction: (String) -> Unit = {}
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                text = "1.0M",
+                text = AnnotatedString("1.0M"),
             )
         }
     }
@@ -50,8 +51,9 @@ object VaultSlippageCheckbox {
             textStyle = TextStyle.dydxDefault
                 .themeColor(ThemeColor.SemanticColor.text_secondary)
                 .themeFont(fontSize = ThemeFont.FontSize.base),
-            text = AnnotatedString(state.text),
+            text = state.text,
             onCheckedChange = state.onCheckedChange,
+            linkAction = state.linkAction,
         )
     }
 }
