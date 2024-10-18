@@ -26,12 +26,13 @@ object AnalyticsSetup {
             val firebaseAnalytics = Firebase.analytics
             compositeTracking.addTracker(FirebaseTracker(firebaseAnalytics))
 
+            val serverZone = activity.applicationContext.getString(R.string.amplitude_server_zone)
             val amplitude = Amplitude(
                 Configuration(
                     apiKey = activity.applicationContext.getString(R.string.amplitude_api_key),
                     context = activity.applicationContext,
                     defaultTracking = DefaultTrackingOptions.ALL,
-                    serverZone = ServerZone.EU,
+                    serverZone = if (serverZone == "EU") ServerZone.EU else ServerZone.US,
                 ),
             )
             compositeTracking.addTracker(AmplitudeTracker(amplitude))
