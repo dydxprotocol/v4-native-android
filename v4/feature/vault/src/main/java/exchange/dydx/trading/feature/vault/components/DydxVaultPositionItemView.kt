@@ -3,7 +3,6 @@ package exchange.dydx.trading.feature.vault.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -115,11 +114,9 @@ object DydxVaultPositionItemView : DydxComponent {
             )
 
             SizeColumnContent(
-                modifier = Modifier,
+                modifier = Modifier.weight(1f),
                 state = state,
             )
-
-            Spacer(modifier = Modifier.weight(1f))
 
             PnLColumnContent(
                 modifier = Modifier,

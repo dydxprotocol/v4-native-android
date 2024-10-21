@@ -81,13 +81,13 @@ class DydxVaultViewModel @Inject constructor(
             leverage = "1.00x",
             notionalValue = formatter.dollarVolume((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 2),
             equity = formatter.dollarVolume((position.marginUsdc?.absoluteValue ?: 0.0), digits = 2),
-            positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 0),
+            positionSize = formatter.condensed((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
             token = TokenTextView.ViewState(
                 symbol = "USDC",
             ),
             pnlAmount = SignedAmountView.ViewState(
                 sign = position.pnlSign,
-                text = formatter.dollar(0.0, digits = 0) ?: "-",
+                text = formatter.dollarVolume(0.0, digits = 2) ?: "-",
             ),
             pnlPercentage = formatter.percent(0.0, digits = 2),
             sparkline = createSparkline(position.thirtyDayPnl),
@@ -114,14 +114,14 @@ class DydxVaultViewModel @Inject constructor(
             },
             notionalValue = formatter.dollarVolume((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 2),
             equity = formatter.dollarVolume((position.marginUsdc?.absoluteValue ?: 0.0), digits = 2),
-            positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
+            positionSize = formatter.condensed((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
             token = TokenTextView.ViewState(
                 symbol = asset.id,
             ),
             pnlAmount = if (position.thirtyDayPnl?.absolute != null) {
                 SignedAmountView.ViewState(
                     sign = position.pnlSign,
-                    text = formatter.dollar(position.thirtyDayPnl?.absolute?.absoluteValue, digits = 0) ?: "-",
+                    text = formatter.dollarVolume(position.thirtyDayPnl?.absolute?.absoluteValue, digits = 2) ?: "-",
                 )
             } else {
                 SignedAmountView.ViewState(
