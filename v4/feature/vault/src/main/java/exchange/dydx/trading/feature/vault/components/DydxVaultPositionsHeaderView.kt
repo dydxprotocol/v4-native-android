@@ -91,7 +91,7 @@ object DydxVaultPositionsHeaderView : DydxComponent {
                     .themeFont(
                         fontSize = ThemeFont.FontSize.large,
                     ),
-                text = state.localizer.localize("APP.TRADE.OPEN_POSITIONS"),
+                text = state.localizer.localize("APP.VAULTS.HOLDINGS"),
             )
 
             val shape = RoundedCornerShape(size = 4.dp)
@@ -126,12 +126,28 @@ object DydxVaultPositionsHeaderView : DydxComponent {
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
 
-            Text(
-                text = state.localizer.localize("APP.GENERAL.SIZE"),
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.small)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-            )
+            Row() {
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.SIZE"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+
+                Text(
+                    text = state.localizer.localize(" / "),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.EQUITY"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 

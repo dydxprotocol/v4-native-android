@@ -58,6 +58,7 @@ object DydxVaultPositionItemView : DydxComponent {
         val leverage: String? = null,
         val notionalValue: String? = null,
         val positionSize: String? = null,
+        val equity: String? = null,
         val token: TokenTextView.ViewState? = null,
         val pnlAmount: SignedAmountView.ViewState? = null,
         val pnlPercentage: String? = null,
@@ -191,11 +192,28 @@ object DydxVaultPositionItemView : DydxComponent {
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
-                text = state.notionalValue ?: "-",
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.small),
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = state.notionalValue ?: "-",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+
+                Text(
+                    text = "/",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+
+                Text(
+                    text = state.equity ?: "-",
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small),
+                )
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

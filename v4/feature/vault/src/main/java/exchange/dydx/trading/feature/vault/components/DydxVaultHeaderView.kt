@@ -1,7 +1,7 @@
 package exchange.dydx.trading.feature.vault.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,17 +9,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -96,27 +98,18 @@ object DydxVaultHeaderView : DydxComponent {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(
-                modifier = Modifier.align(Alignment.CenterVertically)
-                    .clickable {
-                        state.learnMoreAction()
-                    },
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    text = state.localizer.localize("APP.GENERAL.LEARN_MORE"),
-                    style = TextStyle.dydxDefault
-                        .themeFont(
-                            fontSize = ThemeFont.FontSize.medium,
-                        )
-                        .themeColor(ThemeColor.SemanticColor.text_secondary),
-                )
-
-                PlatformImage(
-                    modifier = Modifier.size(18.dp).align(Alignment.CenterVertically),
-                    icon = R.drawable.icon_external_link,
-                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_secondary.color),
-                )
+            Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                PlatformIconButton(
+                    action = state.learnMoreAction,
+                    size = 42.dp,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_info),
+                        contentDescription = state.localizer.localize("APP.GENERAL.LEARN_MORE"),
+                        modifier = Modifier.size(24.dp),
+                        tint = ThemeColor.SemanticColor.text_secondary.color,
+                    )
+                }
             }
         }
     }

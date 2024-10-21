@@ -49,7 +49,7 @@ class DydxVaultViewModel @Inject constructor(
         marketMap: Map<String, PerpetualMarket>?,
         assetMap: Map<String, Asset>?,
     ): DydxVaultView.ViewState {
-        val items: List<DydxVaultPositionItemView.ViewState> = vault?.positions?.sortedBySize?.mapNotNull { position ->
+        val items: List<DydxVaultPositionItemView.ViewState> = vault?.positions?.sortedByEquity?.mapNotNull { position ->
             val marketId = position.marketId ?: return@mapNotNull null
             if (marketId == "USDC-USD") {
                 return@mapNotNull createUsdcItem(position)
@@ -79,7 +79,8 @@ class DydxVaultViewModel @Inject constructor(
                 side = Side.Long,
             ),
             leverage = "1.00x",
-            notionalValue = formatter.dollar((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 0),
+            notionalValue = formatter.dollarVolume((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 2),
+            equity = formatter.dollarVolume((position.marginUsdc?.absoluteValue ?: 0.0), digits = 2),
             positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 0),
             token = TokenTextView.ViewState(
                 symbol = "USDC",
@@ -111,7 +112,8 @@ class DydxVaultViewModel @Inject constructor(
             leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2)?.let {
                 "${it}x"
             },
-            notionalValue = formatter.dollar((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 0),
+            notionalValue = formatter.dollarVolume((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 2),
+            equity = formatter.dollarVolume((position.marginUsdc?.absoluteValue ?: 0.0), digits = 2),
             positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
             token = TokenTextView.ViewState(
                 symbol = asset.id,
@@ -179,6 +181,17 @@ private val VaultPositions.sortedBySize: List<VaultPosition>?
     get() = this.positions?.sortedWith { p1, p2 ->
         val size1 = p1.currentPosition?.usdc ?: 0.0
         val size2 = p2.currentPosition?.usdc ?: 0.0
+        if (size1 == size2) {
+            p2.thirtyDayPnl?.absolute?.compareTo(p1.thirtyDayPnl?.absolute ?: 0.0) ?: 0
+        } else {
+            size2.compareTo(size1)
+        }
+    }
+
+private val VaultPositions.sortedByEquity: List<VaultPosition>?
+    get() = this.positions?.sortedWith { p1, p2 ->
+        val size1 = p1.marginUsdc ?: 0.0
+        val size2 = p2.marginUsdc ?: 0.0
         if (size1 == size2) {
             p2.thirtyDayPnl?.absolute?.compareTo(p1.thirtyDayPnl?.absolute ?: 0.0) ?: 0
         } else {
