@@ -16,6 +16,7 @@ import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SideTextView
+import exchange.dydx.trading.feature.shared.views.SideTextView.Side
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.SparklineView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
@@ -50,6 +51,9 @@ class DydxVaultViewModel @Inject constructor(
     ): DydxVaultView.ViewState {
         val items: List<DydxVaultPositionItemView.ViewState> = vault?.positions?.sortedBySize?.mapNotNull { position ->
             val marketId = position.marketId ?: return@mapNotNull null
+            if (marketId == "USDC-USD") {
+                return@mapNotNull createUsdcItem(position)
+            }
             val market = marketMap?.get(marketId) ?: return@mapNotNull null
             val asset = assetMap?.get(market.assetId) ?: return@mapNotNull null
             createPositionItem(position, asset)
@@ -57,6 +61,35 @@ class DydxVaultViewModel @Inject constructor(
         return DydxVaultView.ViewState(
             localizer = localizer,
             items = items,
+        )
+    }
+
+    private fun createUsdcItem(
+        position: VaultPosition,
+    ): DydxVaultPositionItemView.ViewState? {
+        val marketId = position.marketId ?: return null
+        return DydxVaultPositionItemView.ViewState(
+            localizer = localizer,
+            id = marketId,
+            logoUrl = null,
+            assetName = "USDC",
+            market = marketId,
+            side = SideTextView.ViewState(
+                localizer = localizer,
+                side = Side.Long,
+            ),
+            leverage = "1.00x",
+            notionalValue = formatter.dollar((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 0),
+            positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 0),
+            token = TokenTextView.ViewState(
+                symbol = "USDC",
+            ),
+            pnlAmount = SignedAmountView.ViewState(
+                sign = position.pnlSign,
+                text = formatter.dollar(0.0, digits = 0) ?: "-",
+            ),
+            pnlPercentage = formatter.percent(0.0, digits = 2),
+            sparkline = createSparkline(position.thirtyDayPnl),
         )
     }
 
@@ -75,7 +108,9 @@ class DydxVaultViewModel @Inject constructor(
                 localizer = localizer,
                 side = position.side,
             ),
-            leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2),
+            leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2)?.let {
+                "${it}x"
+            },
             notionalValue = formatter.dollar((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 0),
             positionSize = formatter.raw((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
             token = TokenTextView.ViewState(

@@ -29,6 +29,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.SparklineView
@@ -143,7 +144,7 @@ object DydxVaultPositionItemView : DydxComponent {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             PlatformRoundImage(
-                icon = state.logoUrl,
+                icon = if (state.assetName == "USDC") R.drawable.vault_usdc_token else state.logoUrl,
                 size = 24.dp,
             )
 
