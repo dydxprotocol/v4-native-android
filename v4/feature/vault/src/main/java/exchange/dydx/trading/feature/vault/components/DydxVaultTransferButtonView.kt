@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -71,7 +70,6 @@ object DydxVaultTransferButtonView : DydxComponent {
         val shape = RoundedCornerShape(10.dp)
         Row(
             modifier = modifier
-                .height(48.dp)
                 .background(
                     color = ThemeColor.SemanticColor.layer_4.color,
                     shape = shape,
@@ -80,6 +78,7 @@ object DydxVaultTransferButtonView : DydxComponent {
                 .clickable { state.onTapAction.invoke() }
                 .padding(
                     horizontal = ThemeShapes.HorizontalPadding,
+                    vertical = 14.dp,
                 ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),

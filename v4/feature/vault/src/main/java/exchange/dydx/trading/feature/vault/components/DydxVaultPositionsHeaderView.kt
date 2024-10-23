@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -74,8 +73,6 @@ object DydxVaultPositionsHeaderView : DydxComponent {
         ) {
             PositionsContent(modifier, state)
 
-            PlatformDivider()
-
             ItemTableHeaderContent(modifier, state)
         }
     }
@@ -94,7 +91,7 @@ object DydxVaultPositionsHeaderView : DydxComponent {
                     .themeFont(
                         fontSize = ThemeFont.FontSize.large,
                     ),
-                text = state.localizer.localize("APP.TRADE.OPEN_POSITIONS"),
+                text = state.localizer.localize("APP.VAULTS.HOLDINGS"),
             )
 
             val shape = RoundedCornerShape(size = 4.dp)
@@ -129,12 +126,28 @@ object DydxVaultPositionsHeaderView : DydxComponent {
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
             )
 
-            Text(
-                text = state.localizer.localize("APP.GENERAL.SIZE"),
-                style = TextStyle.dydxDefault
-                    .themeFont(fontSize = ThemeFont.FontSize.small)
-                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
-            )
+            Row() {
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.SIZE"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+
+                Text(
+                    text = state.localizer.localize(" / "),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+
+                Text(
+                    text = state.localizer.localize("APP.GENERAL.EQUITY"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.small)
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
