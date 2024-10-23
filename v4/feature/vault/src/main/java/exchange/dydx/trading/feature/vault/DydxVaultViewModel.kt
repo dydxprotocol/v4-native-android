@@ -24,6 +24,7 @@ import exchange.dydx.trading.feature.vault.components.DydxVaultPositionItemView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
@@ -70,7 +71,7 @@ class DydxVaultViewModel @Inject constructor(
         val marketId = position.marketId ?: return null
         return DydxVaultPositionItemView.ViewState(
             localizer = localizer,
-            id = marketId,
+            id = marketId + UUID.randomUUID(),
             logoUrl = null,
             assetName = "USDC",
             market = marketId,
