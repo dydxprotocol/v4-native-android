@@ -20,7 +20,6 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
-import exchange.dydx.trading.feature.vault.components.DydxVaultButtonsView
 import exchange.dydx.trading.feature.vault.components.DydxVaultChartView
 import exchange.dydx.trading.feature.vault.components.DydxVaultHeaderView
 import exchange.dydx.trading.feature.vault.components.DydxVaultInfoView
@@ -75,8 +74,6 @@ object DydxVaultView : DydxComponent {
             DydxVaultHeaderView.Content(modifier = Modifier)
 
             ScrollingContent(modifier = Modifier.weight(1f), state = state)
-
-            DydxVaultButtonsView.Content(modifier = Modifier)
         }
     }
 

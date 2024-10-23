@@ -75,9 +75,6 @@ object DydxVaultButtonsView : DydxComponent {
                     ButtonType.WITHDRAW -> {
                         PlatformButton(
                             modifier = Modifier.weight(1f)
-                                .padding(
-                                    vertical = ThemeShapes.VerticalPadding,
-                                )
                                 .size(44.dp),
                             text = state.localizer.localize("APP.GENERAL.WITHDRAW"),
                             leadingContent = {
@@ -95,9 +92,6 @@ object DydxVaultButtonsView : DydxComponent {
                     ButtonType.DEPOSIT -> {
                         PlatformButton(
                             modifier = Modifier.weight(1f)
-                                .padding(
-                                    vertical = ThemeShapes.VerticalPadding,
-                                )
                                 .size(44.dp),
                             text = state.localizer.localize("APP.GENERAL.DEPOSIT"),
                             leadingContent = {

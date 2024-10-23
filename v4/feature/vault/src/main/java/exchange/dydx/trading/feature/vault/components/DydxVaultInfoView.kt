@@ -76,10 +76,11 @@ object DydxVaultInfoView : DydxComponent {
 
         Column(
             modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
@@ -111,15 +112,15 @@ object DydxVaultInfoView : DydxComponent {
             }
 
             DydxVaultTransferButtonView.Content(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
 
-            PlatformDivider()
+            DydxVaultButtonsView.Content(modifier = Modifier)
+
+            PlatformDivider(modifier = Modifier)
 
             Row(
-                modifier = Modifier.height(96.dp).padding(16.dp),
+                modifier = Modifier.height(72.dp).padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (state.chartEntrySelected) {
