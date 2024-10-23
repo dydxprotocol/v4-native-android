@@ -19,8 +19,8 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import java.util.Timer
 import javax.inject.Inject
 import kotlin.concurrent.fixedRateTimer
@@ -58,30 +58,26 @@ class DydxTransferStatusViewModel @Inject constructor(
     }
 
     val state: Flow<DydxTransferStatusView.ViewState?> =
-        combine(
-            abacusStateManager.state.transferStatuses,
-            abacusStateManager.state.transferTrackStatuses,
-        ) { statuses, trackStatuses ->
-            when (transfer?.transferType) {
-                DydxTransferInstance.TransferType.DEPOSIT -> createDepositViewState(
-                    transfer = transfer,
-                    statuses = statuses,
-                    trackStatuses = trackStatuses,
-                )
+        abacusStateManager.state.transferStatuses
+            .map { statuses ->
+                when (transfer?.transferType) {
+                    DydxTransferInstance.TransferType.DEPOSIT -> createDepositViewState(
+                        transfer,
+                        statuses,
+                    )
 
-                DydxTransferInstance.TransferType.WITHDRAWAL -> createWithdrawalViewState(
-                    transfer = transfer,
-                    statuses = statuses,
-                    trackStatuses = trackStatuses,
-                )
+                    DydxTransferInstance.TransferType.WITHDRAWAL -> createWithdrawalViewState(
+                        transfer,
+                        statuses,
+                    )
 
-                DydxTransferInstance.TransferType.TRANSFER_OUT -> createTransferOutViewState(
-                    transfer,
-                )
+                    DydxTransferInstance.TransferType.TRANSFER_OUT -> createTransferOutViewState(
+                        transfer,
+                    )
 
-                else -> null
+                    else -> null
+                }
             }
-        }
             .distinctUntilChanged()
 
     override fun onCleared() {
@@ -105,10 +101,9 @@ class DydxTransferStatusViewModel @Inject constructor(
     private fun createDepositViewState(
         transfer: DydxTransferInstance?,
         statuses: Map<String, TransferStatus>?,
-        trackStatuses: Map<String, Boolean>?,
     ): DydxTransferStatusView.ViewState {
         val status = statuses?.get(transactionHash)
-        val routeStatus = routeStatus(statuses, trackStatuses)
+        val routeStatus = routeStatus(statuses)
         if (routeStatus == RouteStatus.Completed && transfer != null) {
             stopTrackingTransaction()
         }
@@ -199,10 +194,9 @@ class DydxTransferStatusViewModel @Inject constructor(
     private fun createWithdrawalViewState(
         transfer: DydxTransferInstance?,
         statuses: Map<String, TransferStatus>?,
-        trackStatuses: Map<String, Boolean>?,
     ): DydxTransferStatusView.ViewState? {
         val status = statuses?.get(transactionHash)
-        val routeStatus = routeStatus(statuses, trackStatuses)
+        val routeStatus = routeStatus(statuses)
         if (routeStatus == RouteStatus.Completed && transfer != null) {
             stopTrackingTransaction()
         }
@@ -366,16 +360,7 @@ class DydxTransferStatusViewModel @Inject constructor(
 
     private fun routeStatus(
         statuses: Map<String, TransferStatus>?,
-        trackStatus: Map<String, Boolean>?,
     ): RouteStatus {
-        if (transactionHash == null) return RouteStatus.NoHash
-
-        // Remove the "0x" prefix from the transaction hash
-        val hash = transactionHash.removeRange(0, 2)
-        if (trackStatus?.get(hash) == true) {
-            return RouteStatus.Completed
-        }
-
         val status = statuses?.get(transactionHash) ?: return RouteStatus.NoHash
 
         return if (status.squidTransactionStatus == "success") {
