@@ -105,13 +105,6 @@ class AbacusState(
             }
     }
 
-    val transferTrackStatuses: StateFlow<Map<String, Boolean>> by lazy {
-        perpetualState
-            .mapState(appScope) {
-                it?.trackStatuses?.toMap() ?: emptyMap()
-            }
-    }
-
     /**
      Account
      **/
