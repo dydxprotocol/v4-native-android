@@ -182,6 +182,20 @@ class DydxTransferStatusViewModel @Inject constructor(
                         RouteStatus.InProgress, RouteStatus.Step1, RouteStatus.NoHash -> ProgressStepView.Status.Custom("3")
                     },
                     title = localizer.localize("APP.ONBOARDING.DEPOSIT_TO_DYDX"),
+                    tapAction = if (routeStatus != RouteStatus.NoHash && !status?.toChainStatus?.transactionUrl.isNullOrEmpty()) {
+                        {
+                            router.navigateTo(
+                                route = status?.toChainStatus?.transactionUrl!!,
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                    trailingIcon = if (routeStatus != RouteStatus.NoHash && !status?.toChainStatus?.transactionUrl.isNullOrEmpty()) {
+                        R.drawable.icon_external_link
+                    } else {
+                        null
+                    },
                 ),
             ),
             deleteAction = createDeleteAction(transfer, routeStatus),
@@ -213,7 +227,7 @@ class DydxTransferStatusViewModel @Inject constructor(
             localizer = localizer,
             title = when (routeStatus) {
                 RouteStatus.Completed -> localizer.localize("APP.V4_WITHDRAWAL.COMPLETED_TITLE")
-                RouteStatus.InProgress, RouteStatus.Step1 -> localizer.localize("APP.V4_DEPOSIT.IN_PROGRESS_TITLE")
+                RouteStatus.InProgress, RouteStatus.Step1 -> localizer.localize("APP.V4_WITHDRAWAL.IN_PROGRESS_TITLE")
                 RouteStatus.NoHash -> localizer.localize("APP.V4_WITHDRAWAL.CHECK_STATUS_TITLE")
             },
             text = when (routeStatus) {
@@ -233,18 +247,16 @@ class DydxTransferStatusViewModel @Inject constructor(
                         RouteStatus.InProgress, RouteStatus.NoHash -> ProgressStepView.Status.InProgress
                     },
                     title = localizer.localize("APP.ONBOARDING.INITIATED_WITHDRAWAL"),
-                    tapAction = if (routeStatus != RouteStatus.NoHash && transfer?.transactionHash != null && mintscanUrl != null) {
+                    tapAction = if (routeStatus != RouteStatus.NoHash && !status?.fromChainStatus?.transactionUrl.isNullOrEmpty()) {
                         {
-                            val hash = transfer.transactionHash.removeRange(0, 2) // remove "0x"
-                            val url = mintscanUrl.replace("{tx_hash}", hash)
                             router.navigateTo(
-                                route = url,
+                                route = status?.fromChainStatus?.transactionUrl!!,
                             )
                         }
                     } else {
                         null
                     },
-                    trailingIcon = if (routeStatus != RouteStatus.NoHash && transfer?.transactionHash != null && mintscanUrl != null) {
+                    trailingIcon = if (routeStatus != RouteStatus.NoHash && !status?.fromChainStatus?.transactionUrl.isNullOrEmpty()) {
                         R.drawable.icon_external_link
                     } else {
                         null
@@ -283,6 +295,20 @@ class DydxTransferStatusViewModel @Inject constructor(
                             "DESTINATION_CHAIN" to (transfer?.toChainName ?: ""),
                         ),
                     ),
+                    tapAction = if (routeStatus != RouteStatus.NoHash && !status?.toChainStatus?.transactionUrl.isNullOrEmpty()) {
+                        {
+                            router.navigateTo(
+                                route = status?.toChainStatus?.transactionUrl!!,
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                    trailingIcon = if (routeStatus != RouteStatus.NoHash && !status?.toChainStatus?.transactionUrl.isNullOrEmpty()) {
+                        R.drawable.icon_external_link
+                    } else {
+                        null
+                    },
                 ),
             ),
             deleteAction = createDeleteAction(transfer, routeStatus),
