@@ -141,10 +141,10 @@ object DydxAlertsView : DydxComponent {
                 .background(color = ThemeColor.SemanticColor.layer_3.color, shape = shape)
                 .border(2.dp, ThemeColor.SemanticColor.layer_6.color, shape = shape)
                 .clip(shape)
-                .padding(16.dp)
                 .clickable {
                     item.tapAction?.invoke()
-                },
+                }
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {

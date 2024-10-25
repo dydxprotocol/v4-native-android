@@ -29,7 +29,7 @@ class DydxTransferInstanceStore @Inject constructor(
                 TransferType.transferOut -> DydxTransferInstance.TransferType.TRANSFER_OUT
                 else -> DydxTransferInstance.TransferType.DEPOSIT
             },
-            transactionHash = hash,
+            transactionHash = hash.lowercase(),
             fromChainId = transferInput.requestPayload?.fromChainId,
             fromChainName = fromChainName,
             toChainId = transferInput.requestPayload?.toChainId,
