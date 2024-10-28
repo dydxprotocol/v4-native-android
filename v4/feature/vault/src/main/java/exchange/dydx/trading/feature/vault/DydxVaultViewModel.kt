@@ -52,11 +52,11 @@ class DydxVaultViewModel @Inject constructor(
     ): DydxVaultView.ViewState {
         val items: List<DydxVaultPositionItemView.ViewState> = vault?.positions?.sortedByEquity?.mapNotNull { position ->
             val marketId = position.marketId ?: return@mapNotNull null
-            if (marketId == "USDC-USD") {
+            if (marketId == "UNALLOCATEDUSDC-USD") {
                 return@mapNotNull createUsdcItem(position)
             }
-            val market = marketMap?.get(marketId) ?: return@mapNotNull null
-            val asset = assetMap?.get(market.assetId) ?: return@mapNotNull null
+            val market = marketMap?.get(marketId)
+            val asset = market?.assetId?.let { assetMap?.get(it) }
             createPositionItem(position, asset)
         } ?: listOf()
         return DydxVaultView.ViewState(
@@ -80,9 +80,18 @@ class DydxVaultViewModel @Inject constructor(
                 side = Side.Long,
             ),
             leverage = "1.00x",
-            notionalValue = formatter.dollarVolume((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 2),
-            equity = formatter.dollarVolume((position.marginUsdc?.absoluteValue ?: 0.0), digits = 2),
-            positionSize = formatter.condensed((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
+            notionalValue = formatter.dollarVolume(
+                (position.currentPosition?.usdc?.absoluteValue ?: 0.0),
+                digits = 2,
+            ),
+            equity = formatter.dollarVolume(
+                (position.marginUsdc?.absoluteValue ?: 0.0),
+                digits = 0,
+            ),
+            positionSize = formatter.condensed(
+                (position.currentPosition?.asset?.absoluteValue ?: 0.0),
+                digits = 0,
+            ),
             token = TokenTextView.ViewState(
                 symbol = "USDC",
             ),
@@ -97,32 +106,47 @@ class DydxVaultViewModel @Inject constructor(
 
     private fun createPositionItem(
         position: VaultPosition,
-        asset: Asset
+        asset: Asset?
     ): DydxVaultPositionItemView.ViewState? {
         val marketId = position.marketId ?: return null
         return DydxVaultPositionItemView.ViewState(
             localizer = localizer,
             id = marketId,
-            logoUrl = asset.resources?.imageUrl,
-            assetName = asset.name,
+            logoUrl = asset?.resources?.imageUrl,
+            assetName = asset?.name,
             market = marketId,
             side = SideTextView.ViewState(
                 localizer = localizer,
                 side = position.side,
             ),
-            leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2)?.let {
-                "${it}x"
-            },
-            notionalValue = formatter.dollarVolume((position.currentPosition?.usdc?.absoluteValue ?: 0.0), digits = 2),
-            equity = formatter.dollarVolume((position.marginUsdc?.absoluteValue ?: 0.0), digits = 2),
-            positionSize = formatter.condensed((position.currentPosition?.asset?.absoluteValue ?: 0.0), digits = 2),
-            token = TokenTextView.ViewState(
-                symbol = asset.id,
+            leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2)
+                ?.let {
+                    "${it}x"
+                },
+            notionalValue = formatter.dollarVolume(
+                (position.currentPosition?.usdc?.absoluteValue ?: 0.0),
+                digits = 2,
             ),
+            equity = formatter.dollarVolume(
+                (position.marginUsdc?.absoluteValue ?: 0.0),
+                digits = 0,
+            ),
+            positionSize = formatter.condensed(
+                (position.currentPosition?.asset?.absoluteValue ?: 0.0),
+                digits = 0,
+            ),
+            token = asset?.id?.let {
+                TokenTextView.ViewState(
+                    symbol = it,
+                )
+            },
             pnlAmount = if (position.thirtyDayPnl?.absolute != null) {
                 SignedAmountView.ViewState(
                     sign = position.pnlSign,
-                    text = formatter.dollarVolume(position.thirtyDayPnl?.absolute?.absoluteValue, digits = 2) ?: "-",
+                    text = formatter.dollarVolume(
+                        position.thirtyDayPnl?.absolute?.absoluteValue,
+                        digits = 2,
+                    ) ?: "-",
                 )
             } else {
                 SignedAmountView.ViewState(

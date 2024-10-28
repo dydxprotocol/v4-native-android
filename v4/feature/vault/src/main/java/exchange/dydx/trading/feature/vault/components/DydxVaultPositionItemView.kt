@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.vault.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -141,17 +143,28 @@ object DydxVaultPositionItemView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            PlatformRoundImage(
-                icon = if (state.assetName == "USDC") R.drawable.vault_usdc_token else state.logoUrl,
-                size = 24.dp,
-            )
+            if (state.assetName == "USDC") {
+                PlatformRoundImage(
+                    icon = R.drawable.vault_usdc_token,
+                    size = 24.dp,
+                )
+            } else if (state.logoUrl != null) {
+                PlatformRoundImage(
+                    icon = state.logoUrl,
+                    size = 24.dp,
+                )
+            } else {
+                Canvas(modifier = Modifier.size(24.dp), onDraw = {
+                    drawCircle(color = ThemeColor.SemanticColor.layer_5.color)
+                })
+            }
 
             Column(
                 modifier = Modifier,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = state.assetName ?: "",
+                    text = state.assetName ?: "-",
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.small),
                 )
