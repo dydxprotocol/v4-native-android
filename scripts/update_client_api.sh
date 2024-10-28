@@ -30,7 +30,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+source ~/.zprofile
+
 # Running npm commands
+nvm install
+nvm use
 npm install
 npm run build
 npm run webpack

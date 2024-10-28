@@ -35,6 +35,7 @@ class DydxTransferOutUSDCStep(
             val payload: Map<String, Any> = mapOf(
                 "subaccountNumber" to subaccountNumber,
                 "amount" to amount,
+                "memo" to transferInput.memo,
                 "recipient" to recipient,
             )
             val paramsInJson = payload.toJson()
