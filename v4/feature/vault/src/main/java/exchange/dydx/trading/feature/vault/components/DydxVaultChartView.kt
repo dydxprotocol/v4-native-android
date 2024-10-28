@@ -82,6 +82,7 @@ object DydxVaultChartView : DydxComponent {
 
         Column(
             modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             TopSelectorContent(
                 modifier = Modifier
@@ -92,7 +93,7 @@ object DydxVaultChartView : DydxComponent {
             SparklineView.Content(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(180.dp)
                     .padding(vertical = 0.dp)
                     .padding(horizontal = 0.dp),
                 state = state.sparkline,

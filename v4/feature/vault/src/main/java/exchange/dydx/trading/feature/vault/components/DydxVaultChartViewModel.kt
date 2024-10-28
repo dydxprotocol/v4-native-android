@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.vault.components
 
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
@@ -9,7 +10,14 @@ import exchange.dydx.abacus.functional.vault.VaultHistoryEntry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.components.charts.config.AxisConfig
+import exchange.dydx.platformui.components.charts.config.AxisTextPosition
+import exchange.dydx.platformui.components.charts.config.InteractionConfig
+import exchange.dydx.platformui.components.charts.config.LabelConfig
+import exchange.dydx.platformui.components.charts.formatter.ValueAxisFormatter
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
+import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.feature.shared.views.SparklineView
 import kotlinx.coroutines.flow.Flow
@@ -55,6 +63,24 @@ class DydxVaultChartViewModel @Inject constructor(
         currentTypeIndex: Int,
         currentResolutionIndex: Int,
     ): DydxVaultChartView.ViewState {
+        val config = SparklineView.ViewState.defaultLineChartConfig.copy(
+            lineDrawing = SparklineView.ViewState.defaultLineChartConfig.lineDrawing.copy(
+                lineWidth = 3.0.toFloat(),
+            ),
+            interaction = InteractionConfig.default.copy(
+                selectionListener = this,
+            ),
+            rightAxis = AxisConfig(
+                drawLine = true,
+                drawGrid = false,
+                label = LabelConfig(
+                    formatter = ValueAxisFormatter(),
+                    size = 8.0f,
+                    color = ThemeColor.SemanticColor.text_secondary.color.toArgb(),
+                    position = AxisTextPosition.INSIDE,
+                ),
+            ),
+        )
         return DydxVaultChartView.ViewState(
             localizer = localizer,
             typeTitles = ChartType.allTypes.map { it.title(localizer) },
@@ -74,8 +100,7 @@ class DydxVaultChartViewModel @Inject constructor(
                     type = ChartType.allTypes[currentTypeIndex],
                     resolution = ChartResolution.allResolutions[currentResolutionIndex],
                 ),
-                lineWidth = 3.0,
-                selectionListener = this,
+                lineChartConfig = config,
             ),
         )
     }
@@ -106,7 +131,7 @@ class DydxVaultChartViewModel @Inject constructor(
                 ChartType.PNL -> entry.totalPnl
                 ChartType.EQUITY -> entry.equity
             }?.toFloat()
-            if (x == null || y == null) {
+            if (y == null) {
                 return@map null
             }
             Entry(x, y, entry)
@@ -132,7 +157,7 @@ enum class ChartType {
 
     fun title(localizer: LocalizerProtocol): String = localizer.localize(titleKey)
 
-    val titleKey: String
+    private val titleKey: String
         get() = when (this) {
             PNL -> "APP.VAULTS.VAULT_PNL"
             EQUITY -> "APP.VAULTS.VAULT_EQUITY"

@@ -12,6 +12,7 @@ import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.PlatformUISign
+import exchange.dydx.platformui.components.charts.config.InteractionConfig
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -87,8 +88,14 @@ class DydxPortfolioChartViewModel @Inject constructor(
             sparkline = SparklineView.ViewState(
                 sparkline = dataset,
                 sign = if (positive) PlatformUISign.Plus else PlatformUISign.Minus,
-                lineWidth = 3.0,
-                selectionListener = this,
+                lineChartConfig = SparklineView.ViewState.defaultLineChartConfig.copy(
+                    lineDrawing = SparklineView.ViewState.defaultLineChartConfig.lineDrawing.copy(
+                        lineWidth = 3.0.toFloat(),
+                    ),
+                    interaction = InteractionConfig.default.copy(
+                        selectionListener = this,
+                    ),
+                ),
             ),
             resolutionTitles = resolutionTitles,
             resolutionIndex = resolutionIndex,

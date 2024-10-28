@@ -11,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.platformui.components.charts.config.AxisConfig
 import exchange.dydx.platformui.components.charts.config.DrawingConfig
@@ -42,8 +41,7 @@ object SparklineView {
     data class ViewState(
         val sparkline: LineChartDataSet? = null,
         val sign: PlatformUISign? = null,
-        val lineWidth: Double = 2.0,
-        val selectionListener: OnChartValueSelectedListener? = null,
+        val lineChartConfig: LineChartConfig? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -59,6 +57,23 @@ object SparklineView {
                 ),
                 sign = PlatformUISign.Plus,
             )
+
+            val defaultLineChartConfig: LineChartConfig
+                get() = LineChartConfig(
+                    lineDrawing = LineChartDrawingConfig(
+                        lineWidth = 2.0.toFloat(),
+                        lineColor = ThemeColor.SemanticColor.text_primary.color.toArgb(),
+                        fillAlpha = null,
+                        smooth = true,
+                    ),
+                    drawing = DrawingConfig(
+                        margin = 0.0f,
+                        autoScale = true,
+                    ),
+                    interaction = InteractionConfig.default,
+                    xAxis = AxisConfig(drawLine = false, drawGrid = false),
+                    leftAxis = AxisConfig(drawLine = false, drawGrid = false),
+                )
         }
     }
 
@@ -66,28 +81,7 @@ object SparklineView {
     fun Content(modifier: Modifier, state: ViewState?) {
         if (state == null) return
 
-        val config = LineChartConfig(
-            lineDrawing = LineChartDrawingConfig(
-                lineWidth = state.lineWidth.toFloat(),
-                lineColor = ThemeColor.SemanticColor.text_primary.color.toArgb(),
-                fillAlpha = null,
-                smooth = true,
-            ),
-            drawing = DrawingConfig(
-                margin = 0.0f,
-                autoScale = true,
-            ),
-            interaction = if (state.selectionListener != null) {
-                InteractionConfig.default.copy(
-                    selectionListener = state.selectionListener,
-                )
-            } else {
-                InteractionConfig.default
-            },
-            xAxis = AxisConfig(drawLine = false, drawGrid = false),
-            leftAxis = AxisConfig(drawLine = false, drawGrid = false),
-            rightAxis = null,
-        )
+        val config = state.lineChartConfig ?: ViewState.defaultLineChartConfig
 
         val context = LocalContext.current
         // Create a reference to the regular Android View
