@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.vault.components
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,11 +15,11 @@ import exchange.dydx.platformui.components.charts.config.AxisConfig
 import exchange.dydx.platformui.components.charts.config.AxisTextPosition
 import exchange.dydx.platformui.components.charts.config.InteractionConfig
 import exchange.dydx.platformui.components.charts.config.LabelConfig
-import exchange.dydx.platformui.components.charts.formatter.ValueAxisFormatter
 import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.views.SparklineView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,7 @@ class DydxVaultChartViewModel @Inject constructor(
     private val selectedChartEntry: MutableStateFlow<VaultHistoryEntry?>,
     private val vaultHistory: MutableStateFlow<List<VaultHistoryEntry>?>,
     private val chartType: MutableStateFlow<ChartType?>,
+    private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
 
     private val typeIndex = MutableStateFlow(0)
@@ -74,7 +76,7 @@ class DydxVaultChartViewModel @Inject constructor(
                 drawLine = true,
                 drawGrid = false,
                 label = LabelConfig(
-                    formatter = ValueAxisFormatter(),
+                    formatter = DollarValueAxisFormatter(formatter),
                     size = 8.0f,
                     color = ThemeColor.SemanticColor.text_secondary.color.toArgb(),
                     position = AxisTextPosition.INSIDE,
@@ -184,5 +186,16 @@ private enum class ChartResolution {
 
     companion object {
         val allResolutions = listOf(DAY, WEEK, MONTH)
+    }
+}
+
+private class DollarValueAxisFormatter(
+    val formatter: DydxFormatter,
+) : ValueFormatter() {
+    override fun getFormattedValue(value: Float): String {
+        return formatter.dollarVolume(
+            value.toDouble(),
+            digits = 2,
+        ) ?: ""
     }
 }
