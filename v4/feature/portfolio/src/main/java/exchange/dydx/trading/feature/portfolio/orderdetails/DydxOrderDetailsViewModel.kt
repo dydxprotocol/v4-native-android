@@ -277,7 +277,9 @@ class DydxOrderDetailsViewModel @Inject constructor(
                             },
                         ),
                     )
-                } else null,
+                } else {
+                    null
+                },
             ).filterNotNull(),
         )
     }

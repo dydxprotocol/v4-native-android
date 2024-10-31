@@ -11,6 +11,7 @@ import exchange.dydx.trading.feature.vault.DydxVaultView
 import exchange.dydx.trading.feature.vault.depositwithdraw.DydxVaultDepositWithdrawView
 import exchange.dydx.trading.feature.vault.depositwithdraw.confirmation.DydxVaultConfirmationView
 import exchange.dydx.trading.feature.vault.history.DydxVaultHistoryView
+import exchange.dydx.trading.feature.vault.tos.DydxVaultTosView
 import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.vaultGraph(
@@ -57,5 +58,13 @@ fun NavGraphBuilder.vaultGraph(
         deepLinks = appRouter.deeplinks(VaultRoutes.history),
     ) { navBackStackEntry ->
         DydxVaultHistoryView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = VaultRoutes.tos,
+        deepLinks = appRouter.deeplinks(VaultRoutes.tos),
+    ) { navBackStackEntry ->
+        DydxVaultTosView.Content(Modifier)
     }
 }
