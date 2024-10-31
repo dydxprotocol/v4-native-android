@@ -248,16 +248,37 @@ class DydxOrderDetailsViewModel @Inject constructor(
                     ),
                 ),
                 DydxOrderDetailsView.Item(
-                    title = localizer.localize("APP.TRADE.TIME_IN_FORCE"),
+                    title = localizer.localize("APP.TRADE.GOOD_TIL"),
                     value = DydxOrderDetailsView.Item.ItemValue.StringValue(
-                        order.resources.timeInForceString ?: order.resources.timeInForceStringKey?.let {
-                            localizer.localize(
-                                it,
-                            )
+                        order.goodTilBlock?.toLong()?.let {
+                            "$it"
                         },
                     ),
                 ),
-            ),
+                DydxOrderDetailsView.Item(
+                    title = localizer.localize("APP.TRADE.TIME_IN_FORCE"),
+                    value = DydxOrderDetailsView.Item.ItemValue.StringValue(
+                        order.resources.timeInForceString
+                            ?: order.resources.timeInForceStringKey?.let {
+                                localizer.localize(
+                                    it,
+                                )
+                            },
+                    ),
+                ),
+                if (order.cancelReason != null) {
+                    DydxOrderDetailsView.Item(
+                        title = localizer.localize("APP.TRADE.CANCEL_REASON"),
+                        value = DydxOrderDetailsView.Item.ItemValue.StringValue(
+                            order.cancelReason?.let {
+                                localizer.localize(
+                                    "APP.TRADE.$it",
+                                )
+                            },
+                        ),
+                    )
+                } else null,
+            ).filterNotNull(),
         )
     }
 

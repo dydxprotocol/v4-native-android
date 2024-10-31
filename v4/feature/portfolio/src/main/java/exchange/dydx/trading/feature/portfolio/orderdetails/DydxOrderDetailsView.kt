@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -162,7 +163,7 @@ object DydxOrderDetailsView : DydxComponent {
                         .padding(vertical = 16.dp)
                         .padding(horizontal = ThemeShapes.HorizontalPadding),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
                 ) {
                     Text(
                         text = item.title ?: "",
@@ -170,6 +171,8 @@ object DydxOrderDetailsView : DydxComponent {
                             .themeColor(ThemeColor.SemanticColor.text_tertiary)
                             .themeFont(fontSize = ThemeFont.FontSize.small),
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
 
                     when (val value = item.value) {
                         is Item.ItemValue.Number -> {
@@ -185,6 +188,7 @@ object DydxOrderDetailsView : DydxComponent {
                                 text = value.value ?: "-",
                                 style = TextStyle.dydxDefault
                                     .themeColor(ThemeColor.SemanticColor.text_primary),
+                                textAlign = TextAlign.End,
                             )
                         }
                         is Item.ItemValue.Checkmark -> {

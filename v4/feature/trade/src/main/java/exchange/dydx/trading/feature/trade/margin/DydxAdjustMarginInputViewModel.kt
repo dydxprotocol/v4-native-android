@@ -111,21 +111,21 @@ class DydxAdjustMarginInputViewModel @Inject constructor(
         when (input.type) {
             Add -> {
                 if (summary.crossFreeCollateral != null && amount.toDouble() >= summary.crossFreeCollateral!!) {
-                    return localizer.localize("APP.ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
+                    return localizer.localize("ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
                 }
                 if (summary.crossMarginUsage != null && summary.crossMarginUsage!! > 1.0) {
-                    return localizer.localize("APP.ERRORS.TRADE_BOX.INVALID_NEW_ACCOUNT_MARGIN_USAGE")
+                    return localizer.localize("ERRORS.TRADE_BOX.INVALID_NEW_ACCOUNT_MARGIN_USAGE")
                 }
             }
             Remove -> {
                 if (summary.positionLeverageUpdated != null && summary.positionLeverageUpdated!! > marketMaxLeverage) {
-                    return localizer.localize("APP.ERRORS.TRADE_BOX.POSITION_LEVERAGE_OVER_MAX")
+                    return localizer.localize("ERRORS.TRADE_BOX.POSITION_LEVERAGE_OVER_MAX")
                 }
                 if (marginUsage != null && marginUsage > 1) {
-                    return localizer.localize("APP.ERRORS.TRADE_BOX.INVALID_NEW_ACCOUNT_MARGIN_USAGE")
+                    return localizer.localize("ERRORS.TRADE_BOX.INVALID_NEW_ACCOUNT_MARGIN_USAGE")
                 }
                 if (freeCollateral != null && amount.toDouble() > freeCollateral) {
-                    return localizer.localize("APP.ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
+                    return localizer.localize("ERRORS.TRANSFER_MODAL.TRANSFER_MORE_THAN_FREE")
                 }
             }
         }

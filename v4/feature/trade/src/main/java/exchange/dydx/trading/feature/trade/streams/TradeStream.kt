@@ -55,7 +55,7 @@ class TradeStream @Inject constructor(
             .distinctUntilChanged()
 
     override fun submitTrade() {
-        if (abacusStateManager.state.tradeInput != null) {
+        if (abacusStateManager.state.tradeInput.value != null) {
             _submissionStatus.update { null }
 
             abacusStateManager.placeOrder { submissionStatus ->
@@ -68,7 +68,7 @@ class TradeStream @Inject constructor(
     }
 
     override fun closePosition() {
-        if (abacusStateManager.state.closePositionInput != null) {
+        if (abacusStateManager.state.closePositionInput.value != null) {
             _submissionStatus.update { null }
 
             abacusStateManager.closePosition { submissionStatus ->
