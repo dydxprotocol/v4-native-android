@@ -61,6 +61,7 @@ class DydxVaultWithdrawViewModel @Inject constructor(
         vault: Vault?,
         result: VaultFormValidationResult?
     ): DydxVaultWithdrawView.ViewState {
+        val roundedWithdrawableUsdc = formatter.raw(vault?.account?.withdrawableUsdc, digits = 2, rounding = RoundingMode.DOWN)
         return DydxVaultWithdrawView.ViewState(
             localizer = localizer,
             transferAmount = VaultAmountBox.ViewState(
@@ -68,17 +69,17 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                 formatter = formatter,
                 parser = parser,
                 value = parser.asString(inputState.amount.value),
-                maxAmount = vault?.account?.withdrawableUsdc,
+                maxAmount = roundedWithdrawableUsdc?.toDouble(),
                 maxAction = {
-                    val amount = formatter.raw(vault?.account?.withdrawableUsdc, digits = 2, rounding = RoundingMode.DOWN)
-                    updateAmount(value = parser.asDouble(amount), vaultAccount = vault?.account)
+                    val amount = roundedWithdrawableUsdc?.toDouble()
+                    updateAmount(value = amount, vaultAccount = vault?.account)
                 },
                 title = localizer.localize("APP.VAULTS.ENTER_AMOUNT_TO_WITHDRAW"),
                 footer = localizer.localize("APP.VAULTS.YOUR_VAULT_BALANCE"),
                 footerBefore = AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = vault?.account?.withdrawableUsdc,
+                    amount = roundedWithdrawableUsdc?.toDouble(),
                     tickSize = 2,
                     requiresPositive = true,
                 ),

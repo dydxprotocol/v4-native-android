@@ -135,7 +135,7 @@ class DydxVaultViewModel @Inject constructor(
                 (position.currentPosition?.asset?.absoluteValue ?: 0.0),
                 digits = 0,
             ),
-            token = asset?.id?.let {
+            token = asset?.displayableAssetId?.let {
                 TokenTextView.ViewState(
                     symbol = it,
                 )

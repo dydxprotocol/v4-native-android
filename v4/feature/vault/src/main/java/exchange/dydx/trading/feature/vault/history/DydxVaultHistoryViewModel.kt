@@ -41,12 +41,12 @@ class DydxVaultHistoryViewModel @Inject constructor(
                 router.navigateBack()
             },
             items = history.mapNotNull {
-                createItemViewStater(it)
+                createItemViewState(it)
             },
         )
     }
 
-    private fun createItemViewStater(item: VaultTransfer): DydxVaultHistoryItemView.ViewState? {
+    private fun createItemViewState(item: VaultTransfer): DydxVaultHistoryItemView.ViewState? {
         val timestamp = item.timestampMs?.toLong() ?: return null
         val dateInstant = Instant.ofEpochMilli(timestamp)
         val dateFormater =
