@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.receipt.components.fee
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -26,7 +25,6 @@ class DydxReceiptTransferFeeViewModel @Inject constructor(
                 createViewState(it)
             }
             .distinctUntilChanged()
-
 
     private fun createViewState(
         transferInput: TransferInput?
