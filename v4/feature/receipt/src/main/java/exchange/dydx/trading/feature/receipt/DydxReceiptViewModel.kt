@@ -51,6 +51,7 @@ private fun ReceiptLine.toType(): DydxReceiptView.ReceiptLineType? {
         ReceiptLine.PositionMargin -> DydxReceiptView.ReceiptLineType.PositionMargin
         ReceiptLine.PositionLeverage -> DydxReceiptView.ReceiptLineType.PositionLeverage
         ReceiptLine.LiquidationPrice -> DydxReceiptView.ReceiptLineType.LiquidationPrice
+        ReceiptLine.TransferFee -> DydxReceiptView.ReceiptLineType.TransferFee
         ReceiptLine.Total -> null
         ReceiptLine.WalletBalance -> null
         ReceiptLine.CrossFreeCollateral -> null

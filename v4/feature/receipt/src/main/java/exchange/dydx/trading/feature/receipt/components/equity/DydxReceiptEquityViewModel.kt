@@ -36,7 +36,7 @@ class DydxReceiptEquityViewModel @Inject constructor(
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = subaccount?.equity?.current,
+                    amount = subaccount.equity?.current,
                     tickSize = 2,
                 )
             } else {
@@ -46,7 +46,7 @@ class DydxReceiptEquityViewModel @Inject constructor(
                 AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = subaccount?.equity?.postOrder,
+                    amount = subaccount.equity?.postOrder,
                     tickSize = 2,
                 )
             } else {

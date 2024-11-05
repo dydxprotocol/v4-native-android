@@ -2,39 +2,44 @@ package exchange.dydx.trading.feature.receipt.components.fee
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.input.TradeInputSummary
+import exchange.dydx.abacus.output.PerpetualMarketSummary
+import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.receipt.streams.ReceiptStreaming
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
-class DydxReceiptFeeViewModel @Inject constructor(
+class DydxReceiptTransferFeeViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
+    private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
-    private val receiptStream: ReceiptStreaming,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxReceiptBaseFeeView.ViewState?> =
-        receiptStream.tradeSummaryFlow
+        abacusStateManager.state.transferInput
             .map {
-                createViewState(it?.first)
+                createViewState(it)
             }
             .distinctUntilChanged()
 
-    private fun createViewState(tradeSummary: TradeInputSummary?): DydxReceiptBaseFeeView.ViewState {
+
+    private fun createViewState(
+        transferInput: TransferInput?
+    ): DydxReceiptBaseFeeView.ViewState {
+        val gasFee = transferInput?.summary?.gasFee
         return DydxReceiptBaseFeeView.ViewState(
             localizer = localizer,
-            feeType = localizer.localize("APP.TRADE.TAKER"),
-            feeFont = if (tradeSummary?.fee == null) {
+            feeType = "Gas",
+            feeFont = if (gasFee == null) {
                 null
-            } else if ((tradeSummary.fee ?: 0.0) > 0.0) {
+            } else if (gasFee > 0.0) {
                 DydxReceiptBaseFeeView.FeeFont.Number(
-                    formatter.dollar(tradeSummary.fee ?: 0.0, 2) ?: "",
+                    formatter.dollar(gasFee, 2) ?: "",
                 )
             } else {
                 DydxReceiptBaseFeeView.FeeFont.String(localizer.localize("APP.GENERAL.FREE"))

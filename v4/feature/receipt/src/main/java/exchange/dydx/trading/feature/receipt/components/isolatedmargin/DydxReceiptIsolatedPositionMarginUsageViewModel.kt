@@ -8,6 +8,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,6 +25,7 @@ class DydxReceiptIsolatedPositionMarginUsageViewModel @Inject constructor(
     private val formatter: DydxFormatter,
 ) : ViewModel(), DydxViewModel {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: Flow<DydxReceiptIsolatedPositionMarginUsageView.ViewState?> =
         abacusStateManager.marketId
             .filterNotNull()

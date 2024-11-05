@@ -1,6 +1,7 @@
 package exchange.dydx.trading.feature.receipt.streams
 
 import exchange.dydx.abacus.output.input.TradeInputSummary
+import exchange.dydx.abacus.output.input.TransferInputSummary
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.receipt.ReceiptType
 import exchange.dydx.trading.feature.receipt.TradeReceiptType

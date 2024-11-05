@@ -44,7 +44,7 @@ class DydxReceiptExpectedPriceViewModel @Inject constructor(
             title = localizer.localize("APP.TRADE.EXPECTED_PRICE"),
             value = if (tradeSummary?.price != null) {
                 formatter.dollar(
-                    tradeSummary?.price ?: 0.0,
+                    tradeSummary.price ?: 0.0,
                     market.configs?.displayTickSizeDecimals ?: 0,
                 )
             } else {

@@ -43,26 +43,26 @@ class DydxReceiptExchangeReceivedViewModel @Inject constructor(
         transferInput: TransferInput?
     ): String? {
         val exchangeRate = transferInput?.summary?.exchangeRate ?: return null
-        val type = transferInput?.type ?: return null
-        val token = transferInput?.token ?: return null
+        val type = transferInput.type ?: return null
+        val token = transferInput.token ?: return null
         val symbol =
-            transferInput?.resources?.tokenResources?.toMap()?.get(token)?.symbol ?: return null
+            transferInput.resources?.tokenResources?.toMap()?.get(token)?.symbol ?: return null
         when (type) {
             TransferType.deposit -> {
-                val usdcSize = transferInput?.summary?.usdcSize ?: return null
+                val usdcSize = transferInput.summary?.usdcSize ?: return null
                 val converted = formatter.raw(usdcSize, 2) ?: return null
                 return "$converted USDC"
             }
 
             TransferType.withdrawal -> {
-                val toAmount = transferInput?.summary?.toAmount
+                val toAmount = transferInput.summary?.toAmount
                 if (toAmount != null) {
-                    val decimals = transferInput?.resources?.tokenResources?.toMap()?.get(token)?.decimals ?: return null
+                    val decimals = transferInput.resources?.tokenResources?.toMap()?.get(token)?.decimals ?: return null
                     val size = toAmount.toDouble() / 10.0.pow(decimals)
                     val converted = formatter.raw(size, 4) ?: return null
                     return "$converted $symbol"
                 } else {
-                    val usdcSize = transferInput?.summary?.usdcSize ?: return null
+                    val usdcSize = transferInput.summary?.usdcSize ?: return null
                     if (exchangeRate > 0) {
                         val converted = formatter.raw(usdcSize * exchangeRate, 2) ?: return null
                         return "$converted $symbol"

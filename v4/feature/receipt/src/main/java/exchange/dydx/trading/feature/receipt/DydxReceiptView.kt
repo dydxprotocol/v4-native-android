@@ -35,6 +35,7 @@ import exchange.dydx.trading.feature.receipt.components.expectedprice.DydxReceip
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptBridgeFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptFeeView
 import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptGasFeeView
+import exchange.dydx.trading.feature.receipt.components.fee.DydxReceiptTransferFeeView
 import exchange.dydx.trading.feature.receipt.components.isolatedmargin.DydxReceiptIsolatedPositionMarginUsageView
 import exchange.dydx.trading.feature.receipt.components.leverage.DydxReceiptPositionLeverageView
 import exchange.dydx.trading.feature.receipt.components.liquidationprice.DydxReceiptLiquidationPriceView
@@ -61,6 +62,7 @@ object DydxReceiptView : DydxComponent {
         Fee,
         GasFee,
         BridgeFee,
+        TransferFee,
         ExpectedPrice,
         Rewards,
         Equity,
@@ -192,6 +194,10 @@ object DydxReceiptView : DydxComponent {
 
                         ReceiptLineType.LiquidationPrice -> {
                             DydxReceiptLiquidationPriceView.Content(Modifier.animateItemPlacement())
+                        }
+
+                        ReceiptLineType.TransferFee -> {
+                            DydxReceiptTransferFeeView.Content(Modifier.animateItemPlacement())
                         }
                     }
                 }

@@ -37,7 +37,7 @@ class DydxReceiptMarginUsageViewModel @Inject constructor(
                 MarginUsageView.ViewState(
                     localizer = localizer,
                     displayOption = MarginUsageView.DisplayOption.IconAndValue,
-                    percent = subaccount?.marginUsage?.current ?: 0.0,
+                    percent = subaccount.marginUsage?.current ?: 0.0,
                 )
             } else {
                 null
@@ -46,7 +46,7 @@ class DydxReceiptMarginUsageViewModel @Inject constructor(
                 MarginUsageView.ViewState(
                     localizer = localizer,
                     displayOption = MarginUsageView.DisplayOption.IconAndValue,
-                    percent = subaccount?.marginUsage?.postOrder ?: 0.0,
+                    percent = subaccount.marginUsage?.postOrder ?: 0.0,
                 )
             } else {
                 null
