@@ -1,9 +1,15 @@
 package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import exchange.dydx.abacus.protocols.FormatterProtocol
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import java.text.DecimalFormat
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AbacusFormatterImp : FormatterProtocol {
+@Singleton
+class AbacusFormatterImp @Inject constructor(
+    private val formatter: DydxFormatter
+) : FormatterProtocol {
     override fun dollar(value: Double?, tickSize: String?): String? {
         if (value == null) {
             return null
@@ -11,16 +17,11 @@ class AbacusFormatterImp : FormatterProtocol {
 
         val digits = tickSize?.let { digits(it) } ?: 2
 
-        val decimalFormat = if (value > 0) DecimalFormat("$#." + "#".repeat(digits)) else DecimalFormat("-$#." + "#".repeat(digits))
-        return decimalFormat.format(value)
+        return formatter.dollar(value, digits)
     }
 
     override fun percent(value: Double?, digits: Int): String? {
-        if (value == null) {
-            return null
-        }
-        val decimalFormat = DecimalFormat("$#." + "#".repeat(digits) + "%")
-        return decimalFormat.format(value * 100)
+        return formatter.percent(value, digits)
     }
 
     private fun digits(size: String): Int {

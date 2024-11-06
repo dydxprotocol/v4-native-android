@@ -4,6 +4,7 @@ import exchange.dydx.abacus.state.app.helper.DynamicLocalizer
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.abacus.utils.UIImplementations
 import exchange.dydx.dydxstatemanager.BuildConfig
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import java.util.Locale
 
 object UIImplementationsExtensions {
@@ -21,7 +22,7 @@ object UIImplementationsExtensions {
             loadLocalOnly = loadLocalOnly,
         )
 
-        val formatter = shared?.formatter ?: AbacusFormatterImp()
+        val formatter = shared?.formatter ?: AbacusFormatterImp(DydxFormatter())
         shared = UIImplementations(localizer = localizer, formatter = formatter)
     }
 }
