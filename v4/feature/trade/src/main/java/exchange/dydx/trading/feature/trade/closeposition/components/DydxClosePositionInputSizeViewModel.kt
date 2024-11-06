@@ -37,7 +37,7 @@ class DydxClosePositionInputSizeViewModel @Inject constructor(
     ): DydxClosePositionInputSizeView.ViewState {
         return DydxClosePositionInputSizeView.ViewState(
             localizer = localizer,
-            token = configsAndAsset?.asset?.id,
+            token = configsAndAsset?.asset?.displayableAssetId,
             size = input?.size?.size.let {
                 formatter.raw(it, configsAndAsset?.configs?.displayStepSizeDecimals ?: 0)
             },

@@ -37,7 +37,7 @@ class DydxTradeInputSizeViewModel @Inject constructor(
     ): DydxTradeInputSizeView.ViewState {
         return DydxTradeInputSizeView.ViewState(
             localizer = localizer,
-            token = configsAndAsset?.asset?.id,
+            token = configsAndAsset?.asset?.displayableAssetId,
             size = tradeInput?.size?.size.let {
                 formatter.raw(it, configsAndAsset?.configs?.displayStepSizeDecimals ?: 0)
             },

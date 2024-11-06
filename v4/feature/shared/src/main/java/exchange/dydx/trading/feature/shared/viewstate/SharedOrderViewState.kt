@@ -93,9 +93,9 @@ data class SharedOrderViewState(
                     else -> formatter.dollar(order.price, tickSize)
                 },
                 triggerPrice = formatter.dollar(order.triggerPrice, tickSize),
-                token = if (asset.id != null) {
+                token = if (asset.displayableAssetId.isNotEmpty()) {
                     TokenTextView.ViewState(
-                        symbol = asset.id,
+                        symbol = asset.displayableAssetId,
                     )
                 } else {
                     null

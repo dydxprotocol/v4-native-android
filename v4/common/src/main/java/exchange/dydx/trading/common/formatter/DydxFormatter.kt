@@ -304,7 +304,7 @@ class DydxFormatter @Inject constructor() {
                         formatted
                     }
                 } else {
-                    number.toString()
+                    number.toBigDecimal().toPlainString()
                 }
             } else {
                 "∞"

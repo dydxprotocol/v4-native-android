@@ -77,9 +77,9 @@ data class SharedFillViewState(
                         OrderSide.Sell -> SideTextView.Side.Sell
                     },
                 ),
-                token = if (asset.id != null) {
+                token = if (asset.displayableAssetId.isNotEmpty()) {
                     TokenTextView.ViewState(
-                        symbol = asset.id,
+                        symbol = asset.displayableAssetId,
                     )
                 } else {
                     null

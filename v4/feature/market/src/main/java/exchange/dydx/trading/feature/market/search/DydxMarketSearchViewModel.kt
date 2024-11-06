@@ -46,7 +46,7 @@ class DydxMarketSearchViewModel @Inject constructor(
                 }
                 val asset = assetMap?.get(market.assetId) ?: return@filter false
 
-                asset.id.lowercase().contains(searchText.lowercase()) ||
+                asset.displayableAssetId.lowercase().contains(searchText.lowercase()) ||
                     (asset.name?.lowercase()?.contains(searchText.lowercase()) ?: false)
             }
             createViewState(filterMarkets, assetMap)

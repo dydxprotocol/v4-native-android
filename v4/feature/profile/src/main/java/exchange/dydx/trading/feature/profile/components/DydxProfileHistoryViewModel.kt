@@ -119,7 +119,7 @@ class DydxProfileHistoryViewModel @Inject constructor(
                 },
                 localizer = localizer,
             ),
-            string = asset.id,
+            string = asset.displayableAssetId,
         )
         val side = SideTextView.ViewState(
             side = when (fill.side) {
@@ -160,7 +160,7 @@ class DydxProfileHistoryViewModel @Inject constructor(
         )
         val type = DydxProfileHistoryItemView.ViewState.TypeUnion.Token(
             tokenTextViewModel = TokenTextView.ViewState(
-                symbol = asset.id,
+                symbol = asset.displayableAssetId,
             ),
         )
         val size = formatter.dollar(funding.payment, 4)

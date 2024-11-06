@@ -53,9 +53,9 @@ class DydxTradeStatusPositionViewModel @Inject constructor(
         return DydxTradeStatusPositionView.ViewState(
             localizer = localizer,
             tokenUrl = configsAndAsset.asset?.resources?.imageUrl,
-            token = if (configsAndAsset.asset?.id != null) {
+            token = if (configsAndAsset.asset?.displayableAssetId?.isNotEmpty() == true) {
                 TokenTextView.ViewState(
-                    symbol = configsAndAsset.asset?.id ?: "",
+                    symbol = configsAndAsset.asset?.displayableAssetId ?: "",
                 )
             } else {
                 null

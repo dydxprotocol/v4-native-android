@@ -133,7 +133,7 @@ class DydxMarketStatsViewModel @Inject constructor(
         } else {
             "-"
         }
-        val token = TokenTextView.ViewState(symbol = asset.id)
+        val token = TokenTextView.ViewState(symbol = asset.displayableAssetId)
         items.add(
             DydxMarketStatsView.StatItem(
                 header = localizer.localize("APP.TRADE.OPEN_INTEREST"),

@@ -58,7 +58,7 @@ data class SharedMarketViewState(
         ): SharedMarketViewState {
             val viewModel = SharedMarketViewState(
                 id = market.displayId,
-                tokenSymbol = asset?.id ?: market.assetId,
+                tokenSymbol = asset?.displayableAssetId ?: market.assetId,
                 tokenFullName = asset?.name ?: market.assetId,
                 logoUrl = asset?.resources?.imageUrl,
                 volume24H = formatter.dollarVolume(market.perpetual?.volume24H),

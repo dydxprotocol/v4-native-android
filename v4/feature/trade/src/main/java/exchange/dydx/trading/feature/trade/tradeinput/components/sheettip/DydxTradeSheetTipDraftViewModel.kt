@@ -56,7 +56,7 @@ class DydxTradeSheetTipDraftViewModel @Inject constructor(
             else -> null
         }
 
-        val symbol = asset?.id ?: configsAndAsset?.assetId
+        val symbol = asset?.displayableAssetId ?: configsAndAsset?.assetId
 
         val price = when (tradeInput.type) {
             OrderType.Limit, OrderType.StopLimit, OrderType.TakeProfitLimit -> tradeInput.price?.limitPrice

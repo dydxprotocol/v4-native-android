@@ -88,7 +88,7 @@ class DydxTriggerOrderSizeViewModel @Inject constructor(
             labeledTextInput = LabeledTextInput.ViewState(
                 localizer = localizer,
                 label = localizer.localize("APP.GENERAL.AMOUNT"),
-                token = configsAndAsset?.asset?.id,
+                token = configsAndAsset?.asset?.displayableAssetId,
                 value = formatter.decimalLocaleAgnostic(size, size = stepSize),
                 alertState = if (firstErrorOrWarning?.fields?.contains(TriggerOrdersInputField.size.rawValue) == true) {
                     firstErrorOrWarning.alertState

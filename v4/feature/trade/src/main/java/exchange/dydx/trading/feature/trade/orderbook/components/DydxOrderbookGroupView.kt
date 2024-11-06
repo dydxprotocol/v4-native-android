@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformImage
+import exchange.dydx.platformui.components.textgroups.PlatformAutoSizingText
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -65,15 +66,13 @@ object DydxOrderbookGroupView : DydxComponent {
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = state?.price ?: "",
+            PlatformAutoSizingText(
                 modifier = Modifier.weight(1f),
-                style = TextStyle.dydxDefault
+                text =  state.price ?: "",
+                textStyle = TextStyle.dydxDefault
                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                     .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number),
-                maxLines = 1,
             )
-
             ZoomButton(
                 icon = R.drawable.icon_minus,
                 enabled = state.zoomLevel > 0,
