@@ -102,7 +102,7 @@ class DydxVaultConfirmationViewModel @Inject constructor(
             },
             sourceValue = formatter.dollar(amount, digits = 2),
             destinationValue = when (type) {
-                VaultInputType.DEPOSIT -> localizer.localize("APP.VAULTS.VAULT")
+                VaultInputType.DEPOSIT -> localizer.localize("APP.VAULTS.MEGAVAULT")
                 VaultInputType.WITHDRAW -> localizer.localize("APP.VAULTS.CROSS_ACCOUNT")
             },
             destinationIcon = when (type) {
