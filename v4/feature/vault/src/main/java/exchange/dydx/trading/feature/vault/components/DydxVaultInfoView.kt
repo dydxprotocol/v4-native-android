@@ -92,7 +92,7 @@ object DydxVaultInfoView : DydxComponent {
                             text = state.balance ?: "-",
                             modifier = modifier,
                             style = TextStyle.dydxDefault
-                                .themeFont(fontSize = ThemeFont.FontSize.medium)
+                                .themeFont(fontSize = ThemeFont.FontSize.large)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
                     },
@@ -105,7 +105,7 @@ object DydxVaultInfoView : DydxComponent {
                             modifier = modifier,
                             state = state.pnl,
                             textStyle = TextStyle.dydxDefault
-                                .themeFont(fontSize = ThemeFont.FontSize.medium),
+                                .themeFont(fontSize = ThemeFont.FontSize.large),
                         )
                     },
                 )
@@ -151,14 +151,14 @@ object DydxVaultInfoView : DydxComponent {
                             modifier = modifier,
                             state = state.apr,
                             textStyle = TextStyle.dydxDefault
-                                .themeFont(fontSize = ThemeFont.FontSize.medium),
+                                .themeFont(fontSize = ThemeFont.FontSize.large),
                         )
                     } else {
                         Text(
                             text = "-",
                             modifier = modifier,
                             style = TextStyle.dydxDefault
-                                .themeFont(fontSize = ThemeFont.FontSize.medium)
+                                .themeFont(fontSize = ThemeFont.FontSize.large)
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
                     }
@@ -172,7 +172,7 @@ object DydxVaultInfoView : DydxComponent {
                         text = state.tvl ?: "-",
                         modifier = modifier,
                         style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.medium)
+                            .themeFont(fontSize = ThemeFont.FontSize.large)
                             .themeColor(ThemeColor.SemanticColor.text_primary),
                     )
                 },
