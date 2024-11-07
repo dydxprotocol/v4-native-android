@@ -42,7 +42,7 @@ class DydxVaultChartViewModel @Inject constructor(
 ) : ViewModel(), DydxViewModel, OnChartValueSelectedListener {
 
     private val typeIndex = MutableStateFlow(0)
-    private val resolutionIndex = MutableStateFlow(1)
+    private val resolutionIndex = MutableStateFlow(0)
 
     val state: Flow<DydxVaultChartView.ViewState?> =
         combine(
@@ -117,9 +117,9 @@ class DydxVaultChartViewModel @Inject constructor(
             val then = entry.dateInstance ?: return@filter false
             val diff = now.toEpochMilliseconds() - then.toEpochMilli()
             when (resolution) {
-                ChartResolution.DAY -> diff <= Duration.ofDays(1).toMillis()
                 ChartResolution.WEEK -> diff <= Duration.ofDays(7).toMillis()
                 ChartResolution.MONTH -> diff <= Duration.ofDays(30).toMillis()
+                ChartResolution.MONTH3 -> diff <= Duration.ofDays(90).toMillis()
             }
         }?.reversed()
         vaultHistory.value = filtered
@@ -171,21 +171,21 @@ enum class ChartType {
 }
 
 private enum class ChartResolution {
-    DAY,
     WEEK,
-    MONTH;
+    MONTH,
+    MONTH3;
 
     fun title(localizer: LocalizerProtocol): String = localizer.localize(titleKey)
 
     val titleKey: String
         get() = when (this) {
-            DAY -> "APP.GENERAL.TIME_STRINGS.1D"
             WEEK -> "APP.GENERAL.TIME_STRINGS.7D"
             MONTH -> "APP.GENERAL.TIME_STRINGS.30D"
+            MONTH3 -> "APP.GENERAL.TIME_STRINGS.90D"
         }
 
     companion object {
-        val allResolutions = listOf(DAY, WEEK, MONTH)
+        val allResolutions = listOf(WEEK, MONTH, MONTH3)
     }
 }
 
