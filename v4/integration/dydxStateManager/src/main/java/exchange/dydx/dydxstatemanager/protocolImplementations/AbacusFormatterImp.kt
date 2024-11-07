@@ -2,7 +2,6 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 
 import exchange.dydx.abacus.protocols.FormatterProtocol
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import java.text.DecimalFormat
 import javax.inject.Inject
 import javax.inject.Singleton
 

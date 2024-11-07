@@ -48,7 +48,6 @@ import exchange.dydx.utilities.utils.combineState
 import exchange.dydx.utilities.utils.mapState
 import exchange.dydx.utilities.utils.mapStateWithThrottle
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 
 class AbacusState(

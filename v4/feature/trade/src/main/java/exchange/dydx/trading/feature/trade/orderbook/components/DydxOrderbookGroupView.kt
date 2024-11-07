@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.trade.orderbook.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +67,7 @@ object DydxOrderbookGroupView : DydxComponent {
         ) {
             PlatformAutoSizingText(
                 modifier = Modifier.weight(1f),
-                text =  state.price ?: "",
+                text = state.price ?: "",
                 textStyle = TextStyle.dydxDefault
                     .themeColor(ThemeColor.SemanticColor.text_tertiary)
                     .themeFont(fontSize = ThemeFont.FontSize.small, fontType = ThemeFont.FontType.number),

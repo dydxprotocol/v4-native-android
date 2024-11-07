@@ -181,7 +181,7 @@ object DydxVaultPositionItemView : DydxComponent {
                         )
                     }
 
-                    if ( state.leverage != null) {
+                    if (state.leverage != null) {
                         Text(
                             text = "@",
                             style = TextStyle.dydxDefault
