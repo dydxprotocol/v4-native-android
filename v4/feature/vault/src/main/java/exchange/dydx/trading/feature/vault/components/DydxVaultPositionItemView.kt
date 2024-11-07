@@ -180,17 +180,20 @@ object DydxVaultPositionItemView : DydxComponent {
                                 .themeFont(fontSize = ThemeFont.FontSize.mini),
                         )
                     }
-                    Text(
-                        text = "@",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.mini)
-                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                    )
-                    Text(
-                        text = state.leverage ?: "-",
-                        style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.mini),
-                    )
+
+                    if ( state.leverage != null) {
+                        Text(
+                            text = "@",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.mini)
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                        )
+                        Text(
+                            text = state.leverage ?: "-",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.mini),
+                        )
+                    }
                 }
             }
         }
