@@ -48,7 +48,15 @@ import exchange.dydx.utilities.utils.combineState
 import exchange.dydx.utilities.utils.mapState
 import exchange.dydx.utilities.utils.mapStateWithThrottle
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 
 class AbacusState(
     val walletState: StateFlow<DydxWalletState?>,
@@ -364,21 +372,23 @@ class AbacusState(
     /**
      Asset of given asset Id
      **/
-    val assetMap: StateFlow<Map<String, Asset>?> by lazy {
+    val assetMap: Flow<Map<String, Asset>?> by lazy {
         perpetualState
-            .mapState(appScope) {
+            .map {
                 it?.assets?.toMap()
             }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
+            .shareIn(appScope, SharingStarted.Lazily, 1)
     }
 
     /**
      MarketConfigs and Asset map
      **/
-    val configsAndAssetMap: StateFlow<Map<String, MarketConfigsAndAsset>?> by lazy {
-        combineState(
+    val configsAndAssetMap: Flow<Map<String, MarketConfigsAndAsset>?> by lazy {
+        combine(
             marketMap,
             assetMap,
-            appScope,
         ) { marketMap: Map<String, PerpetualMarket>?, assetMap: Map<String, Asset>? ->
             val output = mutableMapOf<String, MarketConfigsAndAsset>()
             marketMap?.entries?.forEach { (marketId, market) ->
@@ -387,6 +397,9 @@ class AbacusState(
             }
             output
         }
+            .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
+            .shareIn(appScope, SharingStarted.Lazily, 1)
     }
 
     /**
