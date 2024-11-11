@@ -86,11 +86,11 @@ class DydxVaultViewModel @Inject constructor(
             ),
             equity = formatter.dollarVolume(
                 (position.marginUsdc?.absoluteValue ?: 0.0),
-                digits = 0,
+                digits = 2,
             ),
             positionSize = formatter.condensed(
                 (position.currentPosition?.asset?.absoluteValue ?: 0.0),
-                digits = 0,
+                digits = 2,
             ),
             token = TokenTextView.ViewState(
                 symbol = "USDC",
