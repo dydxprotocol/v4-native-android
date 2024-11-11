@@ -115,10 +115,12 @@ class DydxVaultViewModel @Inject constructor(
             logoUrl = asset?.resources?.imageUrl,
             assetName = asset?.name,
             market = marketId,
-            side = SideTextView.ViewState(
-                localizer = localizer,
-                side = position.side,
-            ),
+            side = position.side?.let {
+                SideTextView.ViewState(
+                    localizer = localizer,
+                    side = it,
+                )
+            },
             leverage = formatter.raw(position.currentLeverageMultiple?.absoluteValue, digits = 2)
                 ?.let {
                     "${it}x"
@@ -178,15 +180,15 @@ class DydxVaultViewModel @Inject constructor(
     }
 }
 
-private val VaultPosition.side: SideTextView.Side
+private val VaultPosition.side: SideTextView.Side?
     get() = run {
-        val size = this.currentPosition?.asset ?: return SideTextView.Side.None
+        val size = this.currentPosition?.asset ?: return null
         return if (size > 0) {
             SideTextView.Side.Long
         } else if (size < 0) {
             SideTextView.Side.Short
         } else {
-            SideTextView.Side.None
+            null
         }
     }
 

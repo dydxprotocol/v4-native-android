@@ -172,12 +172,19 @@ object DydxVaultPositionItemView : DydxComponent {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    state.side?.let {
+                    if (state.side != null) {
                         SideTextView.Content(
                             modifier = Modifier,
-                            state = it,
+                            state = state.side,
                             textStyle = TextStyle.dydxDefault
                                 .themeFont(fontSize = ThemeFont.FontSize.mini),
+                        )
+                    } else {
+                        Text(
+                            text = "-",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.mini)
+                                .themeColor(ThemeColor.SemanticColor.text_tertiary),
                         )
                     }
 
