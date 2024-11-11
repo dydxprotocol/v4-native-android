@@ -88,7 +88,7 @@ ext {
     compileSdkVersion = 34
 
     // App dependencies
-    abacusVersion = '1.13.18'
+    abacusVersion = '1.13.19'
     carteraVersion = '0.1.15'
     kollectionsVersion = '2.0.16'
 
