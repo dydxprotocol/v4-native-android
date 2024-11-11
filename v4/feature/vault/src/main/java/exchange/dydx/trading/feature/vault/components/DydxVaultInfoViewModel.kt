@@ -40,14 +40,14 @@ class DydxVaultInfoViewModel @Inject constructor(
             formatter.dollar(it?.absoluteValue, 2) ?: "-"
         }
         val apr = SignedAmountView.ViewState.fromDouble(vault?.details?.thirtyDayReturnPercent) {
-            formatter.percent(it?.absoluteValue, 2) ?: "-"
+            formatter.percent(it?.absoluteValue, 0) ?: "-"
         }
         return DydxVaultInfoView.ViewState(
             localizer = localizer,
             balance = formatter.dollar(vault?.account?.balanceUsdc, digits = 2),
             pnl = pnl,
             apr = apr,
-            tvl = formatter.dollar(vault?.details?.totalValue, digits = 2),
+            tvl = formatter.dollar(vault?.details?.totalValue, digits = 0),
             chartEntrySelected = selectedChartEntry != null,
         )
     }
