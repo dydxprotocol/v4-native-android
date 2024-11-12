@@ -70,6 +70,7 @@ object DydxPortfolioView : DydxComponent {
         val localizer: LocalizerProtocol,
         val displayContent: DisplayContent = DisplayContent.Overview,
         val tabSelection: DydxPortfolioSectionsView.Selection = DydxPortfolioSectionsView.Selection.Positions,
+        val vaultEnabled: Boolean = false,
     ) {
         companion object {
             val preview = ViewState(
@@ -157,8 +158,10 @@ object DydxPortfolioView : DydxComponent {
                     }
                 }
 
-                item(key = "vault") {
-                    DydxPortfolioVaultView.Content(Modifier)
+                if (state.vaultEnabled) {
+                    item(key = "vault") {
+                        DydxPortfolioVaultView.Content(Modifier)
+                    }
                 }
             }
         }

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 @HiltViewModel
 class DydxPortfolioVaultViewModel @Inject constructor(
@@ -37,7 +38,7 @@ class DydxPortfolioVaultViewModel @Inject constructor(
             localizer = localizer,
             balance = formatter.dollar(account.balanceUsdc, digits = 2),
             apr = SignedAmountView.ViewState(
-                text = formatter.percent(apr, digits = 2),
+                text = formatter.percent(apr?.absoluteValue, digits = 2),
                 sign = if ((apr ?: 0.0) > 0) {
                     PlatformUISign.Plus
                 } else if ((apr ?: 0.0) < 0) {
