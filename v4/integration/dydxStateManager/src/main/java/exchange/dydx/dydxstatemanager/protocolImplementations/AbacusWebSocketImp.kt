@@ -16,7 +16,7 @@ class AbacusWebSocketImp @Inject constructor(
     private val logger: Logging,
 ) : exchange.dydx.abacus.protocols.WebSocketProtocol {
 
-    private val TAG = "AbacusRestImp"
+    private val TAG = "AbacusWebSocketImp"
 
     private var url: String? = null
     private var connected: ((Boolean) -> Unit)? = null
@@ -80,6 +80,7 @@ class AbacusWebSocketImp @Inject constructor(
                     }
 
                     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                        logger.d(TAG, "AbacusWebSocketImp Closing $code $reason")
                         webSocket.close(NORMAL_CLOSURE, null)
                         connected?.invoke(false)
                     }
@@ -89,6 +90,7 @@ class AbacusWebSocketImp @Inject constructor(
                         t: Throwable,
                         response: Response?
                     ) {
+                        logger.e(TAG, "AbacusWebSocketImp Error ${t.message}")
                         connected?.invoke(false)
                     }
                 }

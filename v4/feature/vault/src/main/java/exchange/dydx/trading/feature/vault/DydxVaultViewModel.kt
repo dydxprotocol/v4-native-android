@@ -58,7 +58,9 @@ class DydxVaultViewModel @Inject constructor(
             val market = marketMap?.get(marketId)
             val asset = market?.assetId?.let { assetMap?.get(it) }
             createPositionItem(position, asset)
-        } ?: listOf()
+        }?.distinctBy {
+            it.id
+        }  ?: listOf()
         return DydxVaultView.ViewState(
             localizer = localizer,
             items = items,

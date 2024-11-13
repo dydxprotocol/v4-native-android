@@ -91,6 +91,8 @@ class DydxMarketAssetListViewModel @Inject constructor(
                         favoriteStore.setFavorite(!isFavorite, market.id)
                     },
                 )
+            }?.distinctBy {
+                it.sharedMarketViewState?.id
             } ?: emptyList(),
             scrollToTop = scrollTop,
         )

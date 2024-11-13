@@ -62,6 +62,8 @@ class DydxPortfolioPendingPositionsViewModel @Inject constructor(
                         )
                     },
                 )
+            }?.distinctBy {
+                it.id
             } ?: listOf(),
         )
     }
