@@ -60,7 +60,7 @@ class DydxVaultViewModel @Inject constructor(
             createPositionItem(position, asset)
         }?.distinctBy {
             it.id
-        }  ?: listOf()
+        } ?: listOf()
         return DydxVaultView.ViewState(
             localizer = localizer,
             items = items,

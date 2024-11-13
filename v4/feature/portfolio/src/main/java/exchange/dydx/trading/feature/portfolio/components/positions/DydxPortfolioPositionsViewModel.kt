@@ -66,7 +66,7 @@ class DydxPortfolioPositionsViewModel @Inject constructor(
                 )
             }?.distinctBy {
                 it.id
-            }?: listOf(),
+            } ?: listOf(),
             onPositionTapAction = { position ->
                 val market = marketMap?.get(position.id) ?: return@ViewState
                 router.navigateTo(

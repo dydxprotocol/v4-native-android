@@ -83,7 +83,7 @@ class DydxMarketSearchViewModel @Inject constructor(
                 )
             }?.distinctBy {
                 it.sharedMarketViewState?.id
-            }  ?: emptyList(),
+            } ?: emptyList(),
             searchText = searchText.value,
             searchTextChanged = {
                 searchText.value = it
