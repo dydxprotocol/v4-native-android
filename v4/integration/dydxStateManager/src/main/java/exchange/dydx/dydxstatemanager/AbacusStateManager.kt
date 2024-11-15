@@ -197,7 +197,7 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
-        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing, default = BuildConfig.DEBUG)
+        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing, default = true)
         appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
         appConfigsV2.accountConfigs.subaccountConfigs.notifications =
             listOf(
