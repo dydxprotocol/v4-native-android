@@ -26,6 +26,8 @@ import java.util.Date
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
+private val maxLinesToDisplay = 12 // no need to do extra processing. Even on biggest screen, max displayed is ~10
+
 @HiltViewModel
 class DydxOrderbookAsksViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
@@ -49,13 +51,16 @@ class DydxOrderbookAsksViewModel @Inject constructor(
             val side = tradeInput.side
             val orderbook = orderbookMap?.get(marketId)
             val orderbookUsage = tradeInput.marketOrder?.orderbook
+            val asks = orderbook?.asks?.take(maxLinesToDisplay)
+            val bids = orderbook?.bids?.take(maxLinesToDisplay)
             createViewState(
                 localizer = localizer,
                 formatter = formatter,
                 market = marketMap?.get(marketId),
                 orderbook = orderbook,
                 orderbookUsage = if (side == OrderSide.Buy) orderbookUsage else null,
-                lines = orderbook?.asks?.toList() ?: emptyList(),
+                lines = asks ?: emptyList(),
+                maxDepth = orderbook?.maxDepth(bids, asks) ?: 0.0,
                 startingColor = ThemeColor.SemanticColor.negativeColor,
                 side = DydxOrderbookSideView.Side.Asks,
                 colorMap = colorMap,
@@ -90,13 +95,16 @@ class DydxOrderbookBidsViewModel @Inject constructor(
             val side = tradeInput.side
             val orderbook = orderbookMap?.get(marketId)
             val orderbookUsage = tradeInput.marketOrder?.orderbook
+            val asks = orderbook?.asks?.take(maxLinesToDisplay)
+            val bids = orderbook?.bids?.take(maxLinesToDisplay)
             createViewState(
                 localizer = localizer,
                 formatter = formatter,
                 market = marketMap?.get(marketId),
                 orderbook = orderbook,
                 orderbookUsage = if (side == OrderSide.Sell) orderbookUsage else null,
-                lines = orderbook?.bids?.toList() ?: emptyList(),
+                lines = bids?.toList() ?: emptyList(),
+                maxDepth = orderbook?.maxDepth(asks, bids) ?: 0.0,
                 startingColor = ThemeColor.SemanticColor.positiveColor,
                 side = DydxOrderbookSideView.Side.Bids,
                 colorMap = colorMap,
@@ -123,17 +131,15 @@ private fun createViewState(
     orderbook: MarketOrderbook?,
     orderbookUsage: IList<OrderbookUsage>?,
     lines: List<OrderbookLine>,
+    maxDepth: Double,
     startingColor: ThemeColor.SemanticColor,
     side: DydxOrderbookSideView.Side,
     colorMap: MutableMap<Double, ColorMapEntry>,
     onTap: (DydxOrderbookSideView.DydxOrderbookLine) -> Unit,
 ): DydxOrderbookSideView.ViewState {
     val items = lines.take(12)
-    var maxDepth: Double = 0.0
     val output: MutableList<DydxOrderbookSideView.DydxOrderbookLine> = mutableListOf()
     items.forEach { line ->
-        maxDepth = maxDepth.coerceAtLeast(line.depth ?: 0.0)
-
         val textColor: ThemeColor.SemanticColor
         if (colorMap.containsKey(line.price)) {
             val entry = colorMap[line.price]!!
@@ -187,4 +193,10 @@ internal fun lineSelected(
 
         else -> {}
     }
+}
+
+fun MarketOrderbook.maxDepth(bids: List<OrderbookLine>?, asks: List<OrderbookLine>?): Double {
+    val bidsMaxDepth = bids?.maxOfOrNull { it.depth ?: 0.0 } ?: 0.0
+    val asksMaxDepth = asks?.maxOfOrNull { it.depth ?: 0.0 } ?: 0.0
+    return maxOf(bidsMaxDepth, asksMaxDepth)
 }
