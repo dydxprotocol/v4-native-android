@@ -43,6 +43,9 @@ class DydxMarketAssetListViewModel @Inject constructor(
             favoriteStore.state,
         ) { markets, assetMap, filterAction, sortAction, _ ->
             val filteredMarkets = markets?.filter { market ->
+                if (market.status?.canTrade != true) {
+                    return@filter false
+                }
                 val action = filterAction.action
                 if (assetMap != null) {
                     return@filter action(market, assetMap, favoriteStore)

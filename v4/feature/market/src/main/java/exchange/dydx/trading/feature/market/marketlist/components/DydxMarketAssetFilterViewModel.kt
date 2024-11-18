@@ -86,6 +86,7 @@ data class FilterAction(
                     },
                 ),
 
+                /*
                 FilterAction(
                     type = MarketFiltering.PREDICTION,
                     content = localizer.localize("APP.GENERAL.PREDICTION_MARKET"),
@@ -93,6 +94,7 @@ data class FilterAction(
                         assetMap[market.assetId]?.tags?.contains("Prediction Market") ?: false
                     },
                 ),
+                 */
 
                 FilterAction(
                     type = MarketFiltering.LAYER1,
