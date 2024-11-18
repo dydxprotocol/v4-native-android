@@ -104,7 +104,7 @@ class DydxOrderbookBidsViewModel @Inject constructor(
                 orderbook = orderbook,
                 orderbookUsage = if (side == OrderSide.Sell) orderbookUsage else null,
                 lines = bids?.toList() ?: emptyList(),
-                maxDepth = orderbook?.maxDepth(asks, bids) ?: 0.0,
+                maxDepth = orderbook?.maxDepth(bids, asks) ?: 0.0,
                 startingColor = ThemeColor.SemanticColor.positiveColor,
                 side = DydxOrderbookSideView.Side.Bids,
                 colorMap = colorMap,
