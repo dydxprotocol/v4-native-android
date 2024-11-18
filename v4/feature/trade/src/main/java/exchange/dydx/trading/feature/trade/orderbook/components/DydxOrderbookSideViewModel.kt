@@ -60,7 +60,7 @@ class DydxOrderbookAsksViewModel @Inject constructor(
                 orderbook = orderbook,
                 orderbookUsage = if (side == OrderSide.Buy) orderbookUsage else null,
                 lines = asks ?: emptyList(),
-                maxDepth = orderbook?.maxDepth(bids, asks) ?: 0.0,
+                maxDepth = maxDepth(bids, asks) ?: 0.0,
                 startingColor = ThemeColor.SemanticColor.negativeColor,
                 side = DydxOrderbookSideView.Side.Asks,
                 colorMap = colorMap,
@@ -104,7 +104,7 @@ class DydxOrderbookBidsViewModel @Inject constructor(
                 orderbook = orderbook,
                 orderbookUsage = if (side == OrderSide.Sell) orderbookUsage else null,
                 lines = bids?.toList() ?: emptyList(),
-                maxDepth = orderbook?.maxDepth(bids, asks) ?: 0.0,
+                maxDepth = maxDepth(bids, asks) ?: 0.0,
                 startingColor = ThemeColor.SemanticColor.positiveColor,
                 side = DydxOrderbookSideView.Side.Bids,
                 colorMap = colorMap,
@@ -195,7 +195,7 @@ internal fun lineSelected(
     }
 }
 
-fun MarketOrderbook.maxDepth(bids: List<OrderbookLine>?, asks: List<OrderbookLine>?): Double {
+private fun maxDepth(bids: List<OrderbookLine>?, asks: List<OrderbookLine>?): Double {
     val bidsMaxDepth = bids?.maxOfOrNull { it.depth ?: 0.0 } ?: 0.0
     val asksMaxDepth = asks?.maxOfOrNull { it.depth ?: 0.0 } ?: 0.0
     return maxOf(bidsMaxDepth, asksMaxDepth)
