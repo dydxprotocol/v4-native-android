@@ -69,7 +69,7 @@ class DydxVaultWithdrawViewModel @Inject constructor(
                 formatter = formatter,
                 parser = parser,
                 value = parser.asString(inputState.amount.value),
-                maxAmount =  parser.asDouble(roundedWithdrawableUsdc),
+                maxAmount = parser.asDouble(roundedWithdrawableUsdc),
                 maxAction = {
                     val amount = parser.asDouble(roundedWithdrawableUsdc)
                     updateAmount(value = amount, vaultAccount = vault?.account)
