@@ -262,8 +262,12 @@ class DydxFormatter @Inject constructor() {
    xxxxx.yyyyy
 
    */
-    fun decimalLocaleAgnostic(number: Double?, digits: Int?): String? {
-        return raw(number = number, digits = digits, locale = Locale.US)
+    fun decimalLocaleAgnostic(
+        number: Double?,
+        digits: Int?,
+        rounding: RoundingMode = RoundingMode.HALF_UP,
+    ): String? {
+        return raw(number = number, digits = digits, locale = Locale.US, rounding = rounding)
     }
 
     /*

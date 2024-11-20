@@ -49,7 +49,7 @@ class DydxVaultDepositViewModel @Inject constructor(
         subaccount: Subaccount?,
         result: VaultFormValidationResult?
     ): DydxVaultDepositView.ViewState {
-        val roundedFreeCollateral = formatter.raw(subaccount?.freeCollateral?.current, digits = 2, rounding = RoundingMode.DOWN)
+        val roundedFreeCollateral = formatter.decimalLocaleAgnostic(subaccount?.freeCollateral?.current, digits = 2, rounding = RoundingMode.DOWN)
         return DydxVaultDepositView.ViewState(
             localizer = localizer,
             transferAmount = VaultAmountBox.ViewState(
@@ -57,16 +57,16 @@ class DydxVaultDepositViewModel @Inject constructor(
                 formatter = formatter,
                 parser = parser,
                 value = parser.asString(inputState.amount.value),
-                maxAmount = roundedFreeCollateral?.toDouble(),
+                maxAmount = parser.asDouble(roundedFreeCollateral),
                 maxAction = {
-                    inputState.amount.value = roundedFreeCollateral?.toDouble()
+                    inputState.amount.value = parser.asDouble(roundedFreeCollateral)
                 },
                 title = localizer.localize("APP.VAULTS.ENTER_AMOUNT_TO_DEPOSIT"),
                 footer = localizer.localize("APP.GENERAL.CROSS_FREE_COLLATERAL"),
                 footerBefore = AmountText.ViewState(
                     localizer = localizer,
                     formatter = formatter,
-                    amount = roundedFreeCollateral?.toDouble(),
+                    amount = parser.asDouble(roundedFreeCollateral),
                     tickSize = 2,
                     requiresPositive = true,
                 ),
