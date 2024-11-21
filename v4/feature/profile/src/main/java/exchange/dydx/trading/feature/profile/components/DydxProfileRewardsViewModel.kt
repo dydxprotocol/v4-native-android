@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.account.Account
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.nativeTokenLogoUrl
 import exchange.dydx.trading.common.DydxViewModel
@@ -23,6 +24,10 @@ class DydxProfileRewardsViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
+
+    init {
+        abacusStateManager.setHistoricalTradingRewardsPeriod(HistoricalTradingRewardsPeriod.WEEKLY)
+    }
 
     val state: Flow<DydxProfileRewardsView.ViewState?> = abacusStateManager.state.account
         .map {
