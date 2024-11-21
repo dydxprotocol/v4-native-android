@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.profile.rewards
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,14 +28,13 @@ object DydxRewardsFaqsHeaderView {
         val localizer: LocalizerProtocol,
         val title: String,
         val learnMoreText: String?,
-        val link: String?,
+        var learnMoreAction: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 title = "FAQs",
                 learnMoreText = "Learn more",
-                link = "https://dydx.exchange",
             )
         }
     }
@@ -57,13 +57,17 @@ object DydxRewardsFaqsHeaderView {
             colume2 = {
                 state.learnMoreText?.let {
                     Text(
+                        modifier = Modifier
+                            .clickable {
+                                state.learnMoreAction()
+                            },
                         text = it,
                         style = TextStyle.dydxDefault
                             .themeFont(
                                 fontSize = ThemeFont.FontSize.small,
                                 fontType = ThemeFont.FontType.book,
                             )
-                            .themeColor(ThemeColor.SemanticColor.text_secondary),
+                            .themeColor(ThemeColor.SemanticColor.color_purple),
                     )
                 }
             },

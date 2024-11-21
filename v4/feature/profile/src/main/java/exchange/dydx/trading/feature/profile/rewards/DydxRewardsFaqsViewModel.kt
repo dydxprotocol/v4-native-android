@@ -6,7 +6,7 @@ import exchange.dydx.abacus.output.Documentation
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class DydxRewardsFaqsViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
     var expanded: MutableStateFlow<Set<String>> = MutableStateFlow(mutableSetOf<String>())
 
@@ -35,9 +35,14 @@ class DydxRewardsFaqsViewModel @Inject constructor(
             localizer = localizer,
             title = DydxRewardsFaqsHeaderView.ViewState(
                 localizer = localizer,
-                title = "FAQs",
-                learnMoreText = "Learn more",
-                link = "https://dydx.exchange",
+                title = localizer.localize("APP.HEADER.HELP"),
+                learnMoreText = localizer.localize("APP.GENERAL.LEARN_MORE"),
+                learnMoreAction = {
+                    val url = abacusStateManager.environment?.links?.tradingRewardsLearnMore
+                    if (url != null) {
+                        router.navigateTo(url)
+                    }
+                },
             ),
             faqs = documentation?.tradingRewardsFAQs?.map {
                 val question = localizer.localize(it.questionLocalizationKey)
@@ -46,7 +51,7 @@ class DydxRewardsFaqsViewModel @Inject constructor(
                     question = question,
                     answer = localizer.localize(it.answerLocalizationKey),
                     expanded = expanded.contains(question),
-                    taped = { question ->
+                    tapped = { question ->
                         val modified = expanded.toMutableSet()
                         if (modified.contains(question)) {
                             modified.remove(question)

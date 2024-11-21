@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.profile.rewards
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -57,17 +56,15 @@ object DydxRewardsEventsHeaderView {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
-            Column(modifier = modifier.align(Alignment.CenterVertically)) {
-                Text(
-                    text = state.localizer.localize("APP.GENERAL.TRADING_REWARDS"),
-                    style = TextStyle.dydxDefault
-                        .themeFont(
-                            fontSize = ThemeFont.FontSize.medium,
-                            fontType = ThemeFont.FontType.book,
-                        )
-                        .themeColor(ThemeColor.SemanticColor.text_secondary),
-                )
-            }
+            Text(
+                text = state.localizer.localize("APP.GENERAL.TRADING_REWARDS"),
+                style = TextStyle.dydxDefault
+                    .themeFont(
+                        fontSize = ThemeFont.FontSize.small,
+                        fontType = ThemeFont.FontType.book,
+                    )
+                    .themeColor(ThemeColor.SemanticColor.text_secondary),
+            )
             PlatformPillTextGroup(
                 modifier = modifier,
                 items = state.periods,
@@ -88,6 +85,7 @@ object DydxRewardsEventsHeaderView {
                 onSelectionChanged = { index ->
                     state.onPeriodChanged(index)
                 },
+                scrollingEnabled = true,
             )
         }
 

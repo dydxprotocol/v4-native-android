@@ -42,7 +42,6 @@ object DydxRewardsFaqsView : DydxComponent {
                     localizer = MockLocalizer(),
                     title = "FAQs",
                     learnMoreText = "Learn more",
-                    link = "https://dydx.exchange",
                 ),
                 faqs = listOf(
                     DydxRewardsFaqItemView.ViewState(

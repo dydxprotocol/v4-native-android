@@ -3,7 +3,6 @@ package exchange.dydx.trading.feature.profile.rewards
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,7 +47,7 @@ object DydxRewardsFaqItemView {
         val question: String,
         val answer: String,
         val expanded: Boolean = false,
-        val taped: (key: String) -> Unit = {},
+        val tapped: (key: String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
@@ -82,14 +81,12 @@ object DydxRewardsFaqItemView {
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_secondary),
-            )
-            Spacer(
                 modifier = Modifier.weight(1f),
             )
             PlatformIconButton(
                 size = 24.dp,
                 action = {
-                    state.taped.invoke(state.question)
+                    state.tapped.invoke(state.question)
                 },
                 enabled = true,
                 backgroundColor = ThemeColor.SemanticColor.layer_5,

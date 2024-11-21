@@ -1,6 +1,5 @@
 package exchange.dydx.trading.feature.profile.rewards
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -75,7 +73,6 @@ object DydxRewardsView : DydxComponent {
         Content(modifier, state, summarytate, faqsState, rewardsState)
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Content(
         modifier: Modifier,
@@ -112,8 +109,6 @@ object DydxRewardsView : DydxComponent {
                 userScrollEnabled = true,
                 state = listState,
             ) {
-                val scopy = this as LazyListScope
-
                 item(key = "launch_incentives") {
                     DydxProfileLaunchIncentivesView.Content(
                         Modifier.padding(horizontal = ThemeShapes.HorizontalPadding),
@@ -131,30 +126,30 @@ object DydxRewardsView : DydxComponent {
                 }
 
                 DydxRewardsFaqsView.Content(
-                    this,
-                    Modifier
+                    scope = this,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(240.dp)
                         .padding(
                             horizontal = ThemeShapes.HorizontalPadding,
                             vertical = ThemeShapes.VerticalPadding * 3,
                         ),
-                    faqsViewState,
+                    state = faqsViewState,
                 )
                 item(key = "event_spacer") {
                     Spacer(modifier = Modifier.height(ThemeShapes.VerticalPadding))
                 }
 
                 DydxRewardsEventsView.Content(
-                    this,
-                    Modifier
+                    scope = this,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .requiredHeight(200.dp)
                         .padding(
                             horizontal = ThemeShapes.HorizontalPadding,
                             vertical = ThemeShapes.VerticalPadding * 3,
                         ),
-                    eventsViewState,
+                    state = eventsViewState,
                 )
             }
         }
