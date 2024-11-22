@@ -221,9 +221,9 @@ object DydxOrderbookSideView {
                     }
                 } else {
                     item {
-                        Spacer(modifier = Modifier.height(actualLineHeight))
+                        Spacer(modifier = Modifier.height(actualLineHeight).animateItemPlacement())
                         if (i < numLinesToDisplay - 1) {
-                            Spacer(modifier = Modifier.height(state.displayStyle.spacing))
+                            Spacer(modifier = Modifier.height(state.displayStyle.spacing).animateItemPlacement())
                         }
                     }
                 }

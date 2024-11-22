@@ -75,7 +75,7 @@ object DydxReceiptOrderCountView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                 before = state.before?.let {
+                before = state.before?.let {
                     {
                         Text(
                             text = state.formatter.localFormatted(it.toDouble(), 0) ?: "",

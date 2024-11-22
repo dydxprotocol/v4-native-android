@@ -140,6 +140,9 @@ private fun createViewState(
     val items = lines.take(12)
     val output: MutableList<DydxOrderbookSideView.DydxOrderbookLine> = mutableListOf()
     items.forEach { line ->
+        if (output.find { it.price == line.price } != null) {
+            return@forEach
+        }
         val textColor: ThemeColor.SemanticColor
         if (colorMap.containsKey(line.price)) {
             val entry = colorMap[line.price]!!
