@@ -42,6 +42,7 @@ import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
+import exchange.dydx.dydxstatemanager.protocolImplementations.LanguageKey
 import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsExtensions
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.R
@@ -156,6 +157,7 @@ class AbacusStateManager @Inject constructor(
     private val transferStateManager: DydxTransferStateManagerProtocol,
     private val cosmosClient: CosmosV4ClientProtocol,
     private val preferencesStore: SharedPreferencesStore,
+    @LanguageKey private val preferenceKey: String,
     @EnvKey private val envKey: String,
     private val featureFlags: DydxFeatureFlags,
     @CoroutineScopes.App private val appScope: CoroutineScope,
@@ -175,7 +177,8 @@ class AbacusStateManager @Inject constructor(
     private val asyncStateManager: SingletonAsyncAbacusStateManagerProtocol by lazy {
         statsigInitWorker.start() // Need to ensure statsig is initialized before we access flags.
 
-        UIImplementationsExtensions.reset(language = null, ioImplementations)
+        val language = preferencesStore.read(key = preferenceKey, defaultValue = "en")
+        UIImplementationsExtensions.reset(language = language, ioImplementations)
 
         val deployment: String
         val appConfigsV2 = AppConfigsV2.forAppWithIsolatedMargins
