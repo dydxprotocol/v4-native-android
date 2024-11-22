@@ -50,6 +50,7 @@ open class DydxReceiptItemView {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = state.title ?: "",
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.small)

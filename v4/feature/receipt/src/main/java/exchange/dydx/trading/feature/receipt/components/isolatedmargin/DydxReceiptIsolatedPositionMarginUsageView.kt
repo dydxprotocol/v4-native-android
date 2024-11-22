@@ -65,6 +65,7 @@ object DydxReceiptIsolatedPositionMarginUsageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = state.localizer.localize("APP.TRADE.POSITION_MARGIN"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -74,7 +75,6 @@ object DydxReceiptIsolatedPositionMarginUsageView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
                 before = state.before?.let {
                     {
                         Text(

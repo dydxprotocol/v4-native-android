@@ -68,6 +68,7 @@ object DydxReceiptFreeCollateralView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = state.label ?: state.localizer.localize("APP.GENERAL.FREE_COLLATERAL"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -77,7 +78,6 @@ object DydxReceiptFreeCollateralView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
                 before = if (state.before != null) {
                     {
                         AmountText.Content(

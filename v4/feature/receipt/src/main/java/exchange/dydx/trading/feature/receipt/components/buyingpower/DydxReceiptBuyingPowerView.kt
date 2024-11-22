@@ -64,6 +64,7 @@ object DydxReceiptBuyingPowerView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = state.localizer.localize("APP.GENERAL.BUYING_POWER"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -73,7 +74,6 @@ object DydxReceiptBuyingPowerView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
                 before = if (state.before != null) { {
                     AmountText.Content(
                         state = state.before,

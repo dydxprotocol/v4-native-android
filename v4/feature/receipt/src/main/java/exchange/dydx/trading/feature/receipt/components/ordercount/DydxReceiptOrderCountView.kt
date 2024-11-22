@@ -65,6 +65,7 @@ object DydxReceiptOrderCountView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = state.localizer.localize("APP.CANCEL_ORDERS_MODAL.OPEN_ORDERS"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -74,8 +75,7 @@ object DydxReceiptOrderCountView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
-                before = state.before?.let {
+                 before = state.before?.let {
                     {
                         Text(
                             text = state.formatter.localFormatted(it.toDouble(), 0) ?: "",

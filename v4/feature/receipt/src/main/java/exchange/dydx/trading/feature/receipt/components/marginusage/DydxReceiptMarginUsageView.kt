@@ -67,6 +67,7 @@ object DydxReceiptMarginUsageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = state.label ?: state.localizer.localize("APP.GENERAL.MARGIN_USAGE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -76,7 +77,7 @@ object DydxReceiptMarginUsageView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
                 before = if (state.before != null) { {
                     MarginUsageView.Content(
                         state = state.before,

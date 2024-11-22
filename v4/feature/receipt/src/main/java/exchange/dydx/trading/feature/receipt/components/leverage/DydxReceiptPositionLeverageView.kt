@@ -64,6 +64,7 @@ object DydxReceiptPositionLeverageView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = state.localizer.localize("APP.TRADE.POSITION_LEVERAGE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
@@ -73,7 +74,6 @@ object DydxReceiptPositionLeverageView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
                 before = if (state.before != null) {
                     {
                         LeverageView.Content(

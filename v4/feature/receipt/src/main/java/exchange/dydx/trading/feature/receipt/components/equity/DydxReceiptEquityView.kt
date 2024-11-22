@@ -88,7 +88,6 @@ object DydxReceiptEquityView : DydxComponent {
             Spacer(modifier = Modifier.weight(0.1f))
 
             PlatformAmountChange(
-                modifier = Modifier.weight(1f),
                 before = if (state.before != null) {
                     {
                         AmountText.Content(
