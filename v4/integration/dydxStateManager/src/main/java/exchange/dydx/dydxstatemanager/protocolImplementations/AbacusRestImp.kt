@@ -91,7 +91,12 @@ class AbacusRestImp @Inject constructor(
         val requestBody = if (!body.isNullOrBlank()) {
             body.toRequestBody("application/json".toMediaTypeOrNull())
         } else {
-            null
+            if (verb == "POST" || verb == "PUT") {
+                // Those request types require a body
+                "".toRequestBody()
+            } else {
+                null
+            }
         }
 
         val request = requestBuilder

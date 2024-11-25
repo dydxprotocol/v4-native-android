@@ -72,6 +72,26 @@
                         }
                     ]
                 }
+            },
+            {
+                "title":{
+                    "text":"Market Asset Metadata Service"
+                },
+                "field":{
+                    "field":"metadata_service",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }

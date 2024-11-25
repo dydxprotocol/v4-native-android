@@ -13,6 +13,7 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.viewstate.SharedMarketViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -57,6 +58,7 @@ class MarketInfoStream @Inject constructor(
             .flowOn(Dispatchers.Default)
             .shareIn(streamScope, SharingStarted.Lazily, 1)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override val marketAndAsset: Flow<MarketAndAsset?> =
         abacusStateManager.marketId
             .filterNotNull()
