@@ -54,7 +54,7 @@ enum class MarketFiltering {
     GAMING,
     MEME,
     RWA,
-    ENT,
+    FOREX,
 }
 
 data class FilterAction(
@@ -162,7 +162,7 @@ data class FilterAction(
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.ENT,
+                    type = MarketFiltering.FOREX,
                     content = localizer.localize("APP.GENERAL.FOREX"),
                     action = { market, assetMap, _ ->
                         assetMap[market.assetId]?.tags?.contains("fiat") ?: false
