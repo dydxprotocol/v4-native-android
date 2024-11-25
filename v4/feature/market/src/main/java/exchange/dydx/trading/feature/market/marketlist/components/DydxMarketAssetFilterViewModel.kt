@@ -47,6 +47,7 @@ enum class MarketFiltering {
     LAYER1,
     LAYER2,
     DEFI,
+    DEPIN,
     NEW,
     AI,
     NFT,
@@ -121,7 +122,7 @@ data class FilterAction(
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.DEFI,
+                    type = MarketFiltering.DEPIN,
                     content = localizer.localize("APP.GENERAL.DEPIN"),
                     action = { market, assetMap, _ ->
                         assetMap[market.assetId]?.tags?.contains("depin") ?: false
