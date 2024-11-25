@@ -96,7 +96,6 @@ data class FilterAction(
                 ),
                  */
 
-
                 FilterAction(
                     type = MarketFiltering.MEME,
                     content = localizer.localize("APP.GENERAL.MEME"),
