@@ -96,27 +96,12 @@ data class FilterAction(
                 ),
                  */
 
-                FilterAction(
-                    type = MarketFiltering.LAYER1,
-                    content = localizer.localize("APP.GENERAL.LAYER_1"),
-                    action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("Layer 1") ?: false
-                    },
-                ),
 
                 FilterAction(
-                    type = MarketFiltering.LAYER2,
-                    content = localizer.localize("APP.GENERAL.LAYER_2"),
+                    type = MarketFiltering.MEME,
+                    content = localizer.localize("APP.GENERAL.MEME"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("Layer 2") ?: false
-                    },
-                ),
-
-                FilterAction(
-                    type = MarketFiltering.DEFI,
-                    content = localizer.localize("APP.GENERAL.DEFI"),
-                    action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("Defi") ?: false
+                        assetMap[market.assetId]?.tags?.contains("memes") ?: false
                     },
                 ),
 
@@ -124,31 +109,39 @@ data class FilterAction(
                     type = MarketFiltering.AI,
                     content = localizer.localize("APP.GENERAL.AI"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("AI") ?: false
+                        assetMap[market.assetId]?.tags?.contains("ai-big-data") ?: false
                     },
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.NFT,
-                    content = localizer.localize("APP.GENERAL.NFT"),
+                    type = MarketFiltering.DEFI,
+                    content = localizer.localize("APP.GENERAL.DEFI"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("NFT") ?: false
+                        assetMap[market.assetId]?.tags?.contains("defi") ?: false
                     },
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.GAMING,
-                    content = localizer.localize("APP.GENERAL.GAMING"),
+                    type = MarketFiltering.DEFI,
+                    content = localizer.localize("APP.GENERAL.DEPIN"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("Gaming") ?: false
+                        assetMap[market.assetId]?.tags?.contains("depin") ?: false
                     },
                 ),
 
                 FilterAction(
-                    type = MarketFiltering.MEME,
-                    content = localizer.localize("APP.GENERAL.MEME"),
+                    type = MarketFiltering.LAYER1,
+                    content = localizer.localize("APP.GENERAL.LAYER_1"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("Meme") ?: false
+                        assetMap[market.assetId]?.tags?.contains("layer-1") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.LAYER2,
+                    content = localizer.localize("APP.GENERAL.LAYER_2"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("layer-2") ?: false
                     },
                 ),
 
@@ -156,15 +149,23 @@ data class FilterAction(
                     type = MarketFiltering.RWA,
                     content = localizer.localize("APP.GENERAL.REAL_WORLD_ASSET_SHORT"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("RWA") ?: false
+                        assetMap[market.assetId]?.tags?.contains("real-world-assets") ?: false
+                    },
+                ),
+
+                FilterAction(
+                    type = MarketFiltering.GAMING,
+                    content = localizer.localize("APP.GENERAL.GAMING"),
+                    action = { market, assetMap, _ ->
+                        assetMap[market.assetId]?.tags?.contains("gaming") ?: false
                     },
                 ),
 
                 FilterAction(
                     type = MarketFiltering.ENT,
-                    content = localizer.localize("APP.GENERAL.ENTERTAINMENT"),
+                    content = localizer.localize("APP.GENERAL.FOREX"),
                     action = { market, assetMap, _ ->
-                        assetMap[market.assetId]?.tags?.contains("Ent") ?: false
+                        assetMap[market.assetId]?.tags?.contains("fiat") ?: false
                     },
                 ),
             )
