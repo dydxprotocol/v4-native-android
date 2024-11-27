@@ -46,8 +46,8 @@ dependencies {
 
     implementation "com.github.PhilJay:MPAndroidChart:$mpAndroidChartVersion"
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$junitExtVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
 
@@ -85,7 +85,7 @@ dependencies {
     implementation "androidx.camera:camera-view:${camerax_version}"
 
     // QR code scanner
-    implementation "com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0"
+    implementation "com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1"
     implementation "com.google.mlkit:barcode-scanning-common:17.0.0"
     implementation "com.google.mlkit:vision-common:17.3.0"
 

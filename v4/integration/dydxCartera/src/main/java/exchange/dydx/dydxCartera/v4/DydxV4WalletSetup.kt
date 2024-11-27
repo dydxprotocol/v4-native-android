@@ -29,6 +29,8 @@ class DydxV4WalletSetup @Inject constructor(
                 chainId = ethereumChainId,
                 signTypedDataDomainName = signTypedDataDomainName,
             ),
+            status = { status ->
+            },
             connected = null,
         ) { signed, error ->
             if (signed != null && error == null) {

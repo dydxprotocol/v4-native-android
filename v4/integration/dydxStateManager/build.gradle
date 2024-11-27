@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'exchange.dydx.dydxstatemanager'
-    compileSdk 33
+    compileSdk parent.compileSdkVersion
 
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

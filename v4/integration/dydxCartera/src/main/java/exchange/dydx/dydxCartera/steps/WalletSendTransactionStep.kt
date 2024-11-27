@@ -43,6 +43,9 @@ class WalletSendTransactionStep(
                         continuation.resume(errorEvent("Wallet not connected"))
                     }
                 },
+                status = { status ->
+                    Log.d("AsyncStep", "Status: $status")
+                },
                 completion = { signed, error ->
                     if (signed != null) {
                         continuation.resume(Result.success(signed))
