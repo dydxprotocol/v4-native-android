@@ -7,6 +7,7 @@ import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.cartera.entities.Wallet
 import exchange.dydx.cartera.walletprovider.WalletConnectCompletion
 import exchange.dydx.cartera.walletprovider.WalletError
+import exchange.dydx.cartera.walletprovider.WalletInfo
 import exchange.dydx.cartera.walletprovider.WalletRequest
 import exchange.dydx.cartera.walletprovider.WalletStatusDelegate
 import exchange.dydx.cartera.walletprovider.WalletStatusProtocol
@@ -20,6 +21,8 @@ open class DydxWalletSetup(
     open val context: Context,
     open val logger: Logging,
 ) : WalletStatusDelegate {
+
+    private val walletConnectModalId = "walletconnect_modal"
 
     data class SetupResult(
         val ethereumAddress: String,
@@ -36,6 +39,7 @@ open class DydxWalletSetup(
         object Started : Status()
         object Connected : Status()
         data class Signed(val setupResult: SetupResult) : Status()
+        data class InProgress(val showSwitchWalletName: String?) : Status()
         data class Error(val error: WalletError) : Status()
 
         companion object {
@@ -72,13 +76,27 @@ open class DydxWalletSetup(
     }
 
     fun start(walletId: String?, ethereumChainId: Int, signTypedDataAction: String, signTypedDataDomainName: String) {
-        val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId }
-        if (wallet == null) {
-            logger.e(TAG, "Wallet not found: $walletId")
+        val wallet: Wallet?
+        val useWcModal: Boolean
+        if (walletConnectModalId == walletId) {
+            wallet = null
+            useWcModal = true
+        } else {
+            wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId }
+            if (wallet == null) {
+                logger.e(TAG, "Wallet not found: $walletId")
+            }
+            useWcModal = false
         }
 
         _status.value = Status.Started
-        val request = WalletRequest(wallet, null, ethereumChainId.toString(), context)
+        val request = WalletRequest(
+            wallet = wallet,
+            address = null,
+            chainId = ethereumChainId.toString(),
+            context = context,
+            useModal = useWcModal,
+        )
         provider.connect(request) { info, error ->
             if (info?.address != null && error == null) {
                 _status.value = Status.Connected
@@ -87,7 +105,14 @@ open class DydxWalletSetup(
 //                    event = "ConnectWallet",
 //                    data = mapOf("selectedWalletType" to walletName.uppercase(), "autoReconnect" to true)
 //                )
-                sign(wallet, info.address!!, ethereumChainId, signTypedDataAction, signTypedDataDomainName)
+                val signRequest = WalletRequest(
+                    wallet = wallet,
+                    address = info.address,
+                    chainId = ethereumChainId.toString(),
+                    context = context,
+                    useModal = useWcModal,
+                )
+                sign(signRequest, info, signTypedDataAction, signTypedDataDomainName)
             } else if (error != null) {
                 _status.value = Status.Error(error)
                 provider.disconnect()
@@ -100,7 +125,7 @@ open class DydxWalletSetup(
         _status.value = Status.Idle
     }
 
-    open fun sign(wallet: Wallet?, address: String, ethereumChainId: Int, signTypedDataAction: String, signTypedDataDomainName: String) {
+    open fun sign(request: WalletRequest, connectedWallet: WalletInfo, signTypedDataAction: String, signTypedDataDomainName: String) {
         // Implementation for the sign() method
     }
 

@@ -48,12 +48,14 @@ object DydxWalletListView : DydxComponent {
         val localizer: LocalizerProtocol,
         val desktopSync: DydxWalletListItemView.ViewState? = null,
         val debugScan: DydxWalletListItemView.ViewState? = null,
+        val wcModal: DydxWalletListItemView.ViewState? = null,
         val wallets: List<DydxWalletListItemView.ViewState> = emptyList(),
         val backButtonHandler: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                DydxWalletListItemView.ViewState.preview,
                 DydxWalletListItemView.ViewState.preview,
                 DydxWalletListItemView.ViewState.preview,
                 listOf(DydxWalletListItemView.ViewState.preview),
@@ -100,23 +102,30 @@ object DydxWalletListView : DydxComponent {
                     .fillMaxWidth(),
                 contentPadding = PaddingValues(16.dp),
             ) {
-                state?.desktopSync?.let { item ->
+                state.desktopSync?.let { item ->
                     item(key = "desktop") {
                         DydxWalletListItemView(item).Content(Modifier)
                     }
                 }
 
-                state?.debugScan?.let { item ->
+                state.debugScan?.let { item ->
                     item(key = "debug") {
                         DydxWalletListItemView(item).Content(Modifier)
                     }
                 }
 
-                if (state?.desktopSync != null || state?.debugScan != null) {
+                if (state.desktopSync != null || state.debugScan != null) {
                     item(key = "spacer") { Spacer(modifier = Modifier.height(24.dp)) }
                 }
 
-                state?.wallets?.let { wallets ->
+                state.wcModal?.let { item ->
+                    item(key = "wc") {
+                        DydxWalletListItemView(item).Content(Modifier)
+                    }
+                    item(key = "spacer2") { Spacer(modifier = Modifier.height(24.dp)) }
+                }
+
+                state.wallets.let { wallets ->
                     items(items = wallets, key = { it.main }) { wallet ->
                         DydxWalletListItemView(wallet).Content(Modifier)
                     }
@@ -124,7 +133,7 @@ object DydxWalletListView : DydxComponent {
             }
 
             BackHandler {
-                state?.backButtonHandler?.invoke()
+                state.backButtonHandler.invoke()
             }
         }
     }

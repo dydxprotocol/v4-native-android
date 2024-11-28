@@ -11,6 +11,7 @@ import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxCartera.imageUrl
 import exchange.dydx.dydxCartera.v4.DydxV4WalletSetup
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
@@ -76,6 +77,17 @@ class DydxOnboardConnectViewModel @Inject constructor(
                     }
                 }
 
+                is DydxWalletSetup.Status.InProgress -> {
+                    val walletName = walletStatus.showSwitchWalletName ?: localizer.localize("APP.GENERAL.WALLET")
+                    toaster.show(
+                        message = localizer.localizeWithParams(
+                            "APP.ONBOARDING.SWITCH_TO_WALLET",
+                            mapOf("WALLET" to walletName),
+                        ),
+                        type = PlatformInfoViewModel.Type.Info,
+                    )
+                }
+
                 is DydxWalletSetup.Status.Signed -> {
                     onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
                     walletAnalytics.logConnected(walletId)
@@ -108,6 +120,18 @@ class DydxOnboardConnectViewModel @Inject constructor(
                         message = message,
                         type = PlatformInfoViewModel.Type.Error,
                     )
+
+                    _state.update { state ->
+                        state.copy(
+                            steps = listOf(
+                                step1(status = ProgressStepView.Status.Custom("1")),
+                                step2(status = ProgressStepView.Status.Custom("2")),
+                            ),
+                            linkWalletButtonEnabled = true,
+                        )
+                    }
+
+                    walletSetup.stop()
                 }
 
                 else -> {}
@@ -127,7 +151,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
             localizer = localizer,
             steps = listOf(step1(), step2()),
             closeButtonHandler = {
-                walletSetup?.stop()
+                walletSetup.stop()
                 router.navigateBack()
             },
             linkWalletAction = {
@@ -137,7 +161,7 @@ class DydxOnboardConnectViewModel @Inject constructor(
                 val signTypedDataDomainName =
                     abacusStateManager.environment?.walletConnection?.signTypedDataDomainName
                 if (ethereumChainId != null && signTypedDataAction != null && signTypedDataDomainName != null) {
-                    walletSetup?.start(
+                    walletSetup.start(
                         walletId = walletId,
                         ethereumChainId = ethereumChainId,
                         signTypedDataAction = signTypedDataAction,
