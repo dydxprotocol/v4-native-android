@@ -92,8 +92,9 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
                         presentation = DydxRouter.Presentation.Modal,
                     )
                 }
-            } else
-                null,
+            } else {
+                null
+            },
         )
     }
 
