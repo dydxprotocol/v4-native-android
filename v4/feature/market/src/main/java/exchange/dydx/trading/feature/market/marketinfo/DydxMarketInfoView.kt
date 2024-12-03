@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +60,6 @@ object DydxMarketInfoView : DydxComponent {
         val statsTabSelection: DydxMarketStatsTabView.Selection = DydxMarketStatsTabView.Selection.Statistics,
         val accountTabSelection: DydxMarketAccountTabView.Selection = DydxMarketAccountTabView.Selection.Position,
         val tileSelection: DydxMarketTilesView.TileType = DydxMarketTilesView.TileType.PRICE,
-        val scrollToTop: Boolean = false,
         val scrollToIndex: Int? = null,
     ) {
         companion object {
@@ -193,10 +193,6 @@ object DydxMarketInfoView : DydxComponent {
                     if (state.scrollToIndex != null) {
                         scope.launch {
                             listState.animateScrollToItem(state.scrollToIndex)
-                        }
-                    } else if (state.scrollToTop) {
-                        scope.launch {
-                            listState.animateScrollToItem(0)
                         }
                     }
                 }
