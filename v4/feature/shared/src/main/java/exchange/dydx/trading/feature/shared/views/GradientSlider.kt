@@ -49,7 +49,9 @@ object GradientSlider {
         if (state == null) {
             return
         }
-        assert(state.leftRatio < state.rightRatio)
+        if (state.leftRatio >= state.rightRatio) {
+            return
+        }
 
         val brush: Brush
         val left = abs(state.leftRatio)
@@ -82,7 +84,6 @@ object GradientSlider {
             showLabel = false,
             showIndicator = false,
             thumb = {
-                // CustomSliderDefaults.Thumb("${abs(it)}x")
                 CustomSliderDefaults.Thumb("")
             },
             track = {
