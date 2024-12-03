@@ -245,24 +245,26 @@ object DydxTradeInputLeverageView : DydxComponent {
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             GradientSlider.Content(modifier, sliderViewState)
-            Row() {
-                Text(
-                    text = when (state.side) {
-                        OrderSide.Sell -> "${absMaxLeverage}x"
-                        OrderSide.Buy -> "${absPositionLeverage}x"
-                    },
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.tiny),
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = when (state.side) {
-                        OrderSide.Sell -> "${absPositionLeverage}x"
-                        OrderSide.Buy -> "${absMaxLeverage}x"
-                    },
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.tiny),
-                )
+            if (sliderViewState.leftRatio < sliderViewState.rightRatio) {
+                Row {
+                    Text(
+                        text = when (state.side) {
+                            OrderSide.Sell -> "${absMaxLeverage}x"
+                            OrderSide.Buy -> "${absPositionLeverage}x"
+                        },
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.tiny),
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = when (state.side) {
+                            OrderSide.Sell -> "${absPositionLeverage}x"
+                            OrderSide.Buy -> "${absMaxLeverage}x"
+                        },
+                        style = TextStyle.dydxDefault
+                            .themeFont(fontSize = ThemeFont.FontSize.tiny),
+                    )
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.account.SubaccountOrder
 import exchange.dydx.abacus.output.account.SubaccountPosition
+import exchange.dydx.abacus.output.input.MarginMode
 import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -16,6 +17,7 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TradeRoutes
 import exchange.dydx.trading.feature.market.marketinfo.streams.MarketInfoStreaming
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +39,7 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
 
     private val includeLimitOrders = abacusStateManager.environment?.featureFlags?.isSlTpLimitOrdersEnabled == true || BuildConfig.DEBUG
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: Flow<DydxMarketPositionButtonsView.ViewState?> =
         combine(
             marketIdFlow,
@@ -82,11 +85,15 @@ class DydxMarketPositionButtonsViewModel @Inject constructor(
                 orders = stopLossOrders,
                 configsAndAsset = configsAndAsset,
             ),
-            editMarginAction = {
-                router.navigateTo(
-                    route = TradeRoutes.adjust_margin + "/$marketId",
-                    presentation = DydxRouter.Presentation.Modal,
-                )
+            editMarginAction = if (position?.marginMode == MarginMode.Isolated) {
+                {
+                    router.navigateTo(
+                        route = TradeRoutes.adjust_margin + "/$marketId",
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                }
+            } else {
+                null
             },
         )
     }

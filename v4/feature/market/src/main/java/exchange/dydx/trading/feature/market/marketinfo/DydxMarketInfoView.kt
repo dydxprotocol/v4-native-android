@@ -59,7 +59,6 @@ object DydxMarketInfoView : DydxComponent {
         val statsTabSelection: DydxMarketStatsTabView.Selection = DydxMarketStatsTabView.Selection.Statistics,
         val accountTabSelection: DydxMarketAccountTabView.Selection = DydxMarketAccountTabView.Selection.Position,
         val tileSelection: DydxMarketTilesView.TileType = DydxMarketTilesView.TileType.PRICE,
-        val scrollToTop: Boolean = false,
         val scrollToIndex: Int? = null,
     ) {
         companion object {
@@ -193,10 +192,6 @@ object DydxMarketInfoView : DydxComponent {
                     if (state.scrollToIndex != null) {
                         scope.launch {
                             listState.animateScrollToItem(state.scrollToIndex)
-                        }
-                    } else if (state.scrollToTop) {
-                        scope.launch {
-                            listState.animateScrollToItem(0)
                         }
                     }
                 }

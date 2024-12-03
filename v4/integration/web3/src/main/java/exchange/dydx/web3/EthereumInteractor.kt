@@ -88,9 +88,9 @@ class EthereumInteractor(
     ) {
         executor.submit {
             try {
-                val balance = web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).send()
+                val balance = web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).send().balance
                 runOnMainThread {
-                    completion(null, balance.balance)
+                    completion(null, balance)
                 }
             } catch (e: Exception) {
                 runOnMainThread {
