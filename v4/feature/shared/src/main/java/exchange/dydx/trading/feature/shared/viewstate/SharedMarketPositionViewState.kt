@@ -114,7 +114,7 @@ data class SharedMarketPositionViewState(
                 notionalTotal = formatter.dollar(notionalTotal, 2),
                 token = asset?.displayableAssetId?.let {
                     TokenTextView.ViewState(
-                        symbol = it
+                        symbol = it,
                     )
                 },
                 side = SideTextView.ViewState(
