@@ -158,7 +158,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                 ).runWithLogs()
 
             isSubmittingFlow.value = false
-            val hash = event.getOrNull()
+            val hash = event.getOrNull()?.lowercase()
             if (hash != null) {
                 sendOnboardingAnalytics()
                 transferAnalytics.logDeposit(transferInput)

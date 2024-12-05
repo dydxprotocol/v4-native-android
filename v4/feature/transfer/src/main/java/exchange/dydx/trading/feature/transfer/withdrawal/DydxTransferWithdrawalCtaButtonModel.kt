@@ -183,7 +183,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
                 }
             }
 
-            val hash = withdrawResult.getOrNull()
+            val hash = withdrawResult.getOrNull()?.lowercase()
             if (hash != null) {
                 transferAnalytics.logWithdrawal(transferInput)
                 transferInstanceStore.addTransferHash(
