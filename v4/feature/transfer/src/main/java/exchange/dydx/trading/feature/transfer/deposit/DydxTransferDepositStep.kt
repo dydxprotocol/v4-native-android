@@ -24,7 +24,6 @@ class DydxTransferDepositStep(
         val requestPayload = transferInput.requestPayload ?: return invalidInputEvent
         val targetAddress = requestPayload.targetAddress ?: return invalidInputEvent
         val tokenSize = transferInput.tokenSize ?: return invalidInputEvent
-        val walletId = walletId ?: return invalidInputEvent
         val chainId = transferInput.chain ?: return invalidInputEvent
         val value = requestPayload.value ?: return invalidInputEvent
 

@@ -21,13 +21,16 @@ class WalletSendTransactionStep(
 ) : AsyncStep<String> {
 
     override suspend fun run(): Result<String> {
-        val wallet = CarteraConfig.shared?.wallets?.firstOrNull { it.id == walletId } ?: CarteraConfig.shared?.wallets?.firstOrNull() ?: return invalidInputEvent
+        val wallet = CarteraConfig.shared?.wallets?.firstOrNull {
+            it.id == walletId
+        }
 
         val walletRequest = WalletRequest(
             wallet = wallet,
             address = walletAddress,
             chainId = chainId,
             context = context,
+            useModal = walletId == null,
         )
         val transactionRequest = WalletTransactionRequest(
             walletRequest = walletRequest,
