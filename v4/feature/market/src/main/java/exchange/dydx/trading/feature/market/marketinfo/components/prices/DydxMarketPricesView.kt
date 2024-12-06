@@ -382,7 +382,7 @@ object DydxMarketPricesView : DydxComponent {
                             // and the maxXRange is the range for maxXScale
                             // and range and scale are inverse
                             chart.setVisibleXRange(160f, 40f)
-                        }
+                        },
                     )
                 },
             )
