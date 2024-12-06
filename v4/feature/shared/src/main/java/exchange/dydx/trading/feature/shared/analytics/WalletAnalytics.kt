@@ -11,11 +11,11 @@ class WalletAnalytics @Inject constructor(
     private val tracker: Tracking,
 ) {
     fun logConnected(walletId: String?) {
-        log(AnalyticsEvent.CONNECT_WALLET, walletId)
+        log(AnalyticsEvent.CONNECT_WALLET, walletId?.uppercase())
     }
 
     fun logDisconnected(walletId: String?) {
-        log(AnalyticsEvent.DISCONNECT_WALLET, walletId)
+        log(AnalyticsEvent.DISCONNECT_WALLET, walletId?.uppercase())
     }
 
     private fun log(event: AnalyticsEvent, walletId: String?) {
