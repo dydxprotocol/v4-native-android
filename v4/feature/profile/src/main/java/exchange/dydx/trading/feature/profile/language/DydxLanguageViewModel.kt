@@ -2,11 +2,16 @@ package exchange.dydx.trading.feature.profile.language
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
+import exchange.dydx.dydxstatemanager.AbacusStateManager
+import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.MarketRoutes
+import exchange.dydx.trading.common.navigation.ProfileRoutes.env
+import exchange.dydx.trading.common.navigation.ProfileRoutes.language
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.views.SettingsView
 import exchange.dydx.trading.integration.fcm.FCMRegistrar
@@ -21,14 +26,27 @@ class DydxLanguageViewModel @Inject constructor(
     private val preferencesStore: SharedPreferencesStore,
     private val router: DydxRouter,
     private val fcmRegistrar: FCMRegistrar,
+    private val abacusStateManager: AbacusStateManagerProtocol,
 ) : ViewModel(), DydxViewModel {
+
+    private val filteredLanguages: List<SelectionOption>
+        get() {
+            return localizer.languages.filter { language ->
+                val restrictedLocales = abacusStateManager.environment?.restrictedLocales
+                if (restrictedLocales != null) {
+                    return@filter !restrictedLocales.contains(language.type)
+                } else {
+                    return@filter true
+                }
+            }
+        }
 
     private val mutableState = MutableStateFlow(createViewState())
 
     val state: Flow<SettingsView.ViewState?> = mutableState
 
     private fun createViewState(): SettingsView.ViewState {
-        val items: List<SettingsView.ViewState.Item> = localizer.languages.map { language ->
+        val items: List<SettingsView.ViewState.Item> = filteredLanguages.map { language ->
             SettingsView.ViewState.Item(
                 title = language.localizedString(localizer = localizer),
                 value = language.type,

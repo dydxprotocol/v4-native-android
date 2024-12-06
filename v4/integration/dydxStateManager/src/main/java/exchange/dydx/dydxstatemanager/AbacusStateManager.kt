@@ -181,7 +181,6 @@ class AbacusStateManager @Inject constructor(
         UIImplementationsExtensions.reset(language = language, ioImplementations)
 
         val deployment: String
-        val appConfigsV2 = AppConfigsV2.forAppWithIsolatedMargins
         if (featureFlags.isFeatureEnabled(DydxFeatureFlag.force_mainnet)) {
             deployment = "MAINNET"
         } else {
@@ -195,6 +194,12 @@ class AbacusStateManager @Inject constructor(
             }
         }
 
+        val appConfigsV2 =
+            if (BuildConfig.DEBUG) {
+                AppConfigsV2.forAppDebug
+            } else {
+                AppConfigsV2.forApp
+            }
         // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
         if (BuildConfig.DEBUG) {
             appConfigsV2.enableLogger = false
