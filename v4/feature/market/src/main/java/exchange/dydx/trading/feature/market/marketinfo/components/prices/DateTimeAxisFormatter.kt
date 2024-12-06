@@ -7,7 +7,7 @@ import java.util.Locale
 
 class DateTimeAxisFormatter(
     private val anchorDateTime: Instant,
-    private val candlesPeriod: String?,
+    private val candlesPeriod: CandlePeriod?,
     private val offset: Int,
 ) : ValueAxisFormatter() {
     private val minuteFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -16,31 +16,31 @@ class DateTimeAxisFormatter(
 
     override fun getFormattedValue(value: Float): String {
         val datetime = when (candlesPeriod) {
-            "1DAY" -> {
+            CandlePeriod.OneDay -> {
                 anchorDateTime.plusSeconds((value.toLong() - offset) * 3600 * 24)
             }
 
-            "1HOURS" -> {
+            CandlePeriod.OneHour -> {
                 anchorDateTime.plusSeconds((value.toLong() - offset) * 3600)
             }
 
-            "4HOURS" -> {
+            CandlePeriod.FourHours -> {
                 anchorDateTime.plusSeconds(((value * 4).toLong() - offset) * 3600)
             }
 
-            "1MIN" -> {
+            CandlePeriod.OneMinute -> {
                 anchorDateTime.plusSeconds((value.toLong() - offset) * 60)
             }
 
-            "5MINS" -> {
+            CandlePeriod.FiveMinutes -> {
                 anchorDateTime.plusSeconds(((value * 5).toLong() - offset) * 60)
             }
 
-            "15MINS" -> {
+            CandlePeriod.FifteenMinutes -> {
                 anchorDateTime.plusSeconds(((value * 15).toLong() - offset) * 60)
             }
 
-            "30MINS" -> {
+            CandlePeriod.ThirtyMinutes -> {
                 anchorDateTime.plusSeconds(((value * 30).toLong() - offset) * 60)
             }
 
@@ -49,11 +49,11 @@ class DateTimeAxisFormatter(
             }
         }.atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()
         return when (candlesPeriod) {
-            "1DAY", "4HOURS" -> {
+            CandlePeriod.OneDay, CandlePeriod.FourHours -> {
                 datetime.format(dayFormatter)
             }
 
-            "1HOUR" -> {
+            CandlePeriod.OneHour -> {
                 datetime.format(hourFormatter)
             }
 

@@ -53,6 +53,16 @@ import javax.inject.Inject
 
 private const val TAG = "DydxMarketPricesViewModel"
 
+enum class CandlePeriod(val rawValue: String) {
+    OneMinute("1MIN"),
+    FiveMinutes("5MINS"),
+    FifteenMinutes("15MINS"),
+    ThirtyMinutes("30MINS"),
+    OneHour("1HOUR"),
+    FourHours("4HOURS"),
+    OneDay("1DAY"),
+}
+
 @HiltViewModel
 class DydxMarketPricesViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
@@ -73,16 +83,10 @@ class DydxMarketPricesViewModel @Inject constructor(
         localizer.localize("APP.GENERAL.LINE"),
     )
     private val typeIndex = MutableStateFlow(0)
-    private val candlesPeriods = listOf(
-        "1MIN",
-        "5MINS",
-        "15MINS",
-        "30MINS",
-        "1HOUR",
-        "4HOURS",
-        "1DAY",
-    )
-    private val defaultResolution = candlesPeriods.indexOf("1HOUR")
+
+    private val candlesPeriods = CandlePeriod.entries.map { it.rawValue }
+
+    private val defaultResolution = candlesPeriods.indexOf(CandlePeriod.OneHour.rawValue)
     private val resolutionTitles = listOf(
         localizer.localize("APP.GENERAL.TIME_STRINGS.1MIN"),
         localizer.localize("APP.GENERAL.TIME_STRINGS.5MIN"),
@@ -124,8 +128,8 @@ class DydxMarketPricesViewModel @Inject constructor(
             val liquidationPrice = marketPosition?.liquidationPrice?.current
 
             market.configs?.let { configs ->
-                val candlesPeriod = candlesPeriods[resolutionIndex]
-                val prices = allPrices.candles?.get(candlesPeriod)
+                val candlesPeriod = CandlePeriod.entries[resolutionIndex]
+                val prices = allPrices.candles?.get(candlesPeriod.rawValue)
                 val orderLineData = ordersForMarket?.let { orders ->
                     orders
                         .filter {
@@ -200,7 +204,7 @@ class DydxMarketPricesViewModel @Inject constructor(
         prices: List<MarketCandle>?,
         market: PerpetualMarket?,
         orderLineData: List<OrderLineData>,
-        candlesPeriod: String,
+        candlesPeriod: CandlePeriod,
         selectedPrice: MarketCandle?,
         typeIndex: Int,
         resolutionIndex: Int,
@@ -261,12 +265,12 @@ class DydxMarketPricesViewModel @Inject constructor(
                 volumeText != null
             ) {
                 PriceHighlight(
-                    datetimeText,
-                    openText,
-                    highText,
-                    lowText,
-                    closeText,
-                    volumeText,
+                    datetimeText = datetimeText,
+                    openText = openText,
+                    highText = highText,
+                    lowText = lowText,
+                    closeText = closeText,
+                    volumeText = volumeText,
                 )
             } else {
                 null
@@ -321,34 +325,34 @@ class DydxMarketPricesViewModel @Inject constructor(
         }
     }
 
-    private fun reduce(milliSeconds: Double, candlesPeriod: String?): Long {
+    private fun reduce(milliSeconds: Double, candlesPeriod: CandlePeriod?): Long {
         val time = Instant.ofEpochSecond((milliSeconds / 1000).toLong())
         return when (candlesPeriod) {
-            "1DAY" -> {
+            CandlePeriod.OneDay -> {
                 anchorDateTime.until(time, ChronoUnit.DAYS)
             }
 
-            "1HOUR" -> {
+            CandlePeriod.OneHour -> {
                 anchorDateTime.until(time, ChronoUnit.HOURS)
             }
 
-            "4HOURS" -> {
+            CandlePeriod.FourHours -> {
                 anchorDateTime.until(time, ChronoUnit.HOURS) / 4
             }
 
-            "1MIN" -> {
+            CandlePeriod.OneMinute -> {
                 anchorDateTime.until(time, ChronoUnit.MINUTES)
             }
 
-            "5MINS" -> {
+            CandlePeriod.FiveMinutes -> {
                 anchorDateTime.until(time, ChronoUnit.MINUTES) / 5
             }
 
-            "15MINS" -> {
+            CandlePeriod.FifteenMinutes -> {
                 anchorDateTime.until(time, ChronoUnit.MINUTES) / 15
             }
 
-            "30MINS" -> {
+            CandlePeriod.ThirtyMinutes -> {
                 anchorDateTime.until(time, ChronoUnit.MINUTES) / 30
             }
 
@@ -359,7 +363,7 @@ class DydxMarketPricesViewModel @Inject constructor(
         } + offset
     }
 
-    private fun config(market: PerpetualMarket?, candlesPeriod: String?): CombinedChartConfig {
+    private fun config(market: PerpetualMarket?, candlesPeriod: CandlePeriod?): CombinedChartConfig {
         return CombinedChartConfig(
             candlesDrawing = CandlesDrawingConfig(
                 increasingColor = SemanticColor.positiveColor.color.toArgb(),

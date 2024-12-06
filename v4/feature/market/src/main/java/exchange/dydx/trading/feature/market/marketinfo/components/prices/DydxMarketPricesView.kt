@@ -372,17 +372,18 @@ object DydxMarketPricesView : DydxComponent {
                         line = if (state.typeOptions.index == 0) null else state.prices,
                         config = state.config,
                         lineColor = null,
-                    ) { lastX ->
-                        // Show 40 items
-                        chart.setVisibleXRange(40f, 40f)
-                        chart.moveViewToX(lastX)
-                        //        chart.moveViewToAnimated(lastX, 0f, YAxis.AxisDependency.RIGHT, 500)
-                        // The minXRange has a higher number than maxXRange
-                        // because the minXRange is the range for minXScale
-                        // and the maxXRange is the range for maxXScale
-                        // and range and scale are inverse
-                        chart.setVisibleXRange(160f, 40f)
-                    }
+                        updateRange = { lastX ->
+                            // Show 40 items
+                            chart.setVisibleXRange(40f, 40f)
+                            chart.moveViewToX(lastX)
+                            //        chart.moveViewToAnimated(lastX, 0f, YAxis.AxisDependency.RIGHT, 500)
+                            // The minXRange has a higher number than maxXRange
+                            // because the minXRange is the range for minXScale
+                            // and the maxXRange is the range for maxXScale
+                            // and range and scale are inverse
+                            chart.setVisibleXRange(160f, 40f)
+                        }
+                    )
                 },
             )
         }
