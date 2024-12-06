@@ -207,7 +207,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
                 }
             }
 
-            val hash = transferResult.getOrNull()
+            val hash = transferResult.getOrNull()?.lowercase()
             if (hash != null) {
                 abacusStateManager.resetTransferInputFields()
                 transferInstanceStore.addTransferHash(

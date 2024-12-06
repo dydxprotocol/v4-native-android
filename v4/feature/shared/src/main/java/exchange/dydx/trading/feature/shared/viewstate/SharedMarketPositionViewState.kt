@@ -112,9 +112,11 @@ data class SharedMarketPositionViewState(
                     configs.displayStepSizeDecimals ?: 1,
                 ),
                 notionalTotal = formatter.dollar(notionalTotal, 2),
-                token = TokenTextView.ViewState(
-                    symbol = asset?.displayableAssetId ?: market.assetId,
-                ),
+                token = asset?.displayableAssetId?.let {
+                    TokenTextView.ViewState(
+                        symbol = it,
+                    )
+                },
                 side = SideTextView.ViewState(
                     localizer = localizer,
                     coloringOption = SideTextView.ColoringOption.WITH_BACKGROUND,
