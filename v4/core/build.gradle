@@ -62,7 +62,6 @@ dependencies {
     implementation project(':v4:feature:vault')
 
     /* Local Dependencies */
-    implementation "androidx.core:core:$androidKtxVersion"
 
     api "androidx.activity:activity:$activityComposeVersion"
     implementation "androidx.activity:activity-compose:$activityComposeVersion"
@@ -136,4 +135,9 @@ dependencies {
     implementation "dydxprotocol:cartera-android:$carteraVersion"
 
     implementation "androidx.biometric:biometric-ktx:$biometricVersion"
+
+    implementation platform("com.walletconnect:android-bom:$walletConnectVersion")
+    implementation('com.walletconnect:android-core')
+    implementation("com.walletconnect:walletconnect-modal")
+    implementation 'com.google.accompanist:accompanist-navigation-material:0.34.0'  // need for modal
 }

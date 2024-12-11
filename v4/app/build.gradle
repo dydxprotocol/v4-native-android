@@ -195,7 +195,6 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
     testImplementation "androidx.arch.core:core-testing:$archTestingVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
-    testImplementation "androidx.navigation:navigation-testing:$navigationVersion"
     testImplementation "com.google.truth:truth:$truthVersion"
     testImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
 
@@ -203,20 +202,6 @@ dependencies {
     androidTestImplementation "junit:junit:$junitVersion"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
-
-    // AndroidX Test - JVM testing
-    testImplementation "androidx.test:core-ktx:$androidXTestCoreVersion"
-    testImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
-    testImplementation "androidx.test:rules:$androidXTestRulesVersion"
-    implementation "androidx.test:core:$androidXTestCoreVersion"
-
-    // AndroidX Test - Instrumented testing
-    androidTestImplementation "androidx.test:core-ktx:$androidXTestCoreVersion"
-    androidTestImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
-    androidTestImplementation "androidx.test:rules:$androidXTestRulesVersion"
-    androidTestImplementation "androidx.arch.core:core-testing:$archTestingVersion"
-    androidTestImplementation "androidx.navigation:navigation-testing:$navigationVersion"
-
 
     // Add non-standard deps above. Deps added below this line may be periodically overwritten
     /* Standard Dependencies */
@@ -267,12 +252,12 @@ dependencies {
 
     implementation platform("com.walletconnect:android-bom:$walletConnectVersion")
     implementation('com.walletconnect:android-core')
-    implementation 'com.walletconnect:sign'
+    implementation("com.walletconnect:walletconnect-modal")
 
     //
     // https://docs.cloud.coinbase.com/wallet-sdk/docs/android-install
     //
-    implementation 'com.coinbase:coinbase-wallet-sdk:1.0.4'
+    implementation 'com.coinbase:coinbase-wallet-sdk:1.1.1'
 
     //
     // https://github.com/WalletConnect/kotlin-walletconnect-lib

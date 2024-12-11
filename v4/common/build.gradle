@@ -56,8 +56,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
 
-//    implementation "androidx.core:core-ktx:$androidKtxVersion"
-
     api "androidx.compose.foundation:foundation:$composeVersion"
     api "androidx.compose.runtime:runtime:$composeVersion"
     api "androidx.compose.ui:ui-graphics:$composeVersion"

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'exchange.dydx.dydxcartera'
-    compileSdk 33
+    compileSdk parent.compileSdkVersion
 
     defaultConfig {
         minSdkVersion parent.minSdkVersion
@@ -34,9 +34,9 @@ dependencies {
 
     implementation project(path: ':v4:integration:cosmos')
     implementation project(path: ':v4:utilities')
+    implementation 'androidx.navigation:navigation-runtime-ktx:2.8.4'
 
     testImplementation "junit:junit:$junitVersion"
-//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"

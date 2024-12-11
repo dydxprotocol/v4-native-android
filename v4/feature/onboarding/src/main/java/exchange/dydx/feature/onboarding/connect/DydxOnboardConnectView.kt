@@ -80,7 +80,7 @@ object DydxOnboardConnectView : DydxComponent {
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.ONBOARDING.SIGN_MESSAGE"),
-                icon = state.walletIcon,
+                icon = state.walletIcon ?: exchange.dydx.trading.feature.shared.R.drawable.icon_wc_logo,
                 closeAction = { state.closeButtonHandler?.invoke() },
             )
             Text(

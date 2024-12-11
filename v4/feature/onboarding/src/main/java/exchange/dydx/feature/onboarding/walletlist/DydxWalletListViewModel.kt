@@ -79,12 +79,28 @@ class DydxWalletListViewModel @Inject constructor(
                 localizer = localizer,
                 desktopSync = if (!mobileOnly) desktopSync else null,
                 debugScan = if (!mobileOnly) debugScan else null,
+                wcModal = wcModal,
                 wallets = listState,
                 backButtonHandler = {
                     router.navigateBack()
                 },
             )
         }
+    }
+
+    private val wcModal: DydxWalletListItemView.ViewState by lazy {
+        DydxWalletListItemView.ViewState(
+            iconUrl = exchange.dydx.trading.feature.shared.R.drawable.icon_wc_logo,
+            main = localizer.localize("APP.WALLETS.WALLET_CONNECT_2"),
+            trailing = localizer.localize("APP.GENERAL.RECOMMENDED"),
+            onTap = {
+                router.navigateBack()
+                router.navigateTo(
+                    route = OnboardingRoutes.connect + "/walletconnect_modal",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            },
+        )
     }
 
     private val desktopSync: DydxWalletListItemView.ViewState by lazy {

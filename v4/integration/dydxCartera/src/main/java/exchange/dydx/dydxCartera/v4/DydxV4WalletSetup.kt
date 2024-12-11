@@ -5,6 +5,7 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.cartera.entities.Wallet
 import exchange.dydx.cartera.typeddata.EIP712DomainTypedDataProvider
 import exchange.dydx.cartera.typeddata.WalletTypedData
+import exchange.dydx.cartera.walletprovider.WalletInfo
 import exchange.dydx.cartera.walletprovider.WalletRequest
 import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
@@ -20,19 +21,28 @@ class DydxV4WalletSetup @Inject constructor(
     override val logger: Logging,
 ) : DydxWalletSetup(context, logger) {
 
-    override fun sign(wallet: Wallet?, address: String, ethereumChainId: Int, signTypedDataAction: String, signTypedDataDomainName: String) {
-        val request = WalletRequest(wallet, address, ethereumChainId.toString(), context)
+    override fun sign(request: WalletRequest, connectedWallet: WalletInfo, signTypedDataAction: String, signTypedDataDomainName: String) {
+        val address = request.address
+        if (address == null) {
+            _status.value = Status.createError(message = "Request address is null")
+            return
+        }
         provider.sign(
-            request,
+            request = request,
             typedDataProvider = typedData(
                 action = signTypedDataAction,
-                chainId = ethereumChainId,
+                chainId = parser.asInt(request.chainId),
                 signTypedDataDomainName = signTypedDataDomainName,
             ),
+            status = { requireAppSwitching ->
+                if (requireAppSwitching) {
+                    _status.value = Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
+                }
+            },
             connected = null,
         ) { signed, error ->
             if (signed != null && error == null) {
-                generatePrivateKey(wallet, signed, address)
+                generatePrivateKey(request.wallet, signed, address)
             } else if (error != null) {
                 _status.value = Status.Error(error)
             }
