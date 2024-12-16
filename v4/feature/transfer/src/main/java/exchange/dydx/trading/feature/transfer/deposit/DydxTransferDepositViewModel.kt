@@ -58,7 +58,7 @@ class DydxTransferDepositViewModel @Inject constructor(
             selectedChainFlow,
             selectedTokenFlow,
             tokenAmountFLow,
-            abacusStateManager.state.currentWallet.mapNotNull { it?.ethereumAddress }.distinctUntilChanged(),
+            abacusStateManager.state.currentWallet.map { it?.ethereumAddress }.distinctUntilChanged(),
         ) { transferInput, selectedChain, selectedToken, tokenMaxAmount, ethereumAddress ->
             createViewState(transferInput, selectedChain, selectedToken, tokenMaxAmount, ethereumAddress.isNullOrEmpty())
         }
