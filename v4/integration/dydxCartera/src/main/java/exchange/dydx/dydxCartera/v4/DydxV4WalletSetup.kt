@@ -27,13 +27,14 @@ class DydxV4WalletSetup @Inject constructor(
             _status.value = Status.createError(message = "Request address is null")
             return
         }
+        val typedDataProvider = typedData(
+            action = signTypedDataAction,
+            chainId = parser.asInt(request.chainId),
+            signTypedDataDomainName = signTypedDataDomainName,
+        )
         provider.sign(
             request = request,
-            typedDataProvider = typedData(
-                action = signTypedDataAction,
-                chainId = parser.asInt(request.chainId),
-                signTypedDataDomainName = signTypedDataDomainName,
-            ),
+            typedDataProvider = typedDataProvider,
             status = { requireAppSwitching ->
                 if (requireAppSwitching) {
                     _status.value = Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
@@ -44,7 +45,29 @@ class DydxV4WalletSetup @Inject constructor(
             if (signed != null && error == null) {
                 generatePrivateKey(request.wallet, signed, address)
             } else if (error != null) {
-                _status.value = Status.Error(error)
+                if (provider.walletStatus?.connectedWallet?.peerName == "MetaMask Wallet" &&
+                    error.message == "User rejected."
+                ) {
+                    // MetaMask wallet will send a "User rejected" response when switching chain... let's catch it and resend
+                    provider.sign(
+                        request = request,
+                        typedDataProvider = typedDataProvider,
+                        status = { requireAppSwitching ->
+                            if (requireAppSwitching) {
+                                _status.value = Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
+                            }
+                        },
+                        connected = null,
+                    ) { signed, error ->
+                        if (signed != null && error == null) {
+                            generatePrivateKey(request.wallet, signed, address)
+                        } else if (error != null) {
+                            _status.value = Status.Error(error)
+                        }
+                    }
+                } else {
+                    _status.value = Status.Error(error)
+                }
             }
             provider.disconnect()
         }

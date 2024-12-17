@@ -53,7 +53,31 @@ class WalletSendTransactionStep(
                     if (signed != null) {
                         continuation.resume(Result.success(signed))
                     } else {
-                        continuation.resume(errorEvent(error?.message ?: "Unknown error"))
+                        if (provider.walletStatus?.connectedWallet?.peerName == "MetaMask Wallet" &&
+                            error?.message == "User rejected."
+                        ) {
+                            // MetaMask wallet will send a "User rejected" response when switching chain... let's catch it and resend
+                            provider.send(
+                                request = transactionRequest,
+                                connected = { info ->
+                                    if (info == null) {
+                                        continuation.resume(errorEvent("Wallet not connected"))
+                                    }
+                                },
+                                status = { status ->
+                                    Log.d("AsyncStep", "Status: $status")
+                                },
+                                completion = { signed, error ->
+                                    if (signed != null) {
+                                        continuation.resume(Result.success(signed))
+                                    } else {
+                                        continuation.resume(errorEvent(error?.message ?: "Unknown error"))
+                                    }
+                                },
+                            )
+                        } else {
+                            continuation.resume(errorEvent(error?.message ?: "Unknown error"))
+                        }
                     }
                 },
             )
