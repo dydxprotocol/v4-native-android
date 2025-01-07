@@ -41,6 +41,7 @@
             android:name="exchange.dydx.trading.TradingActivity"
             android:exported="true"
             android:configChanges="uiMode"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.OverlapSystemBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

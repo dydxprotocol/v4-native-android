@@ -88,7 +88,7 @@ ext {
     compileSdkVersion = 35
 
     // App dependencies
-    abacusVersion = '1.13.43'
+    abacusVersion = '1.13.44'
     carteraVersion = '0.1.19'
     //carteraVersion = '0.1.16-local-debug'    // Use this for local testing
     kollectionsVersion = '2.0.16'
