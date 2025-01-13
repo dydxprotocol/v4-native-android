@@ -216,20 +216,9 @@ object DydxVaultPositionItemView : DydxComponent {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                val combinedValues = (state.notionalValue ?: "-") + " / " + (state.equity ?: "-")
                 Text(
-                    text = state.notionalValue ?: "-",
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.small),
-                )
-
-                Text(
-                    text = "/",
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.small),
-                )
-
-                Text(
-                    text = state.equity ?: "-",
+                    text = combinedValues,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.small),
                 )
