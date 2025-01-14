@@ -70,13 +70,15 @@ class DydxPortfolioChartViewModel @Inject constructor(
                 entry.data = pnl
                 entry
             }
-            val currentValue =  subaccount?.equity?.current?.toFloat()
+            val currentValue = subaccount?.equity?.current?.toFloat()
             if (currentValue != null) {
                 entries = entries.toMutableList().apply {
-                    add(Entry(
-                        /* x = */ (System.currentTimeMillis() / 1000).toFloat(),
-                        /* y = */ currentValue,
-                    ))
+                    add(
+                        Entry(
+                            /* x = */ (System.currentTimeMillis() / 1000).toFloat(),
+                            /* y = */ currentValue,
+                        ),
+                    )
                 }
             }
             LineChartDataSet(
@@ -86,7 +88,7 @@ class DydxPortfolioChartViewModel @Inject constructor(
         } ?: LineChartDataSet(listOf(), "PNL")
         val positive = (pnls?.lastOrNull()?.equity ?: 0.0) > (pnls?.firstOrNull()?.equity ?: 0.0)
         val firstEquity = pnls?.firstOrNull()?.equity
-        val lastEquity = selectedPnl?.equity ?: subaccount?.equity?.current ?:  pnls?.lastOrNull()?.equity
+        val lastEquity = selectedPnl?.equity ?: subaccount?.equity?.current ?: pnls?.lastOrNull()?.equity
         val equity = selectedPnl?.equity ?: subaccount?.equity?.current
         val datetimeText = selectedPnl?.createdAtMilliseconds?.let {
             val datetime = Instant.ofEpochMilli(it.toLong())
