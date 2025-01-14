@@ -60,24 +60,33 @@ class DydxPortfolioChartViewModel @Inject constructor(
         selectedPnl: SubaccountHistoricalPNL?,
     ): DydxPortfolioChartView.ViewState {
         val dataset = pnls?.let {
-            val entries = it.map { pnl ->
+            var entries = it.map { pnl ->
                 val value = pnl.equity.toFloat()
                 val time = (pnl.createdAtMilliseconds / 1000).toFloat()
                 val entry = Entry(
-                    time,
-                    value,
+                    /* x = */ time,
+                    /* y = */ value,
                 )
                 entry.data = pnl
                 entry
+            }
+            val currentValue =  subaccount?.equity?.current?.toFloat()
+            if (currentValue != null) {
+                entries = entries.toMutableList().apply {
+                    add(Entry(
+                        /* x = */ (System.currentTimeMillis() / 1000).toFloat(),
+                        /* y = */ currentValue,
+                    ))
+                }
             }
             LineChartDataSet(
                 entries,
                 "PNL",
             )
         } ?: LineChartDataSet(listOf(), "PNL")
-        val positive = (pnls?.lastOrNull()?.totalPnl ?: 0.0) > (pnls?.firstOrNull()?.totalPnl ?: 0.0)
-        val firstPnl = pnls?.firstOrNull()?.totalPnl
-        val lastPnl = selectedPnl?.totalPnl ?: pnls?.lastOrNull()?.totalPnl
+        val positive = (pnls?.lastOrNull()?.equity ?: 0.0) > (pnls?.firstOrNull()?.equity ?: 0.0)
+        val firstEquity = pnls?.firstOrNull()?.equity
+        val lastEquity = selectedPnl?.equity ?: subaccount?.equity?.current ?:  pnls?.lastOrNull()?.equity
         val equity = selectedPnl?.equity ?: subaccount?.equity?.current
         val datetimeText = selectedPnl?.createdAtMilliseconds?.let {
             val datetime = Instant.ofEpochMilli(it.toLong())
@@ -117,13 +126,11 @@ class DydxPortfolioChartViewModel @Inject constructor(
                     "PERIOD" to resolutionTitles[resolutionIndex],
                 ),
             ),
-            diffText = if (firstPnl != null && lastPnl != null) {
-                val firstEqulity = pnls.firstOrNull()?.equity ?: 0.0
-                val diff = lastPnl - firstPnl
-
+            diffText = if (firstEquity != null && lastEquity != null) {
+                val diff = lastEquity - firstEquity
                 val diffText = formatter.dollar(diff.absoluteValue, 2)
 
-                val percent = if (firstEqulity != 0.0) (diff / firstEqulity) else null
+                val percent = if (firstEquity != 0.0) (diff / firstEquity) else null
                 val percentText =
                     if (percent != null) formatter.percent(percent.absoluteValue, 2) else null
                 SignedAmountView.ViewState(
