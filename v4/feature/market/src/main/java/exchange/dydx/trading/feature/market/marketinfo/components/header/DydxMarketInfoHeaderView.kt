@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,6 +25,7 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
+import exchange.dydx.platformui.components.textgroups.PlatformAutoSizingText
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -103,29 +106,29 @@ object DydxMarketInfoHeaderView : DydxComponent {
             )
 
             Column(
-                modifier = Modifier
+                modifier = Modifier.weight(1f)
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
             ) {
                 Row(
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
+                    PlatformAutoSizingText(
+                        modifier = Modifier,
                         text = state.sharedMarketViewState?.tokenFullName ?: "",
-                        style = TextStyle.dydxDefault
+                        textStyle = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.medium)
-                            .themeColor(ThemeColor.SemanticColor.text_primary),
+                            .themeColor(ThemeColor.SemanticColor.text_primary)
                     )
 
                     PlatformImage(
-                        modifier = modifier
+                        modifier = Modifier
                             .clickable {
                                 state.toggleFavoriteAction?.invoke()
                             }
-                            .size(32.dp)
-                            .padding(8.dp),
+                            .size(16.dp),
                         icon = if (state.sharedMarketViewState?.isFavorite == true) {
                             R.drawable.icon_fav_on
                         } else {
@@ -134,20 +137,25 @@ object DydxMarketInfoHeaderView : DydxComponent {
                     )
                 }
 
-                Text(
-                    text = state.sharedMarketViewState?.id?.uppercase() ?: "",
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.mini, fontType = ThemeFont.FontType.plus)
-                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
-                )
+                Row {
+                    Text(
+                        text = state.sharedMarketViewState?.id?.uppercase() ?: "",
+                        style = TextStyle.dydxDefault
+                            .themeFont(
+                                fontSize = ThemeFont.FontSize.mini,
+                                fontType = ThemeFont.FontType.plus
+                            )
+                            .themeColor(ThemeColor.SemanticColor.text_tertiary),
+                    )
+                }
             }
 
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
+                horizontalAlignment = Alignment.End,
             ) {
                 Row(horizontalArrangement = Arrangement.End) {
-                    Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = state.sharedMarketViewState?.indexPrice ?: "-",
                         style = TextStyle.dydxDefault
@@ -159,7 +167,6 @@ object DydxMarketInfoHeaderView : DydxComponent {
                 }
 
                 Row(horizontalArrangement = Arrangement.End) {
-                    Spacer(modifier = Modifier.weight(1f))
                     SignedAmountView.Content(
                         modifier = Modifier,
                         state = state.sharedMarketViewState?.priceChangePercent24H,
