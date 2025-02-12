@@ -4,12 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -108,7 +106,7 @@ object DydxMarketInfoHeaderView : DydxComponent {
             Column(
                 modifier = Modifier.weight(1f)
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.CenterVertically),
             ) {
                 Row(
                     modifier = Modifier,
@@ -120,7 +118,7 @@ object DydxMarketInfoHeaderView : DydxComponent {
                         text = state.sharedMarketViewState?.tokenFullName ?: "",
                         textStyle = TextStyle.dydxDefault
                             .themeFont(fontSize = ThemeFont.FontSize.medium)
-                            .themeColor(ThemeColor.SemanticColor.text_primary)
+                            .themeColor(ThemeColor.SemanticColor.text_primary),
                     )
 
                     PlatformImage(
@@ -143,7 +141,7 @@ object DydxMarketInfoHeaderView : DydxComponent {
                         style = TextStyle.dydxDefault
                             .themeFont(
                                 fontSize = ThemeFont.FontSize.mini,
-                                fontType = ThemeFont.FontType.plus
+                                fontType = ThemeFont.FontType.plus,
                             )
                             .themeColor(ThemeColor.SemanticColor.text_tertiary),
                     )
