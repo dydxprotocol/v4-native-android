@@ -52,6 +52,9 @@ object GradientSlider {
         if (state.leftRatio >= state.rightRatio) {
             return
         }
+        if (state.value !in state.valueRange) {
+            return
+        }
 
         val brush: Brush
         val left = abs(state.leftRatio)

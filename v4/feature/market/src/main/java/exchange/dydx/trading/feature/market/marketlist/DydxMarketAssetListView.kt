@@ -96,12 +96,12 @@ object DydxMarketAssetListView : DydxComponent {
                     state = listState,
                 ) {
                     item(key = "summary") {
-                        DydxPredictionMarketBannerView.Content(
-                            Modifier.padding(
-                                horizontal = ThemeShapes.HorizontalPadding,
-                            )
-                                .padding(bottom = ThemeShapes.VerticalPadding * 2),
-                        )
+//                        DydxPredictionMarketBannerView.Content(
+//                            Modifier.padding(
+//                                horizontal = ThemeShapes.HorizontalPadding,
+//                            )
+//                                .padding(bottom = ThemeShapes.VerticalPadding * 2),
+//                        )
                         DydxMarketSummaryView.Content(Modifier.padding(horizontal = ThemeShapes.HorizontalPadding))
                     }
                     stickyHeader(key = "filter") {
