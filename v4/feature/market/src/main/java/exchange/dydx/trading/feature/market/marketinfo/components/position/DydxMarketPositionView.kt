@@ -367,6 +367,7 @@ object DydxMarketPositionView : DydxComponent {
                     .padding(top = ThemeShapes.VerticalPadding),
             ) {
                 PlatformRoundImage(
+                    modifier = Modifier.padding(end = 4.dp),
                     icon = state.sharedMarketPositionViewState?.logoUrl,
                     size = 32.dp,
                 )

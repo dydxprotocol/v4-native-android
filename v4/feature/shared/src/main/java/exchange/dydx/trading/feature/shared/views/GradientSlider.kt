@@ -52,8 +52,11 @@ object GradientSlider {
         if (state.leftRatio >= state.rightRatio) {
             return
         }
+
+        var value = state.value
         if (state.value !in state.valueRange) {
-            return
+            if (state.value < state.valueRange.start) value = state.valueRange.start
+            if (state.value > state.valueRange.endInclusive) value = state.valueRange.endInclusive
         }
 
         val brush: Brush
@@ -80,7 +83,7 @@ object GradientSlider {
         }
 
         CustomSlider(
-            value = state.value,
+            value = value,
             onValueChange = state.onValueChange,
             valueRange = state.valueRange,
             modifier = modifier,

@@ -80,6 +80,7 @@ interface AbacusStateManagerProtocol {
     val candlesPeriod: StateFlow<String>
 
     fun setEnvironmentId(environment: String?)
+    fun startAbacus()
 
     fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String)
 
@@ -205,9 +206,9 @@ class AbacusStateManager @Inject constructor(
             appConfigsV2.enableLogger = false
         }
 
+        appConfigsV2.autoStart = false
         appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing, default = true)
         appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
-        appConfigsV2.metadataService = featureFlags.isFeatureEnabled(DydxFeatureFlag.metadata_service, default = true)
         appConfigsV2.accountConfigs.subaccountConfigs.notifications =
             listOf(
                 NotificationProviderType.BlockReward,
@@ -284,6 +285,10 @@ class AbacusStateManager @Inject constructor(
             }
             start()
         }
+    }
+
+    override fun startAbacus() {
+        asyncStateManager.start()
     }
 
     override fun setV4(

@@ -34,18 +34,12 @@ class CoreViewModel @Inject constructor(
             .onEach { initialized ->
                 // Wait for the cosmos client to be initialized before setting the environment
                 if (initialized) {
-                    resetEnv()
+                    abacusStateManager.startAbacus()
                 }
             }.launchIn(viewModelScope)
     }
 
     fun startWorkers() {
         globalWorkers.forEach { it.start() }
-    }
-
-    private fun resetEnv() {
-        val envId = abacusStateManager.currentEnvironmentId.value
-        abacusStateManager.setEnvironmentId(null)
-        abacusStateManager.setEnvironmentId(envId)
     }
 }
