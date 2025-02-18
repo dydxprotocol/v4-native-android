@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.transfer.transferout
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.abacus.utils.filterNotNull
 import exchange.dydx.abacus.utils.toJson
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.AsyncStep
@@ -27,12 +28,16 @@ class DydxTransferOutDYDXStep(
         val gasFee = transferInput.summary?.gasFee ?: 0.0
         val nativeTokenBalanceInWallet = nativeTokenAmount ?: 0.0
         val recipient = transferInput.address ?: return invalidInputEvent
+        val memo = transferInput.memo
 
         if (amountDecimal + gasFee <= nativeTokenBalanceInWallet) {
             val payload: Map<String, Any> = mapOf(
                 "amount" to amount,
                 "recipient" to recipient,
+                "memo" to memo,
             )
+                .filterNotNull()
+
             val paramsInJson = payload.toJson()
             return suspendCoroutine { continuation ->
                 cosmosClient.call(
