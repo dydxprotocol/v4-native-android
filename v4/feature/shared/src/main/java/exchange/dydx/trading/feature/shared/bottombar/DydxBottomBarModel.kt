@@ -15,7 +15,6 @@ import exchange.dydx.trading.common.navigation.ProfileRoutes
 import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.feature.shared.R
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
