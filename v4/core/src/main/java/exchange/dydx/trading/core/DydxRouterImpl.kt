@@ -80,12 +80,6 @@ class DydxRouterImpl @Inject constructor(
 
     private val destinationChangedListener: (controller: NavController, destination: NavDestination, arguments: Bundle?) -> Unit =
         { controller, destination, arguments ->
-            val dest = Destination(controller, destination, arguments)
-            val success = destinationFlow.tryEmit(dest)
-            if (!success) {
-                logger.e(TAG, "Failed to emit: $dest")
-            }
-
             val destinationRoute = destination.route
             if (destinationRoute != null) {
                 routingAnalytics.logRoute(destinationRoute, arguments)
@@ -108,6 +102,12 @@ class DydxRouterImpl @Inject constructor(
                         parentMap[destinationRoute] = routeQueue[routeQueue.size - 2]
                     }
                     pendingPresentation = null
+                }
+
+                val dest = Destination(controller, destination, arguments)
+                val success = destinationFlow.tryEmit(dest)
+                if (!success) {
+                    logger.e(TAG, "Failed to emit: $dest")
                 }
             } else {
                 logger.e(TAG, "Destination route is null")

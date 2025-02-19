@@ -16,6 +16,8 @@ import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.feature.shared.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +28,10 @@ class DydxBottomBarModel @Inject constructor(
     private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxBottomBar.ViewState?> = MutableStateFlow(createViewState())
+    val state: Flow<DydxBottomBar.ViewState?> =
+        router.destinationFlow
+            .map { createViewState() }
+            .distinctUntilChanged()
 
     private fun createViewState(): DydxBottomBar.ViewState {
         val barItems: List<BottomBarItem> = listOf(
