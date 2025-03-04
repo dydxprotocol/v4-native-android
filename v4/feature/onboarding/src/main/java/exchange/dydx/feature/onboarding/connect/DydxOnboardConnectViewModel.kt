@@ -104,7 +104,6 @@ class DydxOnboardConnectViewModel @Inject constructor(
 
                     mutableSetupStatusFlow.value = walletStatus
 
-                    router.navigateBack()
                     router.navigateTo(
                         route = OnboardingRoutes.tos,
                         presentation = DydxRouter.Presentation.Modal,

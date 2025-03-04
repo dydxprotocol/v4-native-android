@@ -58,7 +58,7 @@ class DydxTosViewModel @Inject constructor(
                     onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.ACKNOWLEDGE_TERMS)
                 }
 
-                router.navigateBack()
+                router.navigateToRoot(excludeRoot = false)
             },
             urlAction = { url ->
                 router.navigateTo(url)
