@@ -2,6 +2,8 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import android.app.Application
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectModalConfig
@@ -9,6 +11,9 @@ import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModal
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStore
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStoreProtocol
 import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -16,8 +21,11 @@ import exchange.dydx.utilities.utils.CachedFileLoader
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import java.net.URL
 import javax.inject.Inject
 
 private const val TAG = "DydxCarteraConfigWorker"
@@ -29,6 +37,7 @@ class DydxCarteraConfigWorker @Inject constructor(
     private val cachedFileLoader: CachedFileLoader,
     private val application: Application,
     private val logger: Logging,
+    private val walletModalStore: DydxWalletModalStoreProtocol,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -46,11 +55,16 @@ class DydxCarteraConfigWorker @Inject constructor(
                 }
             }
 
+            // WalletConnect Modal's init() can't wait until the wallets.json is loaded, so we
+            // just load from the cached value.
+            CarteraConfig.shared?.updateModalConfig(WalletConnectModalConfig(walletIds = walletModalStore.state.value?.walletIds))
+
+            // Update the cached value when the environment changes
             abacusStateManager.currentEnvironmentId.onEach { _ ->
                 val config = WalletProvidersConfigUtil.getWalletProvidersConfig(application, abacusStateManager)
-                val modalConfig = config.walletConnectModal
-                if (modalConfig != null) {
-                    CarteraConfig.shared?.updateModalConfig(modalConfig)
+                val walletIds = config.walletConnectModal?.walletIds
+                if (!walletIds.isNullOrEmpty()) {
+                    walletModalStore.update((DydxWalletModal(walletIds = walletIds)))
                 }
             }
                 .launchIn(scope)

@@ -28,6 +28,8 @@ import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStore
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManager
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStore
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStoreProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManager
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusChainImp
@@ -188,6 +190,9 @@ interface AppModule {
 
     @Binds
     fun bindUserFavoriteStoreProtocol(dydxFavoriteStore: DydxFavoriteStore): DydxFavoriteStoreProtocol
+
+    @Binds
+    fun bindWalletModalStoreProtocol(dydxWalletModalStore: DydxWalletModalStore): DydxWalletModalStoreProtocol
 
     @Binds
     fun bindCompositeTracking(compositeTracker: CompositeTracker): CompositeTracking

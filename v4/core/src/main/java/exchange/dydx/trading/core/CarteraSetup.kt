@@ -33,13 +33,21 @@ object CarteraSetup {
     }
 
     private fun setUpCartera(activity: FragmentActivity, abacusStateManager: AbacusStateManagerProtocol) {
-        val launcher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val uri = result.data?.data ?: return@registerForActivityResult
-            CarteraConfig.handleResponse(uri)
+        if (CarteraConfig.shared != null) {
+            return
         }
 
+        val launcher =
+            activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                val uri = result.data?.data ?: return@registerForActivityResult
+                CarteraConfig.handleResponse(uri)
+            }
+
         CarteraConfig.shared = CarteraConfig(
-            walletProvidersConfig = getWalletProvidersConfig(activity.applicationContext, abacusStateManager),
+            walletProvidersConfig = getWalletProvidersConfig(
+                activity.applicationContext,
+                abacusStateManager
+            ),
             application = activity.application,
             launcher = launcher,
         )
