@@ -55,7 +55,7 @@ class DydxCarteraConfigWorker @Inject constructor(
                 }
             }
 
-            // WalletConnect Modal's init() can't wait until the wallets.json is loaded, so we
+            // WalletConnect Modal's init() can't wait until the wallet ids from the env.json is loaded, so we
             // just load from the cached value.
             CarteraConfig.shared?.updateModalConfig(WalletConnectModalConfig(walletIds = walletModalStore.state.value?.walletIds))
 
