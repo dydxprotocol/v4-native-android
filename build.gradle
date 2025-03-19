@@ -26,7 +26,6 @@ plugins {
     id "com.diffplug.spotless" version "6.22.0" // apply false
     id 'com.autonomousapps.dependency-analysis' version "1.17.0" // apply false
     id "com.dorongold.task-tree" version "2.1.0"
-    id 'nebula.lint' version '19.0.1'
 }
 
 allprojects {
