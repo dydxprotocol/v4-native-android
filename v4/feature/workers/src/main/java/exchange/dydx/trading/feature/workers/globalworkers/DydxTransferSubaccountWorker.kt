@@ -59,28 +59,28 @@ class DydxTransferSubaccountWorker @Inject constructor(
                             if (depositAmount <= 0) return@combine
                             val amountString = formatter.decimalLocaleAgnostic(
                                 depositAmount,
-                                abacusStateManager.usdcTokenDecimal
+                                abacusStateManager.usdcTokenDecimal,
                             )
                                 ?: return@combine
 
                             depositToSubaccount(
                                 amountString = amountString,
                                 subaccountNumber = abacusStateManager.state.subaccountNumber ?: 0,
-                                wallet = wallet
+                                wallet = wallet,
                             )
                         } else if (balance < rebalanceThreshold) {
                             val withdrawAmount = balanceRetainAmount.minus(balance)
                             if (withdrawAmount <= 0) return@combine
                             val amountString = formatter.decimalLocaleAgnostic(
                                 withdrawAmount,
-                                abacusStateManager.usdcTokenDecimal
+                                abacusStateManager.usdcTokenDecimal,
                             )
                                 ?: return@combine
 
                             withdrawFromSubaccount(
                                 amountString = amountString,
                                 subaccountNumber = abacusStateManager.state.subaccountNumber ?: 0,
-                                wallet = wallet
+                                wallet = wallet,
                             )
                         }
                     }
