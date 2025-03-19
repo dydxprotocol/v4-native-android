@@ -46,7 +46,7 @@ object CarteraSetup {
         CarteraConfig.shared = CarteraConfig(
             walletProvidersConfig = getWalletProvidersConfig(
                 activity.applicationContext,
-                abacusStateManager
+                abacusStateManager,
             ),
             application = activity.application,
             launcher = launcher,

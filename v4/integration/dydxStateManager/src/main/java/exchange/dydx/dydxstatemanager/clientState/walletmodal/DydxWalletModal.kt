@@ -56,8 +56,8 @@ data class DydxWalletModal(
                 "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369",
                 "ecc4036f814562b41a5268adc86270fba1365471402006302e70169465b7ac18",
                 "c286eebc742a537cd1d6818363e9dc53b21759a1e8e5d9b263d0c03ec7703576",
-                "38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662"
-            )
+                "38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662",
+            ),
         )
     }
 }

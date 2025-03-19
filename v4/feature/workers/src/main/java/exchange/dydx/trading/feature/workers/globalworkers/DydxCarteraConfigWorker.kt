@@ -2,8 +2,6 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import android.app.Application
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.WalletConnectModalConfig
@@ -12,7 +10,6 @@ import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModal
-import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStore
 import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStoreProtocol
 import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.R
@@ -21,11 +18,8 @@ import exchange.dydx.utilities.utils.CachedFileLoader
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import java.net.URL
 import javax.inject.Inject
 
 private const val TAG = "DydxCarteraConfigWorker"
