@@ -15,8 +15,10 @@ import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
@@ -39,31 +41,50 @@ class DydxTransferSubaccountWorker @Inject constructor(
 
     override var isStarted = false
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun start() {
         if (!isStarted) {
             isStarted = true
 
-            combine(
-                abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
-                    .filterNotNull(),
-                abacusStateManager.state.currentWallet.mapNotNull { it },
-            ) { balance, wallet ->
-                if (balance > balanceRetainAmount) {
-                    val depositAmount = balance.minus(balanceRetainAmount)
-                    if (depositAmount <= 0) return@combine
-                    val amountString = formatter.decimalLocaleAgnostic(depositAmount, abacusStateManager.usdcTokenDecimal)
-                        ?: return@combine
+            // wait for the environment to be loaded before loading the balance
+            abacusStateManager.currentEnvironmentId
+                .flatMapLatest {
+                    combine(
+                        abacusStateManager.state.accountBalance(abacusStateManager.usdcTokenDenom)
+                            .filterNotNull(),
+                        abacusStateManager.state.currentWallet.mapNotNull { it },
+                    ) { balance, wallet ->
+                        if (balance > balanceRetainAmount) {
+                            val depositAmount = balance.minus(balanceRetainAmount)
+                            if (depositAmount <= 0) return@combine
+                            val amountString = formatter.decimalLocaleAgnostic(
+                                depositAmount,
+                                abacusStateManager.usdcTokenDecimal
+                            )
+                                ?: return@combine
 
-                    depositToSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
-                } else if (balance < rebalanceThreshold) {
-                    val withdrawAmount = balanceRetainAmount.minus(balance)
-                    if (withdrawAmount <= 0) return@combine
-                    val amountString = formatter.decimalLocaleAgnostic(withdrawAmount, abacusStateManager.usdcTokenDecimal)
-                        ?: return@combine
+                            depositToSubaccount(
+                                amountString = amountString,
+                                subaccountNumber = abacusStateManager.state.subaccountNumber ?: 0,
+                                wallet = wallet
+                            )
+                        } else if (balance < rebalanceThreshold) {
+                            val withdrawAmount = balanceRetainAmount.minus(balance)
+                            if (withdrawAmount <= 0) return@combine
+                            val amountString = formatter.decimalLocaleAgnostic(
+                                withdrawAmount,
+                                abacusStateManager.usdcTokenDecimal
+                            )
+                                ?: return@combine
 
-                    withdrawFromSubaccount(amountString, abacusStateManager.state.subaccountNumber ?: 0, wallet)
+                            withdrawFromSubaccount(
+                                amountString = amountString,
+                                subaccountNumber = abacusStateManager.state.subaccountNumber ?: 0,
+                                wallet = wallet
+                            )
+                        }
+                    }
                 }
-            }
                 .launchIn(scope)
         }
     }
