@@ -75,10 +75,10 @@
             },
             {
                 "title":{
-                    "text":"Market Asset Metadata Service"
+                    "text":"Instant Deposit"
                 },
                 "field":{
-                    "field":"metadata_service",
+                    "field":"skip_go_fast",
                     "optional":true,
                     "type" : "text",
                     "options" : [

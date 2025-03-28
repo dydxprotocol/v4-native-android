@@ -1,7 +1,11 @@
 package exchange.dydx.dydxCartera.v4
 
+import android.R.attr.padding
+import android.R.attr.type
+import android.R.id.message
 import android.content.Context
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.cartera.decodeBase58
 import exchange.dydx.cartera.entities.Wallet
 import exchange.dydx.cartera.typeddata.EIP712DomainTypedDataProvider
 import exchange.dydx.cartera.typeddata.WalletTypedData
@@ -13,6 +17,7 @@ import exchange.dydx.utilities.utils.Logging
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
+import kotlin.text.HexFormat
 
 class DydxV4WalletSetup @Inject constructor(
     context: Context,
@@ -22,11 +27,88 @@ class DydxV4WalletSetup @Inject constructor(
 ) : DydxWalletSetup(context, logger) {
 
     override fun sign(request: WalletRequest, connectedWallet: WalletInfo, signTypedDataAction: String, signTypedDataDomainName: String) {
+        if (request.wallet?.id == "phantom-wallet") {
+            signSolana(
+                request = request,
+                connectedWallet = connectedWallet,
+                signTypedDataAction = signTypedDataAction,
+                signTypedDataDomainName = signTypedDataDomainName,
+            )
+        } else {
+            signEVM(
+                request = request,
+                connectedWallet = connectedWallet,
+                signTypedDataAction = signTypedDataAction,
+                signTypedDataDomainName = signTypedDataDomainName,
+            )
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun signSolana(
+        request: WalletRequest,
+        connectedWallet: WalletInfo,
+        signTypedDataAction: String,
+        signTypedDataDomainName: String,
+    ) {
         val address = request.address
         if (address == null) {
             _status.value = Status.createError(message = "Request address is null")
             return
         }
+        val message = """
+{"domain":{"name":"$signTypedDataDomainName"},"message":{"action":"$signTypedDataAction"},"primaryType":"dYdX","types":{"dYdX":[{"name":"action","type":"string"}]}}
+""".trimIndent()
+        provider.signMessage(
+            request = request,
+            message = message,
+            connected = { info ->
+                if (info == null) {
+                    _status.value = Status.createError(message = "Wallet not connected")
+                }
+            },
+            status = { requireAppSwitching ->
+                if (requireAppSwitching) {
+                    _status.value =
+                        Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
+                }
+            },
+        ) { signed, error ->
+            if (signed != null && error == null) {
+                // The signature from Solana is Base58 encoded
+                val signedMessage: String
+                try {
+                    val decoded = signed.decodeBase58()
+                    if (decoded.size != 64) {
+                        _status.value = Status.createError(message = "Invalid signature size")
+                        return@signMessage
+                    }
+                    // Pad a leading zero to "decoded" to make it 65 bytes before passing it down v4-client
+                    val padded =  byteArrayOf(0x00) + decoded
+                    signedMessage = padded.toHexString(format = HexFormat.Default)
+                } catch (e: Exception) {
+                    _status.value = Status.createError(message = "Failed to decode Base58, ${e.message}")
+                    return@signMessage
+                }
+                generatePrivateKey(wallet = request.wallet, privateKeySignature = signedMessage, address = address)
+            } else if (error != null) {
+                _status.value = Status.Error(error)
+            }
+        }
+    }
+
+    private fun signEVM(
+        request: WalletRequest,
+        connectedWallet: WalletInfo,
+        signTypedDataAction: String,
+        signTypedDataDomainName: String,
+    ) {
+        val address = request.address
+        if (address == null) {
+            _status.value = Status.createError(message = "Request address is null")
+            return
+        }
+
         val typedDataProvider = typedData(
             action = signTypedDataAction,
             chainId = parser.asInt(request.chainId),
@@ -37,7 +119,8 @@ class DydxV4WalletSetup @Inject constructor(
             typedDataProvider = typedDataProvider,
             status = { requireAppSwitching ->
                 if (requireAppSwitching) {
-                    _status.value = Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
+                    _status.value =
+                        Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
                 }
             },
             connected = null,
@@ -54,7 +137,8 @@ class DydxV4WalletSetup @Inject constructor(
                         typedDataProvider = typedDataProvider,
                         status = { requireAppSwitching ->
                             if (requireAppSwitching) {
-                                _status.value = Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
+                                _status.value =
+                                    Status.InProgress(showSwitchWalletName = connectedWallet.peerName)
                             }
                         },
                         connected = null,

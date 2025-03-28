@@ -15,9 +15,9 @@ import exchange.dydx.platformui.designSystem.theme.color
 fun InputFieldScaffold(
     modifier: Modifier = Modifier,
     alertState: PlatformInputAlertState = PlatformInputAlertState.None,
+    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
     content: @Composable () -> Unit,
 ) {
-    val shape = RoundedCornerShape(8.dp)
     Box(
         modifier = modifier
             .background(

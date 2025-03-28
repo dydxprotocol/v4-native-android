@@ -25,6 +25,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.navigation.DydxAnimation
 import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
 import exchange.dydx.trading.feature.transfer.deposit.DydxTransferDepositView
+import exchange.dydx.trading.feature.transfer.deposit.DydxTransferInstantDepositView
 import exchange.dydx.trading.feature.transfer.faucet.DydxTransferFaucetView
 import exchange.dydx.trading.feature.transfer.transferout.DydxTransferOutView
 import exchange.dydx.trading.feature.transfer.withdrawal.DydxTransferWithdrawalView
@@ -43,6 +44,7 @@ object DydxTransferView : DydxComponent {
         val localizer: LocalizerProtocol,
         val closeAction: (() -> Unit)? = null,
         val selection: DydxTransferSectionsView.Selection? = null,
+        val skipGoFast: Boolean = true
     ) {
         companion object {
             val preview = ViewState(
@@ -94,9 +96,15 @@ object DydxTransferView : DydxComponent {
             DydxAnimation.AnimateFadeInOut(
                 visible = state.selection == DydxTransferSectionsView.Selection.Deposit,
             ) {
-                DydxTransferDepositView.Content(
-                    modifier = Modifier,
-                )
+                if (state.skipGoFast) {
+                    DydxTransferInstantDepositView.Content(
+                        modifier = Modifier,
+                    )
+                } else {
+                    DydxTransferDepositView.Content(
+                        modifier = Modifier,
+                    )
+                }
             }
             DydxAnimation.AnimateFadeInOut(
                 visible = state.selection == DydxTransferSectionsView.Selection.Withdrawal,

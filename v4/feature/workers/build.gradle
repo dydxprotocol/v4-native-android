@@ -45,6 +45,7 @@ dependencies {
     implementation project(':v4:integration:dydxStateManager')
     implementation project(':v4:integration:analytics')
     implementation project(':v4:integration:statsig')
+    implementation project(':v4:integration:web3')
     implementation project(':v4:platformUI')
     implementation project(':v4:feature:shared')
     api project(':v4:integration:cosmos')

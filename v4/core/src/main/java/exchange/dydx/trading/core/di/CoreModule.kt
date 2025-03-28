@@ -13,6 +13,7 @@ import exchange.dydx.trading.feature.workers.globalworkers.DydxCarteraConfigWork
 import exchange.dydx.trading.feature.workers.globalworkers.DydxGasTokenWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxRestrictionsWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferSubaccountWorker
+import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferTokensWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUpdateWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUserTrackingWorker
 import exchange.dydx.trading.integration.fcm.FCMTokenWorker
@@ -36,6 +37,7 @@ interface CoreModule {
             dydxUserTrackingWorker: DydxUserTrackingWorker,
             dydxGasTokenWorker: DydxGasTokenWorker,
             fcmTokenWorker: FCMTokenWorker,
+            dydxTransferTokensWorker: DydxTransferTokensWorker,
         ): List<WorkerProtocol> =
             listOf(
                 dydxUpdateWorker,
@@ -47,6 +49,7 @@ interface CoreModule {
                 dydxUserTrackingWorker,
                 dydxGasTokenWorker,
                 fcmTokenWorker,
+                dydxTransferTokensWorker,
             )
     }
 }

@@ -37,7 +37,7 @@ class DydxBottomBarModel @Inject constructor(
             portfolioItem(router),
             marketItem(router),
             centerButton(router),
-            if (featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled, default = true)) {
+            if (featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled)) {
                 vaultItem(router)
             } else {
                 newsAlertsItem(router)

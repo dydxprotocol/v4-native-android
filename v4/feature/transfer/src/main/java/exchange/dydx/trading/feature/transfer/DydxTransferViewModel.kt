@@ -10,6 +10,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.receipt.ReceiptType
 import exchange.dydx.trading.feature.shared.DydxScreenResult
@@ -35,6 +37,7 @@ class DydxTransferViewModel @Inject constructor(
     val toaster: PlatformInfo,
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val screenResultFlow: MutableStateFlow<@JvmSuppressWildcards DydxScreenResult?>,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTransferView.ViewState?> = selectionFlow
@@ -122,6 +125,7 @@ class DydxTransferViewModel @Inject constructor(
             closeAction = {
                 router.navigateBack()
             },
+            skipGoFast = featureFlags.isFeatureEnabled(DydxFeatureFlag.skip_go_fast),
         )
     }
 }

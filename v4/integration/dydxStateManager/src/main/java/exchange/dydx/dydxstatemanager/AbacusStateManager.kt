@@ -204,10 +204,11 @@ class AbacusStateManager @Inject constructor(
         // Disable Abacus logging since it's too verbose.  Enable it if you need to debug Abacus.
         if (BuildConfig.DEBUG) {
             appConfigsV2.enableLogger = false
+            appConfigsV2.screening = false
         }
 
         appConfigsV2.autoStart = false
-        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing, default = true)
+        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing)
         appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
         appConfigsV2.accountConfigs.subaccountConfigs.notifications =
             listOf(

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.cartera.PhantomWalletConfig
 import exchange.dydx.cartera.WalletConnectModalConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
@@ -21,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import kotlin.String
 
 private const val TAG = "DydxCarteraConfigWorker"
 
@@ -92,11 +94,26 @@ object WalletProvidersConfigUtil {
             walletIds = walletIds?.toList(),
         )
 
+        val phantomWalletConfig = if (BuildConfig.DEBUG) {
+            PhantomWalletConfig(
+                callbackUrl = "https://v4.testnet.dydx.exchange/phantom",
+                appUrl = "https://v4.testnet.dydx.exchange",
+            )
+        } else {
+            abacusStateManager.environment?.walletConnection?.phantom?.callbackUrl?.let {
+                PhantomWalletConfig(
+                    callbackUrl = it,
+                    appUrl = abacusStateManager.deploymentUri,
+                )
+            }
+        }
+
         return WalletProvidersConfig(
             walletConnectV1 = null,
             walletConnectV2 = walletConnectV2Config,
             walletConnectModal = walletConnectModalConfig,
             walletSegue = walletSegueConfig,
+            phantomWallet = phantomWalletConfig,
         )
     }
 }

@@ -48,6 +48,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="@string/app_web_host"
+                    android:pathPrefix="/phantom" />
+            </intent-filter>
 
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -217,5 +228,6 @@
         <package android:name="me.rainbow" />
         <package android:name="io.oneinch.android" />
         <package android:name="pro.huobi" />
+        <package android:name="app.phantom"/>
     </queries>
 </manifest>

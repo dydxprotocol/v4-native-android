@@ -37,7 +37,7 @@ class DydxPortfolioViewModel @Inject constructor(
             localizer = localizer,
             displayContent = displayContent,
             tabSelection = tabSelection,
-            vaultEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled, default = true),
+            vaultEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled),
         )
     }
 }

@@ -2,6 +2,7 @@ package exchange.dydx.trading
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -18,7 +19,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
+import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.container.PlatformInfoContainer
@@ -64,6 +67,12 @@ class TradingActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         pushPermissionRequester.takeActivity(this)
         viewModel.logger.d(TAG, "TradingActivity#onCreate")
+
+        val action: String? = intent?.action
+        val data: Uri? = intent?.data
+        if (action == "android.intent.action.VIEW" && data != null) {
+            CarteraConfig.handleResponse(data)
+        }
 
         CarteraSetup.run(this, viewModel.logger, abacusStateManager)
         AnalyticsSetup.run(viewModel.compositeTracking, this, viewModel.logger)
@@ -175,6 +184,17 @@ class TradingActivity : FragmentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+
+        // must store the new intent unless getIntent()
+        // will return the old one
+        setIntent(intent)
+
+        val action: String? = intent.action
+        val data: Uri? = intent.data
+        if (action == "android.intent.action.VIEW" && data != null) {
+            CarteraConfig.handleResponse(data)
+        }
+
         viewModel.router.handleIntent(intent)
     }
 

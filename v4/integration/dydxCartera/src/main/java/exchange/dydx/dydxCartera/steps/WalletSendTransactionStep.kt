@@ -35,6 +35,7 @@ class WalletSendTransactionStep(
         val transactionRequest = WalletTransactionRequest(
             walletRequest = walletRequest,
             ethereum = transaction,
+            solana = null,
         )
 
         return suspendCoroutine { continuation ->

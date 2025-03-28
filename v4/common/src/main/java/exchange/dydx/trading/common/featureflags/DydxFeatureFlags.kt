@@ -8,18 +8,29 @@ enum class DydxFeatureFlag {
     force_mainnet,
     abacus_static_typing,
     vault_enabled,
-    metadata_service,
+    skip_go_fast;
+
+    val defaultValue: Boolean
+        get()  {
+            return when (this) {
+                deployment_url -> false
+                force_mainnet -> false
+                abacus_static_typing -> true
+                vault_enabled -> true
+                skip_go_fast -> true
+            }
+        }
 }
 
 class DydxFeatureFlags @Inject constructor(
     private val sharedPreferences: SharedPreferencesStore
 ) {
-    fun isFeatureEnabled(featureFlag: DydxFeatureFlag, default: Boolean = false): Boolean {
+    fun isFeatureEnabled(featureFlag: DydxFeatureFlag): Boolean {
         val value = sharedPreferences.read(featureFlag.name)
         if (value != null) {
             return value.toBoolean() || value == "1"
         }
-        return default
+        return featureFlag.defaultValue
     }
 
     fun valueForFeature(featureFlag: DydxFeatureFlag): String? {

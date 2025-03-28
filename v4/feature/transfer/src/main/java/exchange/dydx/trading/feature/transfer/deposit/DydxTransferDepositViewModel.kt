@@ -95,15 +95,20 @@ class DydxTransferDepositViewModel @Inject constructor(
             abacusStateManager.state.transferInput.mapNotNull { it?.resources }.distinctUntilChanged(),
             abacusStateManager.state.transferInput.mapNotNull { it?.chain }.distinctUntilChanged(),
             abacusStateManager.state.transferInput.mapNotNull { it?.token }.distinctUntilChanged(),
-            abacusStateManager.state.currentWallet.mapNotNull { it?.ethereumAddress }.distinctUntilChanged(),
-        ) { resources, chain, token, ethereumAddress ->
+            abacusStateManager.state.currentWallet,
+        ) { resources, chain, token, currentWallet ->
             val chainRpc = resources.chainResources?.get(chain)?.rpc ?: return@combine null
             val tokenResource = resources.tokenResources?.get(token) ?: return@combine null
             val tokenDecimals = tokenResource.decimals ?: return@combine null
+            val ethereumAddress = currentWallet?.ethereumAddress
             if (ethereumAddress.isNullOrEmpty()) {
                 return@combine null
             }
-            fetchTokenAmount(chainRpc, token, tokenDecimals, ethereumAddress)
+            if (currentWallet.walletId == "phantom-wallet") {
+                // no-op
+            } else {
+                fetchTokenAmount(chainRpc, token, tokenDecimals, ethereumAddress)
+            }
         }
             .launchIn(viewModelScope)
     }
