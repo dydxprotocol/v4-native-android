@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -92,11 +95,12 @@ object InstantInputBox {
             Row(
                 modifier = modifier
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
-                    .padding(vertical = ThemeShapes.VerticalPadding),
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Row(
                         modifier = Modifier,
@@ -130,13 +134,14 @@ object InstantInputBox {
                     }
 
                     PlatformTextInput(
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier,
                         value = state.value ?: "",
                         textStyle = TextStyle.dydxDefault
                             .themeColor(ThemeColor.SemanticColor.text_primary)
                             .themeFont(fontSize = ThemeFont.FontSize.large),
                         placeHolder = state.valuePlaceholder ?: "",
                         onValueChange = { state.editAction(it) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     )
                 }
 
@@ -193,7 +198,6 @@ object InstantInputBox {
                                 .align(Alignment.Center)
                         )
                     }
-
                 }
 
                 Text(

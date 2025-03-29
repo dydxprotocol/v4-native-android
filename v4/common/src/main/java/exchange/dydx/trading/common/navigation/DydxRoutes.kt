@@ -66,6 +66,7 @@ object TradeRoutes {
 object TransferRoutes {
     const val transfer = "transfer"
     const val transfer_search = "transfer/search"
+    const val transfer_deposit_search = "transfer/deposit/search"
     const val transfer_status = "transfer/status"
 }
 

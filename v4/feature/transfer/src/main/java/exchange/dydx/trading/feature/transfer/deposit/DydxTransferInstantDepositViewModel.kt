@@ -18,11 +18,13 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
+import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import exchange.dydx.trading.feature.transfer.components.InstantInputBox
 import exchange.dydx.trading.feature.transfer.components.InstantSelector
-import exchange.dydx.trading.feature.transfer.components.TransferRouteSelection
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
 import jnr.ffi.provider.jffi.CodegenUtils.params
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -42,6 +44,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
     private val transferTokenDetails: TransferTokenDetails,
     private val router: DydxRouter,
     private val parser: ParserProtocol,
+    private val transferRouteSelectionInfo: TransferRouteSelectionInfo,
 ) : ViewModel(), DydxViewModel {
 
     private var currentSize: Double? = null
@@ -131,14 +134,33 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             }
         }
 
+        val hasGoFastRoute = (transferInput?.goFastSummary?.bridgeFee?.toDouble() ?: 0.0) > 0.0
+        if (hasGoFastRoute) {
+            val allSelections = listOf(
+                TransferRouteSelection.Instant,
+                TransferRouteSelection.Regular,
+            )
+            if (transferRouteSelectionInfo.allSelections.value != allSelections) {
+                transferRouteSelectionInfo.allSelections.value = allSelections
+                transferRouteSelectionInfo.selected.value = TransferRouteSelection.Instant
+            }
+        } else {
+            val allSelection = listOf(
+                TransferRouteSelection.Regular,
+            )
+            if (transferRouteSelectionInfo.allSelections.value != allSelection) {
+                transferRouteSelectionInfo.allSelections.value = allSelection
+                transferRouteSelectionInfo.selected.value = TransferRouteSelection.Regular
+            }
+        }
         return InstantSelector.ViewState(
             localizer = localizer,
-            selection = TransferRouteSelection.Instant,
+            selection = transferRouteSelectionInfo.selected.value,
             instantFee = instantFee,
             regularTime = regularTime,
             regularFee = regularFee,
-            selectionAction = {
-                // Handle selection action
+            selectionAction = { selection ->
+                transferRouteSelectionInfo.selected.value = selection
             }
         )
     }
@@ -166,7 +188,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             tokenIconUri = token?.tokenLogoUrl(abacusStateManager.deploymentUri),
             chainIconUri = token?.chainLogUrl(abacusStateManager.deploymentUri),
             assetAction = {
-                router.navigateTo(route = "/transfer/deposit/search", presentation = DydxRouter.Presentation.Push)
+                router.navigateTo(route = TransferRoutes.transfer_deposit_search, presentation = DydxRouter.Presentation.Push)
             },
             maxAction = {
                 val amount = parser.asString(token?.amount)

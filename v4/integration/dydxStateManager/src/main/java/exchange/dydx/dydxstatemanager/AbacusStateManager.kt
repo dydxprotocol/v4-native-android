@@ -215,6 +215,7 @@ class AbacusStateManager @Inject constructor(
                 NotificationProviderType.BlockReward,
                 NotificationProviderType.Positions,
             )
+        appConfigsV2.skipGoFast = featureFlags.isFeatureEnabled(DydxFeatureFlag.skip_go_fast)
 
         AsyncAbacusStateManagerV2(
             deploymentUri = deploymentUri,

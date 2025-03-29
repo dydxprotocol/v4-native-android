@@ -34,6 +34,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.R
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
 
 
 @Preview
@@ -42,10 +43,6 @@ fun Preview_InstantSelector() {
     DydxThemedPreviewSurface {
         InstantSelector.Content(Modifier, InstantSelector.ViewState.preview)
     }
-}
-
-enum class TransferRouteSelection {
-    Instant, Regular
 }
 
 object InstantSelector {
@@ -107,7 +104,8 @@ object InstantSelector {
                 )
                 .clip(shape)
                 .background(backgroundColor)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -166,7 +164,8 @@ object InstantSelector {
                 )
                 .clip(shape)
                 .background(backgroundColor)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

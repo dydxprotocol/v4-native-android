@@ -15,8 +15,7 @@ class TransferTokenDetails @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     @CoroutineScopes.App private val scope: CoroutineScope,
 ) {
-    private val _selectedToken = MutableStateFlow<TransferTokenInfo?>(null)
-    val selectedToken: StateFlow<TransferTokenInfo?> = _selectedToken.asStateFlow()
+    val selectedToken = MutableStateFlow<TransferTokenInfo?>(null)
 
     val defaultToken = MutableStateFlow<TransferTokenInfo?>(null)
 
@@ -70,9 +69,9 @@ class TransferTokenDetails @Inject constructor(
             updatedList[index] = info
             _infos.value = updatedList
 
-            if (_selectedToken.value?.chain == info.chain &&
-                _selectedToken.value?.tokenAddress == info.tokenAddress) {
-                _selectedToken.value = info
+            if (selectedToken.value?.chain == info.chain &&
+                selectedToken.value?.tokenAddress == info.tokenAddress) {
+                selectedToken.value = info
             }
 
             if (defaultToken.value?.chain == info.chain &&

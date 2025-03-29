@@ -12,6 +12,8 @@ import exchange.dydx.trading.feature.transfer.DydxTransferSectionsView
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchParam
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStore
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -67,6 +69,12 @@ interface TransferModule {
         @ActivityRetainedScoped
         fun provideMutableScreenResult(): MutableStateFlow<DydxScreenResult?> {
             return MutableStateFlow(null)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideTransferRouteSelectionInfo(): TransferRouteSelectionInfo {
+            return TransferRouteSelectionInfo()
         }
     }
 }

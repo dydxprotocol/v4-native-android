@@ -7,6 +7,7 @@ import androidx.navigation.navArgument
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
+import exchange.dydx.trading.feature.transfer.search.DydxInstantDepositSearchView
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchView
 import exchange.dydx.trading.feature.transfer.status.DydxTransferStatusView
 import exchange.dydx.utilities.utils.Logging
@@ -31,6 +32,14 @@ fun NavGraphBuilder.transferGraph(
         deepLinks = appRouter.deeplinks(TransferRoutes.transfer_search),
     ) { navBackStackEntry ->
         DydxTransferSearchView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_deposit_search,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_deposit_search),
+    ) { navBackStackEntry ->
+        DydxInstantDepositSearchView.Content(Modifier)
     }
 
     dydxComposable(
