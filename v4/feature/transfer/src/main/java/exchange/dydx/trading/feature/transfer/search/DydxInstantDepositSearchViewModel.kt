@@ -1,11 +1,8 @@
 package exchange.dydx.trading.feature.transfer.search
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -14,10 +11,7 @@ import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.collections.map
 
 @HiltViewModel
 class DydxInstantDepositSearchViewModel @Inject constructor(
@@ -63,7 +57,7 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
                 router.navigateBack()
             },
             tokens = tokens,
-            otherTokens =otherTokens,
+            otherTokens = otherTokens,
         )
     }
 

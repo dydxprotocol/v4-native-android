@@ -115,7 +115,7 @@ object DydxTransferStatusView : DydxComponent {
                         .fillMaxWidth()
                         .padding(16.dp),
                 ) {
-                    state.deleteAction?.invoke()
+                    state.deleteAction.invoke()
                 }
             }
         }

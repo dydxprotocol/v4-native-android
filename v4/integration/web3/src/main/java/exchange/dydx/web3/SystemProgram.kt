@@ -7,7 +7,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 object SystemProgram {
-    val programId =  SolanaPublicKey.from("11111111111111111111111111111111")
+    val programId = SolanaPublicKey.from("11111111111111111111111111111111")
 
     fun transfer(
         fromPublicKey: SolanaPublicKey,
@@ -16,7 +16,7 @@ object SystemProgram {
     ): TransactionInstruction {
         val accounts = listOf(
             AccountMeta(fromPublicKey, isSigner = true, isWritable = true),
-            AccountMeta(toPublicKey, isSigner = false, isWritable = true)
+            AccountMeta(toPublicKey, isSigner = false, isWritable = true),
         )
 
         // SystemProgram Instruction Layout:

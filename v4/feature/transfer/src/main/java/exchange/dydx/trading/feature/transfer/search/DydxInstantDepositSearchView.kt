@@ -1,22 +1,15 @@
 package exchange.dydx.trading.feature.transfer.search
 
-import android.R
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,11 +17,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.dividers.PlatformDivider
-import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
-import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
@@ -37,14 +28,13 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.views.HeaderView
 
-
 @Preview
 @Composable
 fun Preview_DydxInstantDepositSearchView() {
     DydxThemedPreviewSurface {
         DydxInstantDepositSearchView.Content(
             Modifier,
-            DydxInstantDepositSearchView.ViewState.preview
+            DydxInstantDepositSearchView.ViewState.preview,
         )
     }
 }
@@ -106,13 +96,13 @@ object DydxInstantDepositSearchView : DydxComponent {
             ) {
                 stickyHeader(key = "your-tokens") {
                     Text(
-                        text =  state.localizer.localize("APP.GENERAL.YOUR_TOKENS"),
-                        modifier =  Modifier
+                        text = state.localizer.localize("APP.GENERAL.YOUR_TOKENS"),
+                        modifier = Modifier
                             .themeColor(ThemeColor.SemanticColor.layer_2)
                             .fillMaxWidth()
                             .padding(vertical = ThemeShapes.VerticalPadding),
                         style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small)
+                            .themeFont(fontSize = ThemeFont.FontSize.small),
                     )
                 }
 
@@ -131,14 +121,14 @@ object DydxInstantDepositSearchView : DydxComponent {
 
                 stickyHeader(key = "all-tokens") {
                     Text(
-                        text =   state.localizer.localize("APP.GENERAL.OTHER_TOKENS"),
-                        modifier =  Modifier
+                        text = state.localizer.localize("APP.GENERAL.OTHER_TOKENS"),
+                        modifier = Modifier
                             .themeColor(ThemeColor.SemanticColor.layer_2)
                             .fillMaxWidth()
                             .padding(vertical = ThemeShapes.VerticalPadding),
                         style = TextStyle.dydxDefault
-                            .themeFont(fontSize = ThemeFont.FontSize.small)
-                        )
+                            .themeFont(fontSize = ThemeFont.FontSize.small),
+                    )
                 }
 
                 items((state.otherTokens ?: emptyList()).count()) { index ->
@@ -156,6 +146,4 @@ object DydxInstantDepositSearchView : DydxComponent {
             }
         }
     }
-
 }
-

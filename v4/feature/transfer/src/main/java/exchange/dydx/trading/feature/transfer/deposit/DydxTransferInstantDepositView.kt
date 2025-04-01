@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +25,7 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.receipt.DydxReceiptView
+import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
 import exchange.dydx.trading.feature.transfer.components.InstantInputBox
 import exchange.dydx.trading.feature.transfer.components.InstantSelector
 
@@ -35,7 +35,7 @@ fun Preview_DydxTransferInstantDepositView() {
     DydxThemedPreviewSurface {
         DydxTransferInstantDepositView.Content(
             Modifier,
-            DydxTransferInstantDepositView.ViewState.preview
+            DydxTransferInstantDepositView.ViewState.preview,
         )
     }
 }
@@ -52,7 +52,7 @@ object DydxTransferInstantDepositView : DydxComponent {
             val preview = ViewState(
                 localizer = MockLocalizer(),
                 inputBox = InstantInputBox.ViewState.preview,
-                selector = InstantSelector.ViewState.preview
+                selector = InstantSelector.ViewState.preview,
             )
         }
     }
@@ -113,6 +113,9 @@ object DydxTransferInstantDepositView : DydxComponent {
                             state = state.selector,
                         )
                     }
+                    item {
+                        DydxValidationView.Content(Modifier)
+                    }
                 }
             }
 
@@ -128,4 +131,3 @@ object DydxTransferInstantDepositView : DydxComponent {
         }
     }
 }
-

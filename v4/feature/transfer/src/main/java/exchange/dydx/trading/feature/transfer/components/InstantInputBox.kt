@@ -8,13 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -33,18 +30,15 @@ import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
-import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
-import exchange.dydx.platformui.designSystem.theme.isLightTheme
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
-import java.net.URL
 
 @Preview
 @Composable
@@ -71,7 +65,7 @@ object InstantInputBox {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                value =  null,
+                value = null,
                 valuePlaceholder = "0.00",
                 token = "USDC",
                 maxAmount = 1000.0,
@@ -90,7 +84,7 @@ object InstantInputBox {
 
         InputFieldScaffold(
             modifier = modifier,
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
         ) {
             Row(
                 modifier = modifier
@@ -164,7 +158,7 @@ object InstantInputBox {
             contentPadding = PaddingValues(
                 horizontal = 8.dp,
                 vertical = ThemeShapes.VerticalPadding,
-            )
+            ),
         ) {
             Row(
                 modifier = Modifier,
@@ -172,13 +166,13 @@ object InstantInputBox {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(28.dp),
                 ) {
                     PlatformImage(
                         icon = state.tokenIconUri,
                         modifier = Modifier
                             .size(24.dp)
-                            .clip(CircleShape)
+                            .clip(CircleShape),
                     )
 
                     Box(
@@ -186,16 +180,16 @@ object InstantInputBox {
                             .size(18.dp)
                             .background(
                                 color = ThemeColor.SemanticColor.layer_5.color,
-                                shape = CircleShape
+                                shape = CircleShape,
                             )
-                            .align(Alignment.BottomEnd)
+                            .align(Alignment.BottomEnd),
                     ) {
                         PlatformImage(
                             icon = state.chainIconUri,
                             modifier = Modifier
                                 .size(12.dp)
                                 .clip(CircleShape)
-                                .align(Alignment.Center)
+                                .align(Alignment.Center),
                         )
                     }
                 }

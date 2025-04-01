@@ -1,6 +1,5 @@
 package exchange.dydx.dydxCartera.v4
 
-import android.R.attr.padding
 import android.R.attr.type
 import android.R.id.message
 import android.content.Context
@@ -58,7 +57,7 @@ class DydxV4WalletSetup @Inject constructor(
         }
         val message = """
 {"domain":{"name":"$signTypedDataDomainName"},"message":{"action":"$signTypedDataAction"},"primaryType":"dYdX","types":{"dYdX":[{"name":"action","type":"string"}]}}
-""".trimIndent()
+        """.trimIndent()
         provider.signMessage(
             request = request,
             message = message,
@@ -84,7 +83,7 @@ class DydxV4WalletSetup @Inject constructor(
                         return@signMessage
                     }
                     // Pad a leading zero to "decoded" to make it 65 bytes before passing it down v4-client
-                    val padded =  byteArrayOf(0x00) + decoded
+                    val padded = byteArrayOf(0x00) + decoded
                     signedMessage = padded.toHexString(format = HexFormat.Default)
                 } catch (e: Exception) {
                     _status.value = Status.createError(message = "Failed to decode Base58, ${e.message}")

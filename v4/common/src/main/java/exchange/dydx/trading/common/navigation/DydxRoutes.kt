@@ -68,6 +68,7 @@ object TransferRoutes {
     const val transfer_search = "transfer/search"
     const val transfer_deposit_search = "transfer/deposit/search"
     const val transfer_status = "transfer/status"
+    const val transfer_status_instant = "transfer/status/instant"
 }
 
 object VaultRoutes {

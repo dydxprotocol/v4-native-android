@@ -2,11 +2,11 @@ package exchange.dydx.trading.feature.transfer.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,8 +25,6 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
-import exchange.dydx.platformui.designSystem.theme.ThemeSettings
-import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
@@ -35,7 +33,6 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
-
 
 @Preview
 @Composable
@@ -99,11 +96,14 @@ object InstantSelector {
             modifier = modifier
                 .border(
                     width = 2.dp,
-                    color = if (selected) ThemeColor.SemanticColor.color_purple.color else ThemeColor.SemanticColor.transparent.color ,
+                    color = if (selected) ThemeColor.SemanticColor.color_purple.color else ThemeColor.SemanticColor.transparent.color,
                     shape = shape,
                 )
                 .clip(shape)
                 .background(backgroundColor)
+                .clickable {
+                    state.selectionAction(TransferRouteSelection.Instant)
+                }
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -164,6 +164,9 @@ object InstantSelector {
                 )
                 .clip(shape)
                 .background(backgroundColor)
+                .clickable {
+                    state.selectionAction(TransferRouteSelection.Regular)
+                }
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -173,11 +176,11 @@ object InstantSelector {
                 icon = R.drawable.icon_regular_deposit,
                 modifier = Modifier
                     .size(20.dp),
-                colorFilter = if (selected) {
-                    null
+                colorFilter =
+                if (selected) {
+                    ColorFilter.tint(ThemeColor.SemanticColor.color_purple.color)
                 } else {
-                    ColorFilter
-                        .tint(ThemeColor.SemanticColor.text_tertiary.color)
+                    ColorFilter.tint(ThemeColor.SemanticColor.text_tertiary.color)
                 },
             )
             Column(

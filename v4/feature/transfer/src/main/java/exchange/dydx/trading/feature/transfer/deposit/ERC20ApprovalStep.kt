@@ -46,7 +46,8 @@ class ERC20ApprovalStep(
         )
 
         return WalletSendTransactionStep(
-            transaction = transaction,
+            ethereum = transaction,
+            solana = null,
             chainId = chainId,
             walletAddress = ethereumAddress,
             walletId = walletId,

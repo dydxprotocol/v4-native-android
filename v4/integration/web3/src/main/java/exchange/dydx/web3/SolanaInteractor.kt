@@ -29,12 +29,12 @@ class SolanaInteractor(
         val json = mapOf(
             "jsonrpc" to "2.0",
             "id" to 1,
-            "method" to "getLatestBlockhash"
+            "method" to "getLatestBlockhash",
         )
 
         val requestBody = RequestBody.create(
             "application/json; charset=utf-8".toMediaTypeOrNull(),
-            gson.toJson(json)
+            gson.toJson(json),
         )
 
         val request = Request.Builder()
@@ -60,12 +60,12 @@ class SolanaInteractor(
             "jsonrpc" to "2.0",
             "id" to 1,
             "method" to "getBalance",
-            "params" to listOf(publicKey)
+            "params" to listOf(publicKey),
         )
 
         val requestBody = RequestBody.create(
             "application/json; charset=utf-8".toMediaTypeOrNull(),
-            gson.toJson(json)
+            gson.toJson(json),
         )
 
         val request = Request.Builder()
@@ -97,13 +97,13 @@ class SolanaInteractor(
                 mapOf(
                     "mint" to tokenAddress,
                 ),
-                mapOf("encoding" to "jsonParsed")
-            )
+                mapOf("encoding" to "jsonParsed"),
+            ),
         )
 
         val requestBody = RequestBody.create(
             "application/json; charset=utf-8".toMediaTypeOrNull(),
-            gson.toJson(json)
+            gson.toJson(json),
         )
 
         val request = Request.Builder()
@@ -135,10 +135,9 @@ class SolanaInteractor(
         TransactionInstruction(
             programId = SystemProgram.programId,
             accounts = listOf(AccountMeta(publicKey = address, isSigner = true, isWritable = true)),
-            data = memo.encodeToByteArray()
+            data = memo.encodeToByteArray(),
         )
 }
-
 
 data class LatestBlockhashResponse(
     val result: LatestBlockhashResult

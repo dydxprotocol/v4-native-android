@@ -3,11 +3,17 @@ package exchange.dydx.trading.feature.shared
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.map
 import kotlin.collections.toMutableList
 
 @Singleton
@@ -23,7 +29,6 @@ class TransferTokenDetails @Inject constructor(
     val refreshCounter: StateFlow<Int> = _refreshCounter.asStateFlow()
 
     private val _infos = MutableStateFlow<List<TransferTokenInfo>>(emptyList())
-    val currentInfos: List<TransferTokenInfo> get() = _infos.value
 
     val marketPrices: Flow<Map<String, Double>> = abacusStateManager.state.marketMap
         .map { marketMap ->
@@ -37,7 +42,7 @@ class TransferTokenDetails @Inject constructor(
 
     val infos: Flow<List<TransferTokenInfo>> = combine(
         _infos,
-        marketPrices
+        marketPrices,
     ) { infos, marketPrices ->
         infos.map { token ->
             var updatedToken = token
@@ -70,12 +75,14 @@ class TransferTokenDetails @Inject constructor(
             _infos.value = updatedList
 
             if (selectedToken.value?.chain == info.chain &&
-                selectedToken.value?.tokenAddress == info.tokenAddress) {
+                selectedToken.value?.tokenAddress == info.tokenAddress
+            ) {
                 selectedToken.value = info
             }
 
             if (defaultToken.value?.chain == info.chain &&
-                defaultToken.value?.tokenAddress == info.tokenAddress) {
+                defaultToken.value?.tokenAddress == info.tokenAddress
+            ) {
                 defaultToken.value = info
             }
         } else {
@@ -113,7 +120,7 @@ data class TransferTokenInfo(
             TransferChain.Polygon -> "polygon.png"
             TransferChain.Solana -> "solana.png"
         }
-        return "${deploymentUri}/chains/$logoName"
+        return "$deploymentUri/chains/$logoName"
     }
 
     fun tokenLogoUrl(deploymentUri: String): String {
@@ -146,7 +153,7 @@ private val mainnetTokens = listOf(
     TransferTokenInfo(TransferChain.Arbitrum, "42161", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Polygon, "137", TransferToken.POL, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     // TransferTokenInfo(TransferChain.Solana, "solana", TransferToken.SOL, "solana-native"),
-    TransferTokenInfo(TransferChain.Solana, "solana", TransferToken.USDC, "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+    TransferTokenInfo(TransferChain.Solana, "solana", TransferToken.USDC, "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
 )
 
 private val testnetTokens = listOf(
@@ -161,5 +168,5 @@ private val testnetTokens = listOf(
     TransferTokenInfo(TransferChain.Arbitrum, "421614", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Polygon, "80002", TransferToken.POL, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     // TransferTokenInfo(TransferChain.Solana, "solana-devnet", TransferToken.SOL, "solana-devnet-native"),
-    TransferTokenInfo(TransferChain.Solana, "solana-devnet", TransferToken.USDC, "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU")
+    TransferTokenInfo(TransferChain.Solana, "solana-devnet", TransferToken.USDC, "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"),
 )

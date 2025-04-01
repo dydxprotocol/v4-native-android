@@ -10,7 +10,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.receipt.ReceiptType
@@ -125,7 +125,7 @@ class DydxTransferViewModel @Inject constructor(
             closeAction = {
                 router.navigateBack()
             },
-            skipGoFast = featureFlags.isFeatureEnabled(DydxFeatureFlag.skip_go_fast),
+            skipGoFast = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.skip_go_fast),
         )
     }
 }

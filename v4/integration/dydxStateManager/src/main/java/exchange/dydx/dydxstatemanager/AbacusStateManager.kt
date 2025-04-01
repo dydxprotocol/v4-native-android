@@ -34,6 +34,7 @@ import exchange.dydx.abacus.state.model.ClosePositionInputField
 import exchange.dydx.abacus.state.model.TradeInputField
 import exchange.dydx.abacus.state.model.TransferInputField
 import exchange.dydx.abacus.state.model.TriggerOrdersInputField
+import exchange.dydx.abacus.state.model.WalletConnectionType
 import exchange.dydx.abacus.state.v2.manager.AsyncAbacusStateManagerV2
 import exchange.dydx.abacus.state.v2.supervisor.AppConfigsV2
 import exchange.dydx.abacus.state.v2.supervisor.NotificationProviderType
@@ -47,8 +48,9 @@ import exchange.dydx.dydxstatemanager.protocolImplementations.UIImplementationsE
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.di.CoroutineScopes
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+import exchange.dydx.trading.common.featureflags.DydxStringFeatureFlag
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.statsig.StatsigFlags
 import exchange.dydx.trading.integration.statsig.StatsigInitWorker
@@ -182,7 +184,7 @@ class AbacusStateManager @Inject constructor(
         UIImplementationsExtensions.reset(language = language, ioImplementations)
 
         val deployment: String
-        if (featureFlags.isFeatureEnabled(DydxFeatureFlag.force_mainnet)) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)) {
             deployment = "MAINNET"
         } else {
             val appDeployment = application.getString(R.string.app_deployment)
@@ -196,7 +198,7 @@ class AbacusStateManager @Inject constructor(
         }
 
         val appConfigsV2 =
-            if (BuildConfig.DEBUG && !featureFlags.isFeatureEnabled(DydxFeatureFlag.force_mainnet)) {
+            if (BuildConfig.DEBUG && !featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)) {
                 AppConfigsV2.forAppDebug
             } else {
                 AppConfigsV2.forApp
@@ -208,14 +210,14 @@ class AbacusStateManager @Inject constructor(
         }
 
         appConfigsV2.autoStart = false
-        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxFeatureFlag.abacus_static_typing)
+        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.abacus_static_typing)
         appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
         appConfigsV2.accountConfigs.subaccountConfigs.notifications =
             listOf(
                 NotificationProviderType.BlockReward,
                 NotificationProviderType.Positions,
             )
-        appConfigsV2.skipGoFast = featureFlags.isFeatureEnabled(DydxFeatureFlag.skip_go_fast)
+        appConfigsV2.skipGoFast = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.skip_go_fast)
 
         AsyncAbacusStateManagerV2(
             deploymentUri = deploymentUri,
@@ -248,7 +250,7 @@ class AbacusStateManager @Inject constructor(
 
     override val deploymentUri: String
         get() {
-            val urlOverride = featureFlags.valueForFeature(DydxFeatureFlag.deployment_url)
+            val urlOverride = featureFlags.stringForFeature(DydxStringFeatureFlag.deployment_url)
             return if (!urlOverride.isNullOrEmpty()) {
                 urlOverride
             } else {
@@ -304,6 +306,11 @@ class AbacusStateManager @Inject constructor(
             walletStateManager.setCurrentWallet(wallet)
             asyncStateManager.accountAddress = cosmosAddress
             asyncStateManager.sourceAddress = ethereumAddress
+            if (walletId == "phantom-wallet") {
+                asyncStateManager.walletConnectionType = WalletConnectionType.Solana
+            } else {
+                asyncStateManager.walletConnectionType = WalletConnectionType.Ethereum
+            }
         }
     }
 

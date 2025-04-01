@@ -13,17 +13,25 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
+import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.dydxstatemanager.localizedString
+import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.trading.common.featureflags.DydxDoubleFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
+import exchange.dydx.trading.common.navigation.VaultRoutes.deposit
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
+import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
 import exchange.dydx.utilities.utils.runWithLogs
@@ -50,6 +58,9 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     private val onboardingAnalytics: OnboardingAnalytics,
     private val transferAnalytics: TransferAnalytics,
     @CoroutineScopes.App private val appScope: CoroutineScope,
+    private val featureFlags: DydxFeatureFlags,
+    private val formatter: DydxFormatter,
+    private val transferRouteSelectionInfo: TransferRouteSelectionInfo,
 ) : ViewModel(), DydxViewModel {
     private val carteraProvider: CarteraProvider = CarteraProvider(context)
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -61,8 +72,16 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
             abacusStateManager.state.onboarded,
             isSubmittingFlow,
             abacusStateManager.state.currentWallet,
-        ) { transferInput, validationErrors, onboarded, isSubmitting, wallet ->
-            createViewState(transferInput, validationErrors, onboarded, isSubmitting, wallet)
+            transferRouteSelectionInfo.selected,
+        ) { array ->
+            createViewState(
+                array[0] as TransferInput?,
+                array[1] as List<ValidationError>,
+                array[2] as Boolean,
+                array[3] as Boolean,
+                array[4] as DydxWalletInstance?,
+                array[5] as TransferRouteSelection,
+            )
         }
             .distinctUntilChanged()
 
@@ -72,6 +91,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         isOnboarded: Boolean,
         isSubmitting: Boolean,
         wallet: DydxWalletInstance?,
+        selectedRoute: TransferRouteSelection,
     ): DydxTransferDepositCtaButton.ViewState {
         return DydxTransferDepositCtaButton.ViewState(
             ctaButton = InputCtaButton.ViewState(
@@ -84,27 +104,47 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                         localizer.localize("APP.GENERAL.CONNECT_WALLET"),
                     )
                     hasValidSize(transferInput) -> {
-                        val firstBlockingError = tradeErrors.firstOrNull { it.type == ErrorType.required || it.type == ErrorType.error }
-                        val transferError = transferInput?.errors
-                        if (firstBlockingError != null) {
-                            if (transferInput?.requestPayload == null) {
-                                InputCtaButton.State.Thinking
+                        if (belowMinSizeForDeposit(transferInput)) {
+                            val minUsdcAmount = if (BuildConfig.DEBUG) {
+                                1.0
                             } else {
-                                InputCtaButton.State.Disabled(
-                                    firstBlockingError.resources.action?.localizedString(localizer),
-                                )
+                                featureFlags.doubleForFeature(DydxDoubleFeatureFlag.min_usdc_for_deposit)
                             }
-                        } else if (transferError != null) {
+                            val minAmountString = formatter.dollar(minUsdcAmount, digits = 2)
                             InputCtaButton.State.Disabled(
-                                localizer.localize("APP.GENERAL.ERROR"),
+                                localizer.localizeWithParams(
+                                    "APP.ONBOARDING.MINIMUM_DEPOSIT",
+                                    params = mapOf(
+                                        "MIN_DEPOSIT_USDC" to (minAmountString ?: ""),
+                                    ),
+                                ),
                             )
                         } else {
-                            if (transferInput?.requestPayload == null) {
-                                InputCtaButton.State.Thinking
-                            } else {
-                                InputCtaButton.State.Enabled(
-                                    localizer.localize("APP.GENERAL.CONFIRM_DEPOSIT"),
+                            val firstBlockingError =
+                                tradeErrors.firstOrNull { it.type == ErrorType.required || it.type == ErrorType.error }
+                            val transferError = transferInput?.errors
+                            if (firstBlockingError != null) {
+                                if (transferInput?.requestPayload == null) {
+                                    InputCtaButton.State.Thinking
+                                } else {
+                                    InputCtaButton.State.Disabled(
+                                        firstBlockingError.resources.action?.localizedString(
+                                            localizer,
+                                        ),
+                                    )
+                                }
+                            } else if (transferError != null) {
+                                InputCtaButton.State.Disabled(
+                                    localizer.localize("APP.GENERAL.ERROR"),
                                 )
+                            } else {
+                                if (transferInput?.requestPayload == null) {
+                                    InputCtaButton.State.Thinking
+                                } else {
+                                    InputCtaButton.State.Enabled(
+                                        localizer.localize("APP.GENERAL.CONFIRM_DEPOSIT"),
+                                    )
+                                }
                             }
                         }
                     }
@@ -121,7 +161,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                     } else {
                         isSubmittingFlow.value = true
                         if (transferInput != null) {
-                            deposit(transferInput, wallet)
+                            deposit(transferInput, wallet, selectedRoute)
                         }
                     }
                 },
@@ -134,9 +174,20 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         return size > 0.0
     }
 
+    private fun belowMinSizeForDeposit(transferInput: TransferInput?): Boolean {
+        val size = parser.asDouble(transferInput?.size?.size) ?: 0.0
+        val minSize = if (BuildConfig.DEBUG) {
+            1.0
+        } else {
+            featureFlags.doubleForFeature(DydxDoubleFeatureFlag.min_usdc_for_deposit)
+        }
+        return size < minSize * .99 // since USDC price is not always == $1.00
+    }
+
     private fun deposit(
         transferInput: TransferInput,
         wallet: DydxWalletInstance?,
+        selectedRoute: TransferRouteSelection,
     ) {
         val wallet = wallet ?: return
         val walletAddress = wallet.ethereumAddress ?: return
@@ -144,6 +195,11 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         val token = transferInput.token ?: return
         val chainRpc = transferInput.resources?.chainResources?.get(chain)?.rpc ?: return
         val tokenAddress = transferInput.resources?.tokenResources?.get(token)?.address ?: return
+        router.navigateTo(
+            route = "${TransferRoutes.transfer_status_instant}/1111",
+            presentation = DydxRouter.Presentation.Modal,
+        )
+        return
 
         appScope.launch {
             val event =
@@ -155,10 +211,11 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                     chainRpc = chainRpc,
                     tokenAddress = tokenAddress,
                     context = context,
+                    selectedRoute = selectedRoute,
                 ).runWithLogs()
 
             isSubmittingFlow.value = false
-            val hash = event.getOrNull()?.lowercase()
+            val hash = event.getOrNull()
             if (hash != null) {
                 sendOnboardingAnalytics()
                 transferAnalytics.logDeposit(transferInput)
@@ -170,8 +227,16 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                     transferInput = transferInput,
                 )
                 router.navigateBack()
+                val transferStatusRoute = when (selectedRoute) {
+                    TransferRouteSelection.Instant -> {
+                        TransferRoutes.transfer_status_instant
+                    }
+                    TransferRouteSelection.Regular -> {
+                        TransferRoutes.transfer_status
+                    }
+                }
                 router.navigateTo(
-                    route = TransferRoutes.transfer_status + "/$hash",
+                    route = "$transferStatusRoute/$hash",
                     presentation = DydxRouter.Presentation.Modal,
                 )
             } else {

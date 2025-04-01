@@ -4,14 +4,10 @@ import android.R.attr.type
 import android.R.id.input
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
-import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.state.model.TransferInputField
-import exchange.dydx.abacus.utils.Parser
-import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.DydxViewModel
@@ -30,8 +26,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.selects.select
-import java.net.URL
 import javax.inject.Inject
 import kotlin.String
 import kotlin.math.min
@@ -54,13 +48,15 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             abacusStateManager.state.transferInput,
             transferTokenDetails.selectedToken,
             transferTokenDetails.defaultToken,
+            transferRouteSelectionInfo.selected,
             abacusStateManager.state.currentWallet.map { it?.ethereumAddress }.distinctUntilChanged(),
-        ) { transferInput, selectedToken, defaultToken, ethereumAddress ->
+        ) { transferInput, selectedToken, defaultToken, selectedRoute, ethereumAddress ->
             createViewState(
                 transferInput = transferInput,
                 selectedToken = selectedToken,
                 defaultToken = defaultToken,
-                showConnectWallet = ethereumAddress.isNullOrEmpty()
+                selectedRoute = selectedRoute,
+                showConnectWallet = ethereumAddress.isNullOrEmpty(),
             )
         }
             .distinctUntilChanged()
@@ -69,6 +65,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
         transferInput: TransferInput?,
         selectedToken: TransferTokenInfo?,
         defaultToken: TransferTokenInfo?,
+        selectedRoute: TransferRouteSelection,
         showConnectWallet: Boolean,
     ): DydxTransferInstantDepositView.ViewState {
         val token = selectedToken ?: defaultToken
@@ -88,9 +85,10 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
                 transferInput = transferInput,
                 token = token,
             ),
-            selector =  createSelectorState(
+            selector = createSelectorState(
                 transferInput = transferInput,
                 token = token,
+                selectedRoute = selectedRoute,
             ),
             showConnectWallet = showConnectWallet,
             connectWalletAction = {
@@ -105,6 +103,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
     private fun createSelectorState(
         transferInput: TransferInput?,
         token: TransferTokenInfo?,
+        selectedRoute: TransferRouteSelection,
     ): InstantSelector.ViewState {
         var regularTime = "< " + localizer.localize("APP.GENERAL.TIME_STRINGS.30MIN")
         transferInput?.summary?.estimatedRouteDurationSeconds?.toDouble()?.let {
@@ -116,7 +115,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             }
         }
 
-        var regularFee: String =  localizer.localize("APP.ONBOARDING.SKIP_SLOW_ROUTE_DESC")
+        var regularFee: String = localizer.localize("APP.ONBOARDING.SKIP_SLOW_ROUTE_DESC")
         transferInput?.summary?.bridgeFee?.toDouble()?.let {
             if (it > 0) {
                 formatter.dollar(it, digits = 2)?.let {
@@ -125,7 +124,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             }
         }
 
-        var instantFee: String =  localizer.localize("APP.GENERAL.UNAVAILABLE")
+        var instantFee: String = localizer.localize("APP.GENERAL.UNAVAILABLE")
         transferInput?.goFastSummary?.bridgeFee?.toDouble()?.let {
             if (it > 0) {
                 formatter.dollar(it, digits = 2)?.let {
@@ -155,13 +154,15 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
         }
         return InstantSelector.ViewState(
             localizer = localizer,
-            selection = transferRouteSelectionInfo.selected.value,
+            selection = selectedRoute,
             instantFee = instantFee,
             regularTime = regularTime,
             regularFee = regularFee,
             selectionAction = { selection ->
-                transferRouteSelectionInfo.selected.value = selection
-            }
+                if (transferRouteSelectionInfo.allSelections.value.contains(selection)) {
+                    transferRouteSelectionInfo.selected.value = selection
+                }
+            },
         )
     }
 
@@ -200,7 +201,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
                     abacusStateManager.transfer(input = parser.asString(size), type = TransferInputField.size)
                     currentSize = size
                 }
-            }
+            },
         )
     }
 }

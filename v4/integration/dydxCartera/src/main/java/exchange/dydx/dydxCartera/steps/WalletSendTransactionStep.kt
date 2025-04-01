@@ -12,7 +12,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class WalletSendTransactionStep(
-    private val transaction: EthereumTransactionRequest,
+    private val ethereum: EthereumTransactionRequest?,
+    private val solana: ByteArray?,
     private val chainId: String,
     private val walletAddress: String,
     private val walletId: String?,
@@ -34,12 +35,12 @@ class WalletSendTransactionStep(
         )
         val transactionRequest = WalletTransactionRequest(
             walletRequest = walletRequest,
-            ethereum = transaction,
-            solana = null,
+            ethereum = ethereum,
+            solana = solana,
         )
 
         return suspendCoroutine { continuation ->
-            Log.d("AsyncStep", "Sending $transaction")
+            Log.d("AsyncStep", "Sending $ethereum")
             provider.send(
                 request = transactionRequest,
                 connected = { info ->

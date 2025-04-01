@@ -198,5 +198,4 @@ interface AppModule {
     fun bindCompositeTracking(compositeTracker: CompositeTracker): CompositeTracking
 
     @Binds fun bindCosmosV4WebviewClientProtocol(cosmosV4ClientWebview: CosmosV4ClientWebview): CosmosV4WebviewClientProtocol
-
 }

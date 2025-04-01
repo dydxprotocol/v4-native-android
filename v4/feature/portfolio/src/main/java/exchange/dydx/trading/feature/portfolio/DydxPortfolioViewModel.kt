@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.featureflags.DydxFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioSectionsView
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +37,7 @@ class DydxPortfolioViewModel @Inject constructor(
             localizer = localizer,
             displayContent = displayContent,
             tabSelection = tabSelection,
-            vaultEnabled = featureFlags.isFeatureEnabled(DydxFeatureFlag.vault_enabled),
+            vaultEnabled = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.vault_enabled),
         )
     }
 }

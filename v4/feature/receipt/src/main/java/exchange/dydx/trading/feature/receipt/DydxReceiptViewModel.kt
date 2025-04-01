@@ -3,12 +3,14 @@ package exchange.dydx.trading.feature.receipt
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.ReceiptLine
+import exchange.dydx.abacus.output.input.TransferInput
+import exchange.dydx.abacus.output.input.TransferType
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,18 +20,35 @@ class DydxReceiptViewModel @Inject constructor(
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxReceiptView.ViewState?> =
-        abacusStateManager.state.receipts
-            .map {
-                createViewState(it)
-            }
+        combine(
+            abacusStateManager.state.receipts,
+            abacusStateManager.state.transferInput,
+        ) { receipts, transferInput ->
+            createViewState(receipts, transferInput)
+        }
             .distinctUntilChanged()
 
-    private fun createViewState(receipts: List<ReceiptLine>): DydxReceiptView.ViewState {
+    private fun createViewState(
+        receipts: List<ReceiptLine>,
+        transferInput: TransferInput?,
+    ): DydxReceiptView.ViewState {
+        val lineTypes = receipts.mapNotNull { receiptLine ->
+            receiptLine.toType()
+        }.toMutableList()
+
+        if (transferInput?.type == TransferType.deposit) {
+            lineTypes.removeIf {
+                it == DydxReceiptView.ReceiptLineType.BridgeFee ||
+                    it == DydxReceiptView.ReceiptLineType.TransferDuration ||
+                    it == DydxReceiptView.ReceiptLineType.Slippage
+            }
+
+            // TODO: Remove Equity if not in Simple mode
+        }
+
         return DydxReceiptView.ViewState(
             localizer = localizer,
-            lineTypes = receipts.mapNotNull { receiptLine ->
-                receiptLine.toType()
-            },
+            lineTypes = lineTypes,
         )
     }
 }
