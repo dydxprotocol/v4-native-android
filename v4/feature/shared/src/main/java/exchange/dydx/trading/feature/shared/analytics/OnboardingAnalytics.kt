@@ -46,6 +46,8 @@ class OnboardingAnalytics @Inject constructor(
         // Step: Acknowledge Terms
         ACKNOWLEDGE_TERMS("AcknowledgeTerms"),
 
+        DEPOSIT_INITIATED("TransferDepositFundsClick"),
+
         // Step: Deposit Funds
         DEPOSIT_FUNDS("DepositFunds")
     }

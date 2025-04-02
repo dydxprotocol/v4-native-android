@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -82,6 +83,8 @@ object InstantInputBox {
             return
         }
 
+        val focusManager = LocalFocusManager.current
+
         InputFieldScaffold(
             modifier = modifier,
             shape = RoundedCornerShape(16.dp),
@@ -94,7 +97,7 @@ object InstantInputBox {
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Row(
                         modifier = Modifier,
@@ -117,7 +120,9 @@ object InstantInputBox {
 
                         Text(
                             modifier = Modifier
+                                .padding(4.dp)
                                 .clickable {
+                                    focusManager.clearFocus()
                                     state.maxAction()
                                 },
                             text = state.localizer.localize("APP.GENERAL.MAX"),

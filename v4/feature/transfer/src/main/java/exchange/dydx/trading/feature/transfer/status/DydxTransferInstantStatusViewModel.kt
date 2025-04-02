@@ -77,6 +77,9 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         timer?.cancel()
+
+        abacusStateManager.resetTransferInputFields()
+        transferTokenDetails.refresh()
     }
 
     private fun fetchTransferStatuses(transfer: DydxTransferInstance) {
@@ -97,10 +100,12 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
         input: TransferInput?,
         tokenInfos: List<TransferTokenInfo>,
     ): DydxTransferInstantStatusView.ViewState {
-        val tokenInfo = tokenInfos.first { it.tokenAddress == input?.token && it.chainId == input.chain }
+        val tokenInfo = tokenInfos.firstOrNull {
+            it.tokenAddress == input?.token && it.chainId == input.chain
+        }
         val amount = input?.size?.size?.toDoubleOrNull() ?: 0.0
         val status = statuses[transactionHash]
-        val completed = if (status != null) {
+        val completed = if (status != null && tokenInfo != null) {
             routeCompleted(
                 transferStatus = status,
                 chainId = tokenInfo.chainId,
@@ -123,9 +128,9 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
         return DydxTransferInstantStatusView.ViewState(
             localizer = localizer,
             label = localizer.localize("APP.ONBOARDING.YOUR_DEPOSIT"),
-            token = tokenInfo.token.name,
-            tokenIconUri = tokenInfo.tokenLogoUrl(abacusStateManager.deploymentUri),
-            chainIconUri = tokenInfo.chainLogUrl(abacusStateManager.deploymentUri),
+            token = tokenInfo?.token?.name,
+            tokenIconUri = tokenInfo?.tokenLogoUrl(abacusStateManager.deploymentUri),
+            chainIconUri = tokenInfo?.chainLogUrl(abacusStateManager.deploymentUri),
             amount = formatter.raw(number = amount, digits = 3),
             title = if (completed) {
                 localizer.localize("APP.V4_DEPOSIT.COMPLETED_TITLE")
@@ -155,6 +160,9 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
                     StatusIcon.SUBMITTING
                 }
             },
+            closeAction = {
+                router.navigateBack()
+            },
         )
     }
 
@@ -162,7 +170,7 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
         if (transferStatus.squidTransactionStatus == "success") {
             return true
         }
-        val statusContainsExecuted = transferStatus.status?.contains("executed") ?: false
+        val statusContainsExecuted = transferStatus.status?.contains("executed") == true
         val lastStatus = transferStatus.routeStatuses?.lastOrNull()
         if (statusContainsExecuted &&
             lastStatus?.chainId == chainId &&

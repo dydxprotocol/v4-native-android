@@ -145,7 +145,7 @@ class DydxRouterImpl @Inject constructor(
                     restoreState = false
                 }
             } catch (e: Exception) {
-                logger.e(TAG, "Failed to navigate to route: $routePath")
+                logger.e(TAG, "Failed to navigate to route: $routePath, error: ${e.message}")
             }
         }
     }

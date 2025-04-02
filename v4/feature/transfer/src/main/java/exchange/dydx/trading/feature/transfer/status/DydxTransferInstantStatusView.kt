@@ -24,7 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
-import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.components.progress.PlatformIndeterminateProgress
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -38,7 +37,6 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.R
-import exchange.dydx.trading.feature.shared.views.HeaderView
 
 @Preview
 @Composable
@@ -110,14 +108,6 @@ object DydxTransferInstantStatusView : DydxComponent {
                 .themeColor(ThemeColor.SemanticColor.layer_3),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            HeaderView(
-                title = state.title ?: "",
-                icon = if (state.status == StatusIcon.SUCCESS) R.drawable.icon_check else R.drawable.icon_clock,
-                closeAction = state.closeAction,
-            )
-
-            PlatformDivider()
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -184,7 +174,8 @@ object DydxTransferInstantStatusView : DydxComponent {
                         contentAlignment = androidx.compose.ui.Alignment.Center,
                     ) {
                         PlatformImage(
-                            modifier = Modifier,
+                            modifier = Modifier
+                                .size(43.dp),
                             icon = R.drawable.close,
                             colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.color_red.color),
                         )
@@ -200,7 +191,8 @@ object DydxTransferInstantStatusView : DydxComponent {
                         contentAlignment = androidx.compose.ui.Alignment.Center,
                     ) {
                         PlatformImage(
-                            modifier = Modifier,
+                            modifier = Modifier
+                                .size(43.dp),
                             icon = R.drawable.icon_check,
                             colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.color_green.color),
                         )

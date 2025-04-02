@@ -17,6 +17,7 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.R
+import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,6 +35,7 @@ class DydxTransferStatusViewModel @Inject constructor(
     private val transferStateManager: DydxTransferStateManagerProtocol,
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
+    private val transferTokenDetails: TransferTokenDetails,
 ) : ViewModel(), DydxViewModel {
 
     private val transactionHash: String? = savedStateHandle["hash"]
@@ -83,6 +85,8 @@ class DydxTransferStatusViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         timer?.cancel()
+
+        transferTokenDetails.refresh()
     }
 
     private fun fetchTransferStatuses(transfer: DydxTransferInstance) {

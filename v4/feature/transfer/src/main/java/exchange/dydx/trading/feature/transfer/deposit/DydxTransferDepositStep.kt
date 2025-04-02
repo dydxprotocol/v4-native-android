@@ -1,28 +1,30 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
+import android.R.attr.value
 import android.content.Context
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
 import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
+import exchange.dydx.trading.feature.shared.TransferTokenDetails
+import exchange.dydx.trading.feature.transfer.tokenSize
 import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.runWithLogs
 import org.bouncycastle.crypto.params.Blake3Parameters.context
-import java.math.BigInteger
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.math.pow
 
 class DydxTransferDepositStep(
     private val transferInput: TransferInput,
     private val provider: CarteraProvider,
     private val walletAddress: String,
     private val walletId: String?,
-    private val chainRpc: String,
+    private val chainRpc: String?,
     private val tokenAddress: String,
     private val context: Context,
     private val selectedRoute: TransferRouteSelection,
+    private val transferTokenDetails: TransferTokenDetails,
 ) : AsyncStep<String> {
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -35,10 +37,8 @@ class DydxTransferDepositStep(
         if (requestPayload == null) {
             return errorEvent("Invalid request payload")
         }
-        val targetAddress = requestPayload.targetAddress ?: return invalidInputEvent
-        val tokenSize = transferInput.tokenSize ?: return invalidInputEvent
+        val tokenSize = transferInput.tokenSize(transferTokenDetails) ?: return invalidInputEvent
         val chainId = transferInput.chain ?: return invalidInputEvent
-        val value = requestPayload.value ?: return invalidInputEvent
 
         val ethereum: EthereumTransactionRequest?
         val solana: ByteArray?
@@ -51,6 +51,12 @@ class DydxTransferDepositStep(
             solana = Base64.decode(base64Payload)
             ethereum = null
         } else {
+            if (chainRpc == null) {
+                return errorEvent("Invalid chain RPC")
+            }
+            val value = requestPayload.value ?: return errorEvent("Invalid value")
+            val targetAddress = requestPayload.targetAddress ?: return errorEvent("Invalid target address")
+
             val approveERC20Result = EnableERC20TokenStep(
                 chainRpc = chainRpc,
                 tokenAddress = tokenAddress,
@@ -96,15 +102,3 @@ class DydxTransferDepositStep(
         ).runWithLogs()
     }
 }
-
-private val TransferInput.tokenSize: BigInteger?
-    get() {
-        val size = size?.size?.toDouble()
-        val decimals = resources?.tokenResources?.get(token)?.decimals?.toDouble()
-        if (size != null && decimals != null) {
-            val intSize = size * 10.0.pow(decimals)
-            return intSize.toBigDecimal().toBigInteger()
-        }
-
-        return null
-    }

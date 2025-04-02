@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.toMutableList
@@ -40,7 +41,7 @@ class TransferTokenDetails @Inject constructor(
         .distinctUntilChanged()
         .shareIn(scope = scope, started = SharingStarted.Lazily, replay = 1)
 
-    val infos: Flow<List<TransferTokenInfo>> = combine(
+    val infos: StateFlow<List<TransferTokenInfo>> = combine(
         _infos,
         marketPrices,
     ) { infos, marketPrices ->
@@ -58,7 +59,7 @@ class TransferTokenDetails @Inject constructor(
             updatedToken
         }.sortedByDescending { it.usdcAmount ?: 0.0 }
     }.distinctUntilChanged()
-        .shareIn(scope = scope, started = SharingStarted.Lazily, replay = 1)
+        .stateIn(scope = scope, started = SharingStarted.Lazily, emptyList())
 
     init {
         _infos.value = mainnetTokens // Replace with condition if needed

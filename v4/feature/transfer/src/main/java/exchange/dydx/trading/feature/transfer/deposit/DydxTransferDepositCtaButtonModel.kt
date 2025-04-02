@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.transfer.deposit
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.output.input.ErrorType
@@ -25,10 +24,12 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.VaultRoutes.deposit
+import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
+import exchange.dydx.trading.feature.transfer.tokenAddress
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
 import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
@@ -40,9 +41,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,6 +59,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     private val featureFlags: DydxFeatureFlags,
     private val formatter: DydxFormatter,
     private val transferRouteSelectionInfo: TransferRouteSelectionInfo,
+    private val transferTokenDetails: TransferTokenDetails,
 ) : ViewModel(), DydxViewModel {
     private val carteraProvider: CarteraProvider = CarteraProvider(context)
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -175,7 +174,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     }
 
     private fun belowMinSizeForDeposit(transferInput: TransferInput?): Boolean {
-        val size = parser.asDouble(transferInput?.size?.size) ?: 0.0
+        val size = parser.asDouble(transferInput?.size?.usdcSize) ?: 0.0
         val minSize = if (BuildConfig.DEBUG) {
             1.0
         } else {
@@ -191,16 +190,12 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     ) {
         val wallet = wallet ?: return
         val walletAddress = wallet.ethereumAddress ?: return
-        val chain = transferInput.chain ?: return
-        val token = transferInput.token ?: return
-        val chainRpc = transferInput.resources?.chainResources?.get(chain)?.rpc ?: return
-        val tokenAddress = transferInput.resources?.tokenResources?.get(token)?.address ?: return
-        router.navigateTo(
-            route = "${TransferRoutes.transfer_status_instant}/1111",
-            presentation = DydxRouter.Presentation.Modal,
-        )
-        return
+        val tokenAddress = transferInput.tokenAddress(featureFlags) ?: return
 
+        val chain = transferInput.chain ?: return
+        val chainRpc = transferInput.resources?.chainResources?.get(chain)?.rpc
+
+        onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.DEPOSIT_INITIATED)
         appScope.launch {
             val event =
                 DydxTransferDepositStep(
@@ -212,14 +207,17 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                     tokenAddress = tokenAddress,
                     context = context,
                     selectedRoute = selectedRoute,
+                    transferTokenDetails = transferTokenDetails,
                 ).runWithLogs()
 
             isSubmittingFlow.value = false
             val hash = event.getOrNull()
             if (hash != null) {
-                sendOnboardingAnalytics()
+                onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.DEPOSIT_FUNDS)
                 transferAnalytics.logDeposit(transferInput)
-                abacusStateManager.resetTransferInputFields()
+                if (selectedRoute == TransferRouteSelection.Regular) {
+                    abacusStateManager.resetTransferInputFields()
+                }
                 transferInstanceStore.addTransferHash(
                     hash = hash,
                     fromChainName = transferInput.chainName ?: transferInput.networkName,
@@ -245,17 +243,5 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun sendOnboardingAnalytics() {
-        abacusStateManager.state.hasAccount
-            .take(1)
-            .onEach { hasAccount ->
-                // only log for newly onboarded users (i.e., user without an account)
-                if (!hasAccount) {
-                    onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.DEPOSIT_FUNDS)
-                }
-            }
-            .launchIn(viewModelScope)
     }
 }

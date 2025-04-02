@@ -5,6 +5,8 @@ import exchange.dydx.abacus.state.manager.ChainRpcMap
 import exchange.dydx.carteraexample.solana.SolanaInteractor
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.feature.shared.TransferChain
 import exchange.dydx.trading.feature.shared.TransferToken
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
@@ -15,7 +17,7 @@ import exchange.dydx.web3.EthereumInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.take
@@ -31,12 +33,15 @@ class DydxTransferTokensWorker @Inject constructor(
     private val transferTokenDetails: TransferTokenDetails,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val logger: Logging,
+    private val featureFlags: DydxFeatureFlags,
 ) : WorkerProtocol {
     private val solanaInteractor: SolanaInteractor
     private var ethereumInteractors = mutableMapOf<String, EthereumInteractor>()
 
     init {
-        val rpcUrl = if (abacusStateManager.state.isMainNet) {
+        val rpcUrl = if (abacusStateManager.state.isMainNet ||
+            featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
+        ) {
             SolanaInteractor.mainnetUrl
         } else {
             SolanaInteractor.devnetUrl
@@ -54,7 +59,7 @@ class DydxTransferTokensWorker @Inject constructor(
         combine(
             abacusStateManager.state.configs.mapNotNull { it?.rpcMap },
             abacusStateManager.state.currentWallet.mapNotNull { it },
-            transferTokenDetails.infos.take(1),
+            transferTokenDetails.infos.filter { it.size > 0 }.take(1),
             transferTokenDetails.refreshCounter,
         ) { rpcMap, currentWallet, infos, _ ->
             val ethereumAddress = currentWallet.ethereumAddress
@@ -72,7 +77,7 @@ class DydxTransferTokensWorker @Inject constructor(
 
         // Set default token
         combine(
-            transferTokenDetails.infos.distinctUntilChanged(),
+            transferTokenDetails.infos,
             abacusStateManager.state.currentWallet.mapNotNull { it },
         ) { tokens, currentWallet ->
             val default = if (currentWallet.walletId == "phantom-wallet") {
@@ -118,20 +123,15 @@ class DydxTransferTokensWorker @Inject constructor(
             }
         } else if (info.token == TransferToken.USDC) {
             CoroutineScope(Dispatchers.IO).launch {
-                val balance = solanaInteractor.getTokenBalance(
+                val tokenAmount = solanaInteractor.getTokenBalance(
                     publicKey = publicKey,
                     tokenAddress = info.tokenAddress,
-                )
-                if (balance != null) {
-                    val tokenAmount = balance / 10.0.pow(info.decimals.toDouble())
-                    val info = info
-                    info.amount = tokenAmount
-                    info.usdcAmount = tokenAmount
-                    scope.launch {
-                        transferTokenDetails.update(info = info)
-                    }
-                } else {
-                    logger.e(TAG, "Failed to fetch token amount (getTokenBalance) $balance")
+                ) ?: 0.0
+                val info = info
+                info.amount = tokenAmount
+                info.usdcAmount = tokenAmount
+                scope.launch {
+                    transferTokenDetails.update(info = info)
                 }
             }
         }

@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
-import exchange.dydx.trading.common.navigation.TransferRoutes.transfer_status_instant
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.transfer.search.DydxInstantDepositSearchView
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchView
