@@ -29,6 +29,7 @@ import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
+import exchange.dydx.trading.feature.transfer.deposit.steps.DydxTransferDepositStep
 import exchange.dydx.trading.feature.transfer.tokenAddress
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection

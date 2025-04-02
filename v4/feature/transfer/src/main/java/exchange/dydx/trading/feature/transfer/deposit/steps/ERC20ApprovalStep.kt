@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.transfer.deposit
+package exchange.dydx.trading.feature.transfer.deposit.steps
 
 import android.content.Context
 import exchange.dydx.cartera.CarteraProvider
