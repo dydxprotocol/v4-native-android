@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 import kotlin.math.absoluteValue
+import kotlin.math.max
 
 @HiltViewModel
 class DydxVaultInfoViewModel @Inject constructor(
@@ -39,8 +40,13 @@ class DydxVaultInfoViewModel @Inject constructor(
         val pnl = SignedAmountView.ViewState.fromDouble(vault?.account?.allTimeReturnUsdc) {
             formatter.dollar(it?.absoluteValue, 2) ?: "-"
         }
-        val apr = SignedAmountView.ViewState.fromDouble(vault?.details?.thirtyDayReturnPercent) {
-            formatter.percent(it?.absoluteValue, 0) ?: "-"
+        val apr = if (vault?.details != null) {
+            val betterReturnPercent = max(vault.details?.thirtyDayReturnPercent ?: 0.0, vault.details?.ninetyDayReturnPercent ?: 0.0)
+            SignedAmountView.ViewState.fromDouble(betterReturnPercent) {
+                formatter.percent(it?.absoluteValue, 0) ?: "-"
+            }
+        } else {
+            null
         }
         return DydxVaultInfoView.ViewState(
             localizer = localizer,

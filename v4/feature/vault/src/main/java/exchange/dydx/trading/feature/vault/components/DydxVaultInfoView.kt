@@ -144,7 +144,7 @@ object DydxVaultInfoView : DydxComponent {
         ) {
             BottomRowItem(
                 modifier = Modifier,
-                title = state.localizer.localize("APP.VAULTS.VAULT_THIRTY_DAY_APR"),
+                title = state.localizer.localize("APP.VAULTS.EST_APR_PLAIN"),
                 valueComposable = { modifier ->
                     if (state.apr != null) {
                         SignedAmountView.Content(
