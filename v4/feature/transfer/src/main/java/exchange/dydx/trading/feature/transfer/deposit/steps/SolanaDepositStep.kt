@@ -1,12 +1,9 @@
 package exchange.dydx.trading.feature.transfer.deposit.steps
 
 import android.content.Context
-import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.TransferInputRequestPayload
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
-import exchange.dydx.trading.feature.shared.TransferTokenDetails
-import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.runWithLogs
 import kotlin.io.encoding.Base64
