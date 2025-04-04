@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.profile.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.localizeWithParams
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.icons.PlatformImage
@@ -61,6 +64,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         val localizer: LocalizerProtocol,
         val season: String?,
         val points: String?,
+        val rewardPool: String? = null,
         val aboutAction: () -> Unit = {},
         val leaderboardAction: () -> Unit = {},
     ) {
@@ -111,20 +115,27 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
             Row(
                 modifier = modifier
                     .padding(vertical = ThemeShapes.VerticalPadding),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = state.localizer.localize("APP.TRADING_REWARDS.LAUNCH_INCENTIVES"),
+                    text = state.localizer.localize("APP.TRADING_REWARDS.INCENTIVE_PROGRAM"),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),
                 )
-                Spacer(modifier = Modifier.width(ThemeShapes.HorizontalPadding))
                 Text(
-                    text = state.localizer.localize("APP.PORTFOLIO.FOR_V4"),
+                    text = state.localizer.localize("APP.GENERAL.ACTIVE"),
                     style = TextStyle.dydxDefault
-                        .themeColor(ThemeColor.SemanticColor.text_tertiary)
-                        .themeFont(fontSize = ThemeFont.FontSize.medium),
+                        .themeColor(ThemeColor.SemanticColor.color_green)
+                        .themeFont(fontSize = ThemeFont.FontSize.mini),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .border(1.dp, ThemeColor.SemanticColor.color_green.color,
+                            shape = RoundedCornerShape(4.dp))
+                        .padding(
+                            horizontal = 6.dp,
+                            vertical = 4.dp,
+                        )
                 )
             }
 
@@ -134,7 +145,11 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = state.localizer.localize("APP.TRADING_REWARDS.LAUNCH_INCENTIVES_DESCRIPTION"),
+                    text = state.localizer.localizeWithParams("APP.TRADING_REWARDS.EARN_POINTS_TO_QUALIFY_FOR_REWARDS",
+                        mapOf(
+                            "REWARD_POOL" to (state.rewardPool ?: ""),
+                            "TOKEN" to "DYDX"
+                        )),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),
@@ -153,11 +168,9 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                         .themeColor(ThemeColor.SemanticColor.text_secondary)
                         .themeFont(fontSize = ThemeFont.FontSize.small),
                 )
-                Spacer(modifier = Modifier.width(4.dp))
                 PlatformImage(
-                    modifier = modifier.height(16.dp),
-                    icon =
-                    R.drawable.chaoslabs_logo,
+                    modifier = modifier.height(24.dp),
+                    icon = R.drawable.chaoslabs_logo,
                 )
             }
 
@@ -196,7 +209,6 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         season: String,
         points: String?,
     ) {
-        val seasonText = localizer.localize("APP.LEAGUES.SEASON")
         val clipShape = RoundedCornerShape(10.dp)
         Box(
             modifier = modifier.fillMaxWidth()
@@ -231,18 +243,19 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 modifier = Modifier
                     .matchParentSize()
                     .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = localizer.localize("APP.PORTFOLIO.ESTIMATED_REWARDS"),
+                    text = localizer.localize("APP.TRADING_REWARDS.ESTIMATED_POINTS"),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),
                 )
                 Text(
-                    text = "$seasonText $season",
+                    text = localizer.localize("APP.TRADING_REWARDS.TOTAL_POINTS"),
                     style = TextStyle.dydxDefault
-                        .themeColor(ThemeColor.SemanticColor.text_primary)
-                        .themeFont(fontSize = ThemeFont.FontSize.medium),
+                        .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                        .themeFont(fontSize = ThemeFont.FontSize.base),
                 )
 
                 Spacer(modifier = Modifier.weight(1f))

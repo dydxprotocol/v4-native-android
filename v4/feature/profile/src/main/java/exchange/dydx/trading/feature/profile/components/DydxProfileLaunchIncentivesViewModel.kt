@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.LaunchIncentive
 import exchange.dydx.abacus.output.LaunchIncentivePoints
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.state.manager.StatsigConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -37,6 +38,7 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
             localizer = localizer,
             season = season,
             points = points,
+            rewardPool = formatter.dollar(1_500_000.0, digits = 0),
             aboutAction = {
                 router.navigateTo("https://dydx.forum/t/launch-of-season-5-of-the-launch-incentive-program/2725")
             },
