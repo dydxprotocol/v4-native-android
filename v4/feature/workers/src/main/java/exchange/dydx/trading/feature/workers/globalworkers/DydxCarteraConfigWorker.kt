@@ -7,8 +7,10 @@ import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.cartera.PhantomWalletConfig
 import exchange.dydx.cartera.WalletConnectModalConfig
 import exchange.dydx.cartera.WalletConnectV2Config
+import exchange.dydx.cartera.WalletConnectionType
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
+import exchange.dydx.cartera.walletprovider.providers.PhantomWalletProvider
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModal
 import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStoreProtocol
@@ -61,6 +63,17 @@ class DydxCarteraConfigWorker @Inject constructor(
                 val walletIds = config.walletConnectModal?.walletIds
                 if (!walletIds.isNullOrEmpty()) {
                     walletModalStore.update((DydxWalletModal(walletIds = walletIds)))
+                }
+
+                val phantomWalletConfig = config.phantomWallet
+                if (phantomWalletConfig != null) {
+                    CarteraConfig.shared?.registerProvider(
+                        connectionType = WalletConnectionType.PhantomWallet,
+                        provider = PhantomWalletProvider(
+                            phantomWalletConfig = phantomWalletConfig,
+                            application = application,
+                        ),
+                    )
                 }
             }
                 .launchIn(scope)

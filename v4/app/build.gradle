@@ -263,4 +263,11 @@ dependencies {
     // https://github.com/WalletConnect/kotlin-walletconnect-lib
     //
      implementation 'com.github.WalletConnect:kotlin-walletconnect-lib:0.9.9'
+
+    //
+    // https://github.com/InstantWebP2P/tweetnacl-java, for Phantom
+    //
+    implementation 'io.github.instantwebp2p:tweetnacl-java:1.1.2'
+
+    implementation("com.github.komputing.khash:sha256:1.1.3")
 }

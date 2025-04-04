@@ -43,3 +43,5 @@
 -dontwarn com.squareup.javawriter.JavaWriter
 # Uncomment this if you use Mockito
 -dontwarn org.mockito.**
+
+-dontwarn org.slf4j.impl.StaticMDCBinder
