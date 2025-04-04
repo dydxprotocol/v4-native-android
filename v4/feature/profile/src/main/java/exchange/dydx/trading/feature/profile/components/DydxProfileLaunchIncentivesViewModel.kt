@@ -5,7 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.LaunchIncentive
 import exchange.dydx.abacus.output.LaunchIncentivePoints
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.state.manager.StatsigConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter

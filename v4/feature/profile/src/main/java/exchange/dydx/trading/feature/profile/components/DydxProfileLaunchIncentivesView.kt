@@ -3,7 +3,6 @@ package exchange.dydx.trading.feature.profile.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -130,12 +129,15 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                         .themeFont(fontSize = ThemeFont.FontSize.mini),
                     modifier = Modifier
                         .clip(RoundedCornerShape(4.dp))
-                        .border(1.dp, ThemeColor.SemanticColor.color_green.color,
-                            shape = RoundedCornerShape(4.dp))
+                        .border(
+                            1.dp,
+                            ThemeColor.SemanticColor.color_green.color,
+                            shape = RoundedCornerShape(4.dp),
+                        )
                         .padding(
                             horizontal = 6.dp,
                             vertical = 4.dp,
-                        )
+                        ),
                 )
             }
 
@@ -145,11 +147,13 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = state.localizer.localizeWithParams("APP.TRADING_REWARDS.EARN_POINTS_TO_QUALIFY_FOR_REWARDS",
+                    text = state.localizer.localizeWithParams(
+                        "APP.TRADING_REWARDS.EARN_POINTS_TO_QUALIFY_FOR_REWARDS",
                         mapOf(
                             "REWARD_POOL" to (state.rewardPool ?: ""),
-                            "TOKEN" to "DYDX"
-                        )),
+                            "TOKEN" to "DYDX",
+                        ),
+                    ),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),
@@ -243,7 +247,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 modifier = Modifier
                     .matchParentSize()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = localizer.localize("APP.TRADING_REWARDS.ESTIMATED_POINTS"),
