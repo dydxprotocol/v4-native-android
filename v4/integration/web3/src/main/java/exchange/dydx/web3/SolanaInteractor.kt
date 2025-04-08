@@ -1,4 +1,5 @@
-package exchange.dydx.carteraexample.solana
+package exchange.dydx.web3
+
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.solana.programs.SystemProgram
@@ -13,6 +14,9 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import kotlin.math.max
 import kotlin.math.pow
+import timber.log.Timber
+
+private const val TAG = "SolanaInteractor"
 
 class SolanaInteractor(
     private val rpcUrl: String,
@@ -44,7 +48,7 @@ class SolanaInteractor(
 
         val response = client.newCall(request).execute()
         if (!response.isSuccessful) {
-            println("Request failed: ${response.code}")
+            Timber.tag(TAG).e("Request failed: ${response.code}")
             return@withContext null
         }
 
@@ -75,7 +79,7 @@ class SolanaInteractor(
 
         val response = client.newCall(request).execute()
         if (!response.isSuccessful) {
-            println("Request failed: ${response.code}")
+            Timber.tag(TAG).e("Request failed: ${response.code}")
             return@withContext null
         }
 
@@ -113,7 +117,7 @@ class SolanaInteractor(
 
         val response = client.newCall(request).execute()
         if (!response.isSuccessful) {
-            println("Request failed: ${response.code}")
+            Timber.tag(TAG).e("Request failed: ${response.code}")
             return@withContext null
         }
 
@@ -126,7 +130,7 @@ class SolanaInteractor(
             }
             return@withContext balance.toDouble()
         } catch (e: Exception) {
-            println("Failed to parse response: ${e.message}")
+            Timber.tag(TAG).e("Failed to parse response: ${e.message}")
             return@withContext null
         }
     }

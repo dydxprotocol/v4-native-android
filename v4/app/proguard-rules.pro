@@ -20,6 +20,7 @@
 }
 
 -keep class org.web3j.** { *; }
+-keep class exchange.dydx.web3.** { *; }
 
 # cartera
 -keep interface com.walletconnect.foundation.network.data.service.RelayService
