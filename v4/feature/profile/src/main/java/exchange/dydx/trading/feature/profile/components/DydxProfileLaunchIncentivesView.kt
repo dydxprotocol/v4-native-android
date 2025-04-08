@@ -63,7 +63,6 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         val localizer: LocalizerProtocol,
         val season: String?,
         val points: String?,
-        val rewardPool: String? = null,
         val aboutAction: () -> Unit = {},
         val leaderboardAction: () -> Unit = {},
     ) {
@@ -117,7 +116,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = state.localizer.localize("APP.TRADING_REWARDS.INCENTIVE_PROGRAM"),
+                    text = state.localizer.localize("APP.REWARDS_SURGE_APRIL_2025.SURGE_HEADLINE"),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),
@@ -147,12 +146,8 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = state.localizer.localizeWithParams(
-                        "APP.TRADING_REWARDS.EARN_POINTS_TO_QUALIFY_FOR_REWARDS",
-                        mapOf(
-                            "REWARD_POOL" to (state.rewardPool ?: ""),
-                            "TOKEN" to "DYDX",
-                        ),
+                    text = state.localizer.localize(
+                        "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY"
                     ),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)

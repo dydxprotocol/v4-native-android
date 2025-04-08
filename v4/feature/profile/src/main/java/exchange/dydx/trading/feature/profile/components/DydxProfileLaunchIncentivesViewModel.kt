@@ -9,6 +9,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.ProfileRoutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -30,19 +31,27 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
         }
             .distinctUntilChanged()
 
-    private fun createViewState(launchIncentive: LaunchIncentive?, launchIncentivePoints: LaunchIncentivePoints?): DydxProfileLaunchIncentivesView.ViewState {
+    private fun createViewState(
+        launchIncentive: LaunchIncentive?,
+        launchIncentivePoints: LaunchIncentivePoints?
+    ): DydxProfileLaunchIncentivesView.ViewState {
         val season = launchIncentive?.currentSeason
         val points = formatter.raw(season?.let { launchIncentivePoints?.points?.get(it) }?.incentivePoints, 6)
         return DydxProfileLaunchIncentivesView.ViewState(
             localizer = localizer,
             season = season,
             points = points,
-            rewardPool = formatter.dollar(1_500_000.0, digits = 0),
             aboutAction = {
-                router.navigateTo("https://dydx.forum/t/launch-of-season-5-of-the-launch-incentive-program/2725")
+                val url = abacusStateManager.environment?.links?.incentiveProgram
+                if (url != null) {
+                    router.navigateTo(url)
+                }
             },
             leaderboardAction = {
-                router.navigateTo("https://community.chaoslabs.xyz/dydx-v4/risk/leaderboard")
+                val url = abacusStateManager.environment?.links?.incentiveProgramLeaderboard
+                if (url != null) {
+                    router.navigateTo(url)
+                }
             },
         )
     }
