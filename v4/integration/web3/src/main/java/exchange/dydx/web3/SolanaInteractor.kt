@@ -12,9 +12,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import timber.log.Timber
 import kotlin.math.max
 import kotlin.math.pow
-import timber.log.Timber
 
 private const val TAG = "SolanaInteractor"
 
