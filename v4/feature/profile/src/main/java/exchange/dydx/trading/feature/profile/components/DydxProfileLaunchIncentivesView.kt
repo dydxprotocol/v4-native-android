@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.protocols.localizeWithParams
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.icons.PlatformImage
@@ -147,7 +146,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
             ) {
                 Text(
                     text = state.localizer.localize(
-                        "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY"
+                        "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY",
                     ),
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
