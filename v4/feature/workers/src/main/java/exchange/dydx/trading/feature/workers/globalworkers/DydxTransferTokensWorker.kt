@@ -35,19 +35,8 @@ class DydxTransferTokensWorker @Inject constructor(
     private val logger: Logging,
     private val featureFlags: DydxFeatureFlags,
 ) : WorkerProtocol {
-    private val solanaInteractor: SolanaInteractor
+    private var solanaInteractor: SolanaInteractor? = null
     private var ethereumInteractors = mutableMapOf<String, EthereumInteractor>()
-
-    init {
-        val rpcUrl = if (abacusStateManager.state.isMainNet ||
-            featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
-        ) {
-            SolanaInteractor.mainnetUrl
-        } else {
-            SolanaInteractor.devnetUrl
-        }
-        solanaInteractor = SolanaInteractor(rpcUrl = rpcUrl)
-    }
 
     override var isStarted = false
 
@@ -64,6 +53,17 @@ class DydxTransferTokensWorker @Inject constructor(
         ) { rpcMap, currentWallet, infos, _ ->
             val ethereumAddress = currentWallet.ethereumAddress
                 ?: return@combine null // skip if no ethereum address is available
+
+            if (solanaInteractor == null) {
+                val rpcUrl = if (abacusStateManager.state.isMainNet ||
+                    featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
+                ) {
+                    SolanaInteractor.mainnetUrl
+                } else {
+                    SolanaInteractor.devnetUrl
+                }
+                solanaInteractor = SolanaInteractor(rpcUrl = rpcUrl)
+            }
 
             infos.forEach { token ->
                 if (currentWallet.walletId == "phantom-wallet") {
@@ -109,7 +109,7 @@ class DydxTransferTokensWorker @Inject constructor(
 
         if (info.token == TransferToken.SOL) {
             CoroutineScope(Dispatchers.IO).launch {
-                val balance = solanaInteractor.getBalance(publicKey = publicKey)
+                val balance = solanaInteractor?.getBalance(publicKey = publicKey)
                 if (balance != null) {
                     val tokenAmount = balance / 10.0.pow(info.decimals.toDouble())
                     val info = info
@@ -123,7 +123,7 @@ class DydxTransferTokensWorker @Inject constructor(
             }
         } else if (info.token == TransferToken.USDC) {
             CoroutineScope(Dispatchers.IO).launch {
-                val tokenAmount = solanaInteractor.getTokenBalance(
+                val tokenAmount = solanaInteractor?.getTokenBalance(
                     publicKey = publicKey,
                     tokenAddress = info.tokenAddress,
                 ) ?: 0.0
