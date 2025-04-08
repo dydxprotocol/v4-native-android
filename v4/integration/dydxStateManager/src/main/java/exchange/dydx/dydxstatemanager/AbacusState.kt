@@ -71,7 +71,7 @@ class AbacusState(
     @CoroutineScopes.App private val appScope: CoroutineScope,
 ) {
     val isMainNet: Boolean
-        get() = abacusStateManager.environment?.isMainNet ?: false
+        get() = abacusStateManager.environment?.isMainNet ?: true
 
     /**
      Onboarded
