@@ -38,7 +38,7 @@ fun PlatformDialogScaffold(
     val icon = dialog.icon
     if (openAlertDialog) {
         AlertDialog(
-            containerColor = ThemeColor.SemanticColor.layer_0.color,
+            containerColor = ThemeColor.SemanticColor.layer_1.color,
             icon = if (icon != null) {
                 {
                     Icon(icon, contentDescription = "")

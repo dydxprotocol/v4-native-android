@@ -13,7 +13,6 @@ import javax.inject.Inject
 class DydxTradeStatusViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
 ) : ViewModel(), DydxViewModel {
-
     val state: Flow<DydxTradeStatusView.ViewState?> = flowOf(createViewState())
         .distinctUntilChanged()
 

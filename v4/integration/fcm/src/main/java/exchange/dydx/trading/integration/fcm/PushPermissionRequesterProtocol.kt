@@ -15,7 +15,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.protocolImplementations.AbacusLocalizerImp
-import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.utilities.utils.ActivityDelegate
 import exchange.dydx.utilities.utils.SharedPreferencesStore
@@ -23,7 +22,6 @@ import javax.inject.Inject
 
 @ActivityRetainedScoped
 class PushPermissionRequester @Inject constructor(
-    private val platformDialog: PlatformDialog,
     private val platformInfo: PlatformInfo,
     private val abacusLocalizerImp: AbacusLocalizerImp,
     private val sharedPreferencesStore: SharedPreferencesStore,
@@ -55,6 +53,23 @@ class PushPermissionRequester @Inject constructor(
             }
         }
 
+    override val shouldRequestPermission: Boolean
+        get() {
+            val localActivity = activity ?: return false
+            //  // This is only necessary for API level >= 33 (TIRAMISU)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permissionStatus = ContextCompat.checkSelfPermission(
+                    localActivity,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                )
+                if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+                    return false
+                }
+            }
+
+            return sharedPreferencesStore.read(PRIMER_SHOWN_KEY) != "true"
+        }
+
     // Mostly copy pasted from Firebase docs
     override fun requestPushPermission() {
         val localActivity = activity ?: return
@@ -62,19 +77,8 @@ class PushPermissionRequester @Inject constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permissionStatus = ContextCompat.checkSelfPermission(localActivity, Manifest.permission.POST_NOTIFICATIONS)
             if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted already. Do nothing
                 return
             } else if (sharedPreferencesStore.read(PRIMER_SHOWN_KEY) != "true") {
-                // Show primer if needed.
-
-                // this currently doesn't work, leaving here to figure out later.
-//                platformDialog.showMessage(
-//                    title = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_TITLE"),
-//                    message = abacusLocalizerImp.localize("APP.PUSH_NOTIFICATIONS_PRIMER_MESSAGE"),
-//                    confirmTitle = abacusLocalizerImp.localize("APP.GENERAL.OK"),
-//                    cancelTitle = abacusLocalizerImp.localize("APP.GENERAL.NOT_NOW"),
-//                    confirmAction = ::doRequest,
-//                )
                 doRequest()
                 sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
             }
@@ -89,6 +93,7 @@ class PushPermissionRequester @Inject constructor(
 
 interface PushPermissionRequesterProtocol : ActivityDelegate {
     fun requestPushPermission()
+    val shouldRequestPermission: Boolean
 }
 
 @InstallIn(ActivityRetainedComponent::class)
@@ -97,4 +102,4 @@ interface PushPermissionRequesterModule {
     @Binds fun bindPushPermissionRequester(real: PushPermissionRequester): PushPermissionRequesterProtocol
 }
 
-private const val PRIMER_SHOWN_KEY = "push_primer_shown"
+const val PRIMER_SHOWN_KEY = "push_primer_shown"
