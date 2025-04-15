@@ -4,7 +4,6 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
-import exchange.dydx.trading.common.navigation.PortfolioRoutes.transfers
 import exchange.dydx.trading.feature.shared.apprating.AppRatingState
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +17,6 @@ class DydxAppRatingWorker @Inject constructor(
     @CoroutineScopes.App private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val appRatingState: AppRatingState,
-    private val appRatingStateManager: DydxAppRatingStateManagerProtocol,
 ) : WorkerProtocol {
     override var isStarted = false
 

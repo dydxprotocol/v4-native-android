@@ -67,6 +67,7 @@ class DydxPortfolioViewModel @Inject constructor(
         shouldLaunchAppRating: Boolean,
     ): DydxPortfolioView.ViewState {
         if (appRatingState.shouldShowDialog) {
+            appRatingState.prompt()
             appRatingDialog.showing.value = true
         }
         return DydxPortfolioView.ViewState(

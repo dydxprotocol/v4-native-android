@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.shared.apprating
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import com.google.android.play.core.review.ReviewException
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.review.model.ReviewErrorCode
@@ -11,7 +10,6 @@ import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingState
 import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManagerProtocol
 import exchange.dydx.trading.feature.shared.analytics.AppRatingAnalytics
 import exchange.dydx.utilities.utils.Logging
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 private val TAG = "AppRatingState"
@@ -91,8 +89,13 @@ class AppRatingState @Inject constructor(
         }
     }
 
+    fun prompt() {
+        val state = currentState ?: return
+        analytics.logPrompt(state)
+    }
+
     fun prompted(response: ResponseType) {
-        analytics.logPrompted(response)
+        analytics.logPromptCompleted(response)
         when (response) {
             ResponseType.POSITIVE -> {
                 reset()
