@@ -24,6 +24,8 @@ import exchange.dydx.abacus.utils.Parser
 import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.EnvKey
+import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManager
+import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStore
 import exchange.dydx.dydxstatemanager.clientState.favorite.DydxFavoriteStoreProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManager
@@ -190,6 +192,9 @@ interface AppModule {
 
     @Binds
     fun bindUserFavoriteStoreProtocol(dydxFavoriteStore: DydxFavoriteStore): DydxFavoriteStoreProtocol
+
+    @Binds
+    fun bindAppRatingStateManagerProtocol(dydxAppRatingStateManager: DydxAppRatingStateManager): DydxAppRatingStateManagerProtocol
 
     @Binds
     fun bindWalletModalStoreProtocol(dydxWalletModalStore: DydxWalletModalStore): DydxWalletModalStoreProtocol

@@ -36,12 +36,15 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
     private val appRatingDialog = AppRatingDialog(
         localizer = localizer,
         onDismiss = {
+            appRatingState.prompted(AppRatingState.ResponseType.DISMISSED)
             router.navigateBack()
         },
         onPositiveClick = {
+            appRatingState.prompted(AppRatingState.ResponseType.POSITIVE)
             router.navigateBack()
         },
         onNegativeClick = {
+            appRatingState.prompted(AppRatingState.ResponseType.NEGATIVE)
             router.navigateBack()
         },
         showing = MutableStateFlow(false),

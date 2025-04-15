@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.core.DydxRouterImpl
 import exchange.dydx.trading.feature.workers.globalworkers.DydxAlertsWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxApiStatusWorker
+import exchange.dydx.trading.feature.workers.globalworkers.DydxAppRatingWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxCarteraConfigWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxGasTokenWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxRestrictionsWorker
@@ -38,6 +39,7 @@ interface CoreModule {
             dydxGasTokenWorker: DydxGasTokenWorker,
             fcmTokenWorker: FCMTokenWorker,
             dydxTransferTokensWorker: DydxTransferTokensWorker,
+            dydxAppRatingWorker: DydxAppRatingWorker,
         ): List<WorkerProtocol> =
             listOf(
                 dydxUpdateWorker,
@@ -50,6 +52,7 @@ interface CoreModule {
                 dydxGasTokenWorker,
                 fcmTokenWorker,
                 dydxTransferTokensWorker,
+                dydxAppRatingWorker,
             )
     }
 }
