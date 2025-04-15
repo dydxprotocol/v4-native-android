@@ -33,7 +33,10 @@ fun AppRatingDialogScaffold(
     val openAlertDialog = dialog.showing.collectAsState().value
     if (openAlertDialog) {
         Dialog(
-            onDismissRequest = dialog.onDismiss,
+            onDismissRequest = {
+                dialog.showing.value = false
+                dialog.onDismiss.invoke()
+            },
         ) {
             Column(
                 modifier = Modifier

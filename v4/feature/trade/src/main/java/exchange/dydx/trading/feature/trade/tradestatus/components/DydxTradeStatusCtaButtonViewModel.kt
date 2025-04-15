@@ -9,14 +9,11 @@ import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.feature.shared.apprating.AppRatingDialog
-import exchange.dydx.trading.feature.shared.apprating.AppRatingState
 import exchange.dydx.trading.feature.trade.streams.MutableTradeStreaming
 import exchange.dydx.trading.integration.fcm.PRIMER_SHOWN_KEY
 import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -28,28 +25,9 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
     private val tradeStream: MutableTradeStreaming,
     private val savedStateHandle: SavedStateHandle,
     private val pushPermissionRequester: PushPermissionRequesterProtocol,
-    private val appRatingState: AppRatingState,
     private val notificationPrimerDialog: PlatformDialog,
     private val sharedPreferencesStore: SharedPreferencesStore,
 ) : ViewModel(), DydxViewModel {
-
-    private val appRatingDialog = AppRatingDialog(
-        localizer = localizer,
-        onDismiss = {
-            appRatingState.prompted(AppRatingState.ResponseType.DISMISSED)
-            router.navigateBack()
-        },
-        onPositiveClick = {
-            appRatingState.prompted(AppRatingState.ResponseType.POSITIVE)
-            router.navigateBack()
-        },
-        onNegativeClick = {
-            appRatingState.prompted(AppRatingState.ResponseType.NEGATIVE)
-            router.navigateBack()
-        },
-        showing = MutableStateFlow(false),
-    )
-
     private enum class TradeType {
         Trade,
         ClosePosition;
@@ -84,9 +62,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonTitle = localizer.localize("APP.TRADE.RETURN_TO_MARKET"),
                     ctaButtonState = PlatformButtonState.Secondary,
                     ctaButtonAction = {
-                        if (appRatingState.shouldShowDialog) {
-                            appRatingDialog.showing.value = true
-                        } else if (pushPermissionRequester.shouldRequestPermission) {
+                        if (pushPermissionRequester.shouldRequestPermission) {
                             sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
                             notificationPrimerDialog.showMessage(
                                 title = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_TITLE"),
@@ -105,7 +81,6 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                             router.navigateBack()
                         }
                     },
-                    appRatingDialog = appRatingDialog,
                     notificationPrimerDialog = notificationPrimerDialog,
                 )
             is AbacusStateManagerProtocol.SubmissionStatus.Failed ->
@@ -119,7 +94,6 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                             TradeType.ClosePosition -> tradeStream.closePosition()
                         }
                     },
-                    appRatingDialog = appRatingDialog,
                     notificationPrimerDialog = notificationPrimerDialog,
                 )
             else ->
@@ -128,7 +102,6 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonTitle = localizer.localize("APP.TRADE.SUBMITTING_ORDER"),
                     ctaButtonState = PlatformButtonState.Disabled,
                     ctaButtonAction = {},
-                    appRatingDialog = appRatingDialog,
                     notificationPrimerDialog = notificationPrimerDialog,
                 )
         }

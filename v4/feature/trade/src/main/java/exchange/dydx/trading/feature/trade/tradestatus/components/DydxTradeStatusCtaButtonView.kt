@@ -13,9 +13,6 @@ import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.feature.shared.apprating.AppRatingDialog
-import exchange.dydx.trading.feature.shared.apprating.AppRatingDialogScaffold
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Preview
 @Composable
@@ -35,16 +32,11 @@ object DydxTradeStatusCtaButtonView : DydxComponent {
         val ctaButtonTitle: String = "Try again",
         val ctaButtonState: PlatformButtonState = PlatformButtonState.Secondary,
         val ctaButtonAction: () -> Unit = {},
-        val appRatingDialog: AppRatingDialog,
         val notificationPrimerDialog: PlatformDialog,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                appRatingDialog = AppRatingDialog(
-                    localizer = MockLocalizer(),
-                    showing = MutableStateFlow(true),
-                ),
                 notificationPrimerDialog = PlatformDialog(),
             )
         }
@@ -72,7 +64,6 @@ object DydxTradeStatusCtaButtonView : DydxComponent {
             state.ctaButtonAction()
         }
 
-        AppRatingDialogScaffold(dialog = state.appRatingDialog)
         PlatformDialogScaffold(dialog = state.notificationPrimerDialog)
     }
 }

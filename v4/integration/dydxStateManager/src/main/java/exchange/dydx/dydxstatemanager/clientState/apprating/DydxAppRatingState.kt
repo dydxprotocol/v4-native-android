@@ -57,7 +57,6 @@ class DydxAppRatingStateManager @Inject constructor(
 data class DydxAppRatingState(
     val transfersCreatedSinceLastPrompt: Set<String>,
     val ordersCreatedSinceLastPrompt: Set<String>,
-    val vaultOperationsSinceLastPrompt: Set<String>,
     val uniqueDayAppOpensCount: Int,
     val lastAppOpenTimestamp: Double,
     val lastPromptedTimestamp: Double,
@@ -70,12 +69,11 @@ data class DydxAppRatingState(
             return DydxAppRatingState(
                 transfersCreatedSinceLastPrompt = emptySet(),
                 ordersCreatedSinceLastPrompt = emptySet(),
-                vaultOperationsSinceLastPrompt = emptySet(),
                 uniqueDayAppOpensCount = 0,
                 lastAppOpenTimestamp = currentTime,
                 lastPromptedTimestamp = currentTime,
                 hasEverConnectedWallet = false,
-                shouldStopPreprompting = true,
+                shouldStopPreprompting = false,
             )
         }
     }

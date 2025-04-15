@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.compose.PlatformRememberLazyListState
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
@@ -75,6 +78,7 @@ object DydxPortfolioView : DydxComponent {
         val tabSelection: DydxPortfolioSectionsView.Selection = DydxPortfolioSectionsView.Selection.Positions,
         val vaultEnabled: Boolean = false,
         val appRatingDialog: AppRatingDialog,
+        val shouldLaunchAppRating: Boolean = false
     ) {
         companion object {
             val preview = ViewState(
@@ -94,6 +98,18 @@ object DydxPortfolioView : DydxComponent {
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         DydxBottomBarScaffold(Modifier) {
             Content(it, state)
+        }
+
+        if (state == null) {
+            return
+        }
+        AppRatingDialogScaffold(dialog = state.appRatingDialog)
+
+        val context = LocalContext.current
+        LaunchedEffect(key1 = state.shouldLaunchAppRating) {
+            if (state.shouldLaunchAppRating) {
+                viewModel.launchAppRating(context)
+            }
         }
     }
 
@@ -173,8 +189,6 @@ object DydxPortfolioView : DydxComponent {
                 }
             }
         }
-
-        AppRatingDialogScaffold(dialog = state.appRatingDialog)
     }
 
     @Composable

@@ -1,11 +1,15 @@
 package exchange.dydx.trading.feature.portfolio
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.dydxstatemanager.AbacusStateManager
+import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioSectionsView
 import exchange.dydx.trading.feature.shared.apprating.AppRatingDialog
 import exchange.dydx.trading.feature.shared.apprating.AppRatingState
@@ -22,6 +26,8 @@ class DydxPortfolioViewModel @Inject constructor(
     private val tabSelection: Flow<@JvmSuppressWildcards DydxPortfolioSectionsView.Selection>,
     private val featureFlags: DydxFeatureFlags,
     private val appRatingState: AppRatingState,
+    private val router: DydxRouter,
+    private val abacusStateManager: AbacusStateManagerProtocol,
 ) : ViewModel(), DydxViewModel {
 
     private val appRatingDialog = AppRatingDialog(
@@ -31,25 +37,34 @@ class DydxPortfolioViewModel @Inject constructor(
         },
         onPositiveClick = {
             appRatingState.prompted(AppRatingState.ResponseType.POSITIVE)
+            shouldLaunchAppRatingFlow.value = true
         },
         onNegativeClick = {
             appRatingState.prompted(AppRatingState.ResponseType.NEGATIVE)
+            val url = abacusStateManager.environment?.links?.feedback
+            if (url != null) {
+                router.navigateTo(url)
+            }
         },
         showing = MutableStateFlow(false),
     )
+
+    private val shouldLaunchAppRatingFlow = MutableStateFlow(false)
 
     val state: Flow<DydxPortfolioView.ViewState?> =
         combine(
             displayContent,
             tabSelection,
-        ) { displayContent, tabSelection ->
-            createViewState(displayContent, tabSelection)
+            shouldLaunchAppRatingFlow,
+        ) { displayContent, tabSelection, shouldLaunchAppRating ->
+            createViewState(displayContent, tabSelection, shouldLaunchAppRating)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
         displayContent: DydxPortfolioView.DisplayContent,
         tabSelection: DydxPortfolioSectionsView.Selection,
+        shouldLaunchAppRating: Boolean,
     ): DydxPortfolioView.ViewState {
         if (appRatingState.shouldShowDialog) {
             appRatingDialog.showing.value = true
@@ -60,6 +75,14 @@ class DydxPortfolioViewModel @Inject constructor(
             tabSelection = tabSelection,
             vaultEnabled = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.vault_enabled),
             appRatingDialog = appRatingDialog,
+            shouldLaunchAppRating = shouldLaunchAppRating,
         )
+    }
+
+    fun launchAppRating(context: Context) {
+        if (shouldLaunchAppRatingFlow.value) {
+            appRatingState.startReviewFlow(context)
+            shouldLaunchAppRatingFlow.value = false
+        }
     }
 }

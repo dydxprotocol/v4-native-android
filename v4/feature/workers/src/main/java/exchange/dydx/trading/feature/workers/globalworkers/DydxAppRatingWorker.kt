@@ -2,7 +2,9 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.trading.common.navigation.PortfolioRoutes.transfers
 import exchange.dydx.trading.feature.shared.apprating.AppRatingState
 import exchange.dydx.utilities.utils.WorkerProtocol
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +18,7 @@ class DydxAppRatingWorker @Inject constructor(
     @CoroutineScopes.App private val scope: CoroutineScope,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val appRatingState: AppRatingState,
+    private val appRatingStateManager: DydxAppRatingStateManagerProtocol,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -31,8 +34,7 @@ class DydxAppRatingWorker @Inject constructor(
             }
             .launchIn(scope)
 
-        abacusStateManager.state.transfers
-            .mapNotNull { it }
+        abacusStateManager.state.transfers.mapNotNull { it }
             .onEach { transfers ->
                 for (transfer in transfers) {
                     appRatingState.transferCreated(transfer.id, transfer.updatedAtMilliseconds)
@@ -45,18 +47,6 @@ class DydxAppRatingWorker @Inject constructor(
             .onEach { fills ->
                 for (fill in fills) {
                     appRatingState.orderCreated(fill.id, fill.createdAtMilliseconds)
-                }
-            }
-            .launchIn(scope)
-
-        abacusStateManager.state.vault
-            .mapNotNull { it }
-            .onEach { vault ->
-                val history = vault.account?.vaultTransfers ?: emptyList()
-                for (transfer in history) {
-                    val id = transfer.id ?: return@onEach
-                    val createdTimestamp = transfer.timestampMs?.toDouble() ?: return@onEach
-                    appRatingState.vaultOperationCreated(id, createdTimestamp)
                 }
             }
             .launchIn(scope)

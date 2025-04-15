@@ -95,7 +95,7 @@ ext {
 
     accompanistVersion = '0.23.1'
     accompanistPermissionsVersion = '0.34.0'
-    activityComposeVersion = '1.9.3'
+    activityComposeVersion = '1.10.1'
     androidXVersion = '1.0.0'
     androidXTracingVersion = '1.2.0'
     androidXAnnotations = '1.4.0'

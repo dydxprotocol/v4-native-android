@@ -63,7 +63,7 @@ dependencies {
 
     /* Local Dependencies */
 
-    api "androidx.activity:activity:$activityComposeVersion"
+    api "androidx.activity:activity-ktx:$activityComposeVersion"
     implementation "androidx.activity:activity-compose:$activityComposeVersion"
 
     // Add non-standard deps above. Deps added below this line may be periodically overwritten
