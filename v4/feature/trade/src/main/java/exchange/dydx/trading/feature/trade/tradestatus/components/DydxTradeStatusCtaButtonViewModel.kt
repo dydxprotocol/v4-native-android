@@ -63,7 +63,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonState = PlatformButtonState.Secondary,
                     ctaButtonAction = {
                         if (pushPermissionRequester.shouldRequestPermission) {
-                             notificationPrimerDialog.showMessage(
+                            notificationPrimerDialog.showMessage(
                                 title = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_TITLE"),
                                 message = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_MESSAGE"),
                                 cancelTitle = localizer.localize("APP.GENERAL.NOT_NOW"),
