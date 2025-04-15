@@ -7,9 +7,11 @@ import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.VaultRoutes
 import exchange.dydx.trading.feature.shared.analytics.VaultAnalytics
 import exchange.dydx.trading.feature.shared.analytics.VaultAnalyticsInputType
@@ -41,13 +43,15 @@ class DydxVaultDepositViewModel @Inject constructor(
         combine(
             abacusStateManager.state.selectedSubaccount,
             inputState.result,
-        ) { subaccount, result ->
-            createViewState(subaccount, result)
+            abacusStateManager.state.currentWallet,
+        ) { subaccount, result, currentWallet ->
+            createViewState(subaccount, result, currentWallet)
         }
 
     private fun createViewState(
         subaccount: Subaccount?,
-        result: VaultFormValidationResult?
+        result: VaultFormValidationResult?,
+        currentWallet: DydxWalletInstance?
     ): DydxVaultDepositView.ViewState {
         val roundedFreeCollateral = formatter.decimalLocaleAgnostic(subaccount?.freeCollateral?.current, digits = 2, rounding = RoundingMode.DOWN)
         return DydxVaultDepositView.ViewState(
@@ -87,9 +91,20 @@ class DydxVaultDepositViewModel @Inject constructor(
                 ctaButtonState = if (result?.hasBlockingError == true || inputState.amount.value == null) {
                     InputCtaButton.State.Disabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
                 } else {
-                    InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
+                    if (currentWallet == null) {
+                        InputCtaButton.State.Enabled(localizer.localize("APP.GENERAL.CONNECT_WALLET"))
+                    } else {
+                        InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
+                    }
                 },
                 ctaAction = {
+                    if (currentWallet == null) {
+                        router.navigateTo(
+                            route = OnboardingRoutes.welcome,
+                            presentation = DydxRouter.Presentation.Modal,
+                        )
+                        return@ViewState
+                    }
                     inputState.stage.value = VaultInputStage.CONFIRM
                     router.navigateTo(route = VaultRoutes.confirmation, presentation = DydxRouter.Presentation.Push)
 
