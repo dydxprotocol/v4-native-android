@@ -63,8 +63,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonState = PlatformButtonState.Secondary,
                     ctaButtonAction = {
                         if (pushPermissionRequester.shouldRequestPermission) {
-                            sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
-                            notificationPrimerDialog.showMessage(
+                             notificationPrimerDialog.showMessage(
                                 title = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_TITLE"),
                                 message = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_MESSAGE"),
                                 cancelTitle = localizer.localize("APP.GENERAL.NOT_NOW"),
@@ -75,6 +74,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                                 },
                                 cancelAction = {
                                     router.navigateBack()
+                                    sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
                                 },
                             )
                         } else {
