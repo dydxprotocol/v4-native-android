@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.apprating.AppRatingState
 import exchange.dydx.utilities.utils.WorkerProtocol

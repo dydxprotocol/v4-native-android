@@ -25,7 +25,7 @@ class AppRatingAnalytics @Inject constructor(
                 "last_prompted_timestamp" to state.lastPromptedTimestamp,
                 "has_ever_connected_wallet" to state.hasEverConnectedWallet,
                 "should_stop_preprompting" to state.shouldStopPreprompting,
-            )
+            ),
         )
     }
 
