@@ -1,9 +1,7 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.apprating.AppRatingState
 import exchange.dydx.utilities.utils.WorkerProtocol
@@ -29,7 +27,7 @@ class DydxAppRatingWorker @Inject constructor(
         abacusStateManager.state.currentWallet
             .mapNotNull { it }
             .onEach { wallet ->
-                 appRatingState.connectedWallet()
+                appRatingState.connectedWallet()
             }
             .launchIn(scope)
 
@@ -69,5 +67,4 @@ class DydxAppRatingWorker @Inject constructor(
             isStarted = false
         }
     }
-
 }

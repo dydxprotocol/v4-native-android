@@ -75,7 +75,7 @@ data class DydxAppRatingState(
                 lastAppOpenTimestamp = currentTime,
                 lastPromptedTimestamp = currentTime,
                 hasEverConnectedWallet = false,
-                shouldStopPreprompting = true
+                shouldStopPreprompting = true,
             )
         }
     }

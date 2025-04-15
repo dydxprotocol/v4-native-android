@@ -89,4 +89,8 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:$coilVersion")
     implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
+
+
+    implementation("com.google.android.play:review:2.0.2")
+    implementation("com.google.android.play:review-ktx:2.0.2")
 }

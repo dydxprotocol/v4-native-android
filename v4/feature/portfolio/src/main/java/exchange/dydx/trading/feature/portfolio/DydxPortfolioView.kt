@@ -40,7 +40,10 @@ import exchange.dydx.trading.feature.portfolio.components.pendingpositions.DydxP
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView.positionsListContent
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsViewModel
 import exchange.dydx.trading.feature.portfolio.components.vault.DydxPortfolioVaultView
+import exchange.dydx.trading.feature.shared.apprating.AppRatingDialog
+import exchange.dydx.trading.feature.shared.apprating.AppRatingDialogScaffold
 import exchange.dydx.trading.feature.shared.bottombar.DydxBottomBarScaffold
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @Preview
 @Composable
@@ -71,10 +74,15 @@ object DydxPortfolioView : DydxComponent {
         val displayContent: DisplayContent = DisplayContent.Overview,
         val tabSelection: DydxPortfolioSectionsView.Selection = DydxPortfolioSectionsView.Selection.Positions,
         val vaultEnabled: Boolean = false,
+        val appRatingDialog: AppRatingDialog,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                appRatingDialog = AppRatingDialog(
+                    localizer = MockLocalizer(),
+                    showing = MutableStateFlow(true),
+                ),
             )
         }
     }
@@ -165,6 +173,8 @@ object DydxPortfolioView : DydxComponent {
                 }
             }
         }
+
+        AppRatingDialogScaffold(dialog = state.appRatingDialog)
     }
 
     @Composable
