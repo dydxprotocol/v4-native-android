@@ -1,5 +1,6 @@
 package exchange.dydx.dydxstatemanager
 
+import exchange.dydx.abacus.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.Compliance
 import exchange.dydx.abacus.output.ComplianceStatus
@@ -40,7 +41,6 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.responses.ParsingError
 import exchange.dydx.abacus.responses.ParsingErrorType
 import exchange.dydx.abacus.state.manager.ApiState
-import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
 import exchange.dydx.trading.common.di.CoroutineScopes

@@ -10,6 +10,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
+import exchange.dydx.abacus.AsyncAbacusStateManagerV2
+import exchange.dydx.abacus.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.abacus.output.Documentation
 import exchange.dydx.abacus.output.Notification
 import exchange.dydx.abacus.output.PerpetualState
@@ -20,24 +22,22 @@ import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.abacus.protocols.PresentationProtocol
 import exchange.dydx.abacus.protocols.StateNotificationProtocol
 import exchange.dydx.abacus.responses.ParsingError
-import exchange.dydx.abacus.state.changes.StateChanges
+import exchange.dydx.abacus.state.StateChanges
+import exchange.dydx.abacus.state.machine.AdjustIsolatedMarginInputField
+import exchange.dydx.abacus.state.machine.ClosePositionInputField
+import exchange.dydx.abacus.state.machine.TradeInputField
+import exchange.dydx.abacus.state.machine.TransferInputField
+import exchange.dydx.abacus.state.machine.TriggerOrdersInputField
+import exchange.dydx.abacus.state.machine.WalletConnectionType
 import exchange.dydx.abacus.state.manager.ApiState
 import exchange.dydx.abacus.state.manager.GasToken
 import exchange.dydx.abacus.state.manager.HistoricalPnlPeriod
 import exchange.dydx.abacus.state.manager.HistoricalTradingRewardsPeriod
 import exchange.dydx.abacus.state.manager.OrderbookGrouping
-import exchange.dydx.abacus.state.manager.SingletonAsyncAbacusStateManagerProtocol
 import exchange.dydx.abacus.state.manager.TokenInfo
 import exchange.dydx.abacus.state.manager.V4Environment
-import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
-import exchange.dydx.abacus.state.model.ClosePositionInputField
-import exchange.dydx.abacus.state.model.TradeInputField
-import exchange.dydx.abacus.state.model.TransferInputField
-import exchange.dydx.abacus.state.model.TriggerOrdersInputField
-import exchange.dydx.abacus.state.model.WalletConnectionType
-import exchange.dydx.abacus.state.v2.manager.AsyncAbacusStateManagerV2
-import exchange.dydx.abacus.state.v2.supervisor.AppConfigsV2
-import exchange.dydx.abacus.state.v2.supervisor.NotificationProviderType
+import exchange.dydx.abacus.state.supervisor.AppConfigsV2
+import exchange.dydx.abacus.state.supervisor.NotificationProviderType
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
@@ -51,15 +51,20 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.featureflags.DydxStringFeatureFlag
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
-import exchange.dydx.trading.integration.statsig.StatsigFlags
 import exchange.dydx.trading.integration.statsig.StatsigInitWorker
 import exchange.dydx.utilities.utils.DebugEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
+import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -166,8 +171,8 @@ class AbacusStateManager @Inject constructor(
     @CoroutineScopes.App private val appScope: CoroutineScope,
     parser: ParserProtocol,
     private val presentationProtocol: PresentationProtocol,
-    private val statsigFlags: StatsigFlags,
     private val statsigInitWorker: StatsigInitWorker,
+    private val tracker: Tracking,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -210,7 +215,6 @@ class AbacusStateManager @Inject constructor(
         }
 
         appConfigsV2.autoStart = false
-        appConfigsV2.staticTyping = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.abacus_static_typing)
         appConfigsV2.onboardingConfigs.alchemyApiKey = application.getString(R.string.alchemy_api_key)
         appConfigsV2.accountConfigs.subaccountConfigs.notifications =
             listOf(
@@ -301,17 +305,34 @@ class AbacusStateManager @Inject constructor(
         cosmosAddress: String,
         mnemonic: String
     ) {
-        cosmosClient.connectWallet(mnemonic) {
-            val wallet = DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
-            walletStateManager.setCurrentWallet(wallet)
-            asyncStateManager.accountAddress = cosmosAddress
-            asyncStateManager.sourceAddress = ethereumAddress
-            if (walletId == "phantom-wallet") {
-                asyncStateManager.walletConnectionType = WalletConnectionType.Solana
-            } else {
-                asyncStateManager.walletConnectionType = WalletConnectionType.Ethereum
+        cosmosClient.initialized
+            .filter { it }
+            .take(1)
+            .onEach {
+                cosmosClient.connectWallet(mnemonic) { result ->
+                    val resultMap = result?.jsonStringToMap()
+                    if (resultMap?.contains("address") == true) {
+                        val wallet =
+                            DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
+                        walletStateManager.setCurrentWallet(wallet)
+                        asyncStateManager.accountAddress = cosmosAddress
+                        asyncStateManager.sourceAddress = ethereumAddress
+                        if (walletId == "phantom-wallet") {
+                            asyncStateManager.walletConnectionType = WalletConnectionType.Solana
+                        } else {
+                            asyncStateManager.walletConnectionType = WalletConnectionType.Ethereum
+                        }
+                    } else {
+                        tracker.log(
+                            event = "ConnectWalletError",
+                            data = mapOf(
+                                "result" to result,
+                            ),
+                        )
+                    }
+                }
             }
-        }
+            .launchIn(appScope)
     }
 
     override fun logOut() {

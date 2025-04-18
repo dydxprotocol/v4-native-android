@@ -10,7 +10,7 @@ import exchange.dydx.abacus.output.input.OrderType
 import exchange.dydx.abacus.output.input.OrderbookUsage
 import exchange.dydx.abacus.output.input.TradeInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.state.model.TradeInputField
+import exchange.dydx.abacus.state.machine.TradeInputField
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.designSystem.theme.ThemeColor

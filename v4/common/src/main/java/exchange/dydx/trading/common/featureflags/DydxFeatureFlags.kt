@@ -20,7 +20,6 @@ enum class DydxDoubleFeatureFlag {
 
 enum class DydxBoolFeatureFlag {
     force_mainnet,
-    abacus_static_typing,
     vault_enabled,
     prompt_app_rating,
     skip_go_fast;
@@ -29,7 +28,6 @@ enum class DydxBoolFeatureFlag {
         get() {
             return when (this) {
                 force_mainnet -> false
-                abacus_static_typing -> true
                 vault_enabled -> true
                 prompt_app_rating -> false
                 skip_go_fast -> true

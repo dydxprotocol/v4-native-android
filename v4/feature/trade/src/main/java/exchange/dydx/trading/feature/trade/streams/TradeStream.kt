@@ -2,7 +2,7 @@ package exchange.dydx.trading.feature.trade.streams
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.output.account.SubaccountOrder
-import exchange.dydx.abacus.state.model.TradeInputField
+import exchange.dydx.abacus.state.machine.TradeInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
