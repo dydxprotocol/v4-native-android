@@ -9,7 +9,7 @@ import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Add
 import exchange.dydx.abacus.output.input.IsolatedMarginAdjustmentType.Remove
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.abacus.state.model.AdjustIsolatedMarginInputField
+import exchange.dydx.abacus.state.machine.AdjustIsolatedMarginInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.maxLeverage
 import exchange.dydx.trading.common.DydxViewModel

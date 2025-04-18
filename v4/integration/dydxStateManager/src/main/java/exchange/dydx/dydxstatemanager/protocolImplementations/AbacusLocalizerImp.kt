@@ -3,7 +3,7 @@ package exchange.dydx.dydxstatemanager.protocolImplementations
 import exchange.dydx.abacus.output.input.SelectionOption
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
 import exchange.dydx.abacus.responses.ParsingError
-import exchange.dydx.abacus.state.app.helper.DynamicLocalizer
+import exchange.dydx.abacus.state.helper.DynamicLocalizer
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore

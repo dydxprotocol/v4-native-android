@@ -7,7 +7,7 @@ import exchange.dydx.abacus.output.input.TriggerOrdersInput
 import exchange.dydx.abacus.output.input.TriggerPrice
 import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.state.model.TriggerOrdersInputField
+import exchange.dydx.abacus.state.machine.TriggerOrdersInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.inputs.PlatformInputAlertState
 import exchange.dydx.trading.common.DydxViewModel
