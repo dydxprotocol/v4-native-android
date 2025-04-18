@@ -51,15 +51,20 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.featureflags.DydxStringFeatureFlag
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
-import exchange.dydx.trading.integration.statsig.StatsigFlags
 import exchange.dydx.trading.integration.statsig.StatsigInitWorker
 import exchange.dydx.utilities.utils.DebugEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
+import exchange.dydx.utilities.utils.jsonStringToMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -166,8 +171,8 @@ class AbacusStateManager @Inject constructor(
     @CoroutineScopes.App private val appScope: CoroutineScope,
     parser: ParserProtocol,
     private val presentationProtocol: PresentationProtocol,
-    private val statsigFlags: StatsigFlags,
     private val statsigInitWorker: StatsigInitWorker,
+    private val tracker: Tracking,
 ) : AbacusStateManagerProtocol, StateNotificationProtocol {
 
     private val perpetualStatePublisher: MutableStateFlow<PerpetualState?> = MutableStateFlow(null)
@@ -300,17 +305,34 @@ class AbacusStateManager @Inject constructor(
         cosmosAddress: String,
         mnemonic: String
     ) {
-        cosmosClient.connectWallet(mnemonic) {
-            val wallet = DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
-            walletStateManager.setCurrentWallet(wallet)
-            asyncStateManager.accountAddress = cosmosAddress
-            asyncStateManager.sourceAddress = ethereumAddress
-            if (walletId == "phantom-wallet") {
-                asyncStateManager.walletConnectionType = WalletConnectionType.Solana
-            } else {
-                asyncStateManager.walletConnectionType = WalletConnectionType.Ethereum
+        cosmosClient.initialized
+            .filter { it }
+            .take(1)
+            .onEach {
+                cosmosClient.connectWallet(mnemonic) { result ->
+                    val resultMap = result?.jsonStringToMap()
+                    if (resultMap?.contains("address") == true) {
+                        val wallet =
+                            DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
+                        walletStateManager.setCurrentWallet(wallet)
+                        asyncStateManager.accountAddress = cosmosAddress
+                        asyncStateManager.sourceAddress = ethereumAddress
+                        if (walletId == "phantom-wallet") {
+                            asyncStateManager.walletConnectionType = WalletConnectionType.Solana
+                        } else {
+                            asyncStateManager.walletConnectionType = WalletConnectionType.Ethereum
+                        }
+                    } else {
+                        tracker.log(
+                            event = "ConnectWalletError",
+                            data = mapOf(
+                                "result" to result,
+                            ),
+                        )
+                    }
+                }
             }
-        }
+            .launchIn(appScope)
     }
 
     override fun logOut() {
