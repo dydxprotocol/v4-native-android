@@ -8,6 +8,8 @@ import com.google.android.play.core.review.model.ReviewErrorCode
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingState
 import exchange.dydx.dydxstatemanager.clientState.apprating.DydxAppRatingStateManagerProtocol
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.feature.shared.analytics.AppRatingAnalytics
 import exchange.dydx.utilities.utils.Logging
 import javax.inject.Inject
@@ -19,6 +21,7 @@ class AppRatingState @Inject constructor(
     private val appRatingStateManager: DydxAppRatingStateManagerProtocol,
     private val logger: Logging,
     private val analytics: AppRatingAnalytics,
+    private val featureFlags: DydxFeatureFlags,
 ) {
     enum class ResponseType {
         POSITIVE,
@@ -33,6 +36,10 @@ class AppRatingState @Inject constructor(
 
     val shouldShowDialog: Boolean
         get() {
+            if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+                return false
+            }
+
             val state = currentState ?: return false
             if (state.shouldStopPreprompting) {
                 return false
@@ -48,11 +55,17 @@ class AppRatingState @Inject constructor(
         }
 
     fun connectedWallet() {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+            return
+        }
         val state = currentState ?: return
         appRatingStateManager.update(state.copy(hasEverConnectedWallet = true))
     }
 
     fun orderCreated(orderId: String, orderCreatedTimestampMillis: Double) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+            return
+        }
         var state = currentState ?: return
         if (orderCreatedTimestampMillis > state.lastPromptedTimestamp) {
             if (!state.ordersCreatedSinceLastPrompt.contains(orderId)) {
@@ -65,6 +78,9 @@ class AppRatingState @Inject constructor(
     }
 
     fun transferCreated(transferId: String, transferCreatedTimestampMillis: Double) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+            return
+        }
         var state = currentState ?: return
         if (transferCreatedTimestampMillis > state.lastPromptedTimestamp) {
             if (!state.transfersCreatedSinceLastPrompt.contains(transferId)) {
@@ -77,6 +93,9 @@ class AppRatingState @Inject constructor(
     }
 
     fun launchedApp() {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+            return
+        }
         val state = currentState ?: return
         val currentTime = System.currentTimeMillis().toDouble()
         if (currentTime - state.lastAppOpenTimestamp > 24 * 60 * 60 * 1000) {

@@ -92,6 +92,26 @@
                         }
                     ]
                 }
+            },
+            {
+                "title":{
+                    "text":"Prompt for App Rating"
+                },
+                "field":{
+                    "field":"prompt_app_rating",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }

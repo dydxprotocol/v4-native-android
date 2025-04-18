@@ -22,6 +22,7 @@ enum class DydxBoolFeatureFlag {
     force_mainnet,
     abacus_static_typing,
     vault_enabled,
+    prompt_app_rating,
     skip_go_fast;
 
     val defaultValue: Boolean
@@ -30,6 +31,7 @@ enum class DydxBoolFeatureFlag {
                 force_mainnet -> false
                 abacus_static_typing -> true
                 vault_enabled -> true
+                prompt_app_rating -> false
                 skip_go_fast -> true
             }
         }
