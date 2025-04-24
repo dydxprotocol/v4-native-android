@@ -28,11 +28,15 @@ object CarteraSetup {
 
     fun setUpNavHostController(nav: NavHostController) {
         // Need to set the nav controller for the WalletConnectModalProvider
-        val modal = CarteraConfig.shared?.getProvider(WalletConnectionType.WalletConnectModal) as? WalletConnectModalProvider
+        val modal =
+            CarteraConfig.shared?.getProvider(WalletConnectionType.WalletConnectModal) as? WalletConnectModalProvider
         modal?.nav = nav
     }
 
-    private fun setUpCartera(activity: FragmentActivity, abacusStateManager: AbacusStateManagerProtocol) {
+    private fun setUpCartera(
+        activity: FragmentActivity,
+        abacusStateManager: AbacusStateManagerProtocol
+    ) {
         if (CarteraConfig.shared != null) {
             return
         }

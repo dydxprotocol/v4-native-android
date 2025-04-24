@@ -236,8 +236,14 @@ class PlatformInfo @Inject constructor(
 
     private fun displayNextToast() {
         if (toastQueue.isNotEmpty()) {
-            val nextToast = toastQueue.removeFirst()
-            _toasts.value = nextToast
+            val nextToast: PlatformInfoViewModel
+            try {
+                nextToast = toastQueue.removeFirst()
+                _toasts.value = nextToast
+            } catch (e: NoSuchElementException) {
+                _toasts.value = null
+                return
+            }
 
             currentJob = appScope.launch {
                 try {
