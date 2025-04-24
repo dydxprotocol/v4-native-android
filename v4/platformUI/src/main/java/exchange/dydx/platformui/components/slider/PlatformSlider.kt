@@ -69,6 +69,10 @@ fun CustomSlider(
         CustomSliderDefaults.Label(labelValue = labelValue.toString())
     }
 ) {
+    if (valueRange.isFiniteValid().not()) {
+        return
+    }
+
     val itemCount = (valueRange.endInclusive - valueRange.start).roundToInt()
     val steps = if (gap == 1) 0 else (itemCount / gap - 1)
 
@@ -378,3 +382,12 @@ private const val Gap = 1
 private val ValueRange = 0f..1f
 private val TrackHeight = 6.dp
 private val ThumbSize = 30.dp
+
+
+fun ClosedFloatingPointRange<Float>.isFiniteValid(): Boolean {
+    return !start.isNaN() &&
+            !endInclusive.isNaN() &&
+            start.isFinite() &&
+            endInclusive.isFinite() &&
+            start <= endInclusive
+}

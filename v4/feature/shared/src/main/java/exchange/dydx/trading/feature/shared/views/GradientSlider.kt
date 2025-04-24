@@ -104,3 +104,4 @@ object GradientSlider {
         )
     }
 }
+
