@@ -3,6 +3,10 @@ package exchange.dydx.trading.common.featureflags
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import javax.inject.Inject
 
+interface RemoteFlags {
+    fun isEnabled(name: String, default: Boolean = false): Boolean
+}
+
 enum class DydxStringFeatureFlag {
     deployment_url
 }
@@ -20,30 +24,31 @@ enum class DydxDoubleFeatureFlag {
 
 enum class DydxBoolFeatureFlag {
     force_mainnet,
-    vault_enabled,
-    prompt_app_rating,
-    skip_go_fast;
+    ff_vault_enabled,
+    ff_prompt_app_rating,
+    ff_skip_go_fast;
 
     val defaultValue: Boolean
         get() {
             return when (this) {
                 force_mainnet -> false
-                vault_enabled -> true
-                prompt_app_rating -> false
-                skip_go_fast -> true
+                ff_vault_enabled -> true
+                ff_prompt_app_rating -> true
+                ff_skip_go_fast -> true
             }
         }
 }
 
 class DydxFeatureFlags @Inject constructor(
-    private val sharedPreferences: SharedPreferencesStore
+    private val sharedPreferences: SharedPreferencesStore,
+    private val remote: RemoteFlags
 ) {
     fun isFeatureEnabled(featureFlag: DydxBoolFeatureFlag): Boolean {
         val value = sharedPreferences.read(featureFlag.name)
         if (value != null) {
             return value.toBoolean() || value == "1"
         }
-        return featureFlag.defaultValue
+        return remote.isEnabled(name = featureFlag.name, default = featureFlag.defaultValue)
     }
 
     fun stringForFeature(featureFlag: DydxStringFeatureFlag): String? {

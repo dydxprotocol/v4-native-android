@@ -6,12 +6,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import exchange.dydx.trading.common.featureflags.RemoteFlags
 
-interface StatsigFlags {
-    fun isEnabled(name: String, default: Boolean = false): Boolean
-}
-
-object RealStatsigFlags : StatsigFlags {
+object StatsigFlagsImpl : RemoteFlags {
 
     // Cache first accessed value to ensure single value through lifetime of app.
     private val firstAccessCache = mutableMapOf<String, Boolean>()
@@ -43,7 +40,8 @@ object RealStatsigFlags : StatsigFlags {
                 EvaluationReason.Error -> default
 
                 EvaluationReason.Uninitialized -> if (BuildConfig.DEBUG) {
-                    error("Statsig SDK not initialized")
+                    //  error("Statsig SDK not initialized")
+                    default
                 } else {
                     default
                 }
@@ -57,5 +55,5 @@ object RealStatsigFlags : StatsigFlags {
 @InstallIn(SingletonComponent::class)
 @Module
 object StatsigModule {
-    @Provides fun bindStatsigFlags(): StatsigFlags = RealStatsigFlags
+    @Provides fun bindStatsigFlags(): RemoteFlags = StatsigFlagsImpl
 }

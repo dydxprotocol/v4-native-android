@@ -4,12 +4,11 @@ import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
-import kotlinx.coroutines.flow.firstOrNull
 import java.math.BigInteger
 import kotlin.math.pow
 
 fun TransferInput.tokenAddress(featureFlags: DydxFeatureFlags): String? {
-    if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.skip_go_fast)) {
+    if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_skip_go_fast)) {
         return token
     }
     return resources?.tokenResources?.get(token)?.address

@@ -73,7 +73,7 @@ class DydxPortfolioViewModel @Inject constructor(
             localizer = localizer,
             displayContent = displayContent,
             tabSelection = tabSelection,
-            vaultEnabled = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.vault_enabled),
+            vaultEnabled = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_vault_enabled),
             appRatingDialog = appRatingDialog,
             shouldLaunchAppRating = shouldLaunchAppRating,
         )

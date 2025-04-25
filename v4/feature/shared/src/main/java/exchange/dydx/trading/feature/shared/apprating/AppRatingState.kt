@@ -36,7 +36,7 @@ class AppRatingState @Inject constructor(
 
     val shouldShowDialog: Boolean
         get() {
-            if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+            if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_prompt_app_rating) == false) {
                 return false
             }
 
@@ -55,7 +55,7 @@ class AppRatingState @Inject constructor(
         }
 
     fun connectedWallet() {
-        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_prompt_app_rating) == false) {
             return
         }
         val state = currentState ?: return
@@ -63,7 +63,7 @@ class AppRatingState @Inject constructor(
     }
 
     fun orderCreated(orderId: String, orderCreatedTimestampMillis: Double) {
-        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_prompt_app_rating) == false) {
             return
         }
         var state = currentState ?: return
@@ -78,7 +78,7 @@ class AppRatingState @Inject constructor(
     }
 
     fun transferCreated(transferId: String, transferCreatedTimestampMillis: Double) {
-        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_prompt_app_rating) == false) {
             return
         }
         var state = currentState ?: return
@@ -93,7 +93,7 @@ class AppRatingState @Inject constructor(
     }
 
     fun launchedApp() {
-        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.prompt_app_rating) == false) {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_prompt_app_rating) == false) {
             return
         }
         val state = currentState ?: return
