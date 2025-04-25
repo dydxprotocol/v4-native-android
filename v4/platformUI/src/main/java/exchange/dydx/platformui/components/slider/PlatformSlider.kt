@@ -383,11 +383,10 @@ private val ValueRange = 0f..1f
 private val TrackHeight = 6.dp
 private val ThumbSize = 30.dp
 
-
 fun ClosedFloatingPointRange<Float>.isFiniteValid(): Boolean {
     return !start.isNaN() &&
-            !endInclusive.isNaN() &&
-            start.isFinite() &&
-            endInclusive.isFinite() &&
-            start <= endInclusive
+        !endInclusive.isNaN() &&
+        start.isFinite() &&
+        endInclusive.isFinite() &&
+        start <= endInclusive
 }
