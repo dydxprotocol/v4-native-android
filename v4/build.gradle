@@ -89,7 +89,7 @@ ext {
 
     // App dependencies
     abacusVersion = '1.14.0'
-    carteraVersion = '0.1.21'
+    carteraVersion = '0.1.22'
     //carteraVersion = '0.1.21-local-debug'    // Use this for local testing
     kollectionsVersion = '2.0.16'
 

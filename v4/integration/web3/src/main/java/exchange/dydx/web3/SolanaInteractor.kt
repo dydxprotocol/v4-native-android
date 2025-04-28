@@ -46,14 +46,22 @@ class SolanaInteractor(
             .post(requestBody)
             .build()
 
-        val response = client.newCall(request).execute()
-        if (!response.isSuccessful) {
-            Timber.tag(TAG).e("Request failed: ${response.code}")
+        try {
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                Timber.tag(TAG).e("Request failed: ${response.code}")
+                return@withContext null
+            }
+
+            val responseBody = response.body?.string() ?: return@withContext null
+            return@withContext gson.fromJson(
+                responseBody,
+                LatestBlockhashResponse::class.java,
+            ).result
+        } catch (e: Exception) {
+            Timber.tag(TAG).e("Request failed: ${e.message}")
             return@withContext null
         }
-
-        val responseBody = response.body?.string() ?: return@withContext null
-        return@withContext gson.fromJson(responseBody, LatestBlockhashResponse::class.java).result
     }
 
     suspend fun getBalance(publicKey: String): Double? = withContext(Dispatchers.IO) {
@@ -77,15 +85,20 @@ class SolanaInteractor(
             .post(requestBody)
             .build()
 
-        val response = client.newCall(request).execute()
-        if (!response.isSuccessful) {
-            Timber.tag(TAG).e("Request failed: ${response.code}")
+        try {
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                Timber.tag(TAG).e("Request failed: ${response.code}")
+                return@withContext null
+            }
+
+            val body = response.body?.string() ?: return@withContext null
+            val parsed = gson.fromJson(body, BalanceResponse::class.java)
+            return@withContext parsed.result.value.toDouble() / 10.0.pow(9.0)
+        } catch (e: Exception) {
+            Timber.tag(TAG).e("Request failed: ${e.message}")
             return@withContext null
         }
-
-        val body = response.body?.string() ?: return@withContext null
-        val parsed = gson.fromJson(body, BalanceResponse::class.java)
-        return@withContext parsed.result.value.toDouble() / 10.0.pow(9.0)
     }
 
     suspend fun getTokenBalance(publicKey: String, tokenAddress: String): Double? = withContext(Dispatchers.IO) {
@@ -115,22 +128,28 @@ class SolanaInteractor(
             .post(requestBody)
             .build()
 
-        val response = client.newCall(request).execute()
-        if (!response.isSuccessful) {
-            Timber.tag(TAG).e("Request failed: ${response.code}")
-            return@withContext null
-        }
-
         try {
-            val parsed = gson.fromJson(response.body?.string(), TokenAccountsResponse::class.java)
-            var balance = 0.0f
-            for (account in parsed.result.value) {
-                val tokenAmount = account.account.data.parsed.info.tokenAmount.uiAmount
-                balance = max(balance, tokenAmount)
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                Timber.tag(TAG).e("Request failed: ${response.code}")
+                return@withContext null
             }
-            return@withContext balance.toDouble()
+
+            try {
+                val parsed =
+                    gson.fromJson(response.body?.string(), TokenAccountsResponse::class.java)
+                var balance = 0.0f
+                for (account in parsed.result.value) {
+                    val tokenAmount = account.account.data.parsed.info.tokenAmount.uiAmount
+                    balance = max(balance, tokenAmount)
+                }
+                return@withContext balance.toDouble()
+            } catch (e: Exception) {
+                Timber.tag(TAG).e("Failed to parse response: ${e.message}")
+                return@withContext null
+            }
         } catch (e: Exception) {
-            Timber.tag(TAG).e("Failed to parse response: ${e.message}")
+            Timber.tag(TAG).e("Request failed: ${e.message}")
             return@withContext null
         }
     }
