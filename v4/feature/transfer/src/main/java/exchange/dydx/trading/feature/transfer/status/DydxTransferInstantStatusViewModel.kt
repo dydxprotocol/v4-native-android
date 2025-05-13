@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.transfer.status
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.abacus.output.TransferStatus
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -16,7 +17,9 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
+import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
 import exchange.dydx.trading.feature.transfer.status.DydxTransferInstantStatusView.StatusIcon
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,6 +37,7 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     private val transferTokenDetails: TransferTokenDetails,
+    private val tracker: Tracking,
 ) : ViewModel(), DydxViewModel {
     private val transactionHash: String? = savedStateHandle["hash"]
     private val transfer: DydxTransferInstance?
@@ -113,9 +117,19 @@ class DydxTransferInstantStatusViewModel @Inject constructor(
         } else {
             false
         }
-        if (completed && transfer != null) {
+        if (completed && transfer != null && status != null) {
+            when (transfer.transferType) {
+                DydxTransferInstance.TransferType.DEPOSIT ->
+                    tracker.logSharedEvent(
+                        ClientTrackableEventType.DepositFinalizedEvent(
+                            status = status,
+                        ),
+                    )
+                else -> {}
+            }
             stopTrackingTransaction()
         }
+
         status?.error?.let {
             toaster.show(
                 title = localizer.localize("ERRORS.API_STATUS.UNKNOWN_API_ERROR"),

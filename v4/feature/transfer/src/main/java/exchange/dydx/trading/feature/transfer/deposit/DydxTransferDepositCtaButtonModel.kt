@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.ValidationError
@@ -27,6 +28,7 @@ import exchange.dydx.trading.common.navigation.VaultRoutes.deposit
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
+import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.deposit.steps.DydxTransferDepositStep
@@ -36,6 +38,7 @@ import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
 import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.runWithLogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -61,6 +64,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val transferRouteSelectionInfo: TransferRouteSelectionInfo,
     private val transferTokenDetails: TransferTokenDetails,
+    private val tracker: Tracking,
 ) : ViewModel(), DydxViewModel {
     private val carteraProvider: CarteraProvider = CarteraProvider(context)
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -197,6 +201,21 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
         val chainRpc = transferInput.resources?.chainResources?.get(chain)?.rpc
 
         onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.DEPOSIT_INITIATED)
+        val summary = when (selectedRoute) {
+            TransferRouteSelection.Instant -> {
+                transferInput.goFastSummary
+            }
+            TransferRouteSelection.Regular -> {
+                transferInput.summary
+            }
+        }
+        tracker.logSharedEvent(
+            ClientTrackableEventType.DepositInitiatedEvent(
+                transferInput = transferInput,
+                summary = summary,
+            ),
+        )
+
         appScope.launch {
             val event =
                 DydxTransferDepositStep(
@@ -215,6 +234,15 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
             val hash = event.getOrNull()
             if (hash != null) {
                 onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.DEPOSIT_FUNDS)
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.DepositSubmittedEvent(
+                        transferInput = transferInput,
+                        summary = summary,
+                        txHash = hash,
+                        isInstantDeposit = selectedRoute == TransferRouteSelection.Instant,
+                    ),
+                )
+
                 transferAnalytics.logDeposit(transferInput)
                 if (selectedRoute == TransferRouteSelection.Regular) {
                     abacusStateManager.resetTransferInputFields()
@@ -239,8 +267,14 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Modal,
                 )
             } else {
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.DepositErrorEvent(
+                        transferInput = transferInput,
+                        errorMessage = event.exceptionOrNull()?.message ?: "Deposit error",
+                    ),
+                )
                 errorFlow.value = DydxTransferError(
-                    message = event.exceptionOrNull()?.message ?: "Transfer error",
+                    message = event.exceptionOrNull()?.message ?: "Deposit error",
                 )
             }
         }

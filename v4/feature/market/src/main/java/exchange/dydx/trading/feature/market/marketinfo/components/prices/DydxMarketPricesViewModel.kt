@@ -255,7 +255,7 @@ class DydxMarketPricesViewModel @Inject constructor(
             val closeText = formatter.dollar(it.close, market?.configs?.tickSizeDecimals ?: 2)
             val highText = formatter.dollar(it.high, market?.configs?.tickSizeDecimals ?: 2)
             val lowText = formatter.dollar(it.low, market?.configs?.tickSizeDecimals ?: 2)
-            val volumeText = formatter.dollar(it.usdVolume, market?.configs?.tickSizeDecimals ?: 2)
+            val volumeText = formatter.dollar(it.usdVolume, 3)
 
             if (datetimeText != null &&
                 openText != null &&

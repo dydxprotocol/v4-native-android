@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.transfer.status
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.abacus.output.TransferStatus
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
@@ -18,7 +19,9 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
+import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
 import exchange.dydx.trading.feature.shared.views.ProgressStepView
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -36,6 +39,7 @@ class DydxTransferStatusViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     private val transferTokenDetails: TransferTokenDetails,
+    private val tracker: Tracking,
 ) : ViewModel(), DydxViewModel {
 
     private val transactionHash: String? = savedStateHandle["hash"]
@@ -108,7 +112,12 @@ class DydxTransferStatusViewModel @Inject constructor(
     ): DydxTransferStatusView.ViewState {
         val status = statuses?.get(transactionHash)
         val routeStatus = routeStatus(statuses)
-        if (routeStatus == RouteStatus.Completed && transfer != null) {
+        if (routeStatus == RouteStatus.Completed && transfer != null && status != null) {
+            tracker.logSharedEvent(
+                ClientTrackableEventType.DepositFinalizedEvent(
+                    status = status,
+                ),
+            )
             stopTrackingTransaction()
         }
         status?.error?.let {
@@ -215,7 +224,12 @@ class DydxTransferStatusViewModel @Inject constructor(
     ): DydxTransferStatusView.ViewState? {
         val status = statuses?.get(transactionHash)
         val routeStatus = routeStatus(statuses)
-        if (routeStatus == RouteStatus.Completed && transfer != null) {
+        if (routeStatus == RouteStatus.Completed && transfer != null && status != null) {
+            tracker.logSharedEvent(
+                ClientTrackableEventType.WithdrawFinalizedEvent(
+                    status = status,
+                ),
+            )
             stopTrackingTransaction()
         }
         status?.error?.let {

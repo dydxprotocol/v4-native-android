@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.shared.analytics
 
+import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineDispatchers
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -64,13 +65,11 @@ class OnboardingAnalytics @Inject constructor(
                     else -> OnboardingState.WALLET_CONNECTED
                 }
 
-                val data = mapOf(
-                    "state" to state.rawValue,
-                    "step" to step.rawValue,
-                )
-                tracker.log(
-                    event = AnalyticsEvent.ONBOARDING_STEP_CHANGED.rawValue,
-                    data = data,
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.OnboardingStepChanged(
+                        state = state.rawValue,
+                        step = step.rawValue,
+                    ),
                 )
             }
             .launchIn(scope)

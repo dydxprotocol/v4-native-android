@@ -1,6 +1,6 @@
 package exchange.dydx.trading.feature.shared.analytics
 
-import exchange.dydx.abacus.utils.filterNotNull
+import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,11 +18,10 @@ class VaultAnalytics @Inject constructor(
         type: VaultAnalyticsInputType,
         amount: Double
     ) {
-        tracker.log(
-            event = AnalyticsEvent.VaultFormPreviewStep.rawValue,
-            data = mapOf(
-                "operation" to type.name,
-                "amount" to amount.toString(),
+        tracker.logSharedEvent(
+            ClientTrackableEventType.VaultFormPreviewStep(
+                type = type.name,
+                amount = amount,
             ),
         )
     }
@@ -32,13 +31,12 @@ class VaultAnalytics @Inject constructor(
         amount: Double?,
         slippage: Double?,
     ) {
-        tracker.log(
-            event = AnalyticsEvent.AttemptVaultOperation.rawValue,
-            data = mapOf(
-                "operation" to type.name,
-                "amount" to amount.toString(),
-                "slippage" to slippage.toString(),
-            ).filterNotNull(),
+        tracker.logSharedEvent(
+            ClientTrackableEventType.AttemptVaultOperation(
+                type = type.name,
+                amount = amount,
+                slippage = slippage,
+            ),
         )
     }
 
@@ -47,23 +45,21 @@ class VaultAnalytics @Inject constructor(
         amount: Double?,
         amountDiff: Double?,
     ) {
-        tracker.log(
-            event = AnalyticsEvent.SuccessfulVaultOperation.rawValue,
-            data = mapOf(
-                "operation" to type.name,
-                "amount" to amount.toString(),
-                "amountDiff" to amountDiff.toString(),
-            ).filterNotNull(),
+        tracker.logSharedEvent(
+            ClientTrackableEventType.SuccessfulVaultOperation(
+                type = type.name,
+                amount = amount ?: 0.0,
+                amountDiff = amountDiff ?: 0.0,
+            ),
         )
     }
 
     fun logOperationFailure(
         type: VaultAnalyticsInputType,
     ) {
-        tracker.log(
-            event = AnalyticsEvent.VaultOperationProtocolError.rawValue,
-            data = mapOf(
-                "operation" to type.name,
+        tracker.logSharedEvent(
+            ClientTrackableEventType.VaultOperationProtocolError(
+                type = type.name,
             ),
         )
     }

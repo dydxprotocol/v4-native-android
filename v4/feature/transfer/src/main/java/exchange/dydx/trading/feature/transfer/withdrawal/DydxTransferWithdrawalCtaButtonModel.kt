@@ -3,6 +3,7 @@ package exchange.dydx.trading.feature.transfer.withdrawal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.output.input.ErrorType
 import exchange.dydx.abacus.output.input.TransferInput
@@ -19,12 +20,14 @@ import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
+import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
 import exchange.dydx.trading.feature.shared.views.InputCtaButton
 import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.steps.DydxTransferScreenStep
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
 import exchange.dydx.utilities.utils.runWithLogs
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +41,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.Boolean
 
 @HiltViewModel
 class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
@@ -50,6 +54,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
     private val errorFlow: MutableStateFlow<@JvmSuppressWildcards DydxTransferError?>,
     private val transferInstanceStore: DydxTransferInstanceStoring,
     private val transferAnalytics: TransferAnalytics,
+    private val tracker: Tracking,
     @CoroutineScopes.App private val appScope: CoroutineScope,
 ) : ViewModel(), DydxViewModel {
     private val isSubmittingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -167,6 +172,12 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
             screenResultFlow.value = result
             val withdrawResult = when (result) {
                 DydxScreenResult.NoRestriction -> {
+                    tracker.logSharedEvent(
+                        ClientTrackableEventType.WithdrawInitiatedEvent(
+                            transferInput = transferInput,
+                            summary = transferInput.summary,
+                        ),
+                    )
                     DydxWithdrawToIBCStep(
                         transferInput = transferInput,
                         selectedSubaccount = selectedSubaccount,
@@ -186,6 +197,15 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
             val hash = withdrawResult.getOrNull()
             if (hash != null) {
                 transferAnalytics.logWithdrawal(transferInput)
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.WithdrawSubmittedEvent(
+                        transferInput = transferInput,
+                        summary = transferInput.summary,
+                        txHash = hash,
+                        isInstantWithdraw = false,
+                    ),
+                )
+
                 transferInstanceStore.addTransferHash(
                     hash = hash,
                     fromChainName = abacusStateManager.environment?.chainName,
@@ -199,8 +219,14 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Modal,
                 )
             } else {
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.WithdrawErrorEvent(
+                        transferInput = transferInput,
+                        errorMessage = withdrawResult.exceptionOrNull()?.localizedMessage ?: "Withdrawal error",
+                    ),
+                )
                 errorFlow.value = DydxTransferError(
-                    message = withdrawResult.exceptionOrNull()?.localizedMessage ?: "",
+                    message = withdrawResult.exceptionOrNull()?.localizedMessage ?: "Withdrawal error",
                 )
             }
 
