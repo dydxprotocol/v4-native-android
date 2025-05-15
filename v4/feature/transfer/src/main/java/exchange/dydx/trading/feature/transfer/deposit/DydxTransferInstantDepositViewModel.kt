@@ -1,7 +1,5 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
-import android.R.attr.type
-import android.R.id.input
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.input.TransferInput
@@ -15,13 +13,12 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
+import exchange.dydx.trading.feature.receipt.streams.TransferRouteSelection
+import exchange.dydx.trading.feature.receipt.streams.TransferRouteSelectionInfo
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import exchange.dydx.trading.feature.transfer.components.InstantInputBox
 import exchange.dydx.trading.feature.transfer.components.InstantSelector
-import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
-import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
-import jnr.ffi.provider.jffi.CodegenUtils.params
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged

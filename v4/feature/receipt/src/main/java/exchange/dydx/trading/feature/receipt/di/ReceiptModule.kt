@@ -9,6 +9,7 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.trading.feature.receipt.ReceiptType
 import exchange.dydx.trading.feature.receipt.streams.ReceiptStream
 import exchange.dydx.trading.feature.receipt.streams.ReceiptStreaming
+import exchange.dydx.trading.feature.receipt.streams.TransferRouteSelectionInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -31,6 +32,12 @@ interface ReceiptModule {
         @ActivityRetainedScoped
         fun provideMutableReceiptTypeFlow(): MutableStateFlow<ReceiptType?> {
             return MutableStateFlow(null)
+        }
+
+        @Provides
+        @ActivityRetainedScoped
+        fun provideTransferRouteSelectionInfo(): TransferRouteSelectionInfo {
+            return TransferRouteSelectionInfo()
         }
     }
 }

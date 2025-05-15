@@ -24,7 +24,8 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
-import exchange.dydx.trading.common.navigation.VaultRoutes.deposit
+import exchange.dydx.trading.feature.receipt.streams.TransferRouteSelection
+import exchange.dydx.trading.feature.receipt.streams.TransferRouteSelectionInfo
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
@@ -34,8 +35,6 @@ import exchange.dydx.trading.feature.transfer.DydxTransferError
 import exchange.dydx.trading.feature.transfer.deposit.steps.DydxTransferDepositStep
 import exchange.dydx.trading.feature.transfer.tokenAddress
 import exchange.dydx.trading.feature.transfer.utils.DydxTransferInstanceStoring
-import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelection
-import exchange.dydx.trading.feature.transfer.utils.TransferRouteSelectionInfo
 import exchange.dydx.trading.feature.transfer.utils.chainName
 import exchange.dydx.trading.feature.transfer.utils.networkName
 import exchange.dydx.trading.integration.analytics.tracking.Tracking

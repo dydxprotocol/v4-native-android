@@ -1,4 +1,4 @@
-package exchange.dydx.trading.feature.transfer.utils
+package exchange.dydx.trading.feature.receipt.streams
 
 import kotlinx.coroutines.flow.MutableStateFlow
 
