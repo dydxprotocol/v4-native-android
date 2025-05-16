@@ -19,7 +19,7 @@ android {
         minSdkVersion parent.minSdkVersion
         targetSdkVersion parent.targetSdkVersion
         versionCode 10000
-        versionName "1.12.11"
+        versionName "1.12.12"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
