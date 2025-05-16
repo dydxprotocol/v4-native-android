@@ -5,8 +5,11 @@ import exchange.dydx.integration.javascript.JavascriptApiImpl
 import exchange.dydx.integration.javascript.JavascriptRunnerV4
 import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
@@ -21,6 +24,7 @@ class CosmosV4ClientWebview @Inject constructor(
     application: Application,
     @CoroutineScopes.App appScope: CoroutineScope,
     private val logger: Logging,
+    private val tracker: Tracking,
 ) : CosmosV4WebviewClientProtocol,
     JavascriptApiImpl(
         context = application,
@@ -30,6 +34,9 @@ class CosmosV4ClientWebview @Inject constructor(
     ) {
 
     override val initialized = runner.initialized
+
+    private var connectNewtworkParams: String? = null
+    private var connectWalletParams: String? = null
 
     override fun deriveCosmosKey(
         signature: String,
@@ -46,6 +53,7 @@ class CosmosV4ClientWebview @Inject constructor(
         paramsInJson: String,
         completion: JavascriptCompletion,
     ) {
+        connectNewtworkParams = paramsInJson
         callNativeClient(
             functionName = "connectNetwork",
             params = listOf(paramsInJson),
@@ -57,6 +65,7 @@ class CosmosV4ClientWebview @Inject constructor(
         mnemonic: String,
         completion: JavascriptCompletion,
     ) {
+        connectWalletParams = mnemonic
         callNativeClient(
             functionName = "connectWallet",
             params = listOf(mnemonic),
@@ -69,16 +78,18 @@ class CosmosV4ClientWebview @Inject constructor(
         paramsInJson: String?,
         completion: JavascriptCompletion,
     ) {
-        val params = if (paramsInJson != null) {
-            listOf(paramsInJson)
-        } else {
-            listOf()
+        reconnectIfNeeded(functionName) {
+            val params = if (paramsInJson != null) {
+                listOf(paramsInJson)
+            } else {
+                listOf()
+            }
+            callNativeClient(
+                functionName = functionName,
+                params = params,
+                completion = completion,
+            )
         }
-        callNativeClient(
-            functionName = functionName,
-            params = params,
-            completion = completion,
-        )
     }
 
     override fun withdrawToIBC(
@@ -87,13 +98,15 @@ class CosmosV4ClientWebview @Inject constructor(
         payload: String,
         completion: JavascriptCompletion
     ) {
-        val data = payload.toByteArray()
-        val base64String = android.util.Base64.encodeToString(data, android.util.Base64.NO_WRAP)
-        callNativeClient(
-            functionName = "withdrawToIBC",
-            params = listOf(subaccount, amount, base64String),
-            completion = completion,
-        )
+        reconnectIfNeeded("withdrawToIBC") {
+            val data = payload.toByteArray()
+            val base64String = android.util.Base64.encodeToString(data, android.util.Base64.NO_WRAP)
+            callNativeClient(
+                functionName = "withdrawToIBC",
+                params = listOf(subaccount, amount, base64String),
+                completion = completion,
+            )
+        }
     }
 
     override fun depositToMegavault(
@@ -101,11 +114,13 @@ class CosmosV4ClientWebview @Inject constructor(
         amountUsdc: Double,
         completion: JavascriptCompletion
     ) {
-        callNativeClient(
-            functionName = "depositToMegavault",
-            params = listOf(subaccountNumber, amountUsdc),
-            completion = completion,
-        )
+        reconnectIfNeeded("depositToMegavault") {
+            callNativeClient(
+                functionName = "depositToMegavault",
+                params = listOf(subaccountNumber, amountUsdc),
+                completion = completion,
+            )
+        }
     }
 
     override fun withdrawFromMegavault(
@@ -114,22 +129,64 @@ class CosmosV4ClientWebview @Inject constructor(
         minAmount: Long,
         completion: JavascriptCompletion
     ) {
-        callNativeClient(
-            functionName = "withdrawFromMegavault",
-            params = listOf(subaccountNumber, shares, minAmount),
-            completion = completion,
-        )
+        reconnectIfNeeded("withdrawFromMegavault") {
+            callNativeClient(
+                functionName = "withdrawFromMegavault",
+                params = listOf(subaccountNumber, shares, minAmount),
+                completion = completion,
+            )
+        }
     }
 
     override fun getMegavaultWithdrawalInfo(
         shares: Long,
         completion: JavascriptCompletion
     ) {
-        callNativeClient(
-            functionName = "getMegavaultWithdrawalInfo",
-            params = listOf(shares),
-            completion = completion,
-        )
+        reconnectIfNeeded("getMegavaultWithdrawalInfo") {
+            callNativeClient(
+                functionName = "getMegavaultWithdrawalInfo",
+                params = listOf(shares),
+                completion = completion,
+            )
+        }
+    }
+
+    private fun reconnectIfNeeded(functionName: String, completion: JavascriptCompletion) {
+        callNativeClient("isWalletConnected", listOf()) { payload ->
+            var shouldReset: Boolean
+            if (payload == null) {
+                shouldReset = true
+            } else {
+                try {
+                    val json = Json.parseToJsonElement(payload)
+                    val result = json.jsonObject["result"]
+                    shouldReset = result.toString() != "true"
+                } catch (e: Exception) {
+                    shouldReset = true
+                }
+            }
+
+            if (shouldReset) {
+                tracker.log("AndroidV4ClientReconnect", mapOf("functionName" to functionName))
+                val connectWalletParams = connectWalletParams
+                val connectNewtworkParams = connectNewtworkParams
+                if (connectNewtworkParams != null) {
+                    connectNetwork(connectNewtworkParams) {
+                        if (connectWalletParams != null) {
+                            connectWallet(connectWalletParams) {
+                                completion(it)
+                            }
+                        } else {
+                            completion(it)
+                        }
+                    }
+                } else {
+                    completion(null)
+                }
+            } else {
+                completion(null)
+            }
+        }
     }
 
     private fun callNativeClient(

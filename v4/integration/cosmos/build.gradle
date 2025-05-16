@@ -58,6 +58,7 @@ dependencies {
     implementation project(':v4:utilities')
     api project(':v4:integration:javascript')
     api project(':v4:integration:starkex')
+    api project(':v4:integration:analytics')
 
     /* Local Dependencies */
 

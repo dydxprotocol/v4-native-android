@@ -73,4 +73,7 @@ dependencies {
 
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation("io.github.hoc081098:FlowExt:$flowExtVersion")
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
+
 }
