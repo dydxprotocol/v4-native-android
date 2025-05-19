@@ -58,6 +58,12 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
             },
             tokens = tokens,
             otherTokens = otherTokens,
+            nobleItem = DydxTransferNobleItemView.ViewState(
+                localizer = localizer,
+                nobleAdddressAction = {
+                  //  router.navigateToNobleAddress()
+                },
+            )
         )
     }
 

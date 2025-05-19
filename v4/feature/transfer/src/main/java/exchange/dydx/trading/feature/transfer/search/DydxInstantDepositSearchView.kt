@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,6 +28,7 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.views.HeaderView
+import exchange.dydx.trading.feature.transfer.search.DydxTransferNobleItemView
 
 @Preview
 @Composable
@@ -45,6 +47,7 @@ object DydxInstantDepositSearchView : DydxComponent {
         val backButtonAction: () -> Unit = {},
         val tokens: List<DydxInstantDepositSearchItem.ViewState>?,
         val otherTokens: List<DydxInstantDepositSearchItem.ViewState>?,
+        val nobleItem: DydxTransferNobleItemView.ViewState?
     ) {
         companion object {
             val preview = ViewState(
@@ -57,6 +60,7 @@ object DydxInstantDepositSearchView : DydxComponent {
                     DydxInstantDepositSearchItem.ViewState.preview,
                     DydxInstantDepositSearchItem.ViewState.preview,
                 ),
+                nobleItem = DydxTransferNobleItemView.ViewState.preview,
             )
         }
     }
@@ -106,6 +110,16 @@ object DydxInstantDepositSearchView : DydxComponent {
                     )
                 }
 
+                item {
+                     DydxTransferNobleItemView.Content(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .padding(vertical = 4.dp)
+                             .height(70.dp),
+                         state = state.nobleItem
+                     )
+                }
+
                 items((state.tokens ?: emptyList()).count()) { index ->
                     val token = state.tokens?.get(index)
                     if (token == null) {
@@ -114,7 +128,8 @@ object DydxInstantDepositSearchView : DydxComponent {
                     DydxInstantDepositSearchItem.Content(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                            .padding(vertical = 4.dp)
+                            .height(70.dp),
                         state = token,
                     )
                 }
