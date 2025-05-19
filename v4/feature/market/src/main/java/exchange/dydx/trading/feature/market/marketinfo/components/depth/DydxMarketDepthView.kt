@@ -29,7 +29,7 @@ import exchange.dydx.platformui.components.charts.view.config
 import exchange.dydx.platformui.components.charts.view.update
 import exchange.dydx.platformui.components.textgroups.PlatformHorizontalTextGroup
 import exchange.dydx.platformui.components.textgroups.TextPair
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color

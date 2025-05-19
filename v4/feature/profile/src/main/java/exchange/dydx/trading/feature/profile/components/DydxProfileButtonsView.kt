@@ -20,7 +20,7 @@ import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.PlatformDialogScaffold
 import exchange.dydx.platformui.components.buttons.PlatformIconButton
 import exchange.dydx.platformui.components.icons.PlatformImage
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.color

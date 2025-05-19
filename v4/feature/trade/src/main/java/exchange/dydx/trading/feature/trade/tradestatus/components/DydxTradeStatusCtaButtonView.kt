@@ -9,7 +9,7 @@ import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.PlatformDialogScaffold
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent

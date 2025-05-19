@@ -27,7 +27,7 @@ import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.platformui.components.charts.view.config
 import exchange.dydx.platformui.components.charts.view.update
 import exchange.dydx.platformui.components.tabgroups.PlatformPillTextGroup
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes

@@ -22,7 +22,7 @@ import exchange.dydx.platformui.components.inputs.PlatformSwitchInput
 import exchange.dydx.platformui.components.slider.CustomSlider
 import exchange.dydx.platformui.components.slider.CustomSliderDefaults
 import exchange.dydx.platformui.components.slider.progress
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.color

@@ -1,5 +1,6 @@
-package exchange.dydx.trading.feature.trade.tradeinput.components.inputfields.execution
+package exchange.dydx.trading.feature.transfer.noble
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -9,33 +10,34 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
-import exchange.dydx.trading.feature.shared.scaffolds.InputFieldScaffold
-import exchange.dydx.trading.feature.shared.views.LabeledSelectionInput
 
 @Preview
 @Composable
-fun Preview_DydxTradeInputExecutionView() {
+fun Preview_DydxTransferNobleAddressView() {
     DydxThemedPreviewSurface {
-        DydxTradeInputExecutionView.Content(Modifier, DydxTradeInputExecutionView.ViewState.preview)
+        DydxTransferNobleAddressView.Content(
+            Modifier,
+            DydxTransferNobleAddressView.ViewState.preview
+        )
     }
 }
 
-object DydxTradeInputExecutionView : DydxComponent {
+object DydxTransferNobleAddressView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val labeledSelectionInput: LabeledSelectionInput.ViewState,
+        val text: String?,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                labeledSelectionInput = LabeledSelectionInput.ViewState.preview,
+                text = "1.0M",
             )
         }
     }
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxTradeInputExecutionViewModel = hiltViewModel()
+        val viewModel: DydxTransferNobleAddressViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
@@ -46,12 +48,7 @@ object DydxTradeInputExecutionView : DydxComponent {
         if (state == null) {
             return
         }
-
-        InputFieldScaffold(modifier) {
-            LabeledSelectionInput.Content(
-                modifier = Modifier,
-                state = state.labeledSelectionInput,
-            )
-        }
+        Text(text = state?.text ?: "")
     }
 }
+

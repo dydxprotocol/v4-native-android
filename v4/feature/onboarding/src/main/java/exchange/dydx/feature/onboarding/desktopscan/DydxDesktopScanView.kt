@@ -12,7 +12,7 @@ import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.PlatformDialogScaffold
 import exchange.dydx.platformui.components.camera.PlatformQrScanner
 import exchange.dydx.platformui.components.dividers.PlatformDivider
-import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.themeColor

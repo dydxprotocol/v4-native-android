@@ -7,6 +7,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.DydxRouter.Presentation
+import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import kotlinx.coroutines.flow.Flow
@@ -61,7 +63,7 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
             nobleItem = DydxTransferNobleItemView.ViewState(
                 localizer = localizer,
                 nobleAdddressAction = {
-                  //  router.navigateToNobleAddress()
+                   router.navigateTo(TransferRoutes.transfer_deposit_noble, presentation = Presentation.Push)
                 },
             )
         )
