@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.mikephil.charting.data.Entry
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
@@ -27,7 +28,6 @@ import exchange.dydx.platformui.components.charts.view.LineChartDataSet
 import exchange.dydx.platformui.components.charts.view.config
 import exchange.dydx.platformui.components.charts.view.update
 import exchange.dydx.platformui.components.tabgroups.PlatformPillTextGroup
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes

@@ -1,7 +1,6 @@
 package exchange.dydx.trading.feature.transfer.search
 
 import android.R.attr.foreground
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -37,9 +35,7 @@ import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
-import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.R
-import exchange.dydx.utilities.utils.toDp
 
 @Preview
 @Composable
@@ -49,7 +45,7 @@ fun Preview_DydxTransferNobleItemView() {
     }
 }
 
-object DydxTransferNobleItemView  {
+object DydxTransferNobleItemView {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val nobleAdddressAction: (() -> Unit)? = null,
@@ -120,8 +116,8 @@ object DydxTransferNobleItemView  {
                     modifier = Modifier
                         .size(width = 28.dp, height = 28.dp)
                         .background(ThemeColor.SemanticColor.layer_3.color, shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ){
+                    contentAlignment = Alignment.Center,
+                ) {
                     PlatformImage(
                         icon = R.drawable.coinbase_wallet,
                         modifier = Modifier
@@ -133,8 +129,8 @@ object DydxTransferNobleItemView  {
                     modifier = Modifier
                         .size(width = 28.dp, height = 28.dp)
                         .background(ThemeColor.SemanticColor.layer_3.color, shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ){
+                    contentAlignment = Alignment.Center,
+                ) {
                     PlatformImage(
                         icon = R.drawable.okx_wallet,
                         modifier = Modifier
@@ -142,7 +138,6 @@ object DydxTransferNobleItemView  {
                     )
                 }
             }
-
 
             Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Icon(
@@ -155,4 +150,3 @@ object DydxTransferNobleItemView  {
         }
     }
 }
-

@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.utilities.utils.Logging
 

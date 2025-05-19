@@ -7,8 +7,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import exchange.dydx.abacus.protocols.LocalizerProtocol
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent

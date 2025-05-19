@@ -28,7 +28,6 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.views.HeaderView
-import exchange.dydx.trading.feature.transfer.search.DydxTransferNobleItemView
 
 @Preview
 @Composable
@@ -111,13 +110,13 @@ object DydxInstantDepositSearchView : DydxComponent {
                 }
 
                 item {
-                     DydxTransferNobleItemView.Content(
-                         modifier = Modifier
-                             .fillMaxWidth()
-                             .padding(vertical = 4.dp)
-                             .height(70.dp),
-                         state = state.nobleItem
-                     )
+                    DydxTransferNobleItemView.Content(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .height(70.dp),
+                        state = state.nobleItem,
+                    )
                 }
 
                 items((state.tokens ?: emptyList()).count()) { index ->
