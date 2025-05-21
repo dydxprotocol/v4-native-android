@@ -26,11 +26,14 @@ fun AnnotatedString.Builder.applyLink(
         start = startIndex,
         end = startIndex + replacement.length,
     )
-    addStringAnnotation(
-        tag = key,
-        annotation = link ?: "",
-        start = startIndex,
-        end = startIndex + replacement.length,
-    )
+    if (link != null) {
+        addStyle(
+            style = SpanStyle(
+                color = linkColor,
+            ),
+            start = startIndex,
+            end = startIndex + replacement.length,
+        )
+    }
     return replaceString
 }

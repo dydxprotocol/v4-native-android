@@ -79,9 +79,6 @@ object DydxInstantDepositSearchItem {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .clickable {
-                    state.selectAction?.invoke()
-                }
                 .border(
                     width = 2.dp,
                     color = if (state.isSelected) ThemeColor.SemanticColor.color_purple.color else ThemeColor.SemanticColor.transparent.color,
@@ -89,6 +86,9 @@ object DydxInstantDepositSearchItem {
                 )
                 .clip(shape)
                 .background(ThemeColor.SemanticColor.layer_3.color)
+                .clickable {
+                    state.selectAction?.invoke()
+                }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),

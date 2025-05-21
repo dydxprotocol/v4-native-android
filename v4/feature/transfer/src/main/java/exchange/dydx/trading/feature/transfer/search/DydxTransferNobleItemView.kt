@@ -67,15 +67,15 @@ object DydxTransferNobleItemView {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .clickable {
-                    state?.nobleAdddressAction?.invoke()
-                }
                 .border(
                     width = 2.dp,
                     color = ThemeColor.SemanticColor.transparent.color,
                     shape = shape,
                 )
                 .clip(shape)
+                .clickable {
+                    state.nobleAdddressAction?.invoke()
+                }
                 .background(ThemeColor.SemanticColor.layer_3.color)
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,

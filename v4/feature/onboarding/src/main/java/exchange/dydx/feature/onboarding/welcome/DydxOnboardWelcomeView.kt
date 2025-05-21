@@ -89,7 +89,7 @@ object DydxOnboardWelcomeView : DydxComponent {
 
         Column(
             modifier = Modifier
-                .background(exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.layer_2.color)
+                .background(ThemeColor.SemanticColor.layer_2.color)
                 .fillMaxSize(),
         ) {
             HeaderView(
