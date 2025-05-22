@@ -33,7 +33,7 @@ class TransferTokenDetails @Inject constructor(
 
     val marketPrices: Flow<Map<String, Double>> = abacusStateManager.state.marketMap
         .map { marketMap ->
-            listOf("ETH-USD", "POL-USD", "SOL-USD")
+            listOf("ETH-USD", "POL-USD", "SOL-USD", "AVAX-USD")
                 .mapNotNull { id ->
                     marketMap?.get(id)?.oraclePrice?.toDouble()?.let { id to it }
                 }.toMap()
@@ -97,11 +97,11 @@ class TransferTokenDetails @Inject constructor(
 }
 
 enum class TransferChain {
-    Ethereum, Optimism, Arbitrum, Base, Polygon, Solana
+    Ethereum, Optimism, Arbitrum, Base, Polygon, Solana, Avalanche
 }
 
 enum class TransferToken {
-    ETH, USDC, POL, SOL
+    ETH, USDC, POL, SOL, AVAX
 }
 
 data class TransferTokenInfo(
@@ -120,6 +120,7 @@ data class TransferTokenInfo(
             TransferChain.Base -> "base.png"
             TransferChain.Polygon -> "polygon.png"
             TransferChain.Solana -> "solana.png"
+            TransferChain.Avalanche -> "avalanche.png"
         }
         return "$deploymentUri/chains/$logoName"
     }
@@ -130,13 +131,14 @@ data class TransferTokenInfo(
             TransferToken.USDC -> "usdc.png"
             TransferToken.POL -> "pol.png"
             TransferToken.SOL -> "sol.png"
+            TransferToken.AVAX -> "avax.png"
         }
         return "$deploymentUri/currencies/$logoName"
     }
 
     val decimals: Int
         get() = when (token) {
-            TransferToken.ETH, TransferToken.POL -> 18
+            TransferToken.ETH, TransferToken.POL, TransferToken.AVAX -> 18
             TransferToken.USDC -> 6
             TransferToken.SOL -> 9
         }
@@ -148,11 +150,15 @@ private val mainnetTokens = listOf(
     TransferTokenInfo(TransferChain.Optimism, "10", TransferToken.USDC, "0x0b2c639c533813f4aa9d7837caf62653d097ff85"),
     TransferTokenInfo(TransferChain.Arbitrum, "42161", TransferToken.USDC, "0xaf88d065e77c8cC2239327C5EDb3A432268e5831"),
     TransferTokenInfo(TransferChain.Polygon, "137", TransferToken.USDC, "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359"),
+    TransferTokenInfo(TransferChain.Avalanche, "43114", TransferToken.USDC, "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"),
+
     TransferTokenInfo(TransferChain.Ethereum, "1", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Base, "8453", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Optimism, "10", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Arbitrum, "42161", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Polygon, "137", TransferToken.POL, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
+    TransferTokenInfo(TransferChain.Avalanche, "43114", TransferToken.AVAX, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
+
     // TransferTokenInfo(TransferChain.Solana, "solana", TransferToken.SOL, "solana-native"),
     TransferTokenInfo(TransferChain.Solana, "solana", TransferToken.USDC, "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
 )
@@ -163,11 +169,15 @@ private val testnetTokens = listOf(
     TransferTokenInfo(TransferChain.Optimism, "11155420", TransferToken.USDC, "0xD0C591da9805D1f801B297bDF46352287E0A6A63"),
     TransferTokenInfo(TransferChain.Arbitrum, "421614", TransferToken.USDC, "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d"),
     TransferTokenInfo(TransferChain.Polygon, "80002", TransferToken.USDC, "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582"),
+    TransferTokenInfo(TransferChain.Avalanche, "43113", TransferToken.USDC, "0x5425890298aed601595a70AB815c96711a31Bc65"),
+
     TransferTokenInfo(TransferChain.Ethereum, "11155111", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Base, "84532", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Optimism, "11155420", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Arbitrum, "421614", TransferToken.ETH, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
     TransferTokenInfo(TransferChain.Polygon, "80002", TransferToken.POL, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
+    TransferTokenInfo(TransferChain.Avalanche, "43113", TransferToken.AVAX, "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"),
+
     // TransferTokenInfo(TransferChain.Solana, "solana-devnet", TransferToken.SOL, "solana-devnet-native"),
     TransferTokenInfo(TransferChain.Solana, "solana-devnet", TransferToken.USDC, "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"),
 )

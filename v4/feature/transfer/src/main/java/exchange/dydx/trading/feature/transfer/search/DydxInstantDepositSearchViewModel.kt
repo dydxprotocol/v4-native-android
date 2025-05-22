@@ -85,7 +85,7 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
                 null
             },
             usdcSize = if (token.usdcAmount != null) {
-                formatter.raw(token.usdcAmount, digits = 2)
+                formatter.dollar(token.usdcAmount, digits = 2)
             } else {
                 null
             },
