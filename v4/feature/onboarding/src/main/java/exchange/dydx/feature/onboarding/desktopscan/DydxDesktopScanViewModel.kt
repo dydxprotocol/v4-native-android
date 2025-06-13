@@ -79,6 +79,7 @@ class DydxDesktopScanViewModel @Inject constructor(
                         mnemonic = mnemonic,
                         cosmosAddress = cosmosAddress,
                         walletId = null,
+                        isNew = true,
                     )
                     router.navigateBack()
                     router.navigateTo(PortfolioRoutes.main)

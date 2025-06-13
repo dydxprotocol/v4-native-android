@@ -76,6 +76,7 @@ class DydxUserWalletsViewModel @Inject constructor(
                         walletId = wallet.walletId,
                         cosmosAddress = cosmosAddress,
                         mnemonic = mnemonic,
+                        isNew = true,
                     )
                 }
             },

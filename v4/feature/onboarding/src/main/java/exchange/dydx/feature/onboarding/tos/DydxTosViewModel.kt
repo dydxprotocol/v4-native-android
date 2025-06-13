@@ -52,6 +52,7 @@ class DydxTosViewModel @Inject constructor(
                             walletId = result.walletId,
                             cosmosAddress = cosmosAddress,
                             mnemonic = mnemonic,
+                            isNew = true,
                         )
                     }
 

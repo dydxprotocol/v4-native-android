@@ -69,6 +69,7 @@ class DydxDebugScanViewModel @Inject constructor(
                             walletId = result.walletId,
                             cosmosAddress = cosmosAddress,
                             mnemonic = mnemonic,
+                            isNew = true,
                         )
                     }
 

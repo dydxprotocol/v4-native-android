@@ -89,7 +89,7 @@ interface AbacusStateManagerProtocol {
     fun setEnvironmentId(environment: String?)
     fun startAbacus()
 
-    fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String)
+    fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String, isNew: Boolean)
 
     fun logOut()
     fun replaceCurrentWallet()
@@ -303,7 +303,8 @@ class AbacusStateManager @Inject constructor(
         ethereumAddress: String?,
         walletId: String?,
         cosmosAddress: String,
-        mnemonic: String
+        mnemonic: String,
+        isNew: Boolean,
     ) {
         cosmosClient.initialized
             .filter { it }
@@ -315,8 +316,11 @@ class AbacusStateManager @Inject constructor(
                         val wallet =
                             DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
                         walletStateManager.setCurrentWallet(wallet)
-                       // asyncStateManager.accountAddress = cosmosAddress
-                       // asyncStateManager.sourceAddress = ethereumAddress
+                        asyncStateManager.setAddresses(
+                            source =  ethereumAddress,
+                            account =  cosmosAddress,
+                            isNew = isNew
+                        )
                         if (walletId == "phantom-wallet") {
                             asyncStateManager.walletConnectionType = WalletConnectionType.Solana
                         } else {
@@ -339,7 +343,11 @@ class AbacusStateManager @Inject constructor(
         walletStateManager.clear()
         transferStateManager.clear()
 
-       // asyncStateManager.accountAddress = null
+        asyncStateManager.setAddresses(
+            source =  null,
+            account =  null,
+            isNew = false
+        )
     }
 
     override fun replaceCurrentWallet() {
@@ -571,7 +579,13 @@ class AbacusStateManager @Inject constructor(
                 val walletId = currentWallet.walletId
 
                 if (cosmoAddress != null && mnemonic != null) {
-                    setV4(ethereumAddress, walletId, cosmoAddress, mnemonic)
+                    setV4(
+                        ethereumAddress = ethereumAddress,
+                        walletId = walletId,
+                        cosmosAddress = cosmoAddress,
+                        mnemonic = mnemonic,
+                        isNew = false
+                    )
                 }
             }
 
