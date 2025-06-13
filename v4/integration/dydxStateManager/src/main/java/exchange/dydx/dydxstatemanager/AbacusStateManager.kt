@@ -317,9 +317,9 @@ class AbacusStateManager @Inject constructor(
                             DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
                         walletStateManager.setCurrentWallet(wallet)
                         asyncStateManager.setAddresses(
-                            source =  ethereumAddress,
-                            account =  cosmosAddress,
-                            isNew = isNew
+                            source = ethereumAddress,
+                            account = cosmosAddress,
+                            isNew = isNew,
                         )
                         if (walletId == "phantom-wallet") {
                             asyncStateManager.walletConnectionType = WalletConnectionType.Solana
@@ -344,9 +344,9 @@ class AbacusStateManager @Inject constructor(
         transferStateManager.clear()
 
         asyncStateManager.setAddresses(
-            source =  null,
-            account =  null,
-            isNew = false
+            source = null,
+            account = null,
+            isNew = false,
         )
     }
 
@@ -584,7 +584,7 @@ class AbacusStateManager @Inject constructor(
                         walletId = walletId,
                         cosmosAddress = cosmoAddress,
                         mnemonic = mnemonic,
-                        isNew = false
+                        isNew = false,
                     )
                 }
             }
