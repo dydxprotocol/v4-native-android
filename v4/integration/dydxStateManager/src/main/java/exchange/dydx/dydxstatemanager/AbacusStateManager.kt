@@ -315,8 +315,8 @@ class AbacusStateManager @Inject constructor(
                         val wallet =
                             DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
                         walletStateManager.setCurrentWallet(wallet)
-                        asyncStateManager.accountAddress = cosmosAddress
-                        asyncStateManager.sourceAddress = ethereumAddress
+                       // asyncStateManager.accountAddress = cosmosAddress
+                       // asyncStateManager.sourceAddress = ethereumAddress
                         if (walletId == "phantom-wallet") {
                             asyncStateManager.walletConnectionType = WalletConnectionType.Solana
                         } else {
@@ -339,7 +339,7 @@ class AbacusStateManager @Inject constructor(
         walletStateManager.clear()
         transferStateManager.clear()
 
-        asyncStateManager.accountAddress = null
+       // asyncStateManager.accountAddress = null
     }
 
     override fun replaceCurrentWallet() {
