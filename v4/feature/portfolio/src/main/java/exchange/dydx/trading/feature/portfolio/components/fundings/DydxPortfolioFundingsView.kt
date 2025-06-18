@@ -1,13 +1,17 @@
 package exchange.dydx.trading.feature.portfolio.components.fundings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -27,15 +32,22 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.navigation.PortfolioRoutes.funding
+import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
+import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillItemView
+import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView.fundingListContent
+import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
+import exchange.dydx.trading.feature.shared.viewstate.SharedFillViewState
+import java.util.UUID
+
 
 @Preview
 @Composable
 fun Preview_DydxPortfolioFundingsView() {
     DydxThemedPreviewSurface {
         LazyColumn {
-            DydxPortfolioFundingsView.ListContent(
-                this,
-                Modifier,
+            fundingListContent(
                 DydxPortfolioFundingsView.ViewState.preview,
             )
         }
@@ -45,55 +57,94 @@ fun Preview_DydxPortfolioFundingsView() {
 object DydxPortfolioFundingsView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val text: String?,
+        val fundings: List<DydxPortfolioFundingItemView.ViewState> = listOf(),
+        val onTapAction: (String) -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                text = "1.0M",
+                fundings = listOf(
+                    DydxPortfolioFundingItemView.ViewState.preview,
+                    DydxPortfolioFundingItemView.ViewState.preview
+                ),
+                onTapAction = {}
             )
         }
     }
 
     @Composable
     override fun Content(modifier: Modifier) {
+        Content(modifier, isFullScreen = false)
+    }
+
+    @Composable
+    fun Content(modifier: Modifier, isFullScreen: Boolean) {
         val viewModel: DydxPortfolioFundingsViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
-        LazyColumn {
-            ListContent(this, modifier, state)
+
+        if (isFullScreen) {
+            Column(
+                modifier = modifier.fillMaxWidth()
+                    .themeColor(ThemeColor.SemanticColor.layer_2),
+            ) {
+                DydxPortfolioSelectorView.Content(
+                    modifier = Modifier
+                        .height(72.dp)
+                        .padding(horizontal = ThemeShapes.HorizontalPadding)
+                        .fillMaxWidth(),
+                )
+
+                PlatformDivider()
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                ) {
+                    fundingListContent(state)
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier,
+            ) {
+                fundingListContent(state)
+            }
         }
     }
 
-    fun ListContent(scope: LazyListScope, modifier: Modifier, state: ViewState?) {
+    fun LazyListScope.fundingListContent(state: ViewState?) {
         if (state == null) return
 
-        scope.item(key = "header") {
-            CreateHeader(modifier, state)
+        if (state.fundings.isEmpty()) {
+            item(key = "placeholder") {
+                DydxPortfolioPlaceholderView.Content(Modifier.padding(vertical = 0.dp))
+            }
+        } else {
+            item(key = "header") {
+                CreateHeader(Modifier, state)
+            }
+
+            items(items = state.fundings, key = { it.id ?: UUID.randomUUID() }) { funding ->
+                if (funding === state.fundings.first()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                DydxPortfolioFundingItemView.Content(
+                    modifier = Modifier
+                        .clickable {
+                           // state.onItemTappedAction(fill.id)
+                                   },
+                    state = funding,
+                )
+
+                if (funding !== state.fundings.last()) {
+                    PlatformDivider()
+                }
+            }
         }
-
-        // TODO: Implement
-
-//        if (state.fills.isEmpty()) {
-//            scope.item(key = "placeholder") {
-//                DydxPortfolioPlaceholderView.Content(modifier.padding(vertical = 32.dp))
-//            }
-//        } else {
-//            scope.items(items = state.fills, key = { it.id }) { fill ->
-//                if (fill === state.fills.first()) {
-//                    Spacer(modifier = Modifier.height(16.dp))
-//                }
-//                DydxPortfolioFillItemView.Content(
-//                    modifier = modifier
-//                        .clickable { state.onFillTappedAction(fill.id) },
-//                    state = fill,
-//                )
-//
-//                if (fill !== state.fills.last()) {
-//                    PlatformDivider()
-//                }
-//            }
-//        }
     }
 
     @Composable
@@ -114,7 +165,8 @@ object DydxPortfolioFundingsView : DydxComponent {
             )
 
             Text(
-                text = state.localizer.localize("APP.GENERAL.TYPE_AMOUNT"),
+                text = state.localizer.localize("APP.GENERAL.TYPE") + " / " +
+                    state.localizer.localize("APP.GENERAL.POSITION"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
@@ -123,7 +175,8 @@ object DydxPortfolioFundingsView : DydxComponent {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = state.localizer.localize("APP.GENERAL.PRICE_FEE"),
+                text = state.localizer.localize("APP.GENERAL.AMOUNT") + " / " +
+                    state.localizer.localize("APP.TRADE.RATE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),

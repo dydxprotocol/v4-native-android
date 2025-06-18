@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.compose.PlatformRememberLazyListState
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -33,6 +31,8 @@ import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioHeaderVie
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView.fundingListContent
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsViewModel
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView.ordersListContent
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersViewModel
 import exchange.dydx.trading.feature.portfolio.components.overview.DydxPortfolioChartView
@@ -58,7 +58,7 @@ fun Preview_DydxPortfolioView() {
 
 object DydxPortfolioView : DydxComponent {
     enum class DisplayContent {
-        Overview, Positions, Orders, Trades, Fees, Transfers, Payments;
+        Overview, Positions, Orders, Trades, Fees, Transfers, Funding;
 
         val stringKey: String
             get() = when (this) {
@@ -68,7 +68,18 @@ object DydxPortfolioView : DydxComponent {
                 Trades -> "APP.GENERAL.TRADES"
                 Fees -> "APP.GENERAL.FEES"
                 Transfers -> "APP.GENERAL.TRANSFERS"
-                Payments -> "APP.TRADE.FUNDING_PAYMENTS_SHORT"
+                Funding -> "APP.TRADE.FUNDING_PAYMENTS_SHORT"
+            }
+
+        val subTextStringKey: String
+            get() = when (this) {
+                Overview -> "APP.PORTFOLIO.OVERVIEW_DESCRIPTION"
+                Positions -> "APP.PORTFOLIO.POSITIONS_DESCRIPTION"
+                Orders -> "APP.PORTFOLIO.ORDERS_DESCRIPTION"
+                Trades -> "APP.PORTFOLIO.TRADES_DESCRIPTION"
+                Fees -> "APP.PORTFOLIO.FEE_STRUCTURE"
+                Transfers -> "APP.PORTFOLIO.TRANSFERS_DESCRIPTION"
+                Funding -> "APP.TRADE.FUNDING_PAYMENTS_DESCRIPTION"
             }
     }
 
@@ -138,6 +149,10 @@ object DydxPortfolioView : DydxComponent {
         val fillsViewState =
             fillsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
+        val fundingsViewModel: DydxPortfolioFundingsViewModel = hiltViewModel()
+        val fundingsViewState =
+            fundingsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -178,7 +193,8 @@ object DydxPortfolioView : DydxComponent {
                         fillsListContent(fillsViewState)
                     }
 
-                    else -> {
+                    DydxPortfolioSectionsView.Selection.Funding -> {
+                        fundingListContent(fundingsViewState)
                     }
                 }
 

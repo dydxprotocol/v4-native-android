@@ -46,10 +46,10 @@ object DydxPortfolioSelectorView : DydxComponent {
             DydxPortfolioView.DisplayContent.Overview,
             DydxPortfolioView.DisplayContent.Positions,
             DydxPortfolioView.DisplayContent.Orders,
+            DydxPortfolioView.DisplayContent.Funding,
             // DydxPortfolioView.DisplayContent.Fees,
             DydxPortfolioView.DisplayContent.Trades,
             DydxPortfolioView.DisplayContent.Transfers,
-            // DydxPortfolioView.DisplayContent.Payments,
         ),
         val onSelectionChanged: (DydxPortfolioView.DisplayContent) -> Unit = {},
         val currentContent: DydxPortfolioView.DisplayContent = DydxPortfolioView.DisplayContent.Overview,
@@ -111,6 +111,7 @@ object DydxPortfolioSelectorView : DydxComponent {
                 items = state.contents.mapIndexed() { index, content ->
                     PlatformMenuItem(
                         text = state.localizer.localize(content.stringKey),
+                        subText = state.localizer.localize(content.subTextStringKey),
                         onClick = {
                             expanded.value = false
                             state.onSelectionChanged(content)

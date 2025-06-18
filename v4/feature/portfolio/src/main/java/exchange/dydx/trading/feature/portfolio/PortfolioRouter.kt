@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.portfolio.cancelpendingposition.DydxCancelPendingPositionView
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView
@@ -80,6 +81,15 @@ fun NavGraphBuilder.portfolioGraph(
     ) { navBackStackEntry ->
         DydxPortfolioFillsView.Content(Modifier, isFullScreen = true)
     }
+
+    dydxComposable(
+        router = appRouter,
+        route = PortfolioRoutes.funding,
+        deepLinks = appRouter.deeplinks(PortfolioRoutes.trades),
+    ) { navBackStackEntry ->
+        DydxPortfolioFundingsView.Content(Modifier, isFullScreen = true)
+    }
+
 
     dydxComposable(
         router = appRouter,

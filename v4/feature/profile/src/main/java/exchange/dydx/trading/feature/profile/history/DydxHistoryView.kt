@@ -26,6 +26,7 @@ import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView.fundingListContent
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsViewModel
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView.transferListContent
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersViewModel
@@ -78,7 +79,7 @@ object DydxHistoryView : DydxComponent {
         val transfersViewState = transfersViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
         val fundingsViewModel: DydxPortfolioFundingsViewModel = hiltViewModel()
-        val fundingsVewState = fundingsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+        val fundingsViewState = fundingsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
         val currentSelection: MutableState<Int?> = remember {
             mutableStateOf(
@@ -113,7 +114,7 @@ object DydxHistoryView : DydxComponent {
                 } else if (state.selectionBarViewState.currentSelection == 1) {
                     transferListContent(transfersViewState)
                 } else if (state.selectionBarViewState.currentSelection == 2) {
-                    DydxPortfolioFundingsView.ListContent(this, modifier, fundingsVewState)
+                    fundingListContent(fundingsViewState)
                 }
             }
         }

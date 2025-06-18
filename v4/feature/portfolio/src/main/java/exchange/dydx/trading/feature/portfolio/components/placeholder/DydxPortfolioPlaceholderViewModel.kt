@@ -40,7 +40,7 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
         return DydxPortfolioPlaceholderView.ViewState(
             localizer = localizer,
             onboardState = if (onboarded) {
-                if (subaccount?.freeCollateral?.current ?: 0.0 > 0.0) {
+                if ((subaccount?.freeCollateral?.current ?: 0.0) > 0.0) {
                     DydxPortfolioPlaceholderView.OnboardState.Ready
                 } else {
                     DydxPortfolioPlaceholderView.OnboardState.NeedDeposit
@@ -77,7 +77,13 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
                         localizer.localize("APP.GENERAL.PLACEHOLDER_NO_TRANSFERS_LOG_IN")
                     }
                 }
-                else -> ""
+                DydxPortfolioPlaceholderView.Selection.Funding -> {
+                    if (onboarded) {
+                        localizer.localize("APP.GENERAL.PLACEHOLDER_NO_FUNDING")
+                    } else {
+                        localizer.localize("APP.GENERAL.PLACEHOLDER_NO_FUNDING_LOG_IN")
+                    }
+                }
             },
             onboardTapAction = {
                 router.navigateTo(

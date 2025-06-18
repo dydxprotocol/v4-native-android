@@ -35,9 +35,9 @@ class DydxHistoryViewModel @Inject constructor(
                     SelectionBar.Item(
                         text = localizer.localize("APP.GENERAL.TRANSFER"),
                     ),
-//                    SelectionBar.Item(
-//                        text = localizer.localize("APP.TRADE.FUNDING_PAYMENTS_SHORT"),
-//                    ),
+                    SelectionBar.Item(
+                        text = localizer.localize("APP.TRADE.FUNDING_PAYMENTS_SHORT"),
+                    ),
                 ),
                 currentSelection = 0,
                 onSelectionChanged = {

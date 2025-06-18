@@ -2,6 +2,10 @@ package exchange.dydx.platformui.components.menus
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -13,8 +17,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -25,12 +27,13 @@ import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
+import kotlin.collections.forEachIndexed
 
 @Composable
 fun PlatformDropdownMenu(
+    modifier: Modifier = Modifier,
     expanded: MutableState<Boolean>,
     onDismissRequest: () -> Unit = { expanded.value = false },
-    modifier: Modifier = Modifier,
     items: List<PlatformMenuItem>,
     selectedIndex: Int? = null,
 ) {
@@ -56,14 +59,31 @@ fun PlatformDropdownMenu(
                             },
                         ),
                     text = {
-                        Text(
-                            text = item.text,
-                            style = TextStyle.dydxDefault
-                                .themeFont(
-                                    fontSize = ThemeFont.FontSize.mini,
+                        Column(
+                            modifier = Modifier
+                                .padding(vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = item.text,
+                                style = TextStyle.dydxDefault
+                                    .themeFont(
+                                        fontSize = ThemeFont.FontSize.small,
+                                    )
+                                    .themeColor(ThemeColor.SemanticColor.text_primary),
+                            )
+
+                            if (item.subText != null) {
+                                Text(
+                                    text = item.subText,
+                                    style = TextStyle.dydxDefault
+                                        .themeFont(
+                                            fontSize = ThemeFont.FontSize.mini,
+                                        )
+                                        .themeColor(ThemeColor.SemanticColor.text_tertiary),
                                 )
-                                .themeColor(ThemeColor.SemanticColor.text_secondary),
-                        )
+                            }
+                        }
                     },
                     onClick = {
                         expanded.value = false
@@ -91,5 +111,6 @@ fun PlatformDropdownMenu(
 
 data class PlatformMenuItem(
     val text: String,
+    val subText: String? = null,
     val onClick: () -> Unit,
 )

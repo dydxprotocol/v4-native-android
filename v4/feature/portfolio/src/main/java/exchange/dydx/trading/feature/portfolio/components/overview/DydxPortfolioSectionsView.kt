@@ -39,6 +39,7 @@ object DydxPortfolioSectionsView : DydxComponent {
             Selection.Positions,
             Selection.Orders,
             Selection.Trades,
+            Selection.Funding,
         ),
         val currentSelection: Selection = Selection.Positions,
         val onSelectionChanged: (Selection) -> Unit = {},

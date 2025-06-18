@@ -51,7 +51,8 @@ class DydxPortfolioSelectorViewModel @Inject constructor(
                     DydxPortfolioView.DisplayContent.Trades ->
                         router.navigateTo(PortfolioRoutes.trades)
 
-                    DydxPortfolioView.DisplayContent.Payments -> TODO()
+                    DydxPortfolioView.DisplayContent.Funding ->
+                        router.navigateTo(PortfolioRoutes.funding)
                 }
                 displayContentFlow.value = displayContent
             },

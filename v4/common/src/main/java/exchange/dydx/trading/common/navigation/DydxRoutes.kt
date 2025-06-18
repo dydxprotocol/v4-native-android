@@ -17,6 +17,7 @@ object PortfolioRoutes {
     const val transfers = "portfolio/transfers"
     const val trades = "portfolio/trades"
     const val fees = "portfolio/fees"
+    const val funding = "portfolio/funding"
     const val cancel_pending_position = "portfolio/cancel_pending_position"
 }
 
