@@ -43,8 +43,7 @@ class DydxRestrictionsWorker @Inject constructor(
             abacusStateManager.state.compliance
                 .onEach { compliance ->
                     val (title, body) = when (compliance.status) {
-                        UNKNOWN, COMPLIANT -> return@onEach
-                        FIRST_STRIKE,
+                        UNKNOWN, COMPLIANT, FIRST_STRIKE -> return@onEach
                         FIRST_STRIKE_CLOSE_ONLY,
                         CLOSE_ONLY -> {
                             val params = mapOf("DATE" to compliance.expiresAt.orEmpty(), "HELP_LINK" to abacusStateManager.environment?.links?.help.orEmpty())

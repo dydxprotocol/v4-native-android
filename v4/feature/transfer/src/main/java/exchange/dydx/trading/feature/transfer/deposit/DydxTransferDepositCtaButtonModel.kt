@@ -212,6 +212,7 @@ class DydxTransferDepositCtaButtonModel @Inject constructor(
             ClientTrackableEventType.DepositInitiatedEvent(
                 transferInput = transferInput,
                 summary = summary,
+                isInstantDeposit = selectedRoute == TransferRouteSelection.Instant,
             ),
         )
 
