@@ -48,8 +48,15 @@ fun Preview_DydxTradeValidationView() {
 }
 
 object DydxValidationView : DydxComponent {
-    enum class State {
-        Error, Warning, None,
+
+    sealed class State {
+        object Error : State()
+        object Warning : State()
+        object None : State()
+        data class Custom(
+            val tabColor: ThemeColor.SemanticColor,
+            val backgroundColor: ThemeColor.SemanticColor
+        ) : State()
     }
 
     data class Link(
@@ -100,6 +107,7 @@ object DydxValidationView : DydxComponent {
             visible = when (state.state) {
                 State.Error, State.Warning -> true
                 State.None -> false
+                is State.Custom -> true
             },
         ) {
             ContentInBox(modifier, state)
@@ -126,6 +134,7 @@ object DydxValidationView : DydxComponent {
                         State.Error -> ThemeColor.SemanticColor.color_faded_red.color
                         State.Warning -> ThemeColor.SemanticColor.color_faded_yellow.color
                         State.None -> ThemeColor.SemanticColor.layer_2.color
+                        is State.Custom -> viewState.state.backgroundColor.color
                     },
                     shape = shape,
                 )
@@ -140,6 +149,7 @@ object DydxValidationView : DydxComponent {
                             State.Error -> ThemeColor.SemanticColor.color_red
                             State.Warning -> ThemeColor.SemanticColor.color_yellow
                             State.None -> ThemeColor.SemanticColor.layer_2
+                            is State.Custom -> viewState.state.tabColor
                         },
                     ),
             )

@@ -87,7 +87,7 @@ object InstantInputBox {
 
         InputFieldScaffold(
             modifier = modifier,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(12.dp),
         ) {
             Row(
                 modifier = modifier

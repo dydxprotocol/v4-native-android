@@ -9,6 +9,8 @@ import exchange.dydx.abacus.state.machine.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxDoubleFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
@@ -36,9 +38,11 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
     private val router: DydxRouter,
     private val parser: ParserProtocol,
     private val transferRouteSelectionInfo: TransferRouteSelectionInfo,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     private var currentSize: Double? = null
+    private val staticSelector = true
 
     val state: Flow<DydxTransferInstantDepositView.ViewState?> =
         combine(
@@ -94,6 +98,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },
+            freeDepositWarningMessage = shouldShowInstantDepositWarning(transferInput = transferInput),
         )
     }
 
@@ -102,8 +107,8 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
         token: TransferTokenInfo?,
         selectedRoute: TransferRouteSelection,
     ): InstantSelector.ViewState {
-        var regularTime = "< " + localizer.localize("APP.GENERAL.TIME_STRINGS.30MIN")
-        transferInput?.summary?.estimatedRouteDurationSeconds?.toDouble()?.let {
+        var regularTime = if (staticSelector) null else "< " + localizer.localize("APP.GENERAL.TIME_STRINGS.30MIN")
+        transferInput?.summary?.estimatedRouteDurationSeconds?.let {
             if (it > 0) {
                 val minutes = parser.asString((it / 60).toInt())
                 if (minutes != null) {
@@ -112,8 +117,8 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             }
         }
 
-        var regularFee: String = localizer.localize("APP.ONBOARDING.SKIP_SLOW_ROUTE_DESC")
-        transferInput?.summary?.bridgeFee?.toDouble()?.let {
+        var regularFee = if (staticSelector) null else localizer.localize("APP.ONBOARDING.SKIP_SLOW_ROUTE_DESC")
+        transferInput?.summary?.bridgeFee?.let {
             if (it > 0) {
                 formatter.dollar(it, digits = 2)?.let {
                     regularFee = it
@@ -121,8 +126,8 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             }
         }
 
-        var instantFee: String = localizer.localize("APP.GENERAL.UNAVAILABLE")
-        transferInput?.goFastSummary?.bridgeFee?.toDouble()?.let {
+        var instantFee = if (staticSelector) null else localizer.localize("APP.GENERAL.UNAVAILABLE")
+        transferInput?.goFastSummary?.bridgeFee?.let {
             if (it > 0) {
                 formatter.dollar(it, digits = 2)?.let {
                     instantFee = it
@@ -130,23 +135,31 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
             }
         }
 
-        val hasGoFastRoute = (transferInput?.goFastSummary?.bridgeFee?.toDouble() ?: 0.0) > 0.0
-        if (hasGoFastRoute) {
-            val allSelections = listOf(
-                TransferRouteSelection.Instant,
-                TransferRouteSelection.Regular,
-            )
-            if (transferRouteSelectionInfo.allSelections.value != allSelections) {
-                transferRouteSelectionInfo.allSelections.value = allSelections
+        if (staticSelector) {
+            if (shouldShowInstantDeposit(transferInput = transferInput)) {
                 transferRouteSelectionInfo.selected.value = TransferRouteSelection.Instant
+            } else {
+                transferRouteSelectionInfo.selected.value = TransferRouteSelection.Regular
             }
         } else {
-            val allSelection = listOf(
-                TransferRouteSelection.Regular,
-            )
-            if (transferRouteSelectionInfo.allSelections.value != allSelection) {
-                transferRouteSelectionInfo.allSelections.value = allSelection
-                transferRouteSelectionInfo.selected.value = TransferRouteSelection.Regular
+            val hasGoFastRoute = (transferInput?.goFastSummary?.bridgeFee ?: 0.0) > 0.0
+            if (hasGoFastRoute) {
+                val allSelections = listOf(
+                    TransferRouteSelection.Instant,
+                    TransferRouteSelection.Regular,
+                )
+                if (transferRouteSelectionInfo.allSelections.value != allSelections) {
+                    transferRouteSelectionInfo.allSelections.value = allSelections
+                    transferRouteSelectionInfo.selected.value = TransferRouteSelection.Instant
+                }
+            } else {
+                val allSelection = listOf(
+                    TransferRouteSelection.Regular,
+                )
+                if (transferRouteSelectionInfo.allSelections.value != allSelection) {
+                    transferRouteSelectionInfo.allSelections.value = allSelection
+                    transferRouteSelectionInfo.selected.value = TransferRouteSelection.Regular
+                }
             }
         }
         return InstantSelector.ViewState(
@@ -161,6 +174,36 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
                 }
             },
         )
+    }
+
+    private fun shouldShowInstantDeposit(transferInput: TransferInput?): Boolean {
+        if (transferInput?.goFastRequestPayload == null) {
+            return false
+        }
+
+        return shouldShowInstantDepositWarning(transferInput = transferInput) == null
+    }
+
+    private fun shouldShowInstantDepositWarning(transferInput: TransferInput?): String? {
+        val usdcSize = transferInput?.goFastSummary?.usdcSize ?: transferInput?.summary?.usdcSize ?: 0.0
+        val minAmount = featureFlags.doubleForFeature(DydxDoubleFeatureFlag.skip_ga_fast_transfer_min)
+        val maxAmount = featureFlags.doubleForFeature(DydxDoubleFeatureFlag.skip_go_fast_transfer_max)
+        val minAmountString = formatter.localFormatted(minAmount, digits = 0)
+        val maxAmountString = formatter.localFormatted(maxAmount, digits = 0)
+        if (usdcSize > 0.0 && minAmountString != null && maxAmountString != null) {
+            if (usdcSize < minAmount) {
+                return localizer.localizeWithParams(
+                    path = "APP.DEPOSIT_MODAL.FREE_INSTANT_DEPOSIT_MIN",
+                    params = mapOf("MIN_AMOUNT" to minAmountString),
+                )
+            } else if (usdcSize > maxAmount) {
+                return localizer.localizeWithParams(
+                    path = "APP.DEPOSIT_MODAL.FREE_INSTANT_DEPOSIT_MAX",
+                    params = mapOf("MAX_AMOUNT" to maxAmountString),
+                )
+            }
+        }
+        return null
     }
 
     private fun createInputTokenState(

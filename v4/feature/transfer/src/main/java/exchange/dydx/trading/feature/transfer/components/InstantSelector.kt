@@ -1,11 +1,15 @@
 package exchange.dydx.trading.feature.transfer.components
 
+import android.R.attr.shape
+import android.R.attr.text
+import android.R.attr.textColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,8 +45,13 @@ fun Preview_InstantSelector() {
 }
 
 object InstantSelector {
+    enum class DepositSelectorViewStyle {
+        TOGGLE,
+        DISPLAY_ONLY
+    }
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val uiStyle: DepositSelectorViewStyle = DepositSelectorViewStyle.DISPLAY_ONLY,
         val selection: TransferRouteSelection,
         val instantFee: String?,
         val regularTime: String?,
@@ -66,12 +75,79 @@ object InstantSelector {
             return
         }
 
+        when (state.uiStyle) {
+            DepositSelectorViewStyle.TOGGLE ->
+                Row(
+                    modifier = modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    InstantSelectViewContent(modifier = Modifier.weight(1f), state = state)
+                    RegularSelectViewContent(modifier = Modifier.weight(1f), state = state)
+                }
+            DepositSelectorViewStyle.DISPLAY_ONLY ->
+                InstantSelectDisplayViewContent(
+                    modifier = modifier.fillMaxWidth(),
+                    state = state,
+                )
+        }
+    }
+
+    @Composable
+    private fun InstantSelectDisplayViewContent(modifier: Modifier, state: ViewState) {
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            InstantSelectViewContent(modifier = Modifier.weight(1f), state = state)
-            RegularSelectViewContent(modifier = Modifier.weight(1f), state = state)
+            Text(
+                text = state.localizer.localize("APP.DEPOSIT_MODAL.DEPOSIT_METHOD"),
+                style = TextStyle.dydxDefault
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary)
+                    .themeFont(fontSize = ThemeFont.FontSize.small),
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            when (state.selection) {
+                TransferRouteSelection.Instant ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        PlatformImage(
+                            icon = R.drawable.icon_instant_deposit,
+                            modifier = Modifier
+                                .size(14.dp),
+                        )
+
+                        Text(
+                            text = state.localizer.localize("APP.GENERAL.INSTANT"),
+                            style = TextStyle.dydxDefault
+                                .themeColor(ThemeColor.SemanticColor.text_primary)
+                                .themeFont(fontSize = ThemeFont.FontSize.small),
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .background(
+                                    color = ThemeColor.SemanticColor.color_faded_purple.color,
+                                    shape = RoundedCornerShape(size = 6.dp),
+                                )
+                                .padding(horizontal = 4.dp)
+                                .padding(vertical = 3.dp),
+                            text = state.localizer.localize("APP.GENERAL.FREE"),
+                            style = TextStyle.dydxDefault
+                                .themeColor(ThemeColor.SemanticColor.color_purple)
+                                .themeFont(fontSize = ThemeFont.FontSize.tiny),
+                        )
+                    }
+
+                TransferRouteSelection.Regular ->
+                    Text(
+                        text = state.regularTime ?: "-",
+                        style = TextStyle.dydxDefault
+                            .themeColor(ThemeColor.SemanticColor.text_secondary)
+                            .themeFont(fontSize = ThemeFont.FontSize.small),
+                    )
+            }
         }
     }
 
