@@ -84,7 +84,7 @@ subprojects {
 ext {
     // Sdk and tools
     minSdkVersion = 28 // https://apilevels.com/
-    targetSdkVersion = 34
+    targetSdkVersion = 35
     compileSdkVersion = 35
 
     // App dependencies
