@@ -165,8 +165,7 @@ object DydxPortfolioFundingsView : DydxComponent {
             )
 
             Text(
-                text = state.localizer.localize("APP.GENERAL.TYPE") + " / " +
-                    state.localizer.localize("APP.GENERAL.POSITION"),
+                text = state.localizer.localize("APP.GENERAL.TYPE_AMOUNT"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
@@ -175,8 +174,7 @@ object DydxPortfolioFundingsView : DydxComponent {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = state.localizer.localize("APP.GENERAL.AMOUNT") + " / " +
-                    state.localizer.localize("APP.TRADE.RATE"),
+                text = state.localizer.localize("APP.GENERAL.PRICE_FEE"),
                 style = TextStyle.dydxDefault
                     .themeFont(fontSize = ThemeFont.FontSize.small)
                     .themeColor(ThemeColor.SemanticColor.text_tertiary),
