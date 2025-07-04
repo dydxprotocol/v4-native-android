@@ -34,13 +34,9 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.navigation.PortfolioRoutes.funding
 import exchange.dydx.trading.feature.portfolio.components.DydxPortfolioSelectorView
-import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillItemView
-import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView.fundingListContent
 import exchange.dydx.trading.feature.portfolio.components.placeholder.DydxPortfolioPlaceholderView
-import exchange.dydx.trading.feature.shared.viewstate.SharedFillViewState
 import java.util.UUID
-
 
 @Preview
 @Composable
@@ -65,9 +61,9 @@ object DydxPortfolioFundingsView : DydxComponent {
                 localizer = MockLocalizer(),
                 fundings = listOf(
                     DydxPortfolioFundingItemView.ViewState.preview,
-                    DydxPortfolioFundingItemView.ViewState.preview
+                    DydxPortfolioFundingItemView.ViewState.preview,
                 ),
-                onTapAction = {}
+                onTapAction = {},
             )
         }
     }
@@ -135,8 +131,8 @@ object DydxPortfolioFundingsView : DydxComponent {
                 DydxPortfolioFundingItemView.Content(
                     modifier = Modifier
                         .clickable {
-                           // state.onItemTappedAction(fill.id)
-                                   },
+                            // state.onItemTappedAction(fill.id)
+                        },
                     state = funding,
                 )
 

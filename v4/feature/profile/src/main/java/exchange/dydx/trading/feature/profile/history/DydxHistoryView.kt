@@ -25,7 +25,6 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
-import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView.fundingListContent
 import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsViewModel
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView.transferListContent

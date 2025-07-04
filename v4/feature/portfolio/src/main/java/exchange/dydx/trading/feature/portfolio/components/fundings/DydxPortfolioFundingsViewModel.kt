@@ -4,27 +4,19 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.Asset
 import exchange.dydx.abacus.output.PerpetualMarket
-import exchange.dydx.abacus.output.PerpetualMarketSummary
-import exchange.dydx.abacus.output.account.SubaccountFill
 import exchange.dydx.abacus.output.account.SubaccountFundingPayment
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.state.machine.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.common.navigation.PortfolioRoutes
-import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
 import exchange.dydx.trading.feature.shared.views.IntervalText
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
 import exchange.dydx.trading.feature.shared.views.TokenTextView
-import exchange.dydx.trading.feature.shared.viewstate.SharedFillViewState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import java.time.Instant
 import javax.inject.Inject
 import kotlin.math.absoluteValue
@@ -42,7 +34,7 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
         abacusStateManager.state.selectedSubaccountFundings,
         abacusStateManager.state.marketMap,
         abacusStateManager.state.assetMap,
-    ) { marketId, fundings, marketMap, assetMap,  ->
+    ) { marketId, fundings, marketMap, assetMap, ->
         createViewState(marketId, fundings, marketMap, assetMap)
     }
         .distinctUntilChanged()
@@ -84,10 +76,10 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
                     localizer = localizer,
                     id = funding.marketId + funding.payment.toString() + funding.createdAtMilliseconds,
                     date = IntervalText.ViewState(
-                            date = Instant.ofEpochMilli(longValue),
+                        date = Instant.ofEpochMilli(longValue),
                     ),
-                    logoUrl =  asset.resources?.imageUrl,
-                    status =  status,
+                    logoUrl = asset.resources?.imageUrl,
+                    status = status,
                     amount = SignedAmountView.ViewState(
                         text = amount,
                         sign = sign,
@@ -104,7 +96,7 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
                             SideTextView.Side.Buy
                         } else {
                             SideTextView.Side.Sell
-                        }
+                        },
                     ),
                     position = positionSize,
                     token = TokenTextView.ViewState(

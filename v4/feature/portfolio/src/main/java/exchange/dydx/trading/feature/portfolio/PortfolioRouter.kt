@@ -90,7 +90,6 @@ fun NavGraphBuilder.portfolioGraph(
         DydxPortfolioFundingsView.Content(Modifier, isFullScreen = true)
     }
 
-
     dydxComposable(
         router = appRouter,
         route = PortfolioRoutes.transfers,
