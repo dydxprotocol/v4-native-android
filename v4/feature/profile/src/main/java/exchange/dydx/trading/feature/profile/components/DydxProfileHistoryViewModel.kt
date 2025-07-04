@@ -93,7 +93,7 @@ class DydxProfileHistoryViewModel @Inject constructor(
         transfer: SubaccountTransfer?
     ): Any? {
         val fillTime = fill?.createdAtMilliseconds ?: 0.0
-        val fundingTime = funding?.effectiveAtMilliSeconds ?: 0.0
+        val fundingTime = funding?.createdAtMilliseconds ?: 0.0
         val transferTime = transfer?.updatedAtMilliseconds ?: 0.0
 
         return when {

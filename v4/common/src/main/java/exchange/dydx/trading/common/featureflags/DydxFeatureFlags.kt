@@ -12,12 +12,18 @@ enum class DydxStringFeatureFlag {
 }
 
 enum class DydxDoubleFeatureFlag {
-    min_usdc_for_deposit;
+    min_usdc_for_deposit,
+
+    // min/max of Skip Go Fast amount; hardcoded on Skip's end
+    skip_ga_fast_transfer_min,
+    skip_go_fast_transfer_max;
 
     val defaultValue: Double
         get() {
             return when (this) {
                 min_usdc_for_deposit -> 10.0
+                skip_ga_fast_transfer_min -> 100.0
+                skip_go_fast_transfer_max -> 100000.0
             }
         }
 }

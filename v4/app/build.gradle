@@ -5,6 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.compose'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.firebase-perf' version '1.4.2'
     id 'com.google.firebase.crashlytics'
@@ -48,7 +49,7 @@ android {
             jniLibs {
                 // Running into UnsatisfiedLinkError on some devices when linking libsqlcipher.so (used by WalletConnect)
                 // https://github.com/sqlcipher/android-database-sqlcipher/issues/635#issuecomment-1782914589
-                useLegacyPackaging = true
+                // useLegacyPackaging = true
             }
         }
 
@@ -99,7 +100,7 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1']
+            excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1', 'META-INF/versions/9/OSGI-INF/MANIFEST.MF']
         }
     }
 
@@ -262,7 +263,7 @@ dependencies {
     //
     // https://github.com/WalletConnect/kotlin-walletconnect-lib
     //
-     implementation 'com.github.WalletConnect:kotlin-walletconnect-lib:0.9.9'
+    //  implementation 'com.github.WalletConnect:kotlin-walletconnect-lib:0.9.9'
 
     //
     // https://github.com/InstantWebP2P/tweetnacl-java, for Phantom

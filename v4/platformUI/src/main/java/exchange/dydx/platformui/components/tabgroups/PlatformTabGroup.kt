@@ -77,7 +77,7 @@ fun PlatformTabGroup(
                         },
                 ) {
                     selectedItems[index](
-                        modifier = Modifier,
+                        Modifier,
                     )
                 }
             } else {
@@ -94,7 +94,7 @@ fun PlatformTabGroup(
                         ),
                 ) {
                     item(
-                        modifier = Modifier
+                        Modifier
                             .clickable {
                                 if (index != currentSelection) {
                                     onSelectionChanged(index)
