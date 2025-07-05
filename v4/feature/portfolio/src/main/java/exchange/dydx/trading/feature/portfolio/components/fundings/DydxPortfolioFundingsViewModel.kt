@@ -10,6 +10,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
+import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.feature.shared.views.IntervalText
 import exchange.dydx.trading.feature.shared.views.SideTextView
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
@@ -27,6 +29,7 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxPortfolioFundingsView.ViewState?> = combine(
@@ -70,11 +73,11 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
                 }
 
                 val stepSize = market.configs?.displayStepSizeDecimals ?: 1
-                val positionSize = formatter.raw(funding.positionSize, digits = stepSize)
+                val positionSize = formatter.raw(funding.positionSize.absoluteValue, digits = stepSize)
 
                 DydxPortfolioFundingItemView.ViewState(
                     localizer = localizer,
-                    id = funding.marketId + funding.payment.toString() + funding.createdAtMilliseconds,
+                    id = funding.id,
                     date = IntervalText.ViewState(
                         date = Instant.ofEpochMilli(longValue),
                     ),
@@ -87,7 +90,11 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
                     ),
                     rate = SignedAmountView.ViewState(
                         text = rate,
-                        sign = sign,
+                        sign = if (funding.rate >= 0.0) {
+                            PlatformUISign.Plus
+                        } else {
+                            PlatformUISign.Minus
+                        },
                         coloringOption = SignedAmountView.ColoringOption.AllText,
                     ),
                     sideText = SideTextView.ViewState(
@@ -104,6 +111,12 @@ class DydxPortfolioFundingsViewModel @Inject constructor(
                     ),
                 )
             } ?: listOf(),
+            onTapAction = { id ->
+                router.navigateTo(
+                    route = PortfolioRoutes.funding_details + "/$id",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            },
         )
     }
 }

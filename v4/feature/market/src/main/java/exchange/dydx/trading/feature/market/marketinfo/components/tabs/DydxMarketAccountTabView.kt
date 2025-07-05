@@ -36,7 +36,7 @@ object DydxMarketAccountTabView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val currentSelection: Selection = Selection.Position,
-        val selections: List<Selection> = listOf(Selection.Position, Selection.Orders, Selection.Trades),
+        val selections: List<Selection> = listOf(Selection.Position, Selection.Orders, Selection.Trades, Selection.Funding),
         val onSelectionChanged: (Selection) -> Unit = {},
     ) {
         companion object {

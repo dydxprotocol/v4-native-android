@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.compose.PlatformRememberLazyListState
@@ -39,6 +40,8 @@ import exchange.dydx.trading.feature.market.marketinfo.components.tabs.DydxMarke
 import exchange.dydx.trading.feature.market.marketinfo.components.tiles.DydxMarketTilesView
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView.fillsListContent
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsViewModel
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView.fundingListContent
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsViewModel
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView.ordersListContent
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersViewModel
 import exchange.dydx.trading.feature.trade.tradeinput.DydxTradeInputView
@@ -91,6 +94,10 @@ object DydxMarketInfoView : DydxComponent {
         val fillsViewModel: DydxPortfolioFillsViewModel = hiltViewModel()
         val fillsViewState =
             fillsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
+
+        val fundingsViewModel: DydxPortfolioFundingsViewModel = hiltViewModel()
+        val fundingsViewState =
+            fundingsViewModel.state.collectAsStateWithLifecycle(initialValue = null).value
 
         Box(
             modifier = modifier
@@ -147,7 +154,9 @@ object DydxMarketInfoView : DydxComponent {
                             fillsListContent(fillsViewState)
                         }
 
-                        else -> {}
+                        DydxMarketAccountTabView.Selection.Funding -> {
+                            fundingListContent(fundingsViewState)
+                        }
                     }
 
                     stickyHeader(key = "stats_tabs") {

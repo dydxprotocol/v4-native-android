@@ -13,6 +13,7 @@ import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolio
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView
+import exchange.dydx.trading.feature.portfolio.fundingdetails.DydxFundingDetailsView
 import exchange.dydx.trading.feature.portfolio.orderdetails.DydxOrderDetailsView
 import exchange.dydx.utilities.utils.Logging
 
@@ -46,6 +47,24 @@ fun NavGraphBuilder.portfolioGraph(
             return@dydxComposable
         }
         DydxOrderDetailsView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = PortfolioRoutes.funding_details + "/{id}",
+        arguments = listOf(navArgument("id") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinks(
+            destination = PortfolioRoutes.funding_details,
+            path = "id",
+        ),
+    ) { navBackStackEntry ->
+        val id = navBackStackEntry.arguments?.getString("id")
+        if (id == null) {
+            logger.e(TAG, "No identifier passed")
+            appRouter.navigateTo(PortfolioRoutes.funding_details)
+            return@dydxComposable
+        }
+        DydxFundingDetailsView.Content(Modifier)
     }
 
     dydxComposable(

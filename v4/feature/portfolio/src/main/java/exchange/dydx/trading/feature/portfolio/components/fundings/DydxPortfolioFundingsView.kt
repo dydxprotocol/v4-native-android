@@ -131,7 +131,8 @@ object DydxPortfolioFundingsView : DydxComponent {
                 DydxPortfolioFundingItemView.Content(
                     modifier = Modifier
                         .clickable {
-                            // state.onItemTappedAction(fill.id)
+                            if (funding.id == null) return@clickable
+                            state.onTapAction(funding.id)
                         },
                     state = funding,
                 )

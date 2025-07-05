@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import exchange.dydx.abacus.output.account.SubaccountFundingPayment
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
@@ -235,3 +236,6 @@ object DydxPortfolioFundingItemView {
         }
     }
 }
+
+val SubaccountFundingPayment.id: String
+    get() = "$marketId-$payment-$createdAtMilliseconds"
