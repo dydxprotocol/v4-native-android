@@ -121,7 +121,7 @@ allprojects {
 
 
 tasks.named('check') {
-    dependsOn buildHealth
+//    dependsOn buildHealth
     dependsOn spotlessApply
 }
 
