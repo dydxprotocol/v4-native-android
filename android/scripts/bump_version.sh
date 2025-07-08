@@ -1,6 +1,6 @@
 #!/bin/sh
 
-buildGradle="v4/app/build.gradle"
+buildGradle="app/build.gradle"
 
 # Get the current version
 version=$(grep "versionName " $buildGradle | cut -d "\"" -f2)

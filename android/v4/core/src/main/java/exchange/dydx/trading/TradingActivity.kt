@@ -104,9 +104,9 @@ class TradingActivity : FragmentActivity() {
         // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
 
-
-        val intent = Intent(this, MyReactActivity::class.java)
-        startActivity(intent)
+        // Testing React Native integration
+//        val intent = Intent(this, MyReactActivity::class.java)
+//        startActivity(intent)
     }
 
     override fun onPause() {

@@ -20,7 +20,7 @@ fi
 # Extract the download URL for the file
 download_url=$(echo "$file_info" | grep -o '"download_url": "[^"]*' | cut -d '"' -f 4)
 
-targetFileName="v4/build.gradle"
+targetFileName="build.gradle"
 tmpFileName="/tmp/abacusGradle"
 
 rm -rf $tmpFileName

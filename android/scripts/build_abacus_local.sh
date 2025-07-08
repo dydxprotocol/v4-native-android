@@ -30,7 +30,7 @@ cd ${ABACUS_DIR}
 cd ${ANDROID_DIR}
 
 # get the version from the file
-targetFileName="v4/build.gradle"
+targetFileName="build.gradle"
 OLD_VERSION=$(grep "^    abacusVersion = " $targetFileName | sed -n 's/    abacusVersion = ''\(.*\)''/\1/p')
 
 if [ -n "$NEW_VERSION" ] && [ -n "$OLD_VERSION" ]; then

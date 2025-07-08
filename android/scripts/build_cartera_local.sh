@@ -10,7 +10,7 @@
 # you clean-up/revert the changes after you are done with the local testing
 
 CARTERA_DIR=~/cartera-android
-ANDROID_DIR=~/v4-native-android
+ANDROID_DIR=~/v4-native-android/android
 
 # Create a random version number
 NEW_VERSION="local.$(date +%s)"
@@ -31,7 +31,7 @@ echo "Building Cartera ..."
 cd ${ANDROID_DIR}
 
 # get the version from the file
-targetFileName="v4/build.gradle"
+targetFileName="build.gradle"
 OLD_VERSION=$(grep "^    carteraVersion = " $targetFileName | sed -n 's/    carteraVersion = ''\(.*\)''/\1/p')
 
 if [ -n "$NEW_VERSION" ] && [ -n "$OLD_VERSION" ]; then
