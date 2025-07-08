@@ -9,6 +9,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'com.google.firebase.firebase-perf' version '1.4.2'
     id 'com.google.firebase.crashlytics'
+    id 'com.facebook.react'
 }
 
 
@@ -153,6 +154,11 @@ android {
 dependencies {
     /* Module Dependencies */
 
+    implementation "com.facebook.react:react-android"
+    implementation "com.facebook.react:hermes-android"
+
+    implementation "com.facebook.soloader:soloader:0.12.1"
+
     // Module dependencies
     implementation project(':v4:common')
     implementation project(':v4:integration:cosmos')
@@ -271,4 +277,9 @@ dependencies {
     implementation 'io.github.instantwebp2p:tweetnacl-java:1.1.2'
 
     implementation("com.github.komputing.khash:sha256:1.1.3")
+}
+
+react {
+    // Needed to enable Autolinking - https://github.com/react-native-community/cli/blob/master/docs/autolinking.md
+//    autolinkLibrariesWithApp()
 }
