@@ -22,3 +22,4 @@ jobs:
     - name: Lint Kotlin Files
       run: |
         ./gradlew spotlessCheck
+      working-directory: ./android
