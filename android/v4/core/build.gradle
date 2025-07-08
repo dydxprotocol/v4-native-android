@@ -42,6 +42,9 @@ android {
 
 dependencies {
 
+    implementation "com.facebook.react:react-android"
+    implementation "com.facebook.react:hermes-android"
+
     /* Module Dependencies */
     implementation project(':v4:common')
     implementation project(':v4:utilities')
@@ -139,7 +142,7 @@ dependencies {
     implementation platform("com.walletconnect:android-bom:$walletConnectVersion")
     implementation('com.walletconnect:android-core')
     implementation("com.walletconnect:walletconnect-modal")
-    implementation 'com.google.accompanist:accompanist-navigation-material:0.34.0'  // need for modal
+    implementation 'com.google.accompanist:accompanist-navigation-material:0.36.0'  // need for modal
 
     implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
 }

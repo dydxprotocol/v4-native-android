@@ -28,7 +28,6 @@
             android:name="com.google.firebase.messaging.FirebaseMessagingService"
             tools:node="remove" />
 
-
         <service
             android:name="exchange.dydx.trading.integration.fcm.DydxFCMService"
             android:exported="false">
@@ -36,6 +35,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+          android:name="exchange.dydx.trading.MyReactActivity"
+          android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
 
         <activity
             android:name="exchange.dydx.trading.TradingActivity"

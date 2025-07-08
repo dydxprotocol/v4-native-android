@@ -11,8 +11,9 @@ pluginManagement {
      includeBuild("../node_modules/@react-native/gradle-plugin")
 }
 
-//plugins { id("com.facebook.react.settings") }
-//extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
 // If using .gradle.kts files:
 // extensions.configure<com.facebook.react.ReactSettingsExtension> { autolinkLibrariesFromCommand() }
 
@@ -58,7 +59,8 @@ dependencyResolutionManagement {
 rootProject.name = 'native-android'
 
 //Dependencies may look "down" (unenforced)
-include ':v4:app'
+include ':app'
+
 include ':v4:core'
 include ':v4:feature:trade'
 include ':v4:feature:profile'

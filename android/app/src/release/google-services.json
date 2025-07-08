@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "441463123744",
+    "project_id": "dydx-v4",
+    "storage_bucket": "dydx-v4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441463123744:android:42bd231e5fe7116d33b145",
+        "android_client_info": {
+          "package_name": "exchange.dydx.trading"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441463123744-gfu5k4i61ajhqmhiqjo466cjg70lbre6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB80dn2SJzoxbMHXWdYjX0XbcU5tt171Nc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441463123744-gfu5k4i61ajhqmhiqjo466cjg70lbre6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "441463123744-0rnmr81dn95djl4hkjgbm8baaevq8hbb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "exchange.dydx.dydxV4"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441463123744:android:4bf2f17c4fab36e733b145",
+        "android_client_info": {
+          "package_name": "exchange.dydx.trading.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441463123744-gfu5k4i61ajhqmhiqjo466cjg70lbre6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB80dn2SJzoxbMHXWdYjX0XbcU5tt171Nc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441463123744-gfu5k4i61ajhqmhiqjo466cjg70lbre6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "441463123744-0rnmr81dn95djl4hkjgbm8baaevq8hbb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "exchange.dydx.dydxV4"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -23,23 +23,34 @@ import com.facebook.soloader.SoLoader
 @HiltAndroidApp
 class DydxApplication : Application(), ReactApplication {
 
-     override val reactNativeHost: ReactNativeHost =
-              object : DefaultReactNativeHost(this) {
-                    override fun getPackages(): List<ReactPackage> = PackageList(this).packages
-                    override fun getJSMainModuleName(): String = "index"
-                   override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
-                    override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-                    override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-                  }
+    override val reactNativeHost: ReactNativeHost =
+        object : DefaultReactNativeHost(this) {
+            override fun getPackages(): List<ReactPackage> = PackageList(this).packages
+            override fun getJSMainModuleName(): String = "index"
+            override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+            override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+            override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
 
-     override val reactHost: ReactHost
-       get() = getDefaultReactHost(applicationContext, reactNativeHost)
+            override fun getJSBundleFile(): String? {
+                // Example: load from local assets (release mode)
+                return if (BuildConfig.DEBUG) {
+                    "http://192.168.1.7:8081/index.bundle?platform=android"  // Will fallback to Metro
+                } else {
+                    "assets://index.android.bundle"
+                }
+            }
+        }
+
+    override val reactHost: ReactHost
+        get() = getDefaultReactHost(applicationContext, reactNativeHost)
 
     // Do not remove - this is used to trigger initialization via Dagger
     // This is an anti-pattern, do not copy.
-    @Inject lateinit var themeSettings: ThemeSettings
+    @Inject
+    lateinit var themeSettings: ThemeSettings
 
-    @Inject lateinit var logger: DydxLogger
+    @Inject
+    lateinit var logger: DydxLogger
 
     override fun onCreate() {
         super.onCreate()

@@ -41,15 +41,13 @@ import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.jvm.java
 
 private const val TAG = "TradingActivity"
 
 /**
  * Main activity for Dydx Trading
  */
-val LocalTradingActivity = staticCompositionLocalOf<TradingActivity> {
-    error("LocalTradingActivity not present")
-}
 
 @AndroidEntryPoint
 class TradingActivity : FragmentActivity() {
@@ -105,6 +103,10 @@ class TradingActivity : FragmentActivity() {
         // Start the workers: Note the CarteraSetupWorker must start here because
         // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
+
+
+        val intent = Intent(this, MyReactActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onPause() {
