@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
@@ -41,7 +40,6 @@ import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.jvm.java
 
 private const val TAG = "TradingActivity"
 

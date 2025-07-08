@@ -24,3 +24,4 @@ jobs:
     - name: Validate JSONs
       run: |
         ./scripts/ci_validate_json_files.sh
+      working-directory: ./android
