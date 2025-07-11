@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-
     implementation "com.facebook.react:react-android"
     implementation "com.facebook.react:hermes-android"
 
@@ -59,5 +58,4 @@ dependencies {
     implementation platform ("com.google.firebase:firebase-bom:$firebaseBomVersion")
     implementation 'com.google.firebase:firebase-analytics'
     implementation("com.google.firebase:firebase-crashlytics")
-
 }

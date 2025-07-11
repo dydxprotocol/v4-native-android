@@ -26,7 +26,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactFragment
 import com.facebook.react.ReactInstanceManager
-import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import dagger.hilt.android.AndroidEntryPoint
 import exchange.dydx.cartera.CarteraConfig
@@ -48,8 +47,8 @@ import exchange.dydx.trading.feature.shared.analytics.AnalyticsEvent
 import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
+import test.react.TurnkeyReactBridge
 import javax.inject.Inject
-
 
 private const val TAG = "TradingActivity"
 
@@ -69,9 +68,9 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
 
     @Inject lateinit var pushPermissionRequester: PushPermissionRequesterProtocol
 
-    private lateinit var reactRootView: ReactRootView
+    @Inject lateinit var turnkeyReactBridge: TurnkeyReactBridge
+
     private lateinit var reactInstanceManager: ReactInstanceManager
-    private lateinit var turnkeyNativeModule: TurnkeyNativeModule
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,52 +115,26 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
         // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
 
+        setUpReactNativeBridge()
+    }
 
+    override fun invokeDefaultOnBackPressed() {
+        super.onBackPressed()
+    }
+
+    private fun setUpReactNativeBridge() {
         reactInstanceManager = (application as ReactApplication).reactNativeHost.reactInstanceManager
 
         reactInstanceManager.addReactInstanceEventListener(
             object : com.facebook.react.ReactInstanceEventListener {
                 override fun onReactContextInitialized(context: com.facebook.react.bridge.ReactContext) {
-
-                    val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
-
-                    turnkeyNativeModule?.requestJsFunction("req123") { result ->
-                        print("Received result from JS: $result")
-                    }
+                    turnkeyReactBridge.updateContext(context)
                 }
             },
         )
         if (reactInstanceManager.hasStartedCreatingInitialContext() == false) {
             reactInstanceManager.createReactContextInBackground()
         }
-    }
-
-       override fun invokeDefaultOnBackPressed() {
-           super.onBackPressed()
-          }
-
-    @Composable
-    fun FragmentInCompose(
-        fragmentManager: FragmentManager,
-        fragment: Fragment,
-        containerId: Int = View.generateViewId()
-    ) {
-        AndroidView(
-            factory = { context ->
-                FragmentContainerView(context).apply {
-                    id = containerId
-                }
-            },
-            update = { view ->
-                val existingFragment = fragmentManager.findFragmentById(view.id)
-                if (existingFragment == null) {
-                    fragmentManager
-                        .beginTransaction()
-                        .replace(view.id, fragment)
-                        .commit()
-                }
-            }
-        )
     }
 
     override fun onPause() {
@@ -190,7 +163,7 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
         setContent {
             FragmentInCompose(
                 fragmentManager = supportFragmentManager,
-                fragment = reactNativeFragment
+                fragment = reactNativeFragment,
             )
 
             viewModel.cosmosClient.let {
@@ -203,6 +176,30 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
             }
             content()
         }
+    }
+
+    @Composable
+    private fun FragmentInCompose(
+        fragmentManager: FragmentManager,
+        fragment: Fragment,
+        containerId: Int = View.generateViewId()
+    ) {
+        AndroidView(
+            factory = { context ->
+                FragmentContainerView(context).apply {
+                    id = containerId
+                }
+            },
+            update = { view ->
+                val existingFragment = fragmentManager.findFragmentById(view.id)
+                if (existingFragment == null) {
+                    fragmentManager
+                        .beginTransaction()
+                        .replace(view.id, fragment)
+                        .commit()
+                }
+            },
+        )
     }
 
     @Composable

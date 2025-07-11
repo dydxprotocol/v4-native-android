@@ -65,6 +65,7 @@ import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
+import test.react.TurnkeyReactBridge
 import javax.inject.Singleton
 
 @Module
@@ -95,6 +96,13 @@ interface AppModule {
 
         @Provides @Singleton
         fun provideParser(): ParserProtocol = Parser()
+
+        @Provides @Singleton
+        fun provideTurnkeyReactBridge(
+            logger: Logging
+        ): TurnkeyReactBridge = TurnkeyReactBridge(
+            logger = logger,
+        )
 
         @Provides
         @Singleton

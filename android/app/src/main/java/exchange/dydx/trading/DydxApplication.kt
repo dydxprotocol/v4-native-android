@@ -17,6 +17,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
+import test.react.TurnkeyReactBridge
 
 @HiltAndroidApp
 class DydxApplication : Application(), ReactApplication {
@@ -25,9 +26,9 @@ class DydxApplication : Application(), ReactApplication {
         object : DefaultReactNativeHost(this) {
             override fun getPackages(): List<ReactPackage>  {
                 val packages =  PackageList(this).packages
-                return packages + listOf(TurnkeyReactPackage())
+                return packages + listOf(TurnkeyReactBridge.reactPackage)
             }
-            override fun getJSMainModuleName(): String = "index"
+            override fun getJSMainModuleName(): String = TurnkeyReactBridge.jSMainModuleName
             override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
             override val isNewArchEnabled: Boolean = false
             //override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED

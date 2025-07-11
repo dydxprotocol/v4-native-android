@@ -11,6 +11,7 @@ import exchange.dydx.trading.common.navigation.TransferRoutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import test.react.TurnkeyReactBridge
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,6 +19,7 @@ class DydxPortfolioHeaderViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
+    private val turnkeyBridge: TurnkeyReactBridge,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxPortfolioHeaderView.ViewState?> = abacusStateManager.state.onboarded
@@ -31,6 +33,7 @@ class DydxPortfolioHeaderViewModel @Inject constructor(
             localizer = localizer,
             state = if (onboarded) DydxPortfolioHeaderView.OnboardState.Onboarded else DydxPortfolioHeaderView.OnboardState.NotOnboarded,
             onboardAction = {
+                // turnkeyBridge.testFunction()
                 router.navigateTo(
                     route = OnboardingRoutes.welcome,
                     presentation = DydxRouter.Presentation.Modal,

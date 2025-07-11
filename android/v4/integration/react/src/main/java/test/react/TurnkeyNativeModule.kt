@@ -1,4 +1,4 @@
-package exchange.dydx.trading
+package test.react
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.LifecycleEventListener
@@ -9,7 +9,7 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
 @ReactModule(name = TurnkeyNativeModule.NAME)
-class TurnkeyNativeModule(
+internal class TurnkeyNativeModule(
     private val reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext), LifecycleEventListener {
     companion object Companion {
