@@ -89,7 +89,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics")
 
     // Amplitude
-    implementation 'com.amplitude:analytics-android:1.13.0'
+    implementation "com.amplitude:analytics-android:$amplitudeVersion"
 
     // Compose
     api "androidx.compose.runtime:runtime:$composeVersion"

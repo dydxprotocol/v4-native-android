@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'exchange.dydx.trading.integration.analytics'
+    namespace 'exchange.dydx.trading.integration.react'
     compileSdk parent.compileSdkVersion
 
     defaultConfig {
@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    implementation "com.facebook.react:react-android"
+    implementation "com.facebook.react:hermes-android"
+
     /* Module Dependencies */
     implementation project(':v4:common')
     implementation project(path: ':v4:utilities')
@@ -57,6 +60,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation("com.google.firebase:firebase-crashlytics")
 
-    // Amplitude
-    implementation "com.amplitude:analytics-android:$amplitudeVersion"
 }

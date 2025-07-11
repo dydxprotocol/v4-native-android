@@ -37,7 +37,7 @@
         </service>
 
         <activity
-          android:name="exchange.dydx.trading.MyReactActivity"
+          android:name="exchange.dydx.trading.test.react.MyReactActivity"
           android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
 

@@ -71,6 +71,7 @@ include ':v4:integration:chart'
 include ':v4:integration:cosmos'
 include ':v4:integration:starkex'
 include ':v4:integration:javascript'
+include ':v4:integration:react'
 include ':v4:common'
 include ':v4:integration:dydxCartera'
 include ':v4:integration:dydxStateManager'
@@ -88,3 +89,4 @@ include ':v4:integration:fcm'
 include ':v4:feature:vault'
 
 includeBuild("../node_modules/@react-native/gradle-plugin")
+

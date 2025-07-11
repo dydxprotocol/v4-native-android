@@ -2,12 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
 
-    //Only declare versions here if required for buildscript dependencies
-    ext.navigationVersion = '2.8.4'
-    ext.hiltVersion = '2.56.2'
-    ext.googleServicesVersion = '4.3.12'
-
-
     repositories {
         google()
         mavenCentral()

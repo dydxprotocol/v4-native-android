@@ -5,7 +5,7 @@ buildscript {
     ext.kotlinVersion = '2.0.21'
     ext.androidApplicationVersion = '8.11.0'
 
-    ext.navigationVersion = '2.8.4'
+    ext.navigationVersion = '2.9.1'
     ext.hiltVersion = '2.56.2'
     ext.googleServicesVersion = '4.3.12'
 
@@ -149,7 +149,7 @@ ext {
     androidXVersion = '1.0.0'
     androidXTracingVersion = '1.2.0'
     androidXAnnotations = '1.4.0'
-    appcompatVersion = '1.7.0'
+    appcompatVersion = '1.7.1'
     archLifecycleVersion = '2.8.7'
     archTestingVersion = '2.2.0'
     biometricVersion = '1.2.0-alpha05'
@@ -184,6 +184,7 @@ ext {
     material3Version = '1.2.0-rc01'
     web3jVersion = '4.8.8-android'
     walletConnectVersion = '1.35.2'
+    amplitudeVersion = '1.21.4'
 }
 
 

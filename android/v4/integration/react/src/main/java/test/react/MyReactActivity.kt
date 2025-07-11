@@ -1,10 +1,13 @@
-package exchange.dydx.trading
+package test.react
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
+//
+// Sample stand-alone React Native activity for testing purposes.
+//
 class MyReactActivity : ReactActivity() {
 
     override fun getMainComponentName(): String = "HelloWorld"
