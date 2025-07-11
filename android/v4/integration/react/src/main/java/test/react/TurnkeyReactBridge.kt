@@ -1,5 +1,6 @@
 package test.react
 
+import com.facebook.react.ReactFragment
 import com.facebook.react.ReactPackage
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,11 @@ class TurnkeyReactBridge @Inject constructor(
     companion object {
         const val jSMainModuleName = "index"
         val reactPackage: ReactPackage = TurnkeyReactPackage()
+
+        val reactNativeFragment = ReactFragment.Builder()
+            .setComponentName("TurnkeyReact") // e.g., "HelloWorld"
+            .setLaunchOptions(null) // Optional: pass initial props to React Native
+            .build()
     }
 
     private val _isInitialized = MutableStateFlow(false)

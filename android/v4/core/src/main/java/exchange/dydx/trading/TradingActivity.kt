@@ -24,7 +24,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.facebook.react.ReactApplication
-import com.facebook.react.ReactFragment
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import dagger.hilt.android.AndroidEntryPoint
@@ -155,25 +154,19 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
     private fun setContentWithJS(
         content: @Composable () -> Unit,
     ) {
-        val reactNativeFragment = ReactFragment.Builder()
-            .setComponentName("HelloWorld") // e.g., "HelloWorld"
-            .setLaunchOptions(null) // Optional: pass initial props to React Native
-            .build()
-
         setContent {
             FragmentInCompose(
                 fragmentManager = supportFragmentManager,
-                fragment = reactNativeFragment,
+                fragment = TurnkeyReactBridge.reactNativeFragment,
             )
 
-            viewModel.cosmosClient.let {
-                JavascriptRunnerWebview(
-                    modifier = Modifier,
-                    isVisible = false,
-                    javascriptRunner = it.runner,
-                    logger = viewModel.logger,
-                )
-            }
+            JavascriptRunnerWebview(
+                modifier = Modifier,
+                isVisible = false,
+                javascriptRunner = viewModel.cosmosClient.runner,
+                logger = viewModel.logger,
+            )
+
             content()
         }
     }
