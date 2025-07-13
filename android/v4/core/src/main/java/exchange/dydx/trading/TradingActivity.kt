@@ -122,7 +122,8 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
     }
 
     private fun setUpReactNativeBridge() {
-        reactInstanceManager = (application as ReactApplication).reactNativeHost.reactInstanceManager
+        val reactNativeHost = (application as ReactApplication).reactNativeHost
+        reactInstanceManager = reactNativeHost.reactInstanceManager
 
         reactInstanceManager.addReactInstanceEventListener(
             object : com.facebook.react.ReactInstanceEventListener {

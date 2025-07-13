@@ -1,20 +1,42 @@
-import React from 'react';
+import { TurnkeyProvider } from '@turnkey/sdk-react-native';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
   Text,
   useColorScheme,
-  View,
 } from 'react-native';
 
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+
+const { addListener } = require('./turnkey')
+
+export const AddListenerComponent = () => {
+  addListener();
+  return <Text>{'Waiting'}</Text>;
+}
+
+export const TurnkeyProviderComponent = ({ children }: { children: React.ReactNode }) => {
+  const sessionConfig = {
+    apiBaseUrl: 'TURNKEY_API_URL',
+    organizationId: 'TURNKEY_PARENT_ORG_ID',
+    onSessionSelected: () => {
+      console.log("onSessionSelected");
+    },
+    onSessionCleared: () => {
+      console.log("onSessionCleared");
+    },
+  };
+
+  return (
+    <TurnkeyProvider config={sessionConfig}>
+      <AddListenerComponent />
+      {children}
+    </TurnkeyProvider>
+  );
+};
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -24,45 +46,11 @@ function App(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode
-              ? Colors.black
-              : Colors.white,
-            padding: 24,
-          }}>
-          <Text style={styles.title}>Step One</Text>
-          <Text>
-            Edit <Text style={styles.bold}>App.tsx</Text> to
-            change this screen and see your edits.
-          </Text>
-          <Text style={styles.title}>See your changes</Text>
-          <ReloadInstructions />
-          <Text style={styles.title}>Debug</Text>
-          <DebugInstructions />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <TurnkeyProviderComponent>
+      <SafeAreaView style={backgroundStyle}>
+      </SafeAreaView>
+    </TurnkeyProviderComponent>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  bold: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
