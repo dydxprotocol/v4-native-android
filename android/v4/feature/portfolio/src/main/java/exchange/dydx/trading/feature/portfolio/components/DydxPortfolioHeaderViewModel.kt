@@ -33,7 +33,7 @@ class DydxPortfolioHeaderViewModel @Inject constructor(
             localizer = localizer,
             state = if (onboarded) DydxPortfolioHeaderView.OnboardState.Onboarded else DydxPortfolioHeaderView.OnboardState.NotOnboarded,
             onboardAction = {
-                turnkeyBridge.testFunction()
+                // turnkeyBridge.testFunction()
                 router.navigateTo(
                     route = OnboardingRoutes.welcome,
                     presentation = DydxRouter.Presentation.Modal,

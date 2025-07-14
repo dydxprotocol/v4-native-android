@@ -1,4 +1,4 @@
-package exchange.dydx.trading
+package test.react
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
