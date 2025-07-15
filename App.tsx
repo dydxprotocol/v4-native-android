@@ -11,10 +11,11 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 
-const { addListener } = require('./turnkey')
+import { useTurnkeyListener } from './turnkey'
+
 
 export const AddListenerComponent = () => {
-  addListener();
+  useTurnkeyListener();
   return <Text>{'Waiting'}</Text>;
 }
 
@@ -33,6 +34,7 @@ export const TurnkeyProviderComponent = ({ children }: { children: React.ReactNo
   return (
     <TurnkeyProvider config={sessionConfig}>
       <AddListenerComponent />
+      <Text>Turnkey Provider Initialized</Text>
       {children}
     </TurnkeyProvider>
   );

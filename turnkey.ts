@@ -1,5 +1,5 @@
 import { useTurnkey, TurnkeyClient, PasskeyStamper } from '@turnkey/sdk-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DeviceEventEmitter, NativeModules, Text } from 'react-native';
 
 function isUserLoggedIn(): boolean {
@@ -36,24 +36,26 @@ interface NativeToJsRequestEvent {
   callbackId: string;
 }
 
-export function addListener() {
+export function useTurnkeyListener() {
 
     const { user } = useTurnkey();
 
-    DeviceEventEmitter.addListener(
-        'NativeToJsRequest',
-        async (event: NativeToJsRequestEvent) => {
-            const callbackId = event.callbackId;
-            const result = await myJsFunction(callbackId);
+    useEffect(() => {
+      DeviceEventEmitter.addListener(
+          'NativeToJsRequest',
+          async (event: NativeToJsRequestEvent) => {
+              const callbackId = event.callbackId;
+              const result = await myJsFunction(callbackId);
 
-            if (user) {
-                console.log('User is logged in:', user);
-            } else {
-                console.log('No user is logged in.');
-            }
-            TurnkeyNativeModule.onJsResponse(callbackId, result);
-        }
-    );
+              if (user) {
+                  console.log('User is logged in:', user);
+              } else {
+                  console.log('No user is logged in.');
+              }
+              TurnkeyNativeModule.onJsResponse(callbackId, result);
+          }
+      );
+    }, [user]);
 }
 
 // Async function with typed param/return
