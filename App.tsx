@@ -1,8 +1,6 @@
 import { TurnkeyProvider } from '@turnkey/sdk-react-native';
-import React, { useEffect } from 'react';
 import {
   SafeAreaView,
-  Text,
   useColorScheme,
 } from 'react-native';
 
@@ -10,14 +8,7 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
-
-import { useTurnkeyListener } from './turnkey'
-
-
-export const AddListenerComponent = () => {
-  useTurnkeyListener();
-  return <Text>{'Waiting'}</Text>;
-}
+import { TurnkeyCallbackProvider } from './TurnkeyCallbackProvider';
 
 export const TurnkeyProviderComponent = ({ children }: { children: React.ReactNode }) => {
   const sessionConfig = {
@@ -33,9 +24,9 @@ export const TurnkeyProviderComponent = ({ children }: { children: React.ReactNo
 
   return (
     <TurnkeyProvider config={sessionConfig}>
-      <AddListenerComponent />
-      <Text>Turnkey Provider Initialized</Text>
-      {children}
+      <TurnkeyCallbackProvider>
+        {children}
+      </TurnkeyCallbackProvider>
     </TurnkeyProvider>
   );
 };
