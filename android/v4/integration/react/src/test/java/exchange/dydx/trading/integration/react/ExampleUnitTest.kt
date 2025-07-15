@@ -1,4 +1,4 @@
-package trading.react
+package exchange.dydx.trading.integration.react
 
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
