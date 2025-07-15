@@ -8,10 +8,10 @@ import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
+import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import test.react.TurnkeyReactBridge
 import javax.inject.Inject
 
 @HiltViewModel

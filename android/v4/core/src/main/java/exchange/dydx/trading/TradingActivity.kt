@@ -44,9 +44,9 @@ import exchange.dydx.trading.core.biometric.DydxBiometricView
 import exchange.dydx.trading.feature.shared.PreferenceKeys
 import exchange.dydx.trading.feature.shared.analytics.AnalyticsEvent
 import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
+import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
-import test.react.TurnkeyReactBridge
 import javax.inject.Inject
 
 private const val TAG = "TradingActivity"

@@ -60,12 +60,12 @@ import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientWebview
 import exchange.dydx.trading.integration.cosmos.CosmosV4WebviewClientProtocol
+import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import exchange.dydx.utilities.utils.JsonUtils
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
-import test.react.TurnkeyReactBridge
 import javax.inject.Singleton
 
 @Module

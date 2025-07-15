@@ -1,4 +1,4 @@
-package test.react
+package exchange.dydx.trading.integration.react
 
 import com.facebook.react.ReactFragment
 import com.facebook.react.ReactPackage
