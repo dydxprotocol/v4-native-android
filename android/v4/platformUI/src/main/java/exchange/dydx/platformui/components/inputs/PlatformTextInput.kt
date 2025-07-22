@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -81,7 +82,8 @@ fun PlatformTextInput(
                     .themeColor(textColor),
                 cursorBrush = SolidColor(ThemeColor.SemanticColor.text_primary.color),
                 decorationBox = { innerTextField ->
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(modifier = Modifier.fillMaxWidth()
+                        .themeColor(background = ThemeColor.SemanticColor.transparent)) {
                         if (displayValue.isEmpty()) {
                             Text(
                                 text = placeHolder ?: "",
@@ -99,6 +101,10 @@ fun PlatformTextInput(
                         enabled = true,
                         interactionSource = interactionSource,
                         contentPadding = PaddingValues(0.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = ThemeColor.SemanticColor.text_primary.color,
+                            backgroundColor = ThemeColor.SemanticColor.transparent.color,
+                        )
                     )
                 },
             )

@@ -1,7 +1,5 @@
 package exchange.dydx.dydxCartera.v4
 
-import android.R.attr.type
-import android.R.id.message
 import android.content.Context
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.cartera.decodeBase58

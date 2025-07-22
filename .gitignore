@@ -18,4 +18,4 @@ android/scripts/secrets
 android/app/src/debug/google-services.json
 android/app/src/release/google-services.json
 android/v4/common/src/main/res/values/strings.xml
-
+android/.kotlin
