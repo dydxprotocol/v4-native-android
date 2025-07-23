@@ -8,7 +8,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'com.google.gms.google-services'
-    id 'com.google.firebase.firebase-perf' version '1.4.2'
+    id 'com.google.firebase.firebase-perf' version '2.0.0'
     id 'com.google.firebase.crashlytics'
     id 'com.facebook.react'
 }
@@ -26,7 +26,7 @@ android {
         minSdkVersion parent.minSdkVersion
         targetSdkVersion parent.targetSdkVersion
         versionCode 10000
-        versionName "1.12.14"
+        versionName "1.12.15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
