@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.state.manager.ChainRpcMap
-import exchange.dydx.cartera.solana.SolanaInteractor
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
@@ -14,6 +13,7 @@ import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.web3.EthereumInteractor
+import exchange.dydx.web3.SolanaInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
