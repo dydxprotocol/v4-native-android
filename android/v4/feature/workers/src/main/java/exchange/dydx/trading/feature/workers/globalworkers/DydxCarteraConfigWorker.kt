@@ -111,12 +111,16 @@ object WalletProvidersConfigUtil {
             PhantomWalletConfig(
                 callbackUrl = "https://v4.testnet.dydx.exchange/phantom",
                 appUrl = "https://v4.testnet.dydx.exchange",
-            )
+                solanaMainnetUrl = if (abacusStateManager.state.isMainNet) abacusStateManager.environment?.endpoints?.solanaRpcUrl else null,
+                solanaTestnetUrl = if (abacusStateManager.state.isMainNet) null else abacusStateManager.environment?.endpoints?.solanaRpcUrl,
+                )
         } else {
             abacusStateManager.environment?.walletConnection?.phantom?.callbackUrl?.let {
                 PhantomWalletConfig(
                     callbackUrl = it,
                     appUrl = abacusStateManager.deploymentUri,
+                    solanaMainnetUrl = if (abacusStateManager.state.isMainNet) abacusStateManager.environment?.endpoints?.solanaRpcUrl else null,
+                    solanaTestnetUrl = if (abacusStateManager.state.isMainNet) null else abacusStateManager.environment?.endpoints?.solanaRpcUrl,
                 )
             }
         }

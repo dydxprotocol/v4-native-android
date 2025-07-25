@@ -55,13 +55,14 @@ class DydxTransferTokensWorker @Inject constructor(
                 ?: return@combine null // skip if no ethereum address is available
 
             if (solanaInteractor == null) {
-                val rpcUrl = if (abacusStateManager.state.isMainNet ||
-                    featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
-                ) {
-                    SolanaInteractor.mainnetUrl
-                } else {
-                    SolanaInteractor.devnetUrl
-                }
+                val rpcUrl = abacusStateManager.environment?.endpoints?.solanaRpcUrl
+                    ?: if (abacusStateManager.state.isMainNet ||
+                        featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
+                    ) {
+                        SolanaInteractor.mainnetUrl
+                    } else {
+                        SolanaInteractor.devnetUrl
+                    }
                 solanaInteractor = SolanaInteractor(rpcUrl = rpcUrl)
             }
 
