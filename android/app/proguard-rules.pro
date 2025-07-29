@@ -46,3 +46,5 @@
 -dontwarn org.mockito.**
 
 -dontwarn org.slf4j.impl.StaticMDCBinder
+
+-keep class  exchange.dydx.dydxCartera.solana.** { *; }

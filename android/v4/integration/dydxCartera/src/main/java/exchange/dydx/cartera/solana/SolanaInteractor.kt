@@ -6,6 +6,7 @@ import com.solana.transaction.AccountMeta
 import com.solana.transaction.TransactionInstruction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -203,51 +204,62 @@ class SolanaInteractor(
         )
 }
 
+@Serializable
 data class LatestBlockhashResponse(
     val result: LatestBlockhashResult
 )
 
+@Serializable
 data class LatestBlockhashResult(
     val context: ContextInfo,
     val value: BlockhashValue
 )
 
+@Serializable
 data class ContextInfo(
     val slot: Long
 )
 
+@Serializable
 data class BlockhashValue(
     @SerializedName("blockhash") val blockhash: String,
     @SerializedName("lastValidBlockHeight") val lastValidBlockHeight: Long
 )
 
+@Serializable
 data class BalanceResponse(
     val result: BalanceResult
 )
 
+@Serializable
 data class BalanceResult(
     val context: ContextInfo,
     val value: Long // balance in lamports
 )
 
+@Serializable
 data class TokenAccountsResponse(
     val result: ResultWrapper
 )
 
+@Serializable
 data class ResultWrapper(
     val context: Context,
     val value: List<TokenAccount>
 )
 
+@Serializable
 data class Context(
     val slot: ULong
 )
 
+@Serializable
 data class TokenAccount(
     val pubkey: String,
     val account: AccountDetails
 )
 
+@Serializable
 data class AccountDetails(
     val data: AccountData,
     val executable: Boolean,
@@ -256,29 +268,34 @@ data class AccountDetails(
     val rentEpoch: Float
 )
 
+@Serializable
 data class AccountData(
     val program: String,
     val parsed: ParsedData,
     val space: Int
 )
 
+@Serializable
 data class ParsedData(
     val type: String,
     val info: TokenInfo
 )
 
+@Serializable
 data class TokenInfo(
     val mint: String,
     val owner: String,
     val tokenAmount: TokenAmount
 )
 
+@Serializable
 data class TokenAmount(
     val amount: String,
     val decimals: Int,
     val uiAmount: Float
 )
 
+@Serializable
 data class SendTransactionResponse(
     val jsonrpc: String,
     val result: String, // the transaction signature (base58)
