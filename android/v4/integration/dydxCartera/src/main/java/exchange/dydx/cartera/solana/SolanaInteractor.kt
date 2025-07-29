@@ -174,26 +174,22 @@ class SolanaInteractor(
             .post(requestBody)
             .build()
 
-        try {
-            val response = client.newCall(request).execute()
-            if (!response.isSuccessful) {
-                println("Request failed: ${response.code}")
-                return@withContext null
-            }
-
-            try {
-                val json = response.body?.string() ?: return@withContext null
-                val parsed =
-                    gson.fromJson(json, SendTransactionResponse::class.java)
-                return@withContext parsed.result
-            } catch (e: Exception) {
-                Timber.tag(TAG).e("Failed to parse response: ${e.message}")
-                return@withContext null
-            }
-        } catch (e: Exception) {
-            Timber.tag(TAG).e("Request failed: ${e.message}")
-            return@withContext null
+        val response = client.newCall(request).execute()
+        if (!response.isSuccessful) {
+            throw Exception("Request failed with code: ${response.code}")
         }
+
+        val jsonRespsonse = response.body?.string() ?: run {
+            throw Exception("Response body is null or empty")
+        }
+        val parsed =
+            gson.fromJson(jsonRespsonse, SendTransactionResponse::class.java)
+        if (parsed.error != null) {
+            throw Exception(
+                "Error in response: ${parsed.error.code} - ${parsed.error.message}",
+            )
+        }
+        return@withContext parsed.result
     }
 
     fun buildTestMemoTransaction(address: SolanaPublicKey, memo: String) =
@@ -296,8 +292,15 @@ data class TokenAmount(
 )
 
 @Serializable
+data class RpcError(
+    val code: Int?,
+    val message: String?
+)
+
+@Serializable
 data class SendTransactionResponse(
     val jsonrpc: String,
-    val result: String, // the transaction signature (base58)
+    val result: String?, // the transaction signature (base58)
+    val error: RpcError?,
     val id: Int
 )

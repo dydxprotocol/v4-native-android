@@ -73,12 +73,12 @@ class WalletSendTransactionStep(
                                     if (signed != null) {
                                         continuation.resume(Result.success(signed))
                                     } else {
-                                        continuation.resume(errorEvent(error?.message ?: "Unknown error"))
+                                        continuation.resume(errorEvent(error?.title ?: error?.message ?: "Unknown error"))
                                     }
                                 },
                             )
                         } else {
-                            continuation.resume(errorEvent(error?.message ?: "Unknown error"))
+                            continuation.resume(errorEvent(error?.title ?: error?.message ?: "Unknown error"))
                         }
                     }
                 },

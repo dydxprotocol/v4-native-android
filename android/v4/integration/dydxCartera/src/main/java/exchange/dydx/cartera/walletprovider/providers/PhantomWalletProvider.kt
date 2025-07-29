@@ -453,19 +453,36 @@ class PhantomWalletProvider(
 
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
-                val hash = solanaInteractor.sendRawTransaction(signed)
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (hash != null) {
-                        completion(hash, null)
-                    } else {
+                try {
+                    // Solana PRCs can be slower than Skip's, so we wait a bit before sending the transaction
+                    Thread.sleep(5000)
+
+                    val hash = solanaInteractor.sendRawTransaction(signed)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        if (hash != null) {
+                            completion(hash, null)
+                        } else {
+                            completion(
+                                null,
+                                WalletError(
+                                    CarteraErrorCode.UNEXPECTED_RESPONSE,
+                                    "Failed to send transaction",
+                                ),
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    Timber.tag(tag(this@PhantomWalletProvider)).e("Failed to send transaction: ${e.message}")
+                    CoroutineScope(Dispatchers.Main).launch {
                         completion(
                             null,
                             WalletError(
                                 CarteraErrorCode.UNEXPECTED_RESPONSE,
-                                "Failed to send transaction",
+                                "Failed to send transaction: ${e.message}",
                             ),
                         )
                     }
+                    return@launch
                 }
             }
         }

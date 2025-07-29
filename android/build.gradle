@@ -177,7 +177,7 @@ ext {
     timberVersion = '5.0.1'
     truthVersion = '1.1.3'
     woodVersion = '0.9.9.1'
-    gsonVersion = '2.10.1'
+    gsonVersion = '2.13.1'
     flowExtVersion = '0.7.1'
     material3Version = '1.2.0-rc01'
     web3jVersion = '4.8.8-android'
