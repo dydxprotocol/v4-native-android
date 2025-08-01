@@ -27,10 +27,9 @@ fun AnnotatedString.Builder.applyLink(
         end = startIndex + replacement.length,
     )
     if (link != null) {
-        addStyle(
-            style = SpanStyle(
-                color = linkColor,
-            ),
+        addStringAnnotation(
+            tag = "URL",
+            annotation = link,
             start = startIndex,
             end = startIndex + replacement.length,
         )
