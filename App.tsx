@@ -2,6 +2,7 @@ import { TurnkeyProvider } from '@turnkey/sdk-react-native';
 import {
   SafeAreaView,
   useColorScheme,
+  Text,
 } from 'react-native';
 
 import {
@@ -41,6 +42,9 @@ function App(): React.JSX.Element {
   return (
     <TurnkeyProviderComponent>
       <SafeAreaView style={backgroundStyle}>
+        <Text>
+          Welcome to Turnkey React Native!
+        </Text>
       </SafeAreaView>
     </TurnkeyProviderComponent>
   );

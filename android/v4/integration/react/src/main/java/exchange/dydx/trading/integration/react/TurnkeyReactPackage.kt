@@ -10,7 +10,7 @@ internal class TurnkeyReactPackage : ReactPackage {
         return listOf(TurnkeyNativeModule(reactContext))
     }
 
-    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>?> {
+    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<in Nothing, in Nothing>> {
         return emptyList()
     }
 }

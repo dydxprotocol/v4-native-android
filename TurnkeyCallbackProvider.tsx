@@ -3,7 +3,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   DeviceEventEmitter,
 } from 'react-native';
-import { NativeToJsRequestEvent, TurnkeyNativeModule } from './TurnkeyModule'
+
+import { NativeModules } from 'react-native';
+import { NativeToJsRequestEvent, TurnkeyNativeModule } from './TurnkeyModule';
 
 const TurnkeyCallbackContext = createContext({ isReady: false });
 
@@ -12,12 +14,16 @@ export const TurnkeyCallbackProvider = ({ children }: { children: React.ReactNod
   const { user } = useTurnkey();
 
   useEffect(() => {
+    DeviceEventEmitter.removeAllListeners('NativeToJsRequest');
     DeviceEventEmitter.addListener(
       'NativeToJsRequest',
       async (event: NativeToJsRequestEvent) => {
         const callbackId = event.callbackId;
         const result = await myJsFunction(callbackId);
         
+        console.log('✅ NativeModules keys:', Object.keys(NativeModules));
+        console.log('✅ NativeModules.TurnkeyNativeModule:', NativeModules.TurnkeyNativeModule);
+
         if (user) {
           console.log('User is logged in:', user);
         } else {

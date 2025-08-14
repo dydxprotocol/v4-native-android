@@ -4,6 +4,12 @@ import { NativeModules } from 'react-native';
 // Define type for native module
 interface TurnkeyNativeModuleType {
   onJsResponse: (callbackId: string, result: string) => void;
+
+  onAuthRouteToWallet: () => void;
+  onAuthRouteToDesktopQR: () => void;
+  onAuthCompleted: (onboardingSignature: string, evmAddress: string, svmAddress: string, mnemonics: string, loginMethod: string, userEmail: string | undefined) => void;
+
+  onAppleAuthRequest: (nonce: string) => void;
 }
 
 // Safely cast NativeModules
@@ -15,3 +21,13 @@ export const { TurnkeyNativeModule } = NativeModules as {
 export interface NativeToJsRequestEvent {
   callbackId: string;
 }
+
+export interface AppleSignInCompletedEvent {
+  identityToken: string | null;
+  error: string | null;
+}
+
+export interface EmailTokenReceivedEvent {
+  token: string;
+}
+

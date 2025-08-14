@@ -1,0 +1,55 @@
+export const classicDarkTheme = {
+  id: 'classic_dark',
+  colors: {
+    textPrimary: '#FAFAFD',
+    textSecondary: '#C8C7D8',
+    textTertiary: '#807E98',
+
+    layer0: '#08080C',
+    layer1: '#101018',
+    layer2: '#181825',
+    layer3: '#212131',
+    layer4: '#29293D',
+    layer5: '#303045',
+    layer6: '#38384D',
+    layer7: '#464659',
+
+    purple: '#6966FF',
+    green: '#3ED9A4',
+    yellow: '#FFCC48',
+    red: '#E45555',
+    black: '#000000',
+    white: '#FFFFFF',
+
+    fadedPurple: '#6966FF29',
+    fadedGreen: '#3ED9A429',
+    fadedRed: '#E4555529',
+    fadedYellow: '#FFCC4829',
+
+    borderDefault: '#303045',
+    borderDestructive: '#E4555533',
+    borderButton: '#6966FF',
+
+    gradientGrayStart: '#313135',
+    gradientGrayEnd: '#23232F',
+    gradientGreenStart: '#3ED9A429',
+    gradientGreenEnd: '#303045',
+    gradientRedStart: '#FF616129',
+    gradientRedEnd: '#303045',
+  },
+  fontSizes: {
+    largest: 25,
+    larger: 22,
+    large: 18,
+    medium: 16,
+    small: 14.5,
+    smaller: 13,
+    smallest: 11,
+  },
+  fonts: {
+    minus: 'Satoshi-Regular',
+    base: 'Satoshi-Medium',
+    plus: 'Satoshi-Bold',
+    number: '.AppleSystemUIFontMonospaced-Medium',
+  },
+};

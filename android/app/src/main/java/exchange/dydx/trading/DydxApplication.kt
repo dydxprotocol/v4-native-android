@@ -16,6 +16,7 @@ import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 
@@ -49,7 +50,7 @@ class DydxApplication : Application(), ReactApplication {
     override fun onCreate() {
         super.onCreate()
 
-        SoLoader.init(this, false)
+        SoLoader.init(this, OpenSourceMergedSoMapping)
 //        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 //            load()
 //        }

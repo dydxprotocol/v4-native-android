@@ -1,0 +1,55 @@
+export const lightTheme = {
+  id: 'light',
+  colors: {
+    textPrimary: '#181818',
+    textSecondary: '#4B4B4B',
+    textTertiary: '#737373',
+
+    layer0: '#FFFFFF',
+    layer1: '#E9ECEE',
+    layer2: '#FFFFFF',
+    layer3: '#F7F8FA',
+    layer4: '#FFFFFF',
+    layer5: '#EDF0F2',
+    layer6: '#D5DADF',
+    layer7: '#C2CBD3',
+
+    purple: '#7774FF',
+    green: '#2CCC98',
+    yellow: '#FEBA00',
+    red: '#E76565',
+    black: '#000000',
+    white: '#FFFFFF',
+
+    fadedPurple: '#7774FF29',
+    fadedGreen: '#2CCC9829',
+    fadedRed: '#E7656529',
+    fadedYellow: '#FFCC4829',
+
+    borderDefault: '#D1D9E0',
+    borderDestructive: '#E7656533',
+    borderButton: '#7774FF',
+
+    gradientGrayStart: '#F0F2F5',
+    gradientGrayEnd: '#D1D9E0',
+    gradientGreenStart: '#D8F3EB29',
+    gradientGreenEnd: '#E7EBEE',
+    gradientRedStart: '#FAE2E229',
+    gradientRedEnd: '#E7EBEE',
+  },
+  fontSizes: {
+    largest: 25,
+    larger: 22,
+    large: 18,
+    medium: 16,
+    small: 14.5,
+    smaller: 13,
+    smallest: 11,
+  },
+  fonts: {
+    minus: 'Satoshi-Regular',
+    base: 'Satoshi-Medium',
+    plus: 'Satoshi-Bold',
+    number: '.AppleSystemUIFontMonospaced-Medium',
+  },
+};
