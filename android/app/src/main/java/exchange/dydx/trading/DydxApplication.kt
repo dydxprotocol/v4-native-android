@@ -31,7 +31,7 @@ class DydxApplication : Application(), ReactApplication {
             }
             override fun getJSMainModuleName(): String = TurnkeyReactBridge.jSMainModuleName
             override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
-            override val isNewArchEnabled: Boolean = false
+            override val isNewArchEnabled: Boolean = true
             //override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
             //override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
         }
