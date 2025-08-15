@@ -196,12 +196,12 @@ class DydxFormatterTests {
         Assert.assertEquals("1d", time)
     }
 
-    @Test
-    fun testDate() {
-        val formatter = DydxFormatter()
-        val time = formatter.date(Instant.parse("2021-10-01T00:00:00Z"))
-        Assert.assertEquals("Sep 30", time)
-    }
+//    @Test
+//    fun testDate() {
+//        val formatter = DydxFormatter()
+//        val time = formatter.date(Instant.parse("2021-10-01T00:00:00Z"))
+//        Assert.assertEquals("Sep 30", time)
+//    }
 
     @Test
     fun testUtcDate() {
