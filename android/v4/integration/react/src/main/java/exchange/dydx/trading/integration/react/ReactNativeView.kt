@@ -1,5 +1,6 @@
 package exchange.dydx.trading.integration.react
 
+import android.R.attr.path
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -16,11 +17,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactRootView
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
+import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.localizeWithParams
 
 @Composable
 fun ReactNativeView(
     moduleName: String,                 // matches AppRegistry.registerComponent(...)
-    initialProps: Bundle? = null,
+    initialProps: Map<String, String>? = null, // Optional, initial properties for the RN app
+    localizerEntries: List<LocalizerEntry> = emptyList(), // Optional, for localization
+    localizer: LocalizerProtocol,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -40,7 +45,18 @@ fun ReactNativeView(
         factory = {
             reactRootView.apply {
                 // Starting the RN app inside this view
-                startReactApplication(reactInstanceManager, moduleName, initialProps)
+                val initialPropsWithLocalizationData = Bundle()
+                initialProps?.forEach { (key, value) ->
+                    initialPropsWithLocalizationData.putString(key, value)
+                }
+                val localizedValues = Bundle()
+                localizerEntries.forEach { entry ->
+                    val localized = localizer.localizeWithParams(path = entry.path, params = entry.params)
+                    localizedValues.putString(entry.path, localized)
+                }
+                initialPropsWithLocalizationData.putBundle("strings", localizedValues)
+
+                startReactApplication(reactInstanceManager, moduleName, initialPropsWithLocalizationData)
             }
         },
         modifier = modifier
@@ -81,3 +97,8 @@ private tailrec fun Context.findActivity(): Activity {
         else -> error("No Activity in context chain")
     }
 }
+
+data class LocalizerEntry(
+    val path: String,
+    val params: Map<String, String>? = null
+)

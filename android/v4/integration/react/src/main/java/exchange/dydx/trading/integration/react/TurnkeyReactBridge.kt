@@ -8,6 +8,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
+interface TurnkeyBridgeManagerDelegate {
+    fun onAuthRouteToWallet()
+    fun onAuthRouteToDesktopQR()
+    fun onAuthCompleted(
+        onboardingSignature: String,
+        evmAddress: String,
+        svmAddress: String,
+        mnemonics: String,
+        loginMethod: String,
+        userEmail: String? // nullable
+    )
+    fun onAppleAuthRequest(nonce: String)
+}
+
 class TurnkeyReactBridge @Inject constructor(
     private val logger: Logging
 ) {
@@ -19,6 +33,20 @@ class TurnkeyReactBridge @Inject constructor(
             .setComponentName("TurnkeyReact") // e.g., "HelloWorld"
             .setLaunchOptions(null) // Optional: pass initial props to React Native
             .build()
+    }
+
+    private var delegate: TurnkeyBridgeManagerDelegate? = null // weak reference to avoid memory leaks
+        set(value) {
+            field = value
+            if (!isInitialized.value) {
+                throw IllegalStateException("TurnkeyReactBridge is not initialized")
+            }
+            val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
+            turnkeyNativeModule?.delegate = value
+        }
+
+    fun setBridgeDelegate(delegate: TurnkeyBridgeManagerDelegate?) {
+        this.delegate = delegate
     }
 
     private val _isInitialized = MutableStateFlow(false)

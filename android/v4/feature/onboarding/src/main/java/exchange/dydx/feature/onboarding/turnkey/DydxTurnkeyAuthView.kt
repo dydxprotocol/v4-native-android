@@ -1,19 +1,26 @@
 package exchange.dydx.feature.onboarding.turnkey
 
-import android.os.Bundle
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
+import exchange.dydx.trading.integration.react.LocalizerEntry
 import exchange.dydx.trading.integration.react.ReactNativeView
 
 @Preview
@@ -27,12 +34,14 @@ fun Preview_DydxTurnkeyAuthView() {
 object DydxTurnkeyAuthView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val text: String?,
+        val initialProperties: Map<String, String>?,
+        val localizerEntries: List<LocalizerEntry> = emptyList(), // Optional, for localization
+        val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                text = "1.0M",
+                initialProperties = mapOf("userId" to "123"),
             )
         }
     }
@@ -51,21 +60,35 @@ object DydxTurnkeyAuthView : DydxComponent {
             return
         }
 
-        ScreenWithRN()
-    }
-
-    @Composable
-    fun ScreenWithRN() {
-        Column(Modifier.fillMaxSize()) {
-            Text("Compose above")
+        Box(Modifier.fillMaxSize()) {
             ReactNativeView(
                 moduleName = "TurnkeyLogin",
-                initialProps = Bundle().apply { putString("userId", "123") },
+                initialProps = state.initialProperties,
+                localizerEntries = state.localizerEntries,
+                localizer = state.localizer,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
             )
-            Text("Compose below")
+
+            Column {
+                Row(
+                    modifier
+                        .fillMaxWidth()
+                        .padding(
+                            //  horizontal = ThemeShapes.HorizontalPadding,
+                            vertical = ThemeShapes.VerticalPadding,
+                        )
+                        .padding(top = ThemeShapes.VerticalPadding),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Spacer(Modifier.weight(1f))
+
+                    HeaderViewCloseBotton(closeAction = state.closeAction)
+                }
+
+                Spacer(Modifier.weight(1f))   // fills all vertical empty space
+            }
         }
     }
 }
