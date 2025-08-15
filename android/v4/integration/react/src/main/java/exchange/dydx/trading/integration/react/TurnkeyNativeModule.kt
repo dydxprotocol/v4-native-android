@@ -70,4 +70,3 @@ internal class TurnkeyNativeModule(
         print("Host is resumed, ready to handle events.")
     }
 }
-

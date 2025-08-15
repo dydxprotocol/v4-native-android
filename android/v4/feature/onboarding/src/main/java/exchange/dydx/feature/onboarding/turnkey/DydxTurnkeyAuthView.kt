@@ -67,7 +67,7 @@ object DydxTurnkeyAuthView : DydxComponent {
                 localizerEntries = state.localizerEntries,
                 localizer = state.localizer,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
 
             Column {
@@ -87,9 +87,8 @@ object DydxTurnkeyAuthView : DydxComponent {
                     HeaderViewCloseBotton(closeAction = state.closeAction)
                 }
 
-                Spacer(Modifier.weight(1f))   // fills all vertical empty space
+                Spacer(Modifier.weight(1f)) // fills all vertical empty space
             }
         }
     }
 }
-

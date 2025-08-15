@@ -1,6 +1,5 @@
 package exchange.dydx.feature.onboarding.turnkey
 
-import androidx.annotation.MainThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,7 +47,6 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
         .distinctUntilChanged()
 
     private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxTurnkeyAuthView.ViewState {
-
         val initialProperties: Map<String, String> = mapOf(
             // From https://console.cloud.google.com/auth/clients?inv=1&invt=Ab1olg&project=dydx-v4
             "googleClientId" to "441463123744-a02e7s84okic2ggqgdo7e7hlgpvkj3p8.apps.googleusercontent.com",
@@ -58,10 +56,10 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             "turnkeyOrgId" to "3174ac51-1637-47d8-9456-19549963e2ed",
             // Indexer backend
             "backendApiUrl" to "http://dev2-indexer-apne1-lb-public-2076363889.ap-northeast-1.elb.amazonaws.com",
-            "theme" to "dark"
+            "theme" to "dark",
         )
 
-        val localizerEntries =  listOf(
+        val localizerEntries = listOf(
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_TITLE"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_DESCRIPTION"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_PASSKEY"),
@@ -81,7 +79,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             localizerEntries = localizerEntries,
             closeAction = {
                 router.navigateBack()
-            }
+            },
         )
     }
 

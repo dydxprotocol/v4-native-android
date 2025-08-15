@@ -22,7 +22,7 @@ import exchange.dydx.abacus.protocols.localizeWithParams
 
 @Composable
 fun ReactNativeView(
-    moduleName: String,                 // matches AppRegistry.registerComponent(...)
+    moduleName: String, // matches AppRegistry.registerComponent(...)
     initialProps: Map<String, String>? = null, // Optional, initial properties for the RN app
     localizerEntries: List<LocalizerEntry> = emptyList(), // Optional, for localization
     localizer: LocalizerProtocol,
@@ -59,7 +59,7 @@ fun ReactNativeView(
                 startReactApplication(reactInstanceManager, moduleName, initialPropsWithLocalizationData)
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 
     // Forward lifecycle
@@ -73,7 +73,8 @@ fun ReactNativeView(
                             override fun invokeDefaultOnBackPressed() {
                                 activity.onBackPressed() // .onBackPressedDispatcher.onBackPressed()
                             }
-                        })
+                        },
+                    )
 
                 Lifecycle.Event.ON_PAUSE -> reactInstanceManager.onHostPause(activity)
                 Lifecycle.Event.ON_DESTROY -> reactInstanceManager.onHostDestroy(activity)

@@ -13,8 +13,9 @@ object OnboardingRoutes {
     const val turnkey = "onboard/turnkey"
 
     fun landing(featureFlags: DydxFeatureFlags) = if (featureFlags.isFeatureEnabled(
-            DydxBoolFeatureFlag.ff_turnkey_android
-        )) {
+            DydxBoolFeatureFlag.ff_turnkey_android,
+        )
+    ) {
         turnkey
     } else {
         welcome
