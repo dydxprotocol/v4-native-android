@@ -156,10 +156,10 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
         content: @Composable () -> Unit,
     ) {
         setContent {
-            FragmentInCompose(
-                fragmentManager = supportFragmentManager,
-                fragment = TurnkeyReactBridge.reactNativeFragment,
-            )
+//            FragmentInCompose(
+//                fragmentManager = supportFragmentManager,
+//                fragment = TurnkeyReactBridge.reactNativeFragment,
+//            )
 
             JavascriptRunnerWebview(
                 modifier = Modifier,

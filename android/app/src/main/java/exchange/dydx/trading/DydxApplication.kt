@@ -1,7 +1,6 @@
 package exchange.dydx.trading
 
 import android.app.Application
-import android.os.StrictMode
 import com.facebook.stetho.Stetho
 import dagger.hilt.android.HiltAndroidApp
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
@@ -17,6 +16,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
+import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 
 @HiltAndroidApp
@@ -49,7 +49,7 @@ class DydxApplication : Application(), ReactApplication {
     override fun onCreate() {
         super.onCreate()
 
-        SoLoader.init(this, false)
+        SoLoader.init(this, OpenSourceMergedSoMapping)
 //        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
 //            load()
 //        }
