@@ -1,5 +1,8 @@
 package exchange.dydx.trading.common.navigation
 
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+
 object OnboardingRoutes {
     const val desktop_scan = "onboard/scan"
     const val debug_scan = "onboard/qrcode"
@@ -7,6 +10,15 @@ object OnboardingRoutes {
     const val connect = "onboard/connect"
     const val welcome = "onboard"
     const val tos = "onboard/tos"
+    const val turnkey = "onboard/turnkey"
+
+    fun landing(featureFlags: DydxFeatureFlags) = if (featureFlags.isFeatureEnabled(
+            DydxBoolFeatureFlag.ff_turnkey_android
+        )) {
+        turnkey
+    } else {
+        welcome
+    }
 }
 
 object PortfolioRoutes {

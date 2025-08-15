@@ -54,6 +54,7 @@ dependencies {
     implementation project(path: ':v4:feature:shared')
     implementation project(path: ':v4:integration:dydxStateManager')
     implementation project(path: ':v4:integration:dydxCartera')
+    implementation project(path: ':v4:integration:react')
 
     /* Local Dependencies */
 

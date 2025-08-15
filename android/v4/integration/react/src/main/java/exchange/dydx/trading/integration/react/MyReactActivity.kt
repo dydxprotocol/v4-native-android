@@ -14,8 +14,8 @@ class MyReactActivity : ReactActivity() {
 
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         DefaultReactActivityDelegate(
-            this,
-            mainComponentName,
-            DefaultNewArchitectureEntryPoint.fabricEnabled,
+            activity = this,
+            mainComponentName = mainComponentName,
+            fabricEnabled = DefaultNewArchitectureEntryPoint.fabricEnabled,
         )
 }

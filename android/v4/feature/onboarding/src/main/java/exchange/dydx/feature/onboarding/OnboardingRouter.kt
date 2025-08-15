@@ -8,6 +8,7 @@ import exchange.dydx.feature.onboarding.connect.DydxOnboardConnectView
 import exchange.dydx.feature.onboarding.debugscan.DydxDebugScanView
 import exchange.dydx.feature.onboarding.desktopscan.DydxDesktopScanView
 import exchange.dydx.feature.onboarding.tos.DydxTosView
+import exchange.dydx.feature.onboarding.turnkey.DydxTurnkeyAuthView
 import exchange.dydx.feature.onboarding.walletlist.DydxWalletListView
 import exchange.dydx.feature.onboarding.welcome.DydxOnboardWelcomeView
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -27,6 +28,14 @@ fun NavGraphBuilder.loginGraph(
         deepLinks = appRouter.deeplinks(OnboardingRoutes.welcome),
     ) { nbse ->
         DydxOnboardWelcomeView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = OnboardingRoutes.turnkey,
+        deepLinks = appRouter.deeplinks(OnboardingRoutes.turnkey),
+    ) { nbse ->
+        DydxTurnkeyAuthView.Content(Modifier)
     }
 
     dydxComposable(

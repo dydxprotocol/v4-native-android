@@ -55,10 +55,10 @@
             },
             {
                 "title":{
-                    "text":"Prompt for App Rating"
+                    "text":"Turnkey Onboarding"
                 },
                 "field":{
-                    "field":"prompt_app_rating",
+                    "field":"ff_turnkey_android",
                     "optional":true,
                     "type" : "text",
                     "options" : [

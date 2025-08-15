@@ -125,7 +125,6 @@ class DydxTransferViewModel @Inject constructor(
             closeAction = {
                 router.navigateBack()
             },
-            skipGoFast = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_skip_go_fast),
         )
     }
 }

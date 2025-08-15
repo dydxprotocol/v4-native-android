@@ -5,6 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
@@ -18,6 +19,7 @@ class DydxOnboardWelcomeViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val onboardingAnalytics: OnboardingAnalytics,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxOnboardWelcomeView.ViewState?> = flowOf(createViewState())
@@ -29,7 +31,7 @@ class DydxOnboardWelcomeViewModel @Inject constructor(
                 onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.CHOOSE_WALLET)
                 router.navigateBack()
                 router.navigateTo(
-                    route = OnboardingRoutes.wallet_list,
+                    route = OnboardingRoutes.landing(featureFlags),
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },
