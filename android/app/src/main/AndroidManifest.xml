@@ -38,7 +38,7 @@
         </service>
 
         <activity
-          android:name="exchange.dydx.trading.test.react.MyReactActivity"
+          android:name="exchange.dydx.trading.integration.react.MyReactActivity"
           android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
 
@@ -191,7 +191,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="@string/app_scheme" />
-                <data android:host="@string/app_scheme_host" />
+<!--                <data android:host="@string/app_scheme_host" />-->
             </intent-filter>
         </activity>
 

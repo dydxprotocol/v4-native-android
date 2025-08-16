@@ -253,6 +253,10 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
             CarteraConfig.handleResponse(data)
         }
 
+        // Notify the React Native instance manager of the new intent
+        // This is necessary for React Native module to handle deep links correctly.
+        reactInstanceManager.onNewIntent(intent)
+
         viewModel.router.handleIntent(intent)
     }
 

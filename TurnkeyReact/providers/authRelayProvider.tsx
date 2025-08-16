@@ -242,14 +242,14 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
         throw new Error(`Backend Error: ${errorMsg}`);
       }
 
-      if (loginMethod === LoginMethod.OAuth) {
+      if (loginMethod === LoginMethod.OAuth && providerName !== undefined) {
         handleOauthResponse(response, embeddedKeyAndNonce, configs, providerName, userEmail);
       } else if (loginMethod === LoginMethod.Email && userEmail !== undefined) {
         handleEmailResponse(response, embeddedKeyAndNonce, configs, "email", userEmail);
       }
 
     } catch (error: any) {
-      console.error("Error during sign-in:", error);
+      console.error("Error during sign-in: ", error, error.message);
       dispatch({ type: "ERROR", payload: error.message });
     } finally {
       dispatch({ type: "LOADING", payload: null });

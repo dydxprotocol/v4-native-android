@@ -6,6 +6,7 @@
     "android": "react-native run-android --appIdSuffix debug",
     "ios": "react-native run-ios",
     "bundle_ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output dydx/ios/main.jsbundle --assets-dest dydx/ios",
+    "bundle_android": "react-native bundle  --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
