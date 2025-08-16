@@ -87,7 +87,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
         viewModelScope.launch {
             router.navigateBack()
             router.navigateTo(
-                route = OnboardingRoutes.wallet_list,
+                route = OnboardingRoutes.wallet_list + "?backButtonRoute=${OnboardingRoutes.turnkey}",
                 presentation = DydxRouter.Presentation.Modal,
             )
         }

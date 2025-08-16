@@ -79,7 +79,7 @@ open class DydxWalletListItemView(
                     .fillMaxWidth()
                     .height(64.dp)
                     .background(
-                        color = ThemeColor.SemanticColor.layer_5.color,
+                        color = ThemeColor.SemanticColor.layer_3.color,
                         shape = RoundedCornerShape(16.dp),
                     )
                     .padding(vertical = ThemeShapes.VerticalPadding),

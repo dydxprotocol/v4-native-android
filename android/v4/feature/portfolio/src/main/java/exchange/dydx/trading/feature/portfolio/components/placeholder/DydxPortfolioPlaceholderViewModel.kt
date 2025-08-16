@@ -6,6 +6,7 @@ import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
@@ -20,6 +21,7 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val router: DydxRouter,
     private val tabSelection: Flow<@JvmSuppressWildcards DydxPortfolioPlaceholderView.Selection>,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxPortfolioPlaceholderView.ViewState?> =
@@ -87,7 +89,7 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
             },
             onboardTapAction = {
                 router.navigateTo(
-                    route = OnboardingRoutes.wallet_list,
+                    route = OnboardingRoutes.landing(featureFlags = featureFlags),
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },

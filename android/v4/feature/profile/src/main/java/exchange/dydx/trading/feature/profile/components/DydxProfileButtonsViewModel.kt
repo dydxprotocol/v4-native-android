@@ -7,6 +7,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.ProfileRoutes
@@ -23,6 +24,7 @@ class DydxProfileButtonsViewModel @Inject constructor(
     private val router: DydxRouter,
     private val logoutDialog: PlatformDialog,
     private val walletAnalytics: WalletAnalytics,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxProfileButtonsView.ViewState?> =
@@ -84,9 +86,9 @@ class DydxProfileButtonsViewModel @Inject constructor(
                 )
             },
             walletAction = {
-                if (onboarded == false || currentWallet == null) {
+                if (!onboarded || currentWallet == null) {
                     router.navigateTo(
-                        route = OnboardingRoutes.wallet_list,
+                        route = OnboardingRoutes.landing(featureFlags = featureFlags),
                         presentation = DydxRouter.Presentation.Modal,
                     )
                 } else {

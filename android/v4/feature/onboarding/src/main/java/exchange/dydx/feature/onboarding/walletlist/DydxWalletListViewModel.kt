@@ -12,6 +12,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.feature.onboarding.walletlist.components.DydxWalletListItemView
 import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import kotlinx.coroutines.flow.Flow
@@ -25,10 +27,12 @@ class DydxWalletListViewModel @Inject constructor(
     val router: DydxRouter,
     val abacusStateManager: AbacusStateManagerProtocol,
     savedStateHandle: SavedStateHandle,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     private var context: Context? = null
-    private val mobileOnly: Boolean = savedStateHandle["mobileOnly"] ?: false
+    private val mobileOnly: Boolean = (savedStateHandle["mobileOnly"] as? String)?.toBoolean() ?: false
+    private val backButtonRoute: String? = savedStateHandle["backButtonRoute"]
 
     private val _state = MutableStateFlow(DydxWalletListView.ViewState(localizer))
     val state: Flow<DydxWalletListView.ViewState> = _state
@@ -77,11 +81,30 @@ class DydxWalletListViewModel @Inject constructor(
             }
             _state.value = DydxWalletListView.ViewState(
                 localizer = localizer,
-                desktopSync = if (!mobileOnly) desktopSync else null,
-                debugScan = if (!mobileOnly) debugScan else null,
+                desktopSync = if (!mobileOnly && !featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+                    desktopSync
+                } else {
+                    null
+                },
+                debugScan = if (!mobileOnly) {
+                    debugScan
+                } else {
+                    null
+                },
                 wcModal = wcModal,
                 wallets = listState,
-                backButtonHandler = {
+                backButtonHandler = if (backButtonRoute?.isNotEmpty() ?: false) {
+                    {
+                        router.navigateBack()
+                        router.navigateTo(
+                            route = backButtonRoute,
+                            presentation = DydxRouter.Presentation.Modal,
+                        )
+                    }
+                } else {
+                    null
+                },
+                closeButtonHandler = {
                     router.navigateBack()
                 },
             )

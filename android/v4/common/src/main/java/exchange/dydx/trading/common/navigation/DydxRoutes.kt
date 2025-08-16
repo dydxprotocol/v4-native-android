@@ -18,7 +18,7 @@ object OnboardingRoutes {
     ) {
         turnkey
     } else {
-        welcome
+        wallet_list
     }
 }
 

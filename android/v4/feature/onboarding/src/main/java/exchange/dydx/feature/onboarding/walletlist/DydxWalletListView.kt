@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.feature.onboarding.walletlist.components.DydxWalletListItemView
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -50,15 +52,16 @@ object DydxWalletListView : DydxComponent {
         val debugScan: DydxWalletListItemView.ViewState? = null,
         val wcModal: DydxWalletListItemView.ViewState? = null,
         val wallets: List<DydxWalletListItemView.ViewState> = emptyList(),
-        val backButtonHandler: () -> Unit = {},
+        val backButtonHandler: (() -> Unit)? = null,
+        val closeButtonHandler: () -> Unit = {},
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
-                DydxWalletListItemView.ViewState.preview,
-                DydxWalletListItemView.ViewState.preview,
-                DydxWalletListItemView.ViewState.preview,
-                listOf(DydxWalletListItemView.ViewState.preview),
+                desktopSync = DydxWalletListItemView.ViewState.preview,
+                debugScan = DydxWalletListItemView.ViewState.preview,
+                wcModal = DydxWalletListItemView.ViewState.preview,
+                wallets = listOf(DydxWalletListItemView.ViewState.preview),
             )
         }
     }
@@ -80,14 +83,16 @@ object DydxWalletListView : DydxComponent {
             return
         }
         Column(
-            modifier = Modifier
-                .background(exchange.dydx.platformui.designSystem.theme.ThemeColor.SemanticColor.layer_2.color)
+            modifier = modifier
+                .background(ThemeColor.SemanticColor.layer_2.color)
                 .fillMaxSize(),
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.ONBOARDING.SELECT_WALLET"),
-                closeAction = { state.backButtonHandler.invoke() },
+                backAction = state.backButtonHandler,
+                closeAction = { state.closeButtonHandler.invoke() },
             )
+
             Text(
                 text = state.localizer.localize("APP.ONBOARDING.SELECT_WALLET_TEXT"),
                 style = TextStyle.dydxDefault
@@ -133,7 +138,12 @@ object DydxWalletListView : DydxComponent {
             }
 
             BackHandler {
-                state.backButtonHandler.invoke()
+                if (state.backButtonHandler != null) {
+                    // Default behavior if no custom back button handler is provided
+                    state.backButtonHandler.invoke()
+                } else {
+                    state.closeButtonHandler.invoke()
+                }
             }
         }
     }

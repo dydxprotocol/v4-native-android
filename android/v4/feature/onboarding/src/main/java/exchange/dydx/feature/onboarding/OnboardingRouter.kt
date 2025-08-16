@@ -40,11 +40,15 @@ fun NavGraphBuilder.loginGraph(
 
     dydxComposable(
         router = appRouter,
-        route = OnboardingRoutes.wallet_list + "?mobileOnly={mobileOnly}",
+        route = OnboardingRoutes.wallet_list + "?mobileOnly={mobileOnly}&backButtonRoute={backButtonRoute}",
         arguments = listOf(
             navArgument("mobileOnly") {
-                type = NavType.BoolType
-                defaultValue = false
+                type = NavType.StringType
+                defaultValue = "false"
+            },
+            navArgument("backButtonRoute") {
+                type = NavType.StringType
+                defaultValue = ""
             },
         ),
         deepLinks = appRouter.deeplinks(OnboardingRoutes.wallet_list),
