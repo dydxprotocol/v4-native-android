@@ -101,7 +101,7 @@ object DydxPortfolioPlaceholderView : DydxComponent {
                     )
 
                     PlatformButton(
-                        text = state.localizer.localize("APP.GENERAL.CONNECT_WALLET"),
+                        text = state.localizer.localize("APP.TURNKEY_ONBOARD.SIGN_IN_TITLE"),
                         fontSize = ThemeFont.FontSize.base,
                         modifier = Modifier.padding(end = 16.dp)
                             .height(48.dp),

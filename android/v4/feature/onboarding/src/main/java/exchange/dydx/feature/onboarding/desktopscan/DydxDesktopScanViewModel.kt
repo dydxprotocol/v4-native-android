@@ -1,5 +1,7 @@
 package exchange.dydx.feature.onboarding.desktopscan
 
+import android.R.attr.value
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
@@ -33,13 +35,27 @@ class DydxDesktopScanViewModel @Inject constructor(
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
     private val logger: Logging,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
+
+    private val backButtonRoute: String? = savedStateHandle["backButtonRoute"]
 
     val state: Flow<DydxDesktopScanView.ViewState?> = MutableStateFlow(createViewState())
 
     private fun createViewState(): DydxDesktopScanView.ViewState {
         return DydxDesktopScanView.ViewState(
             localizer = localizer,
+            backButtonHandler = if (backButtonRoute?.isNotEmpty() ?: false) {
+                {
+                    router.navigateBack()
+                    router.navigateTo(
+                        route = backButtonRoute,
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                }
+            } else {
+                null
+            },
             closeButtonHandler = {
                 router.navigateBack()
             },

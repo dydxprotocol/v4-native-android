@@ -102,7 +102,7 @@ object DydxTransferInstantDepositView : DydxComponent {
                                 modifier = Modifier.weight(1f),
                             )
                             PlatformButton(
-                                text = state.localizer.localize("APP.GENERAL.CONNECT_WALLET"),
+                                text = state.localizer.localize("APP.TURNKEY_ONBOARD.SIGN_IN_TITLE"),
                             ) {
                                 state.connectWalletAction()
                             }

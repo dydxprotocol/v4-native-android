@@ -92,7 +92,7 @@ class DydxVaultDepositViewModel @Inject constructor(
                     InputCtaButton.State.Disabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
                 } else {
                     if (currentWallet == null) {
-                        InputCtaButton.State.Enabled(localizer.localize("APP.GENERAL.CONNECT_WALLET"))
+                        InputCtaButton.State.Enabled(localizer.localize("APP.TURNKEY_ONBOARD.SIGN_IN_TITLE"))
                     } else {
                         InputCtaButton.State.Enabled(localizer.localize("APP.VAULTS.PREVIEW_DEPOSIT"))
                     }

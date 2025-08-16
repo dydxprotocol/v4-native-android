@@ -67,7 +67,13 @@ fun NavGraphBuilder.loginGraph(
 
     dydxComposable(
         router = appRouter,
-        route = OnboardingRoutes.desktop_scan,
+        route = OnboardingRoutes.desktop_scan + "?backButtonRoute={backButtonRoute}",
+        arguments = listOf(
+            navArgument("backButtonRoute") {
+                type = NavType.StringType
+                defaultValue = ""
+            },
+        ),
         deepLinks = appRouter.deeplinks(OnboardingRoutes.desktop_scan),
     ) { nbse ->
         DydxDesktopScanView.Content(Modifier)

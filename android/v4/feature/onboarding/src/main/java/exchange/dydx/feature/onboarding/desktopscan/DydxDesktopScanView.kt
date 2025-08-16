@@ -35,6 +35,7 @@ object DydxDesktopScanView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val logger: Logging,
+        val backButtonHandler: (() -> Unit)? = null,
         val closeButtonHandler: () -> Unit = {},
         val qrCodeScannedHandler: (String) -> Unit = {},
     ) {
@@ -80,9 +81,8 @@ object DydxDesktopScanView : DydxComponent {
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.ONBOARDING.SCAN_QR_CODE"),
-                backAction = {
-                    state.closeButtonHandler.invoke()
-                },
+                backAction = state.backButtonHandler,
+                closeAction = { state.closeButtonHandler.invoke() },
             )
 
             PlatformDivider()

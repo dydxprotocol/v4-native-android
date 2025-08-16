@@ -8,7 +8,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'com.google.gms.google-services'
-    id 'com.google.firebase.firebase-perf' version '2.0.0'
+    id 'com.google.firebase.firebase-perf' version '2.0.1'
     id 'com.google.firebase.crashlytics'
     id 'com.facebook.react'
 }

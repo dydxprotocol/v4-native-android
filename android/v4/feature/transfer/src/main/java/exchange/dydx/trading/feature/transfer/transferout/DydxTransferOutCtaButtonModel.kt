@@ -82,7 +82,7 @@ class DydxTransferOutCtaButtonModel @Inject constructor(
                         localizer.localize("APP.TRADE.SUBMITTING_ORDER"),
                     )
                     !isOnboarded -> InputCtaButton.State.Disabled(
-                        localizer.localize("APP.GENERAL.CONNECT_WALLET"),
+                        localizer.localize("APP.TURNKEY_ONBOARD.SIGN_IN_TITLE"),
                     )
                     hasValidSize(transferInput) -> {
                         val firstBlockingError = tradeErrors.firstOrNull { it.type == ErrorType.required || it.type == ErrorType.error }

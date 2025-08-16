@@ -56,7 +56,7 @@ fun HeaderView(
                     Icon(
                         painter = painterResource(id = R.drawable.chevron_left),
                         contentDescription = "",
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(18.dp),
                         tint = ThemeColor.SemanticColor.text_primary.color,
                     )
                 }
