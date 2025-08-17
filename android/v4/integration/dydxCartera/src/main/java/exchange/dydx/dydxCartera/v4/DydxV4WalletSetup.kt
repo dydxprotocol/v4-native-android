@@ -167,10 +167,7 @@ class DydxV4WalletSetup @Inject constructor(
                             ethereumAddress = address,
                             walletId = wallet?.id,
                             cosmosAddress = cosmosAddress,
-                            mnemonic = mnemonic,
-                            apiKey = null,
-                            secret = null,
-                            passPhrase = null,
+                            dydxMnemonic = mnemonic,
                         ),
                     )
                 } else {

@@ -55,7 +55,25 @@ internal class TurnkeyNativeModule(
     @ReactMethod
     fun onAuthRouteToDesktopQR() {
         delegate?.onAuthRouteToDesktopQR()
-        print("Auth route to desktop QR requested from JS.")
+    }
+
+    @ReactMethod
+    fun onAuthCompleted(
+        onboardingSignature: String,
+        evmAddress: String,
+        svmAddress: String,
+        mnemonics: String,
+        loginMethod: String,
+        userEmail: String?
+    ) {
+        delegate?.onAuthCompleted(
+            onboardingSignature,
+            evmAddress,
+            svmAddress,
+            mnemonics,
+            loginMethod,
+            userEmail,
+        )
     }
 
     override fun onHostDestroy() {

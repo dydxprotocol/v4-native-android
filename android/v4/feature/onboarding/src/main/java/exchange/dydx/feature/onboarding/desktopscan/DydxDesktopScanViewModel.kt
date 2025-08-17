@@ -92,10 +92,15 @@ class DydxDesktopScanViewModel @Inject constructor(
                     walletAnalytics.logConnected(null)
                     abacusStateManager.setV4(
                         ethereumAddress = null,
-                        mnemonic = mnemonic,
+                        dydxMnemonic = mnemonic,
                         cosmosAddress = cosmosAddress,
                         walletId = null,
                         isNew = true,
+                        svmAddress = null,
+                        avalancheAddress = null,
+                        sourceWalletMnemonic = null,
+                        loginMethod = null,
+                        userEmail = null,
                     )
                     router.navigateBack()
                     router.navigateTo(PortfolioRoutes.main)

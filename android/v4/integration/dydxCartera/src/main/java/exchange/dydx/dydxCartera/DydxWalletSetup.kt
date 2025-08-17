@@ -25,10 +25,12 @@ open class DydxWalletSetup(
         val ethereumAddress: String,
         val walletId: String?,
         val cosmosAddress: String?,
-        val mnemonic: String?,
-        val apiKey: String?,
-        val secret: String?,
-        val passPhrase: String?,
+        val dydxMnemonic: String?,
+        val svmAddress: String? = null,
+        val avalancheAddress: String? = null,
+        val sourceWalletMnemonic: String? = null,
+        val loginMethod: String? = null,
+        val userEmail: String? = null,
     )
 
     sealed class Status {

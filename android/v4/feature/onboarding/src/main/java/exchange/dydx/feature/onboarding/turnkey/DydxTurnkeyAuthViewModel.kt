@@ -6,20 +6,31 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.dydxCartera.DydxWalletSetup
+import exchange.dydx.dydxCartera.DydxWalletSetup.SetupResult
+import exchange.dydx.dydxCartera.DydxWalletSetup.Status
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
+import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
+import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
+import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.react.LocalizerEntry
 import exchange.dydx.trading.integration.react.TurnkeyBridgeManagerDelegate
 import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
+import kotlin.String
 
 @HiltViewModel
 class DydxTurnkeyAuthViewModel @Inject constructor(
@@ -29,6 +40,11 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
     @ApplicationContext private val appContext: android.content.Context,
     private val router: DydxRouter,
     private val turnkeyReactBridge: TurnkeyReactBridge,
+    private val cosmosV4Client: CosmosV4ClientProtocol,
+    private val parser: ParserProtocol,
+    private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
+    private val onboardingAnalytics: OnboardingAnalytics,
+    private val walletAnalytics: WalletAnalytics,
 ) : ViewModel(), DydxViewModel, TurnkeyBridgeManagerDelegate {
 
     init {
@@ -111,7 +127,44 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
         loginMethod: String,
         userEmail: String?
     ) {
-        TODO("Not yet implemented")
+        cosmosV4Client.deriveCosmosKey(signature = onboardingSignature) { data ->
+            if (data == null) {
+                return@deriveCosmosKey
+            }
+
+            val json = Json.parseToJsonElement(data)
+            val map = json.jsonObject.toMap()
+            val dydxMnemonic = parser.asString(map["mnemonic"])
+            val cosmosAddress = parser.asString(map["address"])
+            if (dydxMnemonic != null) {
+                onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
+                walletAnalytics.logConnected(walletId = "turnkey")
+
+                val status = Status.Signed(
+                    SetupResult(
+                        ethereumAddress = evmAddress,
+                        walletId = "turnkey",
+                        cosmosAddress = cosmosAddress,
+                        dydxMnemonic = dydxMnemonic,
+                        svmAddress = svmAddress,
+                        avalancheAddress = null,
+                        sourceWalletMnemonic = mnemonics,
+                        loginMethod = loginMethod,
+                        userEmail = userEmail,
+                    ),
+                )
+
+                mutableSetupStatusFlow.value = status
+
+                viewModelScope.launch {
+                    router.navigateBack()
+                    router.navigateTo(
+                        route = OnboardingRoutes.tos,
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                }
+            }
+        }
     }
 
     override fun onAppleAuthRequest(nonce: String) {

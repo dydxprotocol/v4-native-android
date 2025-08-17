@@ -16,14 +16,11 @@ import exchange.dydx.trading.common.AppConfig
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Destination
 import exchange.dydx.trading.common.navigation.MarketRoutes
-import exchange.dydx.trading.common.navigation.OnboardingRoutes
-import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.feature.shared.analytics.RoutingAnalytics
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.koin.core.definition.indexKey
 import javax.inject.Inject
 
 private const val TAG = "DydxRouterImpl"
@@ -67,7 +64,7 @@ class DydxRouterImpl @Inject constructor(
     private val dydxUris: List<String> = listOf(
         "https://${appConfig.appWebHost}",
         "${appConfig.appScheme}://",
-        //"${appConfig.appScheme}://${appConfig.appSchemeHost}",
+        // "${appConfig.appScheme}://${appConfig.appSchemeHost}",
     )
 
     // All routes paths that are used for deeplinking

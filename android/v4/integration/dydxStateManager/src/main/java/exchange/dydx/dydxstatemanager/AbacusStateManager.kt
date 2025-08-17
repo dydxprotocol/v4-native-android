@@ -66,6 +66,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import okio.`-DeprecatedOkio`.source
 import javax.inject.Inject
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -89,7 +90,18 @@ interface AbacusStateManagerProtocol {
     fun setEnvironmentId(environment: String?)
     fun startAbacus()
 
-    fun setV4(ethereumAddress: String?, walletId: String?, cosmosAddress: String, mnemonic: String, isNew: Boolean)
+    fun setV4(
+        ethereumAddress: String?,
+        walletId: String?,
+        cosmosAddress: String,
+        dydxMnemonic: String,
+        isNew: Boolean,
+        svmAddress: String?,
+        avalancheAddress: String?,
+        sourceWalletMnemonic: String?,
+        loginMethod: String?,
+        userEmail: String?
+    )
 
     fun logOut()
     fun replaceCurrentWallet()
@@ -303,18 +315,33 @@ class AbacusStateManager @Inject constructor(
         ethereumAddress: String?,
         walletId: String?,
         cosmosAddress: String,
-        mnemonic: String,
+        dydxMnemonic: String,
         isNew: Boolean,
+        svmAddress: String?,
+        avalancheAddress: String?,
+        sourceWalletMnemonic: String?,
+        loginMethod: String?,
+        userEmail: String?
     ) {
         cosmosClient.initialized
             .filter { it }
             .take(1)
             .onEach {
-                cosmosClient.connectWallet(mnemonic) { result ->
+                cosmosClient.connectWallet(dydxMnemonic) { result ->
                     val resultMap = result?.jsonStringToMap()
                     if (resultMap?.contains("address") == true) {
                         val wallet =
-                            DydxWalletInstance.v4(ethereumAddress, walletId, cosmosAddress, mnemonic)
+                            DydxWalletInstance.v4(
+                                ethereumAddress = ethereumAddress,
+                                walletId = walletId,
+                                cosmoAddress = cosmosAddress,
+                                dydxMnemonic = dydxMnemonic,
+                                svmAddress = svmAddress,
+                                avalancheAddress = avalancheAddress,
+                                sourceWalletMnemonic = sourceWalletMnemonic,
+                                loginMethod = loginMethod,
+                                userEmail = userEmail,
+                            )
                         walletStateManager.setCurrentWallet(wallet)
                         asyncStateManager.setAddresses(
                             source = ethereumAddress,
@@ -583,8 +610,13 @@ class AbacusStateManager @Inject constructor(
                         ethereumAddress = ethereumAddress,
                         walletId = walletId,
                         cosmosAddress = cosmoAddress,
-                        mnemonic = mnemonic,
+                        dydxMnemonic = mnemonic,
                         isNew = false,
+                        svmAddress = null,
+                        avalancheAddress = null,
+                        sourceWalletMnemonic = null,
+                        loginMethod = null,
+                        userEmail = null,
                     )
                 }
             }

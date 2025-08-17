@@ -45,14 +45,19 @@ class DydxTosViewModel @Inject constructor(
                     val result = it.setupResult
                     val ethereumAddress = result.ethereumAddress
                     val cosmosAddress = result.cosmosAddress
-                    val mnemonic = result.mnemonic
-                    if (ethereumAddress != null && cosmosAddress != null && mnemonic != null) {
+                    val mnemonic = result.dydxMnemonic
+                    if (cosmosAddress != null && mnemonic != null) {
                         abacusStateManager.setV4(
                             ethereumAddress = ethereumAddress,
                             walletId = result.walletId,
                             cosmosAddress = cosmosAddress,
-                            mnemonic = mnemonic,
+                            dydxMnemonic = mnemonic,
                             isNew = true,
+                            svmAddress = null,
+                            avalancheAddress = null,
+                            sourceWalletMnemonic = null,
+                            loginMethod = null,
+                            userEmail = null,
                         )
                     }
 

@@ -96,35 +96,34 @@ data class DydxWalletInstance(
     var apiKey: String? = null,
     var secret: String? = null,
     var passPhrase: String? = null,
+    var svmAddress: String? = null,
+    var avalancheAddress: String? = null,
+    var sourceWalletMnemonic: String? = null,
+    var loginMethod: String? = null,
+    var userEmail: String? = null,
 ) {
     companion object {
         fun v4(
             ethereumAddress: String?,
             walletId: String?,
             cosmoAddress: String,
-            mnemonic: String,
+            dydxMnemonic: String,
+            svmAddress: String?,
+            avalancheAddress: String?,
+            sourceWalletMnemonic: String?,
+            loginMethod: String?,
+            userEmail: String?,
         ): DydxWalletInstance {
             return DydxWalletInstance(
-                ethereumAddress,
-                walletId,
-                cosmoAddress,
-                mnemonic,
-            )
-        }
-
-        fun v3(
-            ethereumAddress: String,
-            walletId: String?,
-            apiKey: String,
-            secret: String,
-            passPhrase: String,
-        ): DydxWalletInstance {
-            return DydxWalletInstance(
-                ethereumAddress,
-                walletId,
-                apiKey,
-                secret,
-                passPhrase,
+                ethereumAddress = ethereumAddress,
+                walletId = walletId,
+                cosmoAddress = cosmoAddress,
+                mnemonic = dydxMnemonic,
+                svmAddress = svmAddress,
+                avalancheAddress = avalancheAddress,
+                sourceWalletMnemonic = sourceWalletMnemonic,
+                loginMethod = loginMethod,
+                userEmail = userEmail,
             )
         }
     }
@@ -138,6 +137,11 @@ data class DydxWalletInstance(
             apiKey?.let { apiKey = another.apiKey }
             secret?.let { secret = another.secret }
             passPhrase?.let { passPhrase = another.passPhrase }
+            svmAddress?.let { svmAddress = another.svmAddress }
+            avalancheAddress?.let { avalancheAddress = another.avalancheAddress }
+            sourceWalletMnemonic?.let { sourceWalletMnemonic = another.sourceWalletMnemonic }
+            loginMethod?.let { loginMethod = another.loginMethod }
+            userEmail?.let { userEmail = another.userEmail }
         }
     }
 

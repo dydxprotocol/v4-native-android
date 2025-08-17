@@ -75,8 +75,13 @@ class DydxUserWalletsViewModel @Inject constructor(
                         ethereumAddress = wallet.ethereumAddress,
                         walletId = wallet.walletId,
                         cosmosAddress = cosmosAddress,
-                        mnemonic = mnemonic,
+                        dydxMnemonic = mnemonic,
                         isNew = true,
+                        svmAddress = null,
+                        avalancheAddress = null,
+                        sourceWalletMnemonic = null,
+                        loginMethod = null,
+                        userEmail = null,
                     )
                 }
             },
