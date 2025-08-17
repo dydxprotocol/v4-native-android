@@ -58,7 +58,7 @@ fun NavGraphBuilder.loginGraph(
                 nullable = true
             },
         ),
-        deepLinks = appRouter.deeplinks(destination = OnboardingRoutes.wallet_list, params = listOf("mobileOnly", "backButtonRoute"))
+        deepLinks = appRouter.deeplinks(destination = OnboardingRoutes.wallet_list, params = listOf("mobileOnly", "backButtonRoute")),
     ) { nbse ->
         DydxWalletListView.Content(Modifier)
     }

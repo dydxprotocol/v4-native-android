@@ -117,12 +117,12 @@ type SendSignInRequestParams = {
   userEmail?: string;
 };
 
-  type OnboardDydxParams = {
-    dydxSession: DydxTurnkeySession;
-    salt: string;
-    loginMethod: string;
-    userEmail?: string;
-  };
+type OnboardDydxParams = {
+  dydxSession: DydxTurnkeySession;
+  salt: string;
+  loginMethod: string;
+  userEmail?: string;
+};
 
 interface AuthRelayProviderProps {
   children: ReactNode;

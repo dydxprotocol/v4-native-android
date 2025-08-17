@@ -48,8 +48,6 @@ import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import android.os.Debug
-import exchange.dydx.trading.core.BuildConfig
 
 private const val TAG = "TradingActivity"
 
@@ -74,7 +72,7 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
     private lateinit var reactInstanceManager: ReactInstanceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
-       // if (BuildConfig.DEBUG) Debug.waitForDebugger()   // pause here
+        // if (BuildConfig.DEBUG) Debug.waitForDebugger()   // pause here
         super.onCreate(savedInstanceState)
 
         setUpReactNativeBridge()
