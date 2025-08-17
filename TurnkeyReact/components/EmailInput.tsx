@@ -35,7 +35,6 @@ export const EmailInput = ({
         completeOtpAuth({
           otpType: "email",
           token: token,
-          embeddedKeyAndNonce: embeddedKeyAndNonce,
           configs: configs,
         });
 

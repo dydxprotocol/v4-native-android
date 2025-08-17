@@ -32,8 +32,14 @@ fun NavGraphBuilder.loginGraph(
 
     dydxComposable(
         router = appRouter,
-        route = OnboardingRoutes.turnkey,
-        deepLinks = appRouter.deeplinks(OnboardingRoutes.turnkey),
+        route = OnboardingRoutes.turnkey + "?token={token}",
+        arguments = listOf(
+            navArgument("token") {
+                type = NavType.StringType
+                nullable = true
+            },
+        ),
+        deepLinks = appRouter.deeplinks(destination = OnboardingRoutes.turnkey, params = listOf("token")),
     ) { nbse ->
         DydxTurnkeyAuthView.Content(Modifier)
     }
@@ -45,13 +51,14 @@ fun NavGraphBuilder.loginGraph(
             navArgument("mobileOnly") {
                 type = NavType.StringType
                 defaultValue = "false"
+                nullable = true
             },
             navArgument("backButtonRoute") {
                 type = NavType.StringType
-                defaultValue = ""
+                nullable = true
             },
         ),
-        deepLinks = appRouter.deeplinks(OnboardingRoutes.wallet_list),
+        deepLinks = appRouter.deeplinks(destination = OnboardingRoutes.wallet_list, params = listOf("mobileOnly", "backButtonRoute"))
     ) { nbse ->
         DydxWalletListView.Content(Modifier)
     }
@@ -59,7 +66,11 @@ fun NavGraphBuilder.loginGraph(
     dydxComposable(
         router = appRouter,
         route = OnboardingRoutes.connect + "/{walletId}",
-        arguments = listOf(navArgument("walletId") { type = NavType.StringType }),
+        arguments = listOf(
+            navArgument("walletId") {
+                type = NavType.StringType
+            },
+        ),
         deepLinks = appRouter.deeplinks(OnboardingRoutes.connect, "walletId"),
     ) { nbse ->
         DydxOnboardConnectView.Content(Modifier)
@@ -71,7 +82,7 @@ fun NavGraphBuilder.loginGraph(
         arguments = listOf(
             navArgument("backButtonRoute") {
                 type = NavType.StringType
-                defaultValue = ""
+                nullable = true
             },
         ),
         deepLinks = appRouter.deeplinks(OnboardingRoutes.desktop_scan),

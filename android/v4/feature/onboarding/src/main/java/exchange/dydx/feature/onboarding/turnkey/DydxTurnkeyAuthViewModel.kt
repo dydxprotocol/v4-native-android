@@ -1,5 +1,6 @@
 package exchange.dydx.feature.onboarding.turnkey
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,6 @@ import exchange.dydx.dydxCartera.DydxWalletSetup.Status
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.R
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
@@ -40,7 +40,6 @@ import kotlin.String
 class DydxTurnkeyAuthViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
     @ApplicationContext private val appContext: android.content.Context,
     private val router: DydxRouter,
     private val turnkeyReactBridge: TurnkeyReactBridge,
@@ -49,7 +48,10 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
     private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel, TurnkeyBridgeManagerDelegate {
+
+    private val token: String? = savedStateHandle["token"]
 
     init {
         // Need to wait for the bridge to be initialized before setting the delegate
@@ -58,13 +60,12 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             .take(1)
             .onEach {
                 turnkeyReactBridge.setBridgeDelegate(this)
+                if (token != null) {
+                    Thread.sleep(1000)
+                    turnkeyReactBridge.emailTokenReceived(token = token)
+                }
             }
             .launchIn(viewModelScope)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        turnkeyReactBridge.setBridgeDelegate(null)
     }
 
     val state: Flow<DydxTurnkeyAuthView.ViewState?> = abacusStateManager.state.marketSummary

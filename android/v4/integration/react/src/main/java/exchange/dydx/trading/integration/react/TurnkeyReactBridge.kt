@@ -59,6 +59,15 @@ class TurnkeyReactBridge @Inject constructor(
         _isInitialized.value = true
     }
 
+    fun emailTokenReceived(token: String) {
+        if (!isInitialized.value) {
+            throw IllegalStateException("TurnkeyReactBridge is not initialized")
+        }
+
+        val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
+        turnkeyNativeModule?.emailTokenReceived(token)
+    }
+
     fun testFunction() {
         if (!isInitialized.value) {
             throw IllegalStateException("TurnkeyReactBridge is not initialized")

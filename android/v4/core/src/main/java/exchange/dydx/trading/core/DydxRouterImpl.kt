@@ -63,7 +63,8 @@ class DydxRouterImpl @Inject constructor(
 
     private val dydxUris: List<String> = listOf(
         "https://${appConfig.appWebHost}",
-        "${appConfig.appScheme}://${appConfig.appSchemeHost}",
+        "${appConfig.appScheme}://",
+    //    "${appConfig.appScheme}://${appConfig.appSchemeHost}",
     )
 
     // All routes paths that are used for deeplinking

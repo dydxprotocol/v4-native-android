@@ -40,4 +40,5 @@ export class STORAGE_KEY {
   static ORGANIZATION_ID = "organizationId";
   static USER_ID = "userId";
   static EMAIL = "email";
+  static PRIVATE_KEY = "privateKey";
 }

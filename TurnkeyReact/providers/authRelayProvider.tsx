@@ -84,7 +84,6 @@ export type OtpAuthRequest = {
 export type OtpAuthComplete = {
   otpType: string;
   token: string;
-  embeddedKeyAndNonce: EmbeddedKeyAndNonce;
   configs: TurnkeyConfigs;
 };
 
@@ -107,6 +106,23 @@ export const AuthRelayContext = createContext<AuthRelayProviderType>({
   loginWithOAuth: async () => Promise.resolve(),
   clearError: () => { },
 });
+
+type SendSignInRequestParams = {
+  headers: HeadersInit;
+  body: string;
+  embeddedKeyAndNonce: EmbeddedKeyAndNonce;
+  configs: TurnkeyConfigs;
+  loginMethod: LoginMethod;
+  providerName?: string;
+  userEmail?: string;
+};
+
+  type OnboardDydxParams = {
+    dydxSession: DydxTurnkeySession;
+    salt: string;
+    loginMethod: string;
+    userEmail?: string;
+  };
 
 interface AuthRelayProviderProps {
   children: ReactNode;
@@ -135,23 +151,33 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       'Accept': 'application/json'
     };
 
-    sendSignInRequest(headers, JSON.stringify(inputBody), embeddedKeyAndNonce, configs, LoginMethod.Email, contact);
+    sendSignInRequest({
+      headers: headers,
+      body: JSON.stringify(inputBody),
+      embeddedKeyAndNonce,
+      configs,
+      loginMethod: LoginMethod.Email,
+      providerName: undefined,
+      userEmail: contact
+    });
   };
 
   const completeOtpAuth = async ({
+    otpType,
     token,
-    embeddedKeyAndNonce,
     configs,
   }: OtpAuthComplete) => {
     dispatch({ type: "LOADING", payload: LoginMethod.Email });
     try {
-      const privateKey = decryptCredentialBundle(token, embeddedKeyAndNonce.privateKey!);
+      const deleteKey = true; // Set to true to delete the key after use
+      const decryptKey = await getValueWithKey(deleteKey, STORAGE_KEY.PRIVATE_KEY);
+      if (!decryptKey) {
+        throw new Error("No private decrypt key found in storage");
+      }
+
+      const privateKey = decryptCredentialBundle(token, decryptKey);
       const publicKey = uint8ArrayToHexString(getPublicKey(privateKey));
 
-      console.log("Decrypted bundle private key:", privateKey);
-      console.log("Decrypted bundle public key:", publicKey);
-
-      const deleteKey = true; // Set to true to delete the key after use
       const salt = await getValueWithKey(deleteKey, STORAGE_KEY.EMAIL_SALT)
       if (!salt) {
         throw new Error("No salt found in storage");
@@ -173,7 +199,12 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
         privateKey, publicKey, configs, organizationId, userId
       )
 
-      onboardDydx(dydxSession, salt, LoginMethod.Email, userEmail);
+      await onboardDydx({
+        dydxSession,
+        salt,
+        loginMethod: LoginMethod.Email,
+        userEmail
+      });
 
     } catch (error: any) {
       console.error("Error decrypting credential bundle:", error);
@@ -216,18 +247,26 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       'Accept': 'application/json'
     };
 
-    sendSignInRequest(headers, JSON.stringify(inputBody), embeddedKeyAndNonce, configs, LoginMethod.OAuth, providerName, decoded.email);
+    sendSignInRequest({
+      headers: headers,
+      body: JSON.stringify(inputBody),
+      embeddedKeyAndNonce,
+      configs,
+      loginMethod: LoginMethod.OAuth,
+      providerName,
+      userEmail: decoded.email
+    });
   };
 
-  const sendSignInRequest = async (
-    headers: HeadersInit,
-    body: string,
-    embeddedKeyAndNonce: EmbeddedKeyAndNonce,
-    configs: TurnkeyConfigs,
-    loginMethod: LoginMethod,
-    providerName?: string,
-    userEmail?: string,
-  ) => {
+  const sendSignInRequest = async ({
+    headers,
+    body,
+    embeddedKeyAndNonce,
+    configs,
+    loginMethod,
+    providerName,
+    userEmail,
+  }: SendSignInRequestParams) => {
     dispatch({ type: "LOADING", payload: loginMethod });
     try {
       const response = await fetch(`${configs.backendApiUrl}/v4/turnkey/signin`, {
@@ -243,9 +282,9 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       }
 
       if (loginMethod === LoginMethod.OAuth && providerName !== undefined) {
-        handleOauthResponse(response, embeddedKeyAndNonce, configs, providerName, userEmail);
+        await handleOauthResponse(response, embeddedKeyAndNonce, configs, providerName, userEmail);
       } else if (loginMethod === LoginMethod.Email && userEmail !== undefined) {
-        handleEmailResponse(response, embeddedKeyAndNonce, configs, "email", userEmail);
+        await handleEmailResponse(response, embeddedKeyAndNonce, configs, "email", userEmail);
       }
 
     } catch (error: any) {
@@ -278,15 +317,15 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       configs
     );
 
-    onboardDydx(dydxSession, salt, loginMethod, userEmail);
+    await onboardDydx({ dydxSession, salt, loginMethod, userEmail });
   }
 
-  const onboardDydx = async (
-    dydxSession: DydxTurnkeySession,
-    salt: string,
-    loginMethod: string,
-    userEmail?: string,
-  ) => {
+  const onboardDydx = async ({
+    dydxSession,
+    salt,
+    loginMethod,
+    userEmail,
+  }: OnboardDydxParams) => {
     const accounts = await dydxSession.loadWalletAccounts();
 
     // get the eth account
@@ -345,6 +384,9 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
     setValueWithKey(STORAGE_KEY.ORGANIZATION_ID, organizationId);
     setValueWithKey(STORAGE_KEY.USER_ID, userId);
     setValueWithKey(STORAGE_KEY.EMAIL, userEmail);
+    if (embeddedKeyAndNonce.privateKey) {
+      setValueWithKey(STORAGE_KEY.PRIVATE_KEY, embeddedKeyAndNonce.privateKey);
+    }
   }
 
   const clearError = () => {
