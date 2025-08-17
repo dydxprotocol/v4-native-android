@@ -191,7 +191,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="@string/app_scheme" />
-<!--                <data android:host="@string/app_scheme_host" />-->
+                <data android:host="@string/app_scheme_host" />
             </intent-filter>
         </activity>
 
