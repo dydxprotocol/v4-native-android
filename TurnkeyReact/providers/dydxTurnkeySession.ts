@@ -2,6 +2,7 @@
 import { ApiKeyStamper } from "@turnkey/api-key-stamper";
 import { TurnkeyClient, TurnkeyApi } from "@turnkey/http";
 import { _TypedDataEncoder } from "ethers/lib/utils";
+import { ethers } from "ethers";
 import { TurnkeyConfigs } from "../sharedConfigs";
 import {
   generateP256KeyPair,
@@ -64,6 +65,14 @@ export class DydxTurnkeySession {
 
     this.walletAccounts = response;
     return Promise.resolve(response);
+  }
+
+  sendDydxAddress = async (dydxAddress: String): Promise<void> => {
+    const message = "\x19Ethereum Signed Message:\n" + dydxAddress.length + dydxAddress
+
+    const messageHash = ethers.utils.hashMessage(message);
+
+    return Promise.resolve();
   }
 
   exportWallet = async (walletId: string): Promise<string> => {

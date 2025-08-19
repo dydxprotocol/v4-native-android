@@ -39,6 +39,21 @@ internal class TurnkeyNativeModule(
         }
     }
 
+    fun uploadDydxAddress(dydxAddress: String, callback: (String) -> Unit) {
+        if (reactContext.hasActiveReactInstance()) {
+            pendingCallbacks[dydxAddress] = callback
+
+            val params = Arguments.createMap()
+            params.putString("dydxAddress", dydxAddress)
+
+            val jsModule = reactContext
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            jsModule?.emit(eventName = "DydxAddressReceived", data = params)
+        } else {
+            print("React Native instance is not active.")
+        }
+    }
+
     fun requestJsFunction(callbackId: String, callback: (String) -> Unit) {
         pendingCallbacks[callbackId] = callback
 

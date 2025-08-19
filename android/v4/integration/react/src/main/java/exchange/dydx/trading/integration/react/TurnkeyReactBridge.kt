@@ -68,6 +68,15 @@ class TurnkeyReactBridge @Inject constructor(
         turnkeyNativeModule?.emailTokenReceived(token)
     }
 
+    fun uploadDydxAddress(dydxAddress: String, callback: (String) -> Unit) {
+        if (!isInitialized.value) {
+            throw IllegalStateException("TurnkeyReactBridge is not initialized")
+        }
+
+        val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
+        turnkeyNativeModule?.uploadDydxAddress(dydxAddress, callback)
+    }
+
     fun testFunction() {
         if (!isInitialized.value) {
             throw IllegalStateException("TurnkeyReactBridge is not initialized")

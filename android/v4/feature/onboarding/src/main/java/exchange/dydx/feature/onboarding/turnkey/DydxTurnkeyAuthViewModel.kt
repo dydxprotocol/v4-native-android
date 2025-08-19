@@ -22,6 +22,7 @@ import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.react.LocalizerEntry
 import exchange.dydx.trading.integration.react.TurnkeyBridgeManagerDelegate
 import exchange.dydx.trading.integration.react.TurnkeyReactBridge
+import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -36,6 +37,8 @@ import kotlinx.serialization.json.jsonObject
 import javax.inject.Inject
 import kotlin.String
 
+private const val TAG = "DydxTurnkeyAuthViewModel"
+
 @HiltViewModel
 class DydxTurnkeyAuthViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
@@ -48,6 +51,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
     private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
+    private val logger: Logging,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel, TurnkeyBridgeManagerDelegate {
 
@@ -148,7 +152,19 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             val map = json.jsonObject.toMap()
             val dydxMnemonic = parser.asString(map["mnemonic"])
             val cosmosAddress = parser.asString(map["address"])
-            if (dydxMnemonic != null) {
+
+            if (dydxMnemonic.isNullOrEmpty() || cosmosAddress.isNullOrEmpty()) {
+                logger.e(TAG, "Failed to derive Cosmos key from Turnkey")
+                return@deriveCosmosKey
+            }
+
+            turnkeyReactBridge.uploadDydxAddress(dydxAddress = cosmosAddress) { result ->
+                if (result != "success") {
+                    // Log error but continue
+                    logger.e(TAG, "Failed to upload dYdX address to Turnkey: $result")
+                    return@uploadDydxAddress
+                }
+
                 onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
                 walletAnalytics.logConnected(walletId = "turnkey")
 
