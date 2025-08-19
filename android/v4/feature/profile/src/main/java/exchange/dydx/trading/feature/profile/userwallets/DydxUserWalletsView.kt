@@ -70,8 +70,8 @@ object DydxUserWalletsView : DydxComponent {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = ThemeShapes.HorizontalPadding)
-                .themeColor(ThemeColor.SemanticColor.layer_2),
+                .themeColor(ThemeColor.SemanticColor.layer_2)
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.GENERAL.MANAGE_WALLET"),

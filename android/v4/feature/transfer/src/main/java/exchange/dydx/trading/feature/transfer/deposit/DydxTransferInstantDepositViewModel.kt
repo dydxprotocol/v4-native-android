@@ -9,6 +9,7 @@ import exchange.dydx.abacus.state.machine.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxDoubleFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -99,6 +100,13 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
                 )
             },
             freeDepositWarningMessage = shouldShowInstantDepositWarning(transferInput = transferInput),
+            closeAction = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+                {
+                    router.navigateBack()
+                }
+            } else {
+                null
+            }
         )
     }
 

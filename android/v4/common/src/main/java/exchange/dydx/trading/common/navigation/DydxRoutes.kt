@@ -80,6 +80,11 @@ object TradeRoutes {
 
 object TransferRoutes {
     const val transfer = "transfer"
+    const val transfer_selector = "transfer/selector"
+    const val transfer_deposit = "transfer/deposit"
+    const val transfer_withdrawal = "transfer/withdrawal"
+    const val transfer_out = "transfer/out"
+    const val transfer_faucet = "transfer/faucet"
     const val transfer_search = "transfer/search"
     const val transfer_deposit_search = "transfer/deposit/search"
     const val transfer_status = "transfer/status"

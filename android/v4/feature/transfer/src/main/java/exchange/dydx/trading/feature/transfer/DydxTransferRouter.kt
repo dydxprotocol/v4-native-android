@@ -8,11 +8,16 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes.transfer_deposit_noble
 import exchange.dydx.trading.common.navigation.dydxComposable
+import exchange.dydx.trading.feature.transfer.deposit.DydxTransferInstantDepositView
+import exchange.dydx.trading.feature.transfer.faucet.DydxTransferFaucetView
 import exchange.dydx.trading.feature.transfer.noble.DydxTransferNobleAddressView
 import exchange.dydx.trading.feature.transfer.search.DydxInstantDepositSearchView
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchView
+import exchange.dydx.trading.feature.transfer.selector.DydxTransferSelectorView
 import exchange.dydx.trading.feature.transfer.status.DydxTransferInstantStatusView
 import exchange.dydx.trading.feature.transfer.status.DydxTransferStatusView
+import exchange.dydx.trading.feature.transfer.transferout.DydxTransferOutView
+import exchange.dydx.trading.feature.transfer.withdrawal.DydxTransferWithdrawalView
 import exchange.dydx.utilities.utils.Logging
 
 private const val TAG = "DydxTransferRouter"
@@ -27,6 +32,46 @@ fun NavGraphBuilder.transferGraph(
         deepLinks = appRouter.deeplinks(TransferRoutes.transfer),
     ) { navBackStackEntry ->
         DydxTransferView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_selector,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_selector),
+    ) { navBackStackEntry ->
+        DydxTransferSelectorView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_deposit,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_deposit),
+    ) { navBackStackEntry ->
+        DydxTransferInstantDepositView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_withdrawal,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_withdrawal),
+    ) { navBackStackEntry ->
+        DydxTransferWithdrawalView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_out,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_out),
+    ) { navBackStackEntry ->
+        DydxTransferOutView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_faucet,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_faucet),
+    ) { navBackStackEntry ->
+        DydxTransferFaucetView.Content(Modifier)
     }
 
     dydxComposable(

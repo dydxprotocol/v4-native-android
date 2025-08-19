@@ -18,12 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
+import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.receipt.DydxReceiptView
 import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
+import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.transfer.components.AddressInputBox
 import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
@@ -46,6 +50,7 @@ object DydxTransferOutView : DydxComponent {
         val tokensComboBox: TokensComboBox.ViewState? = null,
         val transferAmount: TransferAmountBox.ViewState? = null,
         val transferMemo: TransferMemoBox.ViewState? = null,
+        val closeAction: (() -> Unit)? = null,
     ) {
 
         companion object {
@@ -76,8 +81,18 @@ object DydxTransferOutView : DydxComponent {
 
         Column(
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {
+            if (state.closeAction != null) {
+                HeaderView(
+                    title = state.localizer.localize("APP.GENERAL.TRANSFER_OUT"),
+                    closeAction = { state.closeAction.invoke() },
+                )
+
+                PlatformDivider()
+            }
+
             LazyColumn(
                 modifier = modifier
                     .fillMaxWidth()

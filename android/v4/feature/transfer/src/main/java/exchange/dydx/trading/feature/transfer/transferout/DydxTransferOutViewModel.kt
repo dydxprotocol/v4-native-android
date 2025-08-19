@@ -14,6 +14,8 @@ import exchange.dydx.dydxstatemanager.nativeTokenDenom
 import exchange.dydx.dydxstatemanager.nativeTokenKey
 import exchange.dydx.dydxstatemanager.usdcTokenKey
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
@@ -42,6 +44,7 @@ class DydxTransferOutViewModel @Inject constructor(
     private val parser: ParserProtocol,
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
     private val selectedTokenFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
 
@@ -191,6 +194,13 @@ class DydxTransferOutViewModel @Inject constructor(
                     )
                 },
             ),
+            closeAction = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+                {
+                    router.navigateBack()
+                }
+            } else {
+                null
+            }
         )
     }
 }

@@ -22,15 +22,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformButton
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
 import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
+import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.receipt.DydxReceiptView
 import exchange.dydx.trading.feature.receipt.validation.DydxValidationView
+import exchange.dydx.trading.feature.shared.views.HeaderView
 import exchange.dydx.trading.feature.transfer.components.InstantInputBox
 import exchange.dydx.trading.feature.transfer.components.InstantSelector
 import exchange.dydx.trading.feature.transfer.components.InstantSelector.DepositSelectorViewStyle
@@ -55,6 +58,7 @@ object DydxTransferInstantDepositView : DydxComponent {
         val connectWalletAction: () -> Unit = {},
         val showConnectWallet: Boolean = false,
         val freeDepositWarningMessage: String? = null,
+        val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -80,8 +84,18 @@ object DydxTransferInstantDepositView : DydxComponent {
         }
 
         Column(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize()
+                .themeColor(ThemeColor.SemanticColor.layer_2)
         ) {
+            if (state.closeAction != null) {
+                HeaderView(
+                    title = state.localizer.localize("APP.GENERAL.DEPOSIT"),
+                    closeAction = { state.closeAction.invoke() },
+                )
+
+                PlatformDivider()
+            }
+
             LazyColumn(
                 modifier = modifier
                     .fillMaxWidth()

@@ -13,11 +13,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.buttons.PlatformButton
+import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.feature.shared.views.HeaderView
 
 @Preview
 @Composable
@@ -31,6 +33,7 @@ object DydxTransferFaucetView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
         val ctaButtonAction: (() -> Unit)? = null,
+        val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
@@ -56,8 +59,17 @@ object DydxTransferFaucetView : DydxComponent {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_3),
+                .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {
+            if (state.closeAction != null) {
+                HeaderView(
+                    title = "Faucet",
+                    closeAction = { state.closeAction.invoke() },
+                )
+
+                PlatformDivider()
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
             PlatformButton(

@@ -7,6 +7,9 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -16,6 +19,8 @@ class DydxTransferFaucetViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val toaster: PlatformInfo,
+    private val featureFlags: DydxFeatureFlags,
+    private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTransferFaucetView.ViewState?> = flowOf(createViewState())
@@ -42,6 +47,13 @@ class DydxTransferFaucetViewModel @Inject constructor(
                     }
                 }
             },
+            closeAction = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+                {
+                    router.navigateBack()
+                }
+            } else {
+                null
+            }
         )
     }
 }

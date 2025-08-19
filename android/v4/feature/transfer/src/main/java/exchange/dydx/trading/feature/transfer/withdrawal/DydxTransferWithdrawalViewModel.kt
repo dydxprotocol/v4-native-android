@@ -11,6 +11,8 @@ import exchange.dydx.abacus.state.machine.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizedString
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
@@ -38,6 +40,7 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
     private val parser: ParserProtocol,
     private val router: DydxRouter,
     private val paramFlow: MutableStateFlow<DydxTransferSearchParam?>,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
     private val selectedChainFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
     private val selectedTokenFlow: MutableStateFlow<SelectionOption?> = MutableStateFlow(null)
@@ -186,6 +189,13 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
                 value = transferInput?.address,
                 placeholder = "0x00...0000",
             ),
+            closeAction = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+                {
+                    router.navigateBack()
+                }
+            } else {
+                null
+            }
         )
     }
 }
