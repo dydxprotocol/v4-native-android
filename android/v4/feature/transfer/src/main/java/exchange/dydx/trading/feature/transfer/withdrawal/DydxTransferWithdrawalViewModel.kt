@@ -195,7 +195,7 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
                 }
             } else {
                 null
-            }
+            },
         )
     }
 }

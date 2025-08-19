@@ -200,7 +200,7 @@ class DydxTransferOutViewModel @Inject constructor(
                 }
             } else {
                 null
-            }
+            },
         )
     }
 }

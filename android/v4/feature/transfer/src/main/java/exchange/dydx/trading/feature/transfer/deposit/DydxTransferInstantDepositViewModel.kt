@@ -106,7 +106,7 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
                 }
             } else {
                 null
-            }
+            },
         )
     }
 

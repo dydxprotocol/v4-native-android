@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +33,6 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.HeaderView
-import exchange.dydx.trading.feature.shared.views.HeaderViewCloseBotton
-import exchange.dydx.trading.feature.transfer.DydxTransferSectionsView
 
 @Preview
 @Composable
@@ -105,7 +101,7 @@ object DydxTransferSelectorView : DydxComponent {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_2)
+                .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.GENERAL.TRANSFERS"),
@@ -118,7 +114,7 @@ object DydxTransferSelectorView : DydxComponent {
                 modifier = Modifier
                     .padding(top = ThemeShapes.VerticalPadding)
                     .padding(horizontal = ThemeShapes.HorizontalPadding),
-                verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding)
+                verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
             ) {
                 ButtonContent(action = Action.Deposit, state = state)
                 ButtonContent(action = Action.Withdrawal, state = state)
@@ -176,4 +172,3 @@ object DydxTransferSelectorView : DydxComponent {
         }
     }
 }
-

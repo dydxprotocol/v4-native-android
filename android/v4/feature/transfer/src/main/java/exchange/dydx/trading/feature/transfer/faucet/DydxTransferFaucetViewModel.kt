@@ -53,7 +53,7 @@ class DydxTransferFaucetViewModel @Inject constructor(
                 }
             } else {
                 null
-            }
+            },
         )
     }
 }

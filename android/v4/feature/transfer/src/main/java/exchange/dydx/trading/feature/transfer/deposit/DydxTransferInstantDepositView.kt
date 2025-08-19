@@ -85,7 +85,7 @@ object DydxTransferInstantDepositView : DydxComponent {
 
         Column(
             modifier = modifier.fillMaxSize()
-                .themeColor(ThemeColor.SemanticColor.layer_2)
+                .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {
             if (state.closeAction != null) {
                 HeaderView(
