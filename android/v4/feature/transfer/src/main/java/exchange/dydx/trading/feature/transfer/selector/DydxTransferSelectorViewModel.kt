@@ -4,12 +4,17 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
+import exchange.dydx.trading.common.navigation.TransferRoutes.transfer_turnkey_deposit
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,9 +25,16 @@ class DydxTransferSelectorViewModel @Inject constructor(
     private val router: DydxRouter,
 ) : ViewModel(), DydxViewModel {
 
-    val state: Flow<DydxTransferSelectorView.ViewState?> = flowOf(createViewState())
+    val state: Flow<DydxTransferSelectorView.ViewState?> =
+        abacusStateManager.state.currentWallet
+            .map { wallet ->
+                createViewState(wallet = wallet)
+            }
+            .distinctUntilChanged()
 
-    private fun createViewState(): DydxTransferSelectorView.ViewState {
+    private fun createViewState(
+        wallet: DydxWalletInstance?
+    ): DydxTransferSelectorView.ViewState {
         return DydxTransferSelectorView.ViewState(
             localizer = localizer,
             isMainnet = abacusStateManager.state.isMainNet,
@@ -34,7 +46,8 @@ class DydxTransferSelectorViewModel @Inject constructor(
                 when (action) {
                     DydxTransferSelectorView.Action.Deposit -> {
                         router.navigateTo(
-                            route = TransferRoutes.transfer_deposit,
+                            route = if (wallet?.walletId == "turnkey") TransferRoutes.transfer_turnkey_deposit else
+                                TransferRoutes.transfer_deposit,
                             presentation = DydxRouter.Presentation.Modal,
                         )
                     }

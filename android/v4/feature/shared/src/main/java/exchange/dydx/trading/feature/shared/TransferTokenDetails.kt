@@ -1,6 +1,8 @@
 package exchange.dydx.trading.feature.shared
 
+import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.di.CoroutineScopes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -97,7 +99,29 @@ class TransferTokenDetails @Inject constructor(
 }
 
 enum class TransferChain {
-    Ethereum, Optimism, Arbitrum, Base, Polygon, Solana, Avalanche
+    Ethereum, Optimism, Arbitrum, Base, Polygon, Solana, Avalanche;
+
+    val supportedDepositTokenString: String
+        get() = when (this) {
+            Ethereum -> "ETH, USDC"
+            Optimism -> "ETH, USDC"
+            Arbitrum -> "ETH, USDC"
+            Base -> "ETH, USDC"
+            Polygon -> "POL, USDC"
+            Solana -> "USDC"
+            Avalanche -> "AVAX, USDC"
+        }
+
+    fun depositFeesString(localizer: LocalizerProtocol): String {
+        return when (this) {
+            Ethereum -> localizer.localizeWithParams(
+                path = "APP.DEPOSIT_MODAL.FREE_ABOVE",
+                params = mapOf("AMOUNT" to "$100")
+            )
+
+            else -> localizer.localize(path = "APP.GENERAL.FREE")
+        }
+    }
 }
 
 enum class TransferToken {

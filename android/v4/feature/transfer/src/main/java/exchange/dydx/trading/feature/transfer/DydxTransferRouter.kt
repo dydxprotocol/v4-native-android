@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes.transfer_deposit_noble
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.transfer.deposit.DydxTransferInstantDepositView
+import exchange.dydx.trading.feature.transfer.deposit.DydxTransferTurnkeyDepositView
 import exchange.dydx.trading.feature.transfer.faucet.DydxTransferFaucetView
 import exchange.dydx.trading.feature.transfer.noble.DydxTransferNobleAddressView
 import exchange.dydx.trading.feature.transfer.search.DydxInstantDepositSearchView
@@ -48,6 +49,14 @@ fun NavGraphBuilder.transferGraph(
         deepLinks = appRouter.deeplinks(TransferRoutes.transfer_deposit),
     ) { navBackStackEntry ->
         DydxTransferInstantDepositView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_turnkey_deposit,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_turnkey_deposit),
+    ) { navBackStackEntry ->
+        DydxTransferTurnkeyDepositView.Content(Modifier)
     }
 
     dydxComposable(

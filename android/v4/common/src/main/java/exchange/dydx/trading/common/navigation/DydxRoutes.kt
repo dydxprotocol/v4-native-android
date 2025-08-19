@@ -82,6 +82,7 @@ object TransferRoutes {
     const val transfer = "transfer"
     const val transfer_selector = "transfer/selector"
     const val transfer_deposit = "transfer/deposit"
+    const val transfer_turnkey_deposit = "transfer/turnkey_deposit"
     const val transfer_withdrawal = "transfer/withdrawal"
     const val transfer_out = "transfer/out"
     const val transfer_faucet = "transfer/faucet"

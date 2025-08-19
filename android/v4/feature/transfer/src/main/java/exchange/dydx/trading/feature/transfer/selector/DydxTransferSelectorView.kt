@@ -59,7 +59,7 @@ object DydxTransferSelectorView : DydxComponent {
                 Deposit -> "APP.ONBOARDING.DEPOSIT_DESC"
                 Withdrawal -> "APP.ONBOARDING.WITHDRAWAL_DESC"
                 TransferOut -> "APP.ONBOARDING.TRANSFEROUT_DESC"
-                Faucet -> ""
+                Faucet -> "Fund wallet with testnet USDC on dYdX chain"
             }
 
         val icon: Int
@@ -166,7 +166,7 @@ object DydxTransferSelectorView : DydxComponent {
             Icon(
                 painter = painterResource(id = R.drawable.chevron_right),
                 contentDescription = "",
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(16.dp),
                 tint = ThemeColor.SemanticColor.text_secondary.color,
             )
         }
