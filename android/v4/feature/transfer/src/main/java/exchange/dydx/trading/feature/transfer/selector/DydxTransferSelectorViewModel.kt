@@ -12,8 +12,6 @@ import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes.transfer_turnkey_deposit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -46,8 +44,11 @@ class DydxTransferSelectorViewModel @Inject constructor(
                 when (action) {
                     DydxTransferSelectorView.Action.Deposit -> {
                         router.navigateTo(
-                            route = if (wallet?.walletId == "turnkey") TransferRoutes.transfer_turnkey_deposit else
-                                TransferRoutes.transfer_deposit,
+                            route = if (wallet?.walletId == "turnkey") {
+                                TransferRoutes.transfer_turnkey_deposit
+                            } else {
+                                TransferRoutes.transfer_deposit
+                            },
                             presentation = DydxRouter.Presentation.Modal,
                         )
                     }

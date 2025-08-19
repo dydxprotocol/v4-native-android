@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.transfer.deposit
 
 import android.R.attr.action
 import android.R.attr.text
-import android.graphics.drawable.shapes.RoundRectShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,12 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +47,7 @@ fun Preview_DydxTransferTurnkeyDepositView() {
     DydxThemedPreviewSurface {
         DydxTransferTurnkeyDepositView.Content(
             Modifier,
-            DydxTransferTurnkeyDepositView.ViewState.preview
+            DydxTransferTurnkeyDepositView.ViewState.preview,
         )
     }
 }
@@ -78,16 +75,16 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
                         subtitle = "Instantly deposit USDC to your dYdX account",
                         tag = "USDC",
                         iconUrl = URL("https://example.com/icon.png").toString(),
-                        action = {}
+                        action = {},
                     ),
                     Item(
                         title = "Deposit ETH",
                         subtitle = "Instantly deposit ETH to your dYdX account",
                         tag = "ETH",
                         iconUrl = null,
-                        action = {}
-                    )
-                )
+                        action = {},
+                    ),
+                ),
             )
         }
     }
@@ -160,13 +157,13 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     text = item.title,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.base)
-                        .themeColor(ThemeColor.SemanticColor.text_primary)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
                 )
                 Text(
                     text = item.subtitle,
@@ -198,4 +195,3 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
         }
     }
 }
-

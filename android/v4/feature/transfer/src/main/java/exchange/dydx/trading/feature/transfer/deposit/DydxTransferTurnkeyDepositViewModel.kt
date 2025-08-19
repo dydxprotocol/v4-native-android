@@ -4,9 +4,7 @@ import android.R.attr.action
 import android.R.attr.subtitle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.abacus.state.machine.TransferInputField
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
@@ -16,7 +14,6 @@ import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -45,7 +42,7 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
             TransferChain.Arbitrum,
             TransferChain.Base,
             TransferChain.Optimism,
-            TransferChain.Avalanche
+            TransferChain.Avalanche,
         )
         return DydxTransferTurnkeyDepositView.ViewState(
             localizer = localizer,
@@ -69,7 +66,7 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
             iconUrl = tokenInfo.chainLogUrl(abacusStateManager.deploymentUri),
             action = {
                 // Router.shared?.navigate(to: RoutingRequest(path: "/transfer/deposit/qr_code", params: ["chain": tokenInfo.chain.rawValue]), animated: true, completion: nil)
-            }
+            },
         )
     }
 }

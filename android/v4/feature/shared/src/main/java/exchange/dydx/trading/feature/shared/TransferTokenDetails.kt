@@ -116,7 +116,7 @@ enum class TransferChain {
         return when (this) {
             Ethereum -> localizer.localizeWithParams(
                 path = "APP.DEPOSIT_MODAL.FREE_ABOVE",
-                params = mapOf("AMOUNT" to "$100")
+                params = mapOf("AMOUNT" to "$100"),
             )
 
             else -> localizer.localize(path = "APP.GENERAL.FREE")
