@@ -53,11 +53,11 @@ class DydxTosViewModel @Inject constructor(
                             cosmosAddress = cosmosAddress,
                             dydxMnemonic = mnemonic,
                             isNew = true,
-                            svmAddress = null,
-                            avalancheAddress = null,
-                            sourceWalletMnemonic = null,
-                            loginMethod = null,
-                            userEmail = null,
+                            svmAddress = result.svmAddress,
+                            avalancheAddress = result.avalancheAddress,
+                            sourceWalletMnemonic = result.ethereumAddress,
+                            loginMethod = result.loginMethod,
+                            userEmail = result.userEmail,
                         )
                     }
 

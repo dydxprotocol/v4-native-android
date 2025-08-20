@@ -5,7 +5,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.output.account.Subaccount
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
@@ -29,8 +31,9 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
             abacusStateManager.state.onboarded,
             abacusStateManager.state.selectedSubaccount,
             tabSelection,
-        ) { onboarded, subaccount, tabSelection ->
-            createViewState(onboarded, subaccount, tabSelection)
+            abacusStateManager.state.currentWallet,
+        ) { onboarded, subaccount, tabSelection, currentWallet ->
+            createViewState(onboarded, subaccount, tabSelection, currentWallet)
         }
             .distinctUntilChanged()
 
@@ -38,6 +41,7 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
         onboarded: Boolean,
         subaccount: Subaccount?,
         tabSelection: DydxPortfolioPlaceholderView.Selection,
+        wallet: DydxWalletInstance?
     ): DydxPortfolioPlaceholderView.ViewState {
         return DydxPortfolioPlaceholderView.ViewState(
             localizer = localizer,
@@ -94,10 +98,21 @@ class DydxPortfolioPlaceholderViewModel @Inject constructor(
                 )
             },
             transferTapAction = {
-                router.navigateTo(
-                    route = TransferRoutes.transfer,
-                    presentation = DydxRouter.Presentation.Modal,
-                )
+                if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+                    router.navigateTo(
+                        route = if (wallet?.walletId == "turnkey") {
+                            TransferRoutes.transfer_turnkey_deposit
+                        } else {
+                            TransferRoutes.transfer_deposit
+                        },
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                } else {
+                    router.navigateTo(
+                        route = TransferRoutes.transfer,
+                        presentation = DydxRouter.Presentation.Modal,
+                    )
+                }
             },
         )
     }

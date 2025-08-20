@@ -612,11 +612,11 @@ class AbacusStateManager @Inject constructor(
                         cosmosAddress = cosmoAddress,
                         dydxMnemonic = mnemonic,
                         isNew = false,
-                        svmAddress = null,
-                        avalancheAddress = null,
-                        sourceWalletMnemonic = null,
-                        loginMethod = null,
-                        userEmail = null,
+                        svmAddress = currentWallet.svmAddress,
+                        avalancheAddress = currentWallet.avalancheAddress,
+                        sourceWalletMnemonic = currentWallet.sourceWalletMnemonic,
+                        loginMethod = currentWallet.loginMethod,
+                        userEmail = currentWallet.userEmail,
                     )
                 }
             }

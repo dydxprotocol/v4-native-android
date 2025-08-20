@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.shared
 
+import android.R.attr.path
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
@@ -120,6 +121,39 @@ enum class TransferChain {
             )
 
             else -> localizer.localize(path = "APP.GENERAL.FREE")
+        }
+    }
+
+    fun depositWarningString(localizer: LocalizerProtocol): String {
+        val tokens = when (this) {
+            Ethereum, Optimism, Arbitrum, Base -> "ETH " + localizer.localize(path = "APP.LEAGUES.AND") + " USDC"
+            Polygon -> "POL " + localizer.localize(path = "APP.LEAGUES.AND") + " USDC"
+            Solana -> "USDC"
+            Avalanche -> "AVAX " + localizer.localize(path = "APP.LEAGUES.AND") + " USDC"
+        }
+
+        return localizer.localizeWithParams(
+            path = "APP.DEPOSIT_MODAL.TURNKEY_DEPOSIT_WARNING",
+            params = mapOf("TOKENS" to tokens, "NETWORK" to this.name),
+        )
+    }
+
+    fun chainLogoUrl(deploymentUri: String): String {
+        val logoName = when (this) {
+            Ethereum -> "ethereum.png"
+            Optimism -> "optimism.png"
+            Arbitrum -> "arbitrum.png"
+            Base -> "base.png"
+            Polygon -> "polygon.png"
+            Solana -> "solana.png"
+            Avalanche -> "avalanche.png"
+        }
+        return "$deploymentUri/chains/$logoName"
+    }
+
+    companion object {
+        fun fromString(chainName: String): TransferChain? {
+            return TransferChain.entries.find { it.name.equals(chainName, ignoreCase = true) }
         }
     }
 }

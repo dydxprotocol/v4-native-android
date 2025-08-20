@@ -9,6 +9,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.TransferChain
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.shared.TransferTokenInfo
@@ -65,7 +66,10 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
             tag = tokenInfo.chain.depositFeesString(localizer),
             iconUrl = tokenInfo.chainLogUrl(abacusStateManager.deploymentUri),
             action = {
-                // Router.shared?.navigate(to: RoutingRequest(path: "/transfer/deposit/qr_code", params: ["chain": tokenInfo.chain.rawValue]), animated: true, completion: nil)
+                router.navigateTo(
+                    route = TransferRoutes.transfer_turnkey_qrcode + "/${tokenInfo.chain.name}",
+                    presentation = DydxRouter.Presentation.Push,
+                )
             },
         )
     }

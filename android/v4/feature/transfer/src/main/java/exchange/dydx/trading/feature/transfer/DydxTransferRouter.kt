@@ -10,6 +10,7 @@ import exchange.dydx.trading.common.navigation.TransferRoutes.transfer_deposit_n
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.transfer.deposit.DydxTransferInstantDepositView
 import exchange.dydx.trading.feature.transfer.deposit.DydxTransferTurnkeyDepositView
+import exchange.dydx.trading.feature.transfer.deposit.qrcode.DydxTurnkeyQRCodeView
 import exchange.dydx.trading.feature.transfer.faucet.DydxTransferFaucetView
 import exchange.dydx.trading.feature.transfer.noble.DydxTransferNobleAddressView
 import exchange.dydx.trading.feature.transfer.search.DydxInstantDepositSearchView
@@ -57,6 +58,24 @@ fun NavGraphBuilder.transferGraph(
         deepLinks = appRouter.deeplinks(TransferRoutes.transfer_turnkey_deposit),
     ) { navBackStackEntry ->
         DydxTransferTurnkeyDepositView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_turnkey_qrcode + "/{chain}",
+        arguments = listOf(navArgument("chain") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinks(
+            destination = TransferRoutes.transfer_turnkey_qrcode,
+            path = "chain",
+        ),
+    ) { navBackStackEntry ->
+        val chain = navBackStackEntry.arguments?.getString("chain")
+        if (chain == null) {
+            logger.e(TAG, "No chain passed")
+            appRouter.navigateBack()
+            return@dydxComposable
+        }
+        DydxTurnkeyQRCodeView.Content(Modifier)
     }
 
     dydxComposable(

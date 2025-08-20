@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import exchange.dydx.platformui.components.textgroups.PlatformAutoSizingText
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
@@ -22,10 +23,47 @@ import exchange.dydx.platformui.designSystem.theme.color
 import exchange.dydx.platformui.designSystem.theme.dydxDefault
 import exchange.dydx.platformui.designSystem.theme.themeColor
 import exchange.dydx.platformui.designSystem.theme.themeFont
-import kotlinx.serialization.json.JsonNull.content
 
-enum class PlatformButtonState {
-    Primary, Secondary, Disabled, Destructive,
+sealed class PlatformButtonState(
+    open val borderColor: ThemeColor.SemanticColor,
+    open val backgroundColor: ThemeColor.SemanticColor,
+    open val enabled: Boolean,
+    open val textColor: ThemeColor.SemanticColor
+) {
+    data object Primary : PlatformButtonState(
+        borderColor = ThemeColor.SemanticColor.color_purple,
+        backgroundColor = ThemeColor.SemanticColor.color_purple,
+        enabled = true,
+        textColor = ThemeColor.SemanticColor.color_white,
+    )
+
+    data object Secondary : PlatformButtonState(
+        borderColor = ThemeColor.SemanticColor.layer_6,
+        backgroundColor = ThemeColor.SemanticColor.layer_4,
+        enabled = true,
+        textColor = ThemeColor.SemanticColor.text_primary,
+    )
+
+    data object Disabled : PlatformButtonState(
+        borderColor = ThemeColor.SemanticColor.layer_6,
+        backgroundColor = ThemeColor.SemanticColor.layer_2,
+        enabled = false,
+        textColor = ThemeColor.SemanticColor.text_tertiary,
+    )
+
+    data object Destructive : PlatformButtonState(
+        borderColor = ThemeColor.SemanticColor.color_faded_red,
+        backgroundColor = ThemeColor.SemanticColor.layer_4,
+        enabled = true,
+        textColor = ThemeColor.SemanticColor.color_red,
+    )
+
+    data class Custom(
+        override val borderColor: ThemeColor.SemanticColor,
+        override val backgroundColor: ThemeColor.SemanticColor,
+        override val enabled: Boolean,
+        override val textColor: ThemeColor.SemanticColor
+    ) : PlatformButtonState(borderColor, backgroundColor, enabled, textColor)
 }
 
 @Composable
@@ -58,43 +96,19 @@ fun PlatformButton(
     state: PlatformButtonState = PlatformButtonState.Primary,
     text: String?,
     fontSize: ThemeFont.FontSize = ThemeFont.FontSize.medium,
+    cornerRadius: Dp = 8.dp,
     fitText: Boolean = false,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     action: () -> Unit,
 ) {
-    val borderColor = when (state) {
-        PlatformButtonState.Primary -> ThemeColor.SemanticColor.color_purple.color
-        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.layer_6.color
-        PlatformButtonState.Disabled -> ThemeColor.SemanticColor.layer_6.color
-        PlatformButtonState.Destructive -> ThemeColor.SemanticColor.color_faded_red.color
-    }
-    val backgroundColor = when (state) {
-        PlatformButtonState.Primary -> ThemeColor.SemanticColor.color_purple.color
-        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.layer_4.color
-        PlatformButtonState.Disabled -> ThemeColor.SemanticColor.layer_2.color
-        PlatformButtonState.Destructive -> ThemeColor.SemanticColor.layer_4.color
-    }
-    val enabled = when (state) {
-        PlatformButtonState.Primary -> true
-        PlatformButtonState.Secondary -> true
-        PlatformButtonState.Disabled -> false
-        PlatformButtonState.Destructive -> true
-    }
-    val textColor = when (state) {
-        PlatformButtonState.Primary -> ThemeColor.SemanticColor.color_white
-        PlatformButtonState.Secondary -> ThemeColor.SemanticColor.text_primary
-        PlatformButtonState.Disabled -> ThemeColor.SemanticColor.text_tertiary
-        PlatformButtonState.Destructive -> ThemeColor.SemanticColor.color_red
-    }
-
     OutlinedButton(
         modifier = modifier.defaultMinSize(minHeight = 52.dp),
-        border = BorderStroke(1.dp, borderColor),
-        shape = RoundedCornerShape(size = 8.dp),
+        border = BorderStroke(1.dp, state.borderColor.color),
+        shape = RoundedCornerShape(size = cornerRadius),
         colors = ButtonDefaults
-            .outlinedButtonColors(backgroundColor),
-        enabled = enabled,
+            .outlinedButtonColors(state.backgroundColor.color),
+        enabled = state.enabled,
         onClick = action,
     ) {
         Row(
@@ -109,14 +123,14 @@ fun PlatformButton(
                 if (fitText) {
                     PlatformAutoSizingText(
                         textStyle = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
-                            .themeColor(foreground = textColor),
+                            .themeColor(foreground = state.textColor),
                         text = text,
                     )
                 } else {
                     Text(
                         text = text,
                         style = TextStyle.dydxDefault.themeFont(fontSize = fontSize)
-                            .themeColor(foreground = textColor),
+                            .themeColor(foreground = state.textColor),
                     )
                 }
             }
