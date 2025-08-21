@@ -57,6 +57,7 @@ object ProfileRoutes {
     const val report_issue = "settings/report_issue"
     const val notifications = "settings/notifications"
     const val alerts = "settings/alerts"
+    const val security = "profile/security"
 }
 
 object NewsAlertsRoutes {

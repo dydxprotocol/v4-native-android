@@ -93,7 +93,7 @@ object DydxProfileButtonsView : DydxComponent {
 
             createButton(
                 icon = state.walletImageUrl ?: R.drawable.icon_wallet,
-                title = state.localizer.localize("APP.GENERAL.WALLETS"),
+                title = state.localizer.localize("APP.GENERAL.ACCOUNT"),
                 action = state.walletAction,
                 tint = if (state.walletImageUrl != null) null else ThemeColor.SemanticColor.text_secondary,
                 modifier = Modifier.weight(1f),

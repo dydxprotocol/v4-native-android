@@ -93,7 +93,7 @@ class DydxProfileButtonsViewModel @Inject constructor(
                     )
                 } else {
                     router.navigateTo(
-                        route = ProfileRoutes.wallets,
+                        route = if (currentWallet.walletId == "turnkey") ProfileRoutes.security else ProfileRoutes.wallets,
                         presentation = DydxRouter.Presentation.Modal,
                     )
                 }

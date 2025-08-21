@@ -26,6 +26,7 @@ import exchange.dydx.trading.feature.profile.theme.DydxThemeView
 import exchange.dydx.trading.feature.profile.tradingnetwork.DydxTradingNetworkView
 import exchange.dydx.trading.feature.profile.update.DydxUpdateView
 import exchange.dydx.trading.feature.profile.userwallets.DydxUserWalletsView
+import exchange.dydx.trading.feature.profile.walletsecurity.DydxWalletSecurityView
 import exchange.dydx.utilities.utils.Logging
 
 fun NavGraphBuilder.profileGraph(
@@ -198,5 +199,13 @@ fun NavGraphBuilder.profileGraph(
         deepLinks = appRouter.deeplinks(ProfileRoutes.alerts),
     ) { navBackStackEntry ->
         DydxAlertsContainerView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = ProfileRoutes.security,
+        deepLinks = appRouter.deeplinks(ProfileRoutes.security),
+    ) { navBackStackEntry ->
+        DydxWalletSecurityView.Content(Modifier)
     }
 }
