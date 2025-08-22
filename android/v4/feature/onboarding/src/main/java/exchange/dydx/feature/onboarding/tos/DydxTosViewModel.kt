@@ -55,7 +55,7 @@ class DydxTosViewModel @Inject constructor(
                             isNew = true,
                             svmAddress = result.svmAddress,
                             avalancheAddress = result.avalancheAddress,
-                            sourceWalletMnemonic = result.ethereumAddress,
+                            sourceWalletMnemonic = result.sourceWalletMnemonic,
                             loginMethod = result.loginMethod,
                             userEmail = result.userEmail,
                         )

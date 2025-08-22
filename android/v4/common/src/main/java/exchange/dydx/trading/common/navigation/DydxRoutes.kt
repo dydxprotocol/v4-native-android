@@ -35,6 +35,11 @@ object PortfolioRoutes {
     const val cancel_pending_position = "portfolio/cancel_pending_position"
 }
 
+object KeyExportType {
+    const val source = "source"
+    const val dydx = "dydx"
+}
+
 object ProfileRoutes {
     const val main = "my-profile"
     const val settings = "settings"

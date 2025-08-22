@@ -1,7 +1,10 @@
 package exchange.dydx.trading.feature.profile
 
+import android.R.attr.path
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.ProfileRoutes
 import exchange.dydx.trading.common.navigation.ProfileRoutes.debug_enable
@@ -28,6 +31,8 @@ import exchange.dydx.trading.feature.profile.update.DydxUpdateView
 import exchange.dydx.trading.feature.profile.userwallets.DydxUserWalletsView
 import exchange.dydx.trading.feature.profile.walletsecurity.DydxWalletSecurityView
 import exchange.dydx.utilities.utils.Logging
+
+private const val TAG = "ProfileRouter"
 
 fun NavGraphBuilder.profileGraph(
     appRouter: DydxRouter,
@@ -123,9 +128,19 @@ fun NavGraphBuilder.profileGraph(
 
     dydxComposable(
         router = appRouter,
-        route = ProfileRoutes.key_export,
-        deepLinks = appRouter.deeplinks(ProfileRoutes.key_export),
+        route = ProfileRoutes.key_export + "/{type}",
+        arguments = listOf(navArgument("type") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinks(
+            destination = ProfileRoutes.key_export,
+            path = "type",
+        ),
     ) { navBackStackEntry ->
+        val type = navBackStackEntry.arguments?.getString("type")
+        if (type == null) {
+            logger.e(TAG, "No type passed")
+            appRouter.navigateTo(ProfileRoutes.main)
+            return@dydxComposable
+        }
         DydxKeyExportView.Content(Modifier)
     }
 

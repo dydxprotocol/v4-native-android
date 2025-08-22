@@ -8,7 +8,9 @@ import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.KeyExportType
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
+import exchange.dydx.trading.common.navigation.ProfileRoutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -38,6 +40,18 @@ class DydxWalletSecurityViewModel @Inject constructor(
             },
             loginAction = {
                 router.navigateTo(route = OnboardingRoutes.turnkey, presentation = DydxRouter.Presentation.Push)
+            },
+            exportSourceAction = {
+                router.navigateTo(
+                    route = ProfileRoutes.key_export + "/${KeyExportType.source}",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
+            },
+            exportDydxAction = {
+                router.navigateTo(
+                    route = ProfileRoutes.key_export + "/${KeyExportType.dydx}",
+                    presentation = DydxRouter.Presentation.Modal,
+                )
             },
             email = wallet?.userEmail,
             sourceAddress = wallet?.ethereumAddress,

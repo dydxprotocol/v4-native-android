@@ -8,6 +8,7 @@ import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletState
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.KeyExportType
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.ProfileRoutes
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +51,7 @@ class DydxUserWalletsViewModel @Inject constructor(
                     },
                     exportAction = {
                         router.navigateTo(
-                            route = ProfileRoutes.key_export,
+                            route = ProfileRoutes.key_export + "/${KeyExportType.dydx}",
                             presentation = DydxRouter.Presentation.Modal,
                         )
                     },
