@@ -40,6 +40,7 @@ class ThemeSettings(
 data class ThemeConfig(
     val themeColor: ThemeColor,
     val themeFont: ThemeFont,
+    val id: String? = null,
 ) {
     companion object {
         private const val TAG = "ThemeConfig"

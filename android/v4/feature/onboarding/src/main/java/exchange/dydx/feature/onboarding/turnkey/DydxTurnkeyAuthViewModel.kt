@@ -12,6 +12,7 @@ import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxCartera.DydxWalletSetup.SetupResult
 import exchange.dydx.dydxCartera.DydxWalletSetup.Status
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.navigation.DydxRouter
@@ -88,7 +89,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             "turnkeyOrgId" to "3174ac51-1637-47d8-9456-19549963e2ed",
             // Indexer backend
             "backendApiUrl" to "http://dev2-indexer-apne1-lb-public-2076363889.ap-northeast-1.elb.amazonaws.com",
-            "theme" to "dark",
+            "theme" to (ThemeSettings.shared.themeConfig.value?.id ?: "dark"),
         )
 
         val localizerEntries = listOf(
