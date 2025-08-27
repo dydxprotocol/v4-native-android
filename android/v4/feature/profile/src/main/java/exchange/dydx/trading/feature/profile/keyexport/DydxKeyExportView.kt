@@ -90,9 +90,9 @@ object DydxKeyExportView : DydxComponent {
 
         Column(
             modifier = modifier
+                .themeColor(ThemeColor.SemanticColor.layer_2)
                 .fillMaxSize()
-                .padding(horizontal = ThemeShapes.HorizontalPadding)
-                .themeColor(ThemeColor.SemanticColor.layer_2),
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
         ) {
             HeaderView(
                 title = state.localizer.localize("APP.MNEMONIC_EXPORT.REVEAL_SECRET_PHRASE"),
