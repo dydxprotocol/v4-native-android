@@ -6,7 +6,7 @@ buildscript {
     ext.androidApplicationVersion = '8.12.1'
 
     ext.navigationVersion = '2.9.1'
-    ext.hiltVersion = '2.57'
+    ext.hiltVersion = '2.57.1'
     ext.googleServicesVersion = '4.3.12'
 
     repositories {

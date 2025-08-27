@@ -40,6 +40,7 @@ import exchange.dydx.abacus.state.supervisor.AppConfigsV2
 import exchange.dydx.abacus.state.supervisor.NotificationProviderType
 import exchange.dydx.abacus.utils.IList
 import exchange.dydx.abacus.utils.IOImplementations
+import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DydxDepositAddressesStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.transfers.DydxTransferStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletStateManagerProtocol
@@ -175,6 +176,7 @@ class AbacusStateManager @Inject constructor(
     private val ioImplementations: IOImplementations,
     private val walletStateManager: DydxWalletStateManagerProtocol,
     private val transferStateManager: DydxTransferStateManagerProtocol,
+    private val depositAddressesStateManager: DydxDepositAddressesStateManagerProtocol,
     private val cosmosClient: CosmosV4ClientProtocol,
     private val preferencesStore: SharedPreferencesStore,
     @LanguageKey private val preferenceKey: String,
@@ -369,6 +371,7 @@ class AbacusStateManager @Inject constructor(
     override fun logOut() {
         walletStateManager.clear()
         transferStateManager.clear()
+        depositAddressesStateManager.reset()
 
         asyncStateManager.setAddresses(
             source = null,

@@ -15,6 +15,7 @@ import exchange.dydx.trading.feature.workers.globalworkers.DydxGasTokenWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxRestrictionsWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferSubaccountWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxTransferTokensWorker
+import exchange.dydx.trading.feature.workers.globalworkers.DydxTurnkeyAddressWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUpdateWorker
 import exchange.dydx.trading.feature.workers.globalworkers.DydxUserTrackingWorker
 import exchange.dydx.trading.integration.fcm.FCMTokenWorker
@@ -40,6 +41,7 @@ interface CoreModule {
             fcmTokenWorker: FCMTokenWorker,
             dydxTransferTokensWorker: DydxTransferTokensWorker,
             dydxAppRatingWorker: DydxAppRatingWorker,
+            dydxTurnkeyAddressWorker: DydxTurnkeyAddressWorker,
         ): List<WorkerProtocol> =
             listOf(
                 dydxUpdateWorker,
@@ -53,6 +55,7 @@ interface CoreModule {
                 fcmTokenWorker,
                 dydxTransferTokensWorker,
                 dydxAppRatingWorker,
+                dydxTurnkeyAddressWorker,
             )
     }
 }

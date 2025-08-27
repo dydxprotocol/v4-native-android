@@ -12,6 +12,7 @@ import exchange.dydx.utilities.utils.VersionUtils
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.utilities.utils.delayFlow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
@@ -33,6 +34,7 @@ class DydxUpdateWorker @Inject constructor(
 ) : WorkerProtocol {
     override var isStarted = false
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun start() {
         if (!isStarted) {
             isStarted = true

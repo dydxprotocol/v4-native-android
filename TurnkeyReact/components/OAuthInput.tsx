@@ -8,6 +8,7 @@ import { AppleSignInCompletedEvent, TurnkeyNativeModule } from "../../TurnkeyMod
 import { useEffect } from "react";
 import { currentTheme } from "../../rn_style/themes/currentTheme";
 import { useThemedStyles } from "../turnkeyStyle";
+import { Platform } from 'react-native';
 
 type OAuthProps = {
   onSuccess: (params: OAuthRequest) => Promise<void>;
@@ -23,7 +24,7 @@ export const GoogleAuthButton: React.FC<OAuthProps> = ({
   const { handleGoogleOAuth } = useTurnkey();
 
   const styles = useThemedStyles(currentTheme);
-   
+
   const handlePress = async () => {
     try {
       await handleGoogleOAuth({
@@ -99,12 +100,12 @@ export const AppleAuthButton: React.FC<OAuthProps> = ({
     TurnkeyNativeModule.onAppleAuthRequest(embeddedKeyAndNonce.nonce);
   };
 
-     const styles = useThemedStyles(currentTheme);
-   
+  const styles = useThemedStyles(currentTheme);
+
   return (
     <Button
       onPress={handleAppleAuth}
-      style = {styles.socialButton}
+      style={styles.socialButton}
       disabled={embeddedKeyAndNonce.nonce == null || !embeddedKeyAndNonce.targetPublicKey}
     >
 
@@ -125,18 +126,18 @@ export const OAuthInput: React.FC<OAuthProps> = (props) => {
 
   return (
     <View style={{ flexDirection: 'row', justifyContent: "space-evenly", gap: 8, width: '100%' }}>
-
-      <AppleAuthButton
-        onSuccess={onSuccess}
-        configs={configs}
-        embeddedKeyAndNonce={embeddedKeyAndNonce}
-      />
+      {Platform.OS === 'ios' && (
+        <AppleAuthButton
+          onSuccess={onSuccess}
+          configs={configs}
+          embeddedKeyAndNonce={embeddedKeyAndNonce}
+        />
+      )}
       <GoogleAuthButton
         onSuccess={onSuccess}
         configs={configs}
         embeddedKeyAndNonce={embeddedKeyAndNonce}
       />
-
     </View>
   );
 };

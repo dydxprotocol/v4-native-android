@@ -47,6 +47,7 @@ export const useThemedStyles = (currentTheme: any) => {
       borderRadius: 16,
       borderColor: currentTheme.colors.borderDefault,
       borderWidth: 1,
+      flex: 1,
     },
     emailRow: {
       flexDirection: 'row',

@@ -112,8 +112,7 @@ object DydxTransferSelectorView : DydxComponent {
 
             Column(
                 modifier = Modifier
-                    .padding(top = ThemeShapes.VerticalPadding)
-                    .padding(horizontal = ThemeShapes.HorizontalPadding),
+                    .padding(top = ThemeShapes.VerticalPadding),
                 verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
             ) {
                 ButtonContent(action = Action.Deposit, state = state)
@@ -130,11 +129,12 @@ object DydxTransferSelectorView : DydxComponent {
     fun ButtonContent(modifier: Modifier = Modifier, action: Action, state: ViewState) {
         Row(
             modifier = modifier
-                .padding(vertical = 4.dp)
                 .clickable {
                     state.onActionTapped(action)
-                },
-            verticalAlignment = Alignment.CenterVertically,
+                }
+                .padding(vertical = 4.dp)
+                .padding(horizontal = ThemeShapes.HorizontalPadding),
+        verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
         ) {
             Icon(

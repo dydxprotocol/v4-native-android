@@ -142,9 +142,9 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
     ) {
         Row(
             modifier = modifier
+                .clickable { item.action() }
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp)
-                .clickable { item.action() },
+                .padding(horizontal = 16.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
         ) {

@@ -51,6 +51,7 @@ dependencies {
     implementation project(':v4:platformUI')
     implementation project(':v4:feature:shared')
     api project(':v4:integration:cosmos')
+    implementation project(path: ':v4:integration:react')
 
     /* Local Dependencies */
 
