@@ -67,14 +67,6 @@ export class DydxTurnkeySession {
     return Promise.resolve(response);
   }
 
-  sendDydxAddress = async (dydxAddress: String): Promise<void> => {
-    const message = "\x19Ethereum Signed Message:\n" + dydxAddress.length + dydxAddress
-
-    const messageHash = ethers.utils.hashMessage(message);
-
-    return Promise.resolve();
-  }
-
   exportWallet = async (walletId: string): Promise<string> => {
     const {
       publicKeyUncompressed: targetPublicKey,
@@ -152,9 +144,34 @@ export class DydxTurnkeySession {
       throw new Error("Failed to sign onboarding message");
     }
 
-    const signature = response.activity.result.signRawPayloadResult;
+    const result = response.activity.result.signRawPayloadResult;
 
-    return Promise.resolve(signature.r + signature.s + signature.v); // Concatenate r, s, and v to form the full signature=
+    return Promise.resolve("0x" + result.r + result.s + result.v); // Concatenate r, s, and v to form the full signature=
+  }
+
+  signUploadAddressMessage = async (walletAccountAddress: string, dydxAddress: string): Promise<string>  => {
+    const messageHash = ethers.utils.hashMessage(dydxAddress);
+
+    const response = await this.client.signRawPayload({
+      type: "ACTIVITY_TYPE_SIGN_RAW_PAYLOAD_V2",
+      /** @description Timestamp (in milliseconds) of the request, used to verify liveness of user requests. */
+      timestampMs: Date.now().toString(),
+      organizationId: this.organizationId,
+      parameters: {
+        signWith: walletAccountAddress,
+        payload: messageHash,
+        encoding: "PAYLOAD_ENCODING_HEXADECIMAL",
+        hashFunction: "HASH_FUNCTION_NO_OP",
+      }
+    });
+
+    if (!response || !response.activity || !response.activity.result || !response.activity.result.signRawPayloadResult) {
+      throw new Error("Failed to sign upload dydx address message");
+    }
+
+    const result = response.activity.result.signRawPayloadResult;
+
+    return Promise.resolve("0x" + result.r + result.s + result.v); // Concatenate r, s, and v to form the full signature=
   }
 
   private getUser = async (): Promise<TurnkeyApi.TGetWhoamiResponse> => {

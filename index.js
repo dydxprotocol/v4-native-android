@@ -16,5 +16,8 @@ if (typeof global.TextEncoder === 'undefined') {
 
 global.Buffer = global.Buffer || Buffer;
 
+
+import './TurnkeyReact/TurnkeyAddress';
+
 AppRegistry.registerComponent('TurnkeyReact', () => App);
 AppRegistry.registerComponent('TurnkeyLogin', () => TurnkeyLogin);

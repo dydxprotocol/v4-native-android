@@ -34,5 +34,12 @@ export interface EmailTokenReceivedEvent {
 }
 
 export interface DydxAddressReceivedEvent {
+  callbackId: string;
   dydxAddress: string;
+}
+
+export interface FetchDepositAddressesEvent {
+  callbackId: string;
+  dydxAddress: string;
+  indexerUrl: string;
 }

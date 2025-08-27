@@ -1,11 +1,11 @@
 package exchange.dydx.feature.onboarding.turnkey
 
+import android.R.attr.path
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import exchange.dydx.abacus.output.PerpetualMarketSummary
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
 import exchange.dydx.dydxCartera.DydxWalletSetup
@@ -26,8 +26,8 @@ import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -73,22 +73,19 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    val state: Flow<DydxTurnkeyAuthView.ViewState?> = abacusStateManager.state.marketSummary
-        .map {
-            createViewState(it)
-        }
-        .distinctUntilChanged()
+    val state: Flow<DydxTurnkeyAuthView.ViewState?> = flowOf(createViewState())
 
-    private fun createViewState(marketSummary: PerpetualMarketSummary?): DydxTurnkeyAuthView.ViewState {
+    private fun createViewState(): DydxTurnkeyAuthView.ViewState? {
+        val indexerUrl = abacusStateManager.environment?.endpoints?.indexers?.firstOrNull()?.api ?: return null
+
         val initialProperties: Map<String, String> = mapOf(
             // From https://console.cloud.google.com/auth/clients?inv=1&invt=Ab1olg&project=dydx-v4
-            "googleClientId" to "441463123744-a02e7s84okic2ggqgdo7e7hlgpvkj3p8.apps.googleusercontent.com",
+            "googleClientId" to appContext.getString(R.string.google_client_id),
             "appScheme" to appContext.getString(R.string.app_scheme),
             "turnkeyUrl" to "https://api.turnkey.com",
             // From Turnkey console
-            "turnkeyOrgId" to "3174ac51-1637-47d8-9456-19549963e2ed",
-            // Indexer backend
-            "backendApiUrl" to "http://dev2-indexer-apne1-lb-public-2076363889.ap-northeast-1.elb.amazonaws.com",
+            "turnkeyOrgId" to appContext.getString(R.string.turnkey_org_id),
+            "backendApiUrl" to indexerUrl,
             "theme" to (ThemeSettings.shared.themeConfig.value?.id ?: "dark"),
         )
 
@@ -103,6 +100,8 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CHECK_EMAIL_TITLE"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CHECK_EMAIL_DESCRIPTION"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.RESEND"),
+            LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_TITLE"),
+            LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_DESCRIPTION"),
             LocalizerEntry(path = "APP.GENERAL.OR"),
         )
 
