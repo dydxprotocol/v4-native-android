@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import java.util.UUID
 
 @ReactModule(name = TurnkeyNativeModule.NAME)
 internal class TurnkeyNativeModule(
@@ -40,30 +41,25 @@ internal class TurnkeyNativeModule(
     }
 
     fun uploadDydxAddress(dydxAddress: String, callback: (String) -> Unit) {
-        if (reactContext.hasActiveReactInstance()) {
-            pendingCallbacks[dydxAddress] = callback
-
-            val params = Arguments.createMap()
-            params.putString("dydxAddress", dydxAddress)
-
-            val jsModule = reactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            jsModule?.emit(eventName = "DydxAddressReceived", data = params)
-        } else {
-            print("React Native instance is not active.")
+        requestJsFunction(functionName = "DydxAddressReceived", params = mapOf("dydxAddress" to dydxAddress)) { result ->
+            callback(result)
         }
     }
 
-    fun requestJsFunction(callbackId: String, callback: (String) -> Unit) {
+    fun requestJsFunction(functionName: String, params: Map<String, String> = emptyMap(), callback: (String) -> Unit) {
+        val callbackId = UUID.randomUUID().toString()
         pendingCallbacks[callbackId] = callback
 
-        val params = Arguments.createMap()
-        params.putString("callbackId", callbackId)
+        val args = Arguments.createMap()
+        args.putString("callbackId", callbackId)
+        for ((key, value) in params) {
+            args.putString(key, value)
+        }
 
         if (reactContext.hasActiveReactInstance()) {
             val jsModule = reactContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            jsModule?.emit("NativeToJsRequest", params)
+            jsModule?.emit(functionName, args)
         } else {
             print("React Native instance is not active.")
         }

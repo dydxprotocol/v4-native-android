@@ -84,7 +84,7 @@ class TurnkeyReactBridge @Inject constructor(
 
         val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
 
-        turnkeyNativeModule?.requestJsFunction("req123") { result ->
+        turnkeyNativeModule?.requestJsFunction("NativeToJsRequest") { result ->
             print("Received result from JS: $result")
         }
     }
