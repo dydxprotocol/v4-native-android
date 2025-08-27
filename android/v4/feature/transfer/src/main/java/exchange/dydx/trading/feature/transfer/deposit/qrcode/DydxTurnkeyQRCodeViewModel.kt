@@ -5,13 +5,10 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.localizeWithParams
-import exchange.dydx.abacus.state.Changes
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DepositAddresses
 import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DydxDepositAddressesStateManagerProtocol
-import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.TransferChain
 import kotlinx.coroutines.flow.Flow
@@ -55,7 +52,7 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
             TransferChain.Arbitrum -> addresses.evmAddress
             TransferChain.Base -> addresses.evmAddress
             TransferChain.Optimism -> addresses.evmAddress
-            TransferChain.Avalanche ->addresses.avalancheAddress
+            TransferChain.Avalanche -> addresses.avalancheAddress
             else -> null
         }
         return DydxTurnkeyQRCodeView.ViewState(

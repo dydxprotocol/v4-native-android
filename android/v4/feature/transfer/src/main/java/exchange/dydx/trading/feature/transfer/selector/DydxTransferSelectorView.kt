@@ -134,7 +134,7 @@ object DydxTransferSelectorView : DydxComponent {
                 }
                 .padding(vertical = 4.dp)
                 .padding(horizontal = ThemeShapes.HorizontalPadding),
-        verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
         ) {
             Icon(

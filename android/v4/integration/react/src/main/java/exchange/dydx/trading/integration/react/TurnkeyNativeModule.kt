@@ -43,7 +43,7 @@ internal class TurnkeyNativeModule(
     fun uploadDydxAddress(dydxAddress: String, callback: (String) -> Unit) {
         requestJsFunction(
             functionName = "DydxAddressReceived",
-            params = mapOf("dydxAddress" to dydxAddress)
+            params = mapOf("dydxAddress" to dydxAddress),
         ) { result ->
             callback(result)
         }
@@ -52,7 +52,7 @@ internal class TurnkeyNativeModule(
     fun fetchDepositAddresses(dydxAddress: String, indexerUrl: String, callback: (String) -> Unit) {
         requestJsFunction(
             functionName = "FetchDepositAddresses",
-            params = mapOf("dydxAddress" to dydxAddress, "indexerUrl" to indexerUrl)
+            params = mapOf("dydxAddress" to dydxAddress, "indexerUrl" to indexerUrl),
         ) { result ->
             callback(result)
         }

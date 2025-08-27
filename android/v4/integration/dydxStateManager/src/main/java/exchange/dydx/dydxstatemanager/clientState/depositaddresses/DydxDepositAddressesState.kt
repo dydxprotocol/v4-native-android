@@ -34,7 +34,7 @@ class DydxDepositAddressesStateManager @Inject constructor(
         try {
             val state: DepositAddresses? = clientState.load(
                 storeKey,
-                storeType
+                storeType,
             )
             mutableState.value = state ?: DepositAddresses()
         } catch (e: Exception) {
@@ -47,9 +47,10 @@ class DydxDepositAddressesStateManager @Inject constructor(
 
     override fun update(state: DepositAddresses) {
         mutableState.value = state
-        clientState.store(state,
+        clientState.store(
+            state,
             storeKey,
-            storeType
+            storeType,
         )
     }
 
@@ -57,7 +58,7 @@ class DydxDepositAddressesStateManager @Inject constructor(
         mutableState.value = DepositAddresses()
         clientState.reset(
             storeKey,
-            storeType
+            storeType,
         )
     }
 }
