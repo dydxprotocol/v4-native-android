@@ -8,6 +8,8 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.nativeTokenLogoUrl
 import exchange.dydx.platformui.components.PlatformUISign
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.receipt.streams.ReceiptStreaming
 import exchange.dydx.trading.feature.shared.views.SignedAmountView
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.math.max
 
 @HiltViewModel
 class DydxReceiptRewardsViewModel @Inject constructor(
@@ -22,6 +25,7 @@ class DydxReceiptRewardsViewModel @Inject constructor(
     private val abacusStateManager: AbacusStateManagerProtocol,
     private val formatter: DydxFormatter,
     val receiptStream: ReceiptStreaming,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxReceiptRewardsView.ViewState?> =
@@ -34,6 +38,8 @@ class DydxReceiptRewardsViewModel @Inject constructor(
     private fun createViewState(tradeSummary: TradeInputSummary?): DydxReceiptRewardsView.ViewState {
         val reward = tradeSummary?.reward ?: 0.0
         val text = formatter.localFormatted(reward, 6)
+        val fee = tradeSummary?.fee ?: 0.0
+        val feeAmount = max(0.0, fee / 2)
         return DydxReceiptRewardsView.ViewState(
             localizer = localizer,
             nativeTokenLogoUrl = abacusStateManager.nativeTokenLogoUrl,
@@ -52,6 +58,16 @@ class DydxReceiptRewardsViewModel @Inject constructor(
             } else {
                 null
             },
+            rewardsSep2025 = if (tradeSummary?.fee != null) {
+                SignedAmountView.ViewState(
+                    text = formatter.dollar(feeAmount, digits = 2),
+                    sign = PlatformUISign.None,
+                    coloringOption = SignedAmountView.ColoringOption.SignOnly,
+                )
+            } else {
+                null
+            },
+            isSep2025 = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_rewards_sep_2025),
         )
     }
 }

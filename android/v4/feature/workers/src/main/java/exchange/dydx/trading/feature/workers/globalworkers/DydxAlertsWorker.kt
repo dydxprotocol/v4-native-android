@@ -1,11 +1,14 @@
 package exchange.dydx.trading.feature.workers.globalworkers
 
+import android.system.Os.link
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.platformui.components.container.PlatformInfo
 import exchange.dydx.platformui.components.container.PlatformInfoViewModel
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.NotificationEnabled
 import exchange.dydx.utilities.utils.SharedPreferencesStore
@@ -24,6 +27,7 @@ class DydxAlertsWorker @Inject constructor(
     private val router: DydxRouter,
     private val toaster: PlatformInfo,
     private val preferencesStore: SharedPreferencesStore,
+    private val featureFlags: DydxFeatureFlags,
 ) : WorkerProtocol {
     private val handledAlertHashes = mutableSetOf<String>()
 
@@ -58,6 +62,12 @@ class DydxAlertsWorker @Inject constructor(
                 val alertText = alert.text ?: return@forEach
 
                 if (!NotificationEnabled.enabled(preferencesStore)) {
+                    return@forEach
+                }
+
+                if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_rewards_sep_2025) &&
+                    alert.id.startsWith("blockReward:")
+                ) {
                     return@forEach
                 }
 
