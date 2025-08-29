@@ -23,12 +23,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontVariation.weight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.localizeWithParams
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.icons.PlatformImage
@@ -64,6 +66,7 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         val points: String?,
         val aboutAction: () -> Unit = {},
         val leaderboardAction: () -> Unit = {},
+        val isSep2025: Boolean = false
     ) {
         companion object {
             val preview = ViewState(
@@ -113,13 +116,28 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                 modifier = modifier
                     .padding(vertical = ThemeShapes.VerticalPadding),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                val header = if (state.isSep2025) {
+                    state.localizer.localize("APP.REWARDS_SURGE_APRIL_2025.SURGE") + ": " +
+                        state.localizer.localizeWithParams(
+                            path = "APP.REWARDS_SURGE_APRIL_2025.SURGE_HEADLINE_SEP_2025",
+                            params = mapOf(
+                                "REWARD_AMOUNT" to "$1M",
+                                "REBATE_PERCENT" to "50%",
+                            ),
+                        )
+                } else {
+                    state.localizer.localize("APP.REWARDS_SURGE_APRIL_2025.SURGE_HEADLINE")
+                }
                 Text(
-                    text = state.localizer.localize("APP.REWARDS_SURGE_APRIL_2025.SURGE_HEADLINE"),
+                    text = header,
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_primary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),
+                    modifier = Modifier.weight(1f),
                 )
+
                 Text(
                     text = state.localizer.localize("APP.GENERAL.ACTIVE"),
                     style = TextStyle.dydxDefault
@@ -144,10 +162,21 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                     .padding(vertical = ThemeShapes.VerticalPadding),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
+                val body = if (state.isSep2025) {
+                    state.localizer.localizeWithParams(
+                        path = "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY_SEP_2025",
+                        params = mapOf(
+                            "REWARD_AMOUNT" to "$1M",
+                            "REBATE_PERCENT" to "50%",
+                        ),
+                    )
+                } else {
+                    state.localizer.localize(
+                        path = "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY",
+                    )
+                }
                 Text(
-                    text = state.localizer.localize(
-                        "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY",
-                    ),
+                    text = body,
                     style = TextStyle.dydxDefault
                         .themeColor(ThemeColor.SemanticColor.text_tertiary)
                         .themeFont(fontSize = ThemeFont.FontSize.medium),

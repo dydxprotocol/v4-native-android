@@ -32,7 +32,8 @@ enum class DydxBoolFeatureFlag {
     force_mainnet,
     ff_vault_enabled,
     ff_turnkey_android,
-    ff_prompt_app_rating;
+    ff_prompt_app_rating,
+    ff_rewards_sep_2025;
 
     val defaultValue: Boolean
         get() {
@@ -41,6 +42,7 @@ enum class DydxBoolFeatureFlag {
                 ff_vault_enabled -> true
                 ff_turnkey_android -> false
                 ff_prompt_app_rating -> true
+                ff_rewards_sep_2025 -> false
             }
         }
 }

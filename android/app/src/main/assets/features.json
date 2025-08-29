@@ -72,6 +72,26 @@
                         }
                     ]
                 }
+            },
+             {
+                "title":{
+                    "text":"Rewards Sep 2025"
+                },
+                "field":{
+                    "field":"ff_rewards_sep_2025",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }
