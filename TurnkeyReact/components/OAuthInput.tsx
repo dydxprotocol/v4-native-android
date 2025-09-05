@@ -112,7 +112,7 @@ export const AppleAuthButton: React.FC<OAuthProps> = ({
       <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
         <Image
           source={require('../../rn_style/assets/logo_apple.png')}
-          style={{ height: 26 }}
+          style={{ height: 24 }}
           resizeMode="contain"
           tintColor={currentTheme.colors.textPrimary}
         />
@@ -125,7 +125,7 @@ export const OAuthInput: React.FC<OAuthProps> = (props) => {
   const { onSuccess, configs, embeddedKeyAndNonce } = props;
 
   return (
-    <View style={{ flexDirection: 'row', justifyContent: "space-evenly", gap: 8, width: '100%' }}>
+    <View style={{ flexDirection: 'row', justifyContent: "space-evenly", gap: 16, width: '100%' }}>
       {Platform.OS === 'ios' && (
         <AppleAuthButton
           onSuccess={onSuccess}

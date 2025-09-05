@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import exchange.dydx.feature.onboarding.connect.DydxOnboardConnectView
 import exchange.dydx.feature.onboarding.debugscan.DydxDebugScanView
+import exchange.dydx.feature.onboarding.depositprompt.DydxDepositPromptView
 import exchange.dydx.feature.onboarding.desktopscan.DydxDesktopScanView
 import exchange.dydx.feature.onboarding.tos.DydxTosView
 import exchange.dydx.feature.onboarding.turnkey.DydxTurnkeyAuthView
@@ -22,6 +23,14 @@ fun NavGraphBuilder.loginGraph(
     appRouter: DydxRouter,
     logger: Logging,
 ) {
+    dydxComposable(
+        router = appRouter,
+        route = OnboardingRoutes.deposit_prompt,
+        deepLinks = appRouter.deeplinks(OnboardingRoutes.deposit_prompt),
+    ) { nbse ->
+        DydxDepositPromptView.Content(Modifier)
+    }
+
     dydxComposable(
         router = appRouter,
         route = OnboardingRoutes.welcome,

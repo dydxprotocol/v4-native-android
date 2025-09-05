@@ -9,6 +9,7 @@ object OnboardingRoutes {
     const val wallet_list = "onboard/wallets"
     const val connect = "onboard/connect"
     const val welcome = "onboard"
+    const val deposit_prompt = "onboard/deposit_prompt"
     const val tos = "onboard/tos"
     const val turnkey = "onboard/turnkey"
 

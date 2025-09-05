@@ -151,7 +151,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       "signinMethod": "email",
       "userEmail": contact,
       "targetPublicKey": embeddedKeyAndNonce.targetPublicKey,
-      "magicLink": "https://v4.testnet.dydx.exchange/onboard/turnkey?token",
+      "magicLink":  configs.deploymentUri + "onboard/turnkey?token",
     };
     const headers = {
       'Content-Type': 'application/json',

@@ -100,6 +100,8 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
 
   const styles = useThemedStyles(currentTheme);
 
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  
   return (
     <ScrollView
       bounces={false} // iOS
@@ -140,10 +142,13 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
           </View>
 
           {/* Email input row */}
-          <View style={styles.emailRow}>
+          <View style={[styles.emailRow, { borderColor: isEmailFocused ? currentTheme.colors.purple : currentTheme.colors.layer4 }]}>
             <EmailInput
               embeddedKeyAndNonce={emailEmbeddedKeyAndNonce}
               configs={configs}
+              focusChanged={(focused) => {
+                setIsEmailFocused(focused)
+              }}
             />
           </View>
 

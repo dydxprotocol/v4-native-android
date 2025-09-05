@@ -45,20 +45,20 @@ export const useThemedStyles = (currentTheme: any) => {
       width: '48%',
       backgroundColor: currentTheme.colors.layer3,
       borderRadius: 16,
-      borderColor: currentTheme.colors.borderDefault,
-      borderWidth: 1,
+      borderColor: currentTheme.colors.layer4,
+      borderWidth: 1.6,
       flex: 1,
     },
     emailRow: {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: 16,
-      paddingHorizontal: 12,
-      borderColor: currentTheme.colors.borderDefault,
+      paddingHorizontal: 10,
+      borderColor: currentTheme.colors.layer4,
       borderWidth: 1,
       overflow: 'hidden',
       marginBottom: 24,
-      height: 48,
+      height: 52,
     },
     emailInput: {
       flex: 1,
@@ -68,6 +68,11 @@ export const useThemedStyles = (currentTheme: any) => {
     submitButton: {
       justifyContent: 'center',
       paddingHorizontal: 12,
+    },
+    sendButton: {
+      backgroundColor: "#6c63ff",
+      padding: 10,
+      borderRadius: 12,
     },
     dividerContainer: {
       flexDirection: 'row',
