@@ -101,7 +101,11 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
   const styles = useThemedStyles(currentTheme);
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
-  
+
+  const { state } = useAuthRelay();
+  const hasError = state.error && state.loading === null;
+  const showContinueModal = continueModal && hasError === false;
+
   return (
     <ScrollView
       bounces={false} // iOS
@@ -110,7 +114,7 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
     >
       <View style={styles.content}>
         <ContinueSignInModal
-          visible={continueModal}
+          visible={showContinueModal}
           onClose={() => setContinueModal(false)}
           configs={configs}
           currentTheme={currentTheme}
