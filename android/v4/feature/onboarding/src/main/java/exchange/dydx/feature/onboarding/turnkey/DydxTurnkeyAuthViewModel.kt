@@ -100,7 +100,9 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CHECK_EMAIL_TITLE"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CHECK_EMAIL_DESCRIPTION"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.RESEND"),
-            LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_TITLE"),
+            LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_GOOGLE"),
+            LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_APPLE"),
+            LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_EMAIL"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_DESCRIPTION"),
             LocalizerEntry(path = "APP.GENERAL.OR"),
         )
