@@ -224,16 +224,16 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
             />
           </TouchableOpacity>
 
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <RenderHTML
-              contentWidth={width}
-              source={source}
-              tagsStyles={{
-                body: { fontFamily: "Satoshi-Regular", fontSize: 11, color: currentTheme.colors.textTertiary }, 
-                a: { color: currentTheme.colors.purple }, // links color
-              }}
-            />
-          </View>
+          <RenderHTML
+            contentWidth={width * 0.9} // 90% of screen width
+            source={source}
+            baseStyle={{ textAlign: "center" }} // center text inside
+
+            tagsStyles={{
+              body: { fontFamily: "Satoshi-Regular", fontSize: 11, color: currentTheme.colors.textTertiary },
+              a: { color: currentTheme.colors.purple }, // links color
+            }}
+          />
 
         </View>
       </View>
