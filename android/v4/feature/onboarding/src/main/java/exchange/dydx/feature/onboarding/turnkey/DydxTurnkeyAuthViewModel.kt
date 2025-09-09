@@ -8,10 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.dydxCartera.DydxWalletSetup
-import exchange.dydx.dydxCartera.DydxWalletSetup.SetupResult
-import exchange.dydx.dydxCartera.DydxWalletSetup.Status
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.R
@@ -25,7 +23,6 @@ import exchange.dydx.trading.integration.react.TurnkeyBridgeManagerDelegate
 import exchange.dydx.trading.integration.react.TurnkeyReactBridge
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -49,7 +46,6 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
     private val turnkeyReactBridge: TurnkeyReactBridge,
     private val cosmosV4Client: CosmosV4ClientProtocol,
     private val parser: ParserProtocol,
-    private val mutableSetupStatusFlow: MutableStateFlow<DydxWalletSetup.Status.Signed?>,
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
     private val logger: Logging,
@@ -77,6 +73,8 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
 
     private fun createViewState(): DydxTurnkeyAuthView.ViewState? {
         val indexerUrl = abacusStateManager.environment?.endpoints?.indexers?.firstOrNull()?.api ?: return null
+        val tosUrl = abacusStateManager.environment?.links?.tos ?: return null
+        val privacyUrl = abacusStateManager.environment?.links?.privacy ?: return null
 
         val initialProperties: Map<String, String> = mapOf(
             // From https://console.cloud.google.com/auth/clients?inv=1&invt=Ab1olg&project=dydx-v4
@@ -87,6 +85,17 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             "turnkeyOrgId" to appContext.getString(R.string.turnkey_org_id),
             "backendApiUrl" to indexerUrl,
             "theme" to (ThemeSettings.shared.themeConfig.value?.id ?: "dark"),
+        )
+
+        // The terms string contains HTML links, so we need to construct it here
+        val tos = "<a href=\"${tosUrl}\">${localizer.localize(path = "APP.HEADER.TERMS_OF_USE")}</a>"
+        val privacy = "<a href=\"${privacyUrl}\">${localizer.localize(path = "APP.ONBOARDING.PRIVACY_POLICY")}</a>"
+        val terms = localizer.localizeWithParams(
+            path = "APP.ONBOARDING.TOS_SHORT",
+            params = mapOf(
+                "TERMS_LINK" to tos,
+                "PRIVACY_POLICY_LINK" to privacy,
+            ),
         )
 
         val localizerEntries = listOf(
@@ -105,6 +114,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.SIGN_IN_EMAIL"),
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_DESCRIPTION"),
             LocalizerEntry(path = "APP.GENERAL.OR"),
+            LocalizerEntry(path = "APP.ONBOARDING.TOS_SHORT", localized = terms),
         )
 
         return DydxTurnkeyAuthView.ViewState(
@@ -170,26 +180,26 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
                 onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
                 walletAnalytics.logConnected(walletId = "turnkey")
 
-                val status = Status.Signed(
-                    SetupResult(
-                        ethereumAddress = evmAddress,
-                        walletId = "turnkey",
-                        cosmosAddress = cosmosAddress,
-                        dydxMnemonic = dydxMnemonic,
-                        svmAddress = svmAddress,
-                        avalancheAddress = null,
-                        sourceWalletMnemonic = mnemonics,
-                        loginMethod = loginMethod,
-                        userEmail = userEmail,
-                    ),
+                abacusStateManager.setV4(
+                    ethereumAddress = evmAddress,
+                    walletId = "turnkey",
+                    cosmosAddress = cosmosAddress,
+                    dydxMnemonic = dydxMnemonic,
+                    isNew = true,
+                    svmAddress = svmAddress,
+                    avalancheAddress = null,
+                    sourceWalletMnemonic = mnemonics,
+                    loginMethod = loginMethod,
+                    userEmail = userEmail,
                 )
 
-                mutableSetupStatusFlow.value = status
+                onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.ACKNOWLEDGE_TERMS)
 
                 viewModelScope.launch {
                     router.navigateBack()
+                    router.navigateToRoot(excludeRoot = false)
                     router.navigateTo(
-                        route = OnboardingRoutes.tos,
+                        route = OnboardingRoutes.deposit_prompt,
                         presentation = DydxRouter.Presentation.Modal,
                     )
                 }

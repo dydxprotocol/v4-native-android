@@ -20,6 +20,8 @@ import { useEmbeddedKeyAndNonce } from './useEmbeddedKeyAndNonce';
 import { Image } from 'react-native';
 import { currentTheme } from '../../rn_style/themes/currentTheme';
 import { DydxTurnkeySession } from '../providers/dydxTurnkeySession';
+import RenderHTML from "react-native-render-html";
+import { useWindowDimensions, StyleSheet } from "react-native";
 
 const renderError = () => {
   const {
@@ -106,6 +108,11 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
   const { state } = useAuthRelay();
   const hasError = state.error !== "" && state.loading === null;
   const showContinueModal = continueModal && hasError === false;
+
+  const { width } = useWindowDimensions();
+  const source = {
+    html: configs.strings["APP.ONBOARDING.TOS_SHORT"],
+  };
 
   return (
     <ScrollView
@@ -216,6 +223,18 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
               resizeMode="contain"
             />
           </TouchableOpacity>
+
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <RenderHTML
+              contentWidth={width}
+              source={source}
+              tagsStyles={{
+                body: { fontFamily: "Satoshi-Regular", fontSize: 11, color: currentTheme.colors.textTertiary }, 
+                a: { color: currentTheme.colors.purple }, // links color
+              }}
+            />
+          </View>
+
         </View>
       </View>
     </ScrollView>
@@ -258,7 +277,7 @@ const ContinueSignInModal = ({
       break;
     default:
       signInTitle = configs.strings['APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_TITLE'];
-  } 
+  }
   return (
     <Modal
       visible={visible}

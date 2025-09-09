@@ -41,6 +41,7 @@
     "react-native-keychain": "^9.2.3",
     "react-native-otp-entry": "^1.8.5",
     "react-native-passkey": "^3.1.0",
+    "react-native-render-html": "^6.3.4",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.13.0",
     "react-native-svg": "^15.12.0",

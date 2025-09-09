@@ -51,7 +51,7 @@ fun ReactNativeView(
                 }
                 val localizedValues = Bundle()
                 localizerEntries.forEach { entry ->
-                    val localized = localizer.localizeWithParams(path = entry.path, params = entry.params)
+                    val localized = entry.localized ?: localizer.localizeWithParams(path = entry.path, params = entry.params)
                     localizedValues.putString(entry.path, localized)
                 }
                 initialPropsWithLocalizationData.putBundle("strings", localizedValues)
@@ -101,5 +101,6 @@ private tailrec fun Context.findActivity(): Activity {
 
 data class LocalizerEntry(
     val path: String,
-    val params: Map<String, String>? = null
+    val params: Map<String, String>? = null,
+    val localized: String? = null // This takes precedence over path and params
 )
