@@ -84,21 +84,19 @@ export const EmailInput = ({
         aria-errormessage="emailError"
       />
 
-      <Button
+      <TouchableOpacity
         disabled={!!state.loading || !isValidEmail}
-        onPress={() => handleEmailSubmit()}
+        onPress={handleEmailSubmit}
+        style={[
+          styles.sendButton,
+          { backgroundColor: isValidEmail ? currentTheme.colors.purple : currentTheme.colors.textTertiary }
+        ]}
       >
-        <TouchableOpacity style={[styles.sendButton, { backgroundColor: isValidEmail ? currentTheme.colors.purple : currentTheme.colors.textTertiary }]}>
-          <Image
-            source={require('../../rn_style/assets/icon_arrow.png')}
-            style={{ width: 12, height: 12, tintColor: currentTheme.colors.white}}
-          />
-        </TouchableOpacity>
-
-        {/* <Text style={{ color: isValidEmail ? currentTheme.colors.purple : currentTheme.colors.textTertiary }}>
-          {configs.strings["APP.TURNKEY_ONBOARD.SUBMIT"]}
-        </Text> */}
-      </Button>
+        <Image
+          source={require('../../rn_style/assets/icon_arrow.png')}
+          style={{ width: 12, height: 12, tintColor: currentTheme.colors.white }}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
