@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings

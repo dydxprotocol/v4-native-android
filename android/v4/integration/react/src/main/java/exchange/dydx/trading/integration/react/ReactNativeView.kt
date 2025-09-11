@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.os.Bundle
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -58,7 +57,7 @@ fun ReactNativeView(
             }
             initialPropsWithLocalizationData.putBundle("strings", localizedValues)
 
-            startReactApplication(reactInstanceManager, moduleName, initialPropsWithLocalizationData )
+            startReactApplication(reactInstanceManager, moduleName, initialPropsWithLocalizationData)
         }
     }
 
