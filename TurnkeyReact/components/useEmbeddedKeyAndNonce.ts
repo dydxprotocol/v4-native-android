@@ -1,6 +1,5 @@
-import { useTurnkey } from "@turnkey/sdk-react-native";
 import { SHA256 } from "crypto-js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   generateP256KeyPair,
 } from "@turnkey/crypto";
@@ -58,5 +57,5 @@ export const useEmbeddedKeyAndNonce = (loginMethod: LoginMethod): EmbeddedKeyAnd
     generateNonce();
   }, [generateNonce]);
 
-  return { privateKey, targetPublicKey, nonce, refreshNonce: generateNonce };
+  return useMemo(() => ({ privateKey, targetPublicKey, nonce, refreshNonce: generateNonce }), [privateKey, targetPublicKey, nonce]);
 };

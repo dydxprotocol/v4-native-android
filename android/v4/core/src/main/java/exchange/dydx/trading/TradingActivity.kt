@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
@@ -147,6 +148,9 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
     override fun onResume() {
         super.onResume()
         abacusStateManager.setReadyToConnect(true)
+
+        // Helps ensure ReactRootView can handle keyboard
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     override fun onDestroy() {

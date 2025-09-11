@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
+import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.platformui.designSystem.theme.ThemeSettings
@@ -84,6 +85,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             // From Turnkey console
             "turnkeyOrgId" to appContext.getString(R.string.turnkey_org_id),
             "backendApiUrl" to indexerUrl,
+            "deploymentUri" to abacusStateManager.deploymentUri + "/",
             "theme" to (ThemeSettings.shared.themeConfig.value?.id ?: "dark"),
         )
 

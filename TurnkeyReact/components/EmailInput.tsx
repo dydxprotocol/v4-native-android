@@ -78,10 +78,12 @@ export const EmailInput = ({
           const isValid = validateEmail(text);
           setIsValidEmail(isValid);
         }}
-        onFocus={() => focusChanged(true)} 
-        onBlur={() => focusChanged(false)}
-        aria-labelledby="emailLabel"
-        aria-errormessage="emailError"
+        onFocus={(e) => {
+          focusChanged(true);
+        }}
+        onBlur={() =>
+          focusChanged(false)
+        }
       />
 
       <TouchableOpacity

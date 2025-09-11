@@ -5,13 +5,23 @@ import { Providers } from './providers/providers';
 import "react-native-get-random-values";
 import { TurnkeyConfigs } from './sharedConfigs';
 import { setDydXTheme } from '../rn_style/themes/currentTheme';
-import { useThemedStyles } from './turnkeyStyle';
+import { useEffect } from 'react';
 
 export const TurnkeyLogin = (configs: TurnkeyConfigs) => {
-  if (configs.theme !== undefined) {
-    setDydXTheme(configs.theme);
-  }
+  useEffect(() => {
+    if (configs.theme !== undefined) {
+      setDydXTheme(configs.theme);
+    }
+  }, [configs.theme]);
 
+    useEffect(() => {
+    console.log("MOUNT");
+  
+    return () => {
+      console.log("UNMOUNT");
+    };
+  }, []);
+  
   return (
     <Providers configs={configs}>
       <Auth configs={configs} />

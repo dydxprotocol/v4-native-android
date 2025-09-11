@@ -21,7 +21,7 @@ import { Image } from 'react-native';
 import { currentTheme } from '../../rn_style/themes/currentTheme';
 import { DydxTurnkeySession } from '../providers/dydxTurnkeySession';
 import RenderHTML from "react-native-render-html";
-import { useWindowDimensions, StyleSheet } from "react-native";
+import { useWindowDimensions } from "react-native";
 
 const renderError = () => {
   const {
@@ -44,8 +44,6 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
     uploadDydxAddress,
     completeOtpAuth,
   } = useAuthRelay();
-
-  const [session, setSession] = useState<DydxTurnkeySession>();
   const [continueModal, setContinueModal] = useState(false);
   const [continueModalProviderName, setContinueModalProviderName] = useState<string>();
 
@@ -53,6 +51,26 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
   const emailEmbeddedKeyAndNonce = useEmbeddedKeyAndNonce(LoginMethod.Email);
 
   useEffect(() => {
+    DeviceEventEmitter.removeAllListeners('EmailTokenReceived');
+    DeviceEventEmitter.addListener(
+      'EmailTokenReceived',
+      async ({ token }: EmailTokenReceivedEvent) => {
+        setContinueModalProviderName("Email");
+        setContinueModal(true);
+        const session = await completeOtpAuth({
+          otpType: "email",
+          token: token,
+          configs: configs,
+        });
+
+        registerDydxAddressReceivedHandler(session);
+
+        await emailEmbeddedKeyAndNonce.refreshNonce();
+      }
+    );
+  }, [emailEmbeddedKeyAndNonce]);
+
+  function registerDydxAddressReceivedHandler(session: DydxTurnkeySession | undefined) {
     DeviceEventEmitter.removeAllListeners('DydxAddressReceived');
     DeviceEventEmitter.addListener(
       'DydxAddressReceived',
@@ -79,27 +97,7 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
         }
       }
     );
-  });
-
-  useEffect(() => {
-    DeviceEventEmitter.removeAllListeners('EmailTokenReceived');
-    DeviceEventEmitter.addListener(
-      'EmailTokenReceived',
-      async ({ token }: EmailTokenReceivedEvent) => {
-        setContinueModalProviderName("Email");
-        setContinueModal(true);
-        const session = await completeOtpAuth({
-          otpType: "email",
-          token: token,
-          configs: configs,
-        });
-
-        setSession(session);
-
-        await emailEmbeddedKeyAndNonce.refreshNonce();
-      }
-    );
-  }, [emailEmbeddedKeyAndNonce]);
+  }
 
   const styles = useThemedStyles(currentTheme);
 
@@ -113,6 +111,8 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
   const source = {
     html: configs.strings["APP.ONBOARDING.TOS_SHORT"],
   };
+
+  const MemoizedRenderHTML = React.memo(RenderHTML);
 
   return (
     <ScrollView
@@ -147,7 +147,7 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
                 setContinueModalProviderName(params.providerName);
                 setContinueModal(true);
                 const session = await loginWithOAuth(params);
-                setSession(session);
+                registerDydxAddressReceivedHandler(session);
               }}
               configs={configs}
               embeddedKeyAndNonce={oAuthEmbeddedKeyAndNonce} />
@@ -224,7 +224,7 @@ export const Auth = ({ configs }: { configs: TurnkeyConfigs }) => {
             />
           </TouchableOpacity>
 
-          <RenderHTML
+          <MemoizedRenderHTML
             contentWidth={width * 0.9} // 90% of screen width
             source={source}
             baseStyle={{ textAlign: "center" }} // center text inside

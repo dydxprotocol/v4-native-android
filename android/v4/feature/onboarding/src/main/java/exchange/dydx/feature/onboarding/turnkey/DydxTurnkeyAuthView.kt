@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,14 +61,16 @@ object DydxTurnkeyAuthView : DydxComponent {
             return
         }
 
+        val keyboardController = LocalSoftwareKeyboardController.current
+
         Box(Modifier.fillMaxSize()) {
             ReactNativeView(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 moduleName = "TurnkeyLogin",
                 initialProps = state.initialProperties,
                 localizerEntries = state.localizerEntries,
                 localizer = state.localizer,
-                modifier = Modifier
-                    .fillMaxWidth(),
             )
 
             Column {
@@ -84,7 +87,10 @@ object DydxTurnkeyAuthView : DydxComponent {
                 ) {
                     Spacer(Modifier.weight(1f))
 
-                    HeaderViewCloseBotton(closeAction = state.closeAction)
+                    HeaderViewCloseBotton(closeAction = {
+                        keyboardController?.hide()
+                        state.closeAction?.invoke()
+                    })
                 }
 
                 Spacer(Modifier.weight(1f)) // fills all vertical empty space

@@ -1,10 +1,11 @@
 package exchange.dydx.trading.integration.react
 
-import android.R.attr.path
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Bundle
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -22,11 +23,11 @@ import exchange.dydx.abacus.protocols.localizeWithParams
 
 @Composable
 fun ReactNativeView(
+    modifier: Modifier = Modifier,
     moduleName: String, // matches AppRegistry.registerComponent(...)
     initialProps: Map<String, String>? = null, // Optional, initial properties for the RN app
     localizerEntries: List<LocalizerEntry> = emptyList(), // Optional, for localization
     localizer: LocalizerProtocol,
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
@@ -39,26 +40,30 @@ fun ReactNativeView(
     }
 
     // Keep one ReactRootView instance
-    val reactRootView = remember { ReactRootView(context) }
+    val reactRootView = remember {
+        ReactRootView(context).apply {
+            isFocusable = true
+            isFocusableInTouchMode = true
+            descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
+
+            // Starting the RN app inside this view
+            val initialPropsWithLocalizationData = Bundle()
+            initialProps?.forEach { (key, value) ->
+                initialPropsWithLocalizationData.putString(key, value)
+            }
+            val localizedValues = Bundle()
+            localizerEntries.forEach { entry ->
+                val localized = entry.localized ?: localizer.localizeWithParams(path = entry.path, params = entry.params)
+                localizedValues.putString(entry.path, localized)
+            }
+            initialPropsWithLocalizationData.putBundle("strings", localizedValues)
+
+            startReactApplication(reactInstanceManager, moduleName, initialPropsWithLocalizationData )
+        }
+    }
 
     AndroidView(
-        factory = {
-            reactRootView.apply {
-                // Starting the RN app inside this view
-                val initialPropsWithLocalizationData = Bundle()
-                initialProps?.forEach { (key, value) ->
-                    initialPropsWithLocalizationData.putString(key, value)
-                }
-                val localizedValues = Bundle()
-                localizerEntries.forEach { entry ->
-                    val localized = entry.localized ?: localizer.localizeWithParams(path = entry.path, params = entry.params)
-                    localizedValues.putString(entry.path, localized)
-                }
-                initialPropsWithLocalizationData.putBundle("strings", localizedValues)
-
-                startReactApplication(reactInstanceManager, moduleName, initialPropsWithLocalizationData)
-            }
-        },
+        factory = { reactRootView },
         modifier = modifier,
     )
 

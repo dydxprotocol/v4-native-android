@@ -45,8 +45,9 @@
         <activity
             android:name="exchange.dydx.trading.TradingActivity"
             android:exported="true"
-            android:configChanges="uiMode"
             android:launchMode="singleInstance"
+            android:configChanges="uiMode"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme.OverlapSystemBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -123,6 +124,18 @@
                     android:scheme="https"
                     android:host="@string/app_web_host"
                     android:pathPrefix="/onboard" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="@string/app_web_host"
+                    android:pathPrefix="/onboard/turnkey" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
