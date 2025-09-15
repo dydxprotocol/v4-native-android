@@ -33,7 +33,7 @@ interface TurnkeyTrackingDelegate {
 class TurnkeyReactBridge @Inject constructor(
     private val logger: Logging,
     private val tracker: Tracking,
-): TurnkeyTrackingDelegate  {
+) : TurnkeyTrackingDelegate {
     companion object {
         const val jSMainModuleName = "index"
         val reactPackage: ReactPackage = TurnkeyReactPackage()
