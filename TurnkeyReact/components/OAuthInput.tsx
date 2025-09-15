@@ -27,6 +27,7 @@ export const GoogleAuthButton: React.FC<OAuthProps> = ({
 
   const handlePress = async () => {
     try {
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signInMethod": "google" });
       await handleGoogleOAuth({
         clientId: configs.googleClientId,
         nonce: embeddedKeyAndNonce.nonce!,
@@ -92,6 +93,7 @@ export const AppleAuthButton: React.FC<OAuthProps> = ({
   })
 
   const handleAppleAuth = async () => {
+    TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signInMethod": "apple" });
     if (!embeddedKeyAndNonce.nonce) {
       console.error("Nonce is not ready");
       return;

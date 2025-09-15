@@ -5,6 +5,7 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import java.util.UUID
@@ -22,6 +23,7 @@ internal class TurnkeyNativeModule(
     override fun getName(): String = TurnkeyNativeModule.NAME
 
     var delegate: TurnkeyBridgeManagerDelegate? = null
+    var trackingDelegate: TurnkeyTrackingDelegate? = null
 
     init {
         reactContext.addLifecycleEventListener(this)
@@ -110,6 +112,13 @@ internal class TurnkeyNativeModule(
             loginMethod,
             userEmail,
         )
+    }
+
+    @ReactMethod
+    fun onTrackingEvent(eventName: String, eventParams: ReadableMap) {
+        val params: Map<String, String> = eventParams.toHashMap()
+            .mapValues { it.value.toString() }
+        trackingDelegate?.onTrackingEvent(eventName = eventName, eventParams = params)
     }
 
     override fun onHostDestroy() {

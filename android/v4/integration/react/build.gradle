@@ -46,6 +46,7 @@ dependencies {
     /* Module Dependencies */
     implementation project(':v4:common')
     implementation project(path: ':v4:utilities')
+    implementation project(path: ':v4:integration:analytics')
 
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
 

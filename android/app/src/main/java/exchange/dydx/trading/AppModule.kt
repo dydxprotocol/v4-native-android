@@ -101,9 +101,11 @@ interface AppModule {
 
         @Provides @Singleton
         fun provideTurnkeyReactBridge(
-            logger: Logging
+            logger: Logging,
+            tracker: Tracking,
         ): TurnkeyReactBridge = TurnkeyReactBridge(
             logger = logger,
+            tracker = tracker
         )
 
         @Provides

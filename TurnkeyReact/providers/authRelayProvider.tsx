@@ -146,7 +146,6 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
     embeddedKeyAndNonce,
     configs,
   }: OtpAuthRequest) => {
-
     const inputBody = {
       "signinMethod": "email",
       "userEmail": contact,
@@ -216,6 +215,8 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       return Promise.resolve(dydxSession);
 
     } catch (error: any) {
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginError", { "signInMethod": "email", "error": error.message });
+  
       console.error("Error decrypting credential bundle:", error);
       dispatch({ type: "ERROR", payload: error.message });
     } finally {
@@ -301,6 +302,13 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       return Promise.resolve(undefined);
 
     } catch (error: any) {
+      var signInMethod = "unknown";
+      if (providerName) {
+        signInMethod = providerName;
+      } else if (loginMethod === LoginMethod.Email) {
+        signInMethod = "email";
+      }
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginError", { "signInMethod": signInMethod, "error": error.message });
       console.error("Error during sign-in: ", error, error.message);
       dispatch({ type: "ERROR", payload: error.message });
     } finally {
@@ -361,6 +369,8 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
     if (!mnemonics) {
       throw new Error("Unable to export wallet mnemonics");
     }
+
+    TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginCompleted", { "signInMethod": loginMethod });
 
     TurnkeyNativeModule.onAuthCompleted(
       signed,
@@ -452,6 +462,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       // TODO(turnkey): handle policy returned in response
 
     } catch (error: any) {
+      TurnkeyNativeModule.onTrackingEvent("UploadAddressnError", { dydxAddress, "error": error.message });
       console.error("Error during sign-in: ", error, error.message);
       dispatch({ type: "ERROR", payload: error.message });
       throw error;

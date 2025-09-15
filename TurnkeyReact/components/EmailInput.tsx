@@ -10,6 +10,7 @@ import { EmbeddedKeyAndNonce } from "./useEmbeddedKeyAndNonce";
 import { Button } from "./ui/button";
 import { OtpType } from "../lib/types";
 import { currentTheme } from "../../rn_style/themes/currentTheme";
+import { TurnkeyNativeModule } from "../../TurnkeyModule";
 
 interface EmailInputProps {
   embeddedKeyAndNonce: EmbeddedKeyAndNonce;
@@ -32,6 +33,7 @@ export const EmailInput = ({
 
   const handleEmailSubmit = () => {
     if (isValidEmail) {
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLogin", { "signinMethod": "email" });
       initOtpLogin({
         otpType: OtpType.Email,
         contact: email,

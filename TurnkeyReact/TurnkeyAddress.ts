@@ -31,6 +31,7 @@ DeviceEventEmitter.addListener(
       TurnkeyNativeModule.onJsResponse(callbackId, rawResponse);
 
     } catch (error: any) {
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyFetchDepositAddressError", { "dydxAddress": dydxAddress, "error": error.message });
       console.error("Error during sign-in: ", error, error.message);
       TurnkeyNativeModule.onJsResponse(callbackId, error.message);
     }
