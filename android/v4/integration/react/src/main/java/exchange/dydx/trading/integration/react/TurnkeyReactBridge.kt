@@ -18,7 +18,8 @@ interface TurnkeyBridgeManagerDelegate {
         svmAddress: String,
         mnemonics: String,
         loginMethod: String,
-        userEmail: String? // nullable
+        userEmail: String?,
+        dydxAddress: String?,
     )
     fun onAppleAuthRequest(nonce: String)
 }

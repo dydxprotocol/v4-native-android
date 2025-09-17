@@ -102,7 +102,8 @@ internal class TurnkeyNativeModule(
         svmAddress: String,
         mnemonics: String,
         loginMethod: String,
-        userEmail: String?
+        userEmail: String?,
+        dydxAddress: String?,
     ) {
         delegate?.onAuthCompleted(
             onboardingSignature,
@@ -111,6 +112,7 @@ internal class TurnkeyNativeModule(
             mnemonics,
             loginMethod,
             userEmail,
+            dydxAddress,
         )
     }
 

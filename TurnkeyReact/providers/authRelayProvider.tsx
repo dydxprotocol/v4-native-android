@@ -129,6 +129,7 @@ type OnboardDydxParams = {
   salt: string;
   loginMethod: string;
   userEmail?: string;
+  dydxAddress?: string;
 };
 
 interface AuthRelayProviderProps {
@@ -200,6 +201,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       if (!userEmail) {
         throw new Error("No userEmail found in storage");
       }
+      var dydxAddress = await getValueWithKey(deleteKey, STORAGE_KEY.DYDX_ADDRESS);
 
       const dydxSession = new DydxTurnkeySession(
         privateKey, publicKey, configs, organizationId, userId
@@ -209,7 +211,8 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
         dydxSession,
         salt,
         loginMethod: LoginMethod.Email,
-        userEmail
+        userEmail,
+        dydxAddress: dydxAddress ?? undefined
       });
 
       return Promise.resolve(dydxSession);
@@ -338,7 +341,9 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       configs
     );
 
-    await onboardDydx({ dydxSession, salt, loginMethod, userEmail });
+    const dydxAddress = response.dydxAddress;
+
+    await onboardDydx({ dydxSession, salt, loginMethod, userEmail, dydxAddress});
     return Promise.resolve(dydxSession);
   }
 
@@ -347,6 +352,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
     salt,
     loginMethod,
     userEmail,
+    dydxAddress,
   }: OnboardDydxParams) => {
     const accounts = await dydxSession.loadWalletAccounts();
 
@@ -378,7 +384,8 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       solanaAccount.address,
       mnemonics,
       loginMethod,
-      userEmail
+      userEmail,
+      dydxAddress
     );
   };
 
@@ -401,6 +408,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
     if (!userId) {
       throw new Error("No userId provided in response");
     }
+    const dydxAddress = response.dydxAddress;
 
     // save data needed after the user clicks the magic link to secure store
     // so that we retain the info if the app is closed
@@ -411,6 +419,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
     if (embeddedKeyAndNonce.privateKey) {
       setValueWithKey(STORAGE_KEY.PRIVATE_KEY, embeddedKeyAndNonce.privateKey);
     }
+    setValueWithKey(STORAGE_KEY.DYDX_ADDRESS, dydxAddress);
   }
 
   const clearError = () => {

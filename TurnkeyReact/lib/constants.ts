@@ -41,4 +41,5 @@ export class STORAGE_KEY {
   static USER_ID = "userId";
   static EMAIL = "email";
   static PRIVATE_KEY = "privateKey";
+  static DYDX_ADDRESS = "dydxAddress";
 }

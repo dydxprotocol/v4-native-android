@@ -154,7 +154,8 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
         svmAddress: String,
         mnemonics: String,
         loginMethod: String,
-        userEmail: String?
+        userEmail: String?,
+        dydxAddress: String?,
     ) {
         cosmosV4Client.deriveCosmosKey(signature = onboardingSignature) { data ->
             if (data == null) {
@@ -171,6 +172,23 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
                 return@deriveCosmosKey
             }
 
+            if (!dydxAddress.isNullOrEmpty()) {
+                if (dydxAddress != cosmosAddress) {
+                    logger.e(TAG, "dYdX address from Turnkey does not match derived address")
+                } else {
+                    completed(
+                        evmAddress = evmAddress,
+                        svmAddress = svmAddress,
+                        mnemonics = mnemonics,
+                        loginMethod = loginMethod,
+                        userEmail = userEmail,
+                        dydxMnemonic = dydxMnemonic,
+                        cosmosAddress = cosmosAddress,
+                    )
+                }
+                return@deriveCosmosKey
+            }
+
             turnkeyReactBridge.uploadDydxAddress(dydxAddress = cosmosAddress) { result ->
                 if (result != "success") {
                     // Log error but continue
@@ -178,33 +196,53 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
                     return@uploadDydxAddress
                 }
 
-                onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
-                walletAnalytics.logConnected(walletId = "turnkey")
-
-                abacusStateManager.setV4(
-                    ethereumAddress = evmAddress,
-                    walletId = "turnkey",
-                    cosmosAddress = cosmosAddress,
-                    dydxMnemonic = dydxMnemonic,
-                    isNew = true,
+                completed(
+                    evmAddress = evmAddress,
                     svmAddress = svmAddress,
-                    avalancheAddress = null,
-                    sourceWalletMnemonic = mnemonics,
+                    mnemonics = mnemonics,
                     loginMethod = loginMethod,
                     userEmail = userEmail,
+                    dydxMnemonic = dydxMnemonic,
+                    cosmosAddress = cosmosAddress,
                 )
-
-                onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.ACKNOWLEDGE_TERMS)
-
-                viewModelScope.launch {
-                    router.navigateBack()
-                    router.navigateToRoot(excludeRoot = false)
-                    router.navigateTo(
-                        route = OnboardingRoutes.deposit_prompt,
-                        presentation = DydxRouter.Presentation.Modal,
-                    )
-                }
             }
+        }
+    }
+
+    private fun completed(
+        evmAddress: String,
+        svmAddress: String,
+        mnemonics: String,
+        loginMethod: String,
+        userEmail: String?,
+        dydxMnemonic: String,
+        cosmosAddress: String,
+    ) {
+        onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.KEY_DERIVATION)
+        walletAnalytics.logConnected(walletId = "turnkey")
+
+        abacusStateManager.setV4(
+            ethereumAddress = evmAddress,
+            walletId = "turnkey",
+            cosmosAddress = cosmosAddress,
+            dydxMnemonic = dydxMnemonic,
+            isNew = true,
+            svmAddress = svmAddress,
+            avalancheAddress = null,
+            sourceWalletMnemonic = mnemonics,
+            loginMethod = loginMethod,
+            userEmail = userEmail,
+        )
+
+        onboardingAnalytics.log(OnboardingAnalytics.OnboardingSteps.ACKNOWLEDGE_TERMS)
+
+        viewModelScope.launch {
+            router.navigateBack()
+            router.navigateToRoot(excludeRoot = false)
+            router.navigateTo(
+                route = OnboardingRoutes.deposit_prompt,
+                presentation = DydxRouter.Presentation.Modal,
+            )
         }
     }
 
