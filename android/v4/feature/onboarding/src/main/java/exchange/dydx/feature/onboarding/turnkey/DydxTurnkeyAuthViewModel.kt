@@ -17,6 +17,7 @@ import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import exchange.dydx.trading.feature.shared.analytics.WalletAnalytics
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.trading.integration.react.LocalizerEntry
 import exchange.dydx.trading.integration.react.TurnkeyBridgeManagerDelegate
@@ -49,6 +50,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
     private val onboardingAnalytics: OnboardingAnalytics,
     private val walletAnalytics: WalletAnalytics,
     private val logger: Logging,
+    private val tracker: Tracking,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel, TurnkeyBridgeManagerDelegate {
 
@@ -175,6 +177,16 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             if (!dydxAddress.isNullOrEmpty()) {
                 if (dydxAddress != cosmosAddress) {
                     logger.e(TAG, "dYdX address from Turnkey does not match derived address")
+                    tracker.log(
+                        event = "TurnkeyAddressMismatch",
+                        data = mapOf(
+                            "turnkeyAddress" to dydxAddress,
+                            "derivedAddress" to cosmosAddress,
+                            "loginMethod" to loginMethod,
+                            "evmAddress" to evmAddress,
+                            "userEmail" to (userEmail ?: ""),
+                        ),
+                    )
                 } else {
                     completed(
                         evmAddress = evmAddress,
