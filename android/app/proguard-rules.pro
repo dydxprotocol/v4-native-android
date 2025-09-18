@@ -48,3 +48,11 @@
 -dontwarn org.slf4j.impl.StaticMDCBinder
 
 -keep class  exchange.dydx.dydxCartera.solana.** { *; }
+
+# Keep EventBus annotations
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+-keep class com.proyecto26.inappbrowser.** { *; }

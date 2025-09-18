@@ -184,9 +184,9 @@ object DydxWalletSecurityView : DydxComponent {
             val shape = RoundedCornerShape(12.dp)
             Row(
                 modifier = Modifier
-                    .clickable {
-                        state.loginAction()
-                    }
+//                    .clickable {
+//                        state.loginAction()
+//                    }
                     .background(color = ThemeColor.SemanticColor.layer_3.color, shape = shape)
                     .padding(horizontal = 16.dp, vertical = 14.dp)
                     .clip(shape),
@@ -230,12 +230,12 @@ object DydxWalletSecurityView : DydxComponent {
                             .themeFont(fontSize = ThemeFont.FontSize.tiny),
                     )
                 }
-
-                PlatformImage(
-                    modifier = Modifier.size(12.dp),
-                    icon = R.drawable.chevron_right,
-                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_tertiary.color),
-                )
+//
+//                PlatformImage(
+//                    modifier = Modifier.size(12.dp),
+//                    icon = R.drawable.chevron_right,
+//                    colorFilter = ColorFilter.tint(ThemeColor.SemanticColor.text_tertiary.color),
+//                )
             }
         }
     }
