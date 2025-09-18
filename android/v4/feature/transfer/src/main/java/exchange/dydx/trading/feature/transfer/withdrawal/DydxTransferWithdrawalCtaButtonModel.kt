@@ -18,7 +18,6 @@ import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.common.navigation.TransferRoutes
-import exchange.dydx.trading.common.navigation.VaultRoutes.withdraw
 import exchange.dydx.trading.feature.shared.DydxScreenResult
 import exchange.dydx.trading.feature.shared.analytics.TransferAnalytics
 import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
