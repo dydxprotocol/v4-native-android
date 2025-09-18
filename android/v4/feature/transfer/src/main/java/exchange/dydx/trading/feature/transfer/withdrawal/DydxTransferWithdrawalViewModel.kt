@@ -93,6 +93,10 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
         } else {
             null
         }
+        if (transferInput?.token != tokenAddress) {
+            abacusStateManager.transfer(input = tokenAddress, type = TransferInputField.token)
+        }
+
         return DydxTransferWithdrawalView.ViewState(
             localizer = localizer,
             chainsComboBox = if (chain != null) {
