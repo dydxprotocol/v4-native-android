@@ -40,7 +40,7 @@ enum class DydxBoolFeatureFlag {
             return when (this) {
                 force_mainnet -> false
                 ff_vault_enabled -> true
-                ff_turnkey_android -> false
+                ff_turnkey_android -> true
                 ff_prompt_app_rating -> true
                 ff_rewards_sep_2025 -> false
             }
