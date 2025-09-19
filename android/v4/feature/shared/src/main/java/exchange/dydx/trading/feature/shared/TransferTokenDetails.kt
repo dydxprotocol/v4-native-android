@@ -110,7 +110,7 @@ enum class TransferChain {
             Base -> "ETH, USDC"
             Polygon -> "POL, USDC"
             Solana -> "USDC"
-            Avalanche -> "AVAX, USDC"
+            Avalanche -> "USDC"
         }
 
     fun depositFeesString(localizer: LocalizerProtocol): String {
@@ -126,10 +126,10 @@ enum class TransferChain {
 
     fun depositWarningString(localizer: LocalizerProtocol): String {
         val tokens = when (this) {
-            Ethereum, Optimism, Arbitrum, Base -> "ETH " + localizer.localize(path = "APP.LEAGUES.AND") + " USDC"
-            Polygon -> "POL " + localizer.localize(path = "APP.LEAGUES.AND") + " USDC"
+            Ethereum, Optimism, Arbitrum, Base -> "ETH " + localizer.localize(path = "APP.GENERAL.OR") + " USDC"
+            Polygon -> "POL " + localizer.localize(path = "APP.GENERAL.OR") + " USDC"
             Solana -> "USDC"
-            Avalanche -> "AVAX " + localizer.localize(path = "APP.LEAGUES.AND") + " USDC"
+            Avalanche -> " USDC"
         }
 
         return localizer.localizeWithParams(

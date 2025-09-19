@@ -9,6 +9,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DepositAddresses
 import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DydxDepositAddressesStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.RemoteFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.TransferChain
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,7 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
     private val depositAddressesStateManager: DydxDepositAddressesStateManagerProtocol,
     private val router: DydxRouter,
     savedStateHandle: SavedStateHandle,
+    private val remoteFlags: RemoteFlags,
 ) : ViewModel(), DydxViewModel {
     private val chain: String? = savedStateHandle["chain"]
 
@@ -55,6 +57,21 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
             TransferChain.Avalanche -> addresses.avalancheAddress
             else -> null
         }
+        val minSlowVal = if (chain == TransferChain.Ethereum) {
+            remoteFlags.getConfigValue("turnkey_deposit", "eth_min_slow", "-")
+        } else {
+            remoteFlags.getConfigValue("turnkey_deposit", "default_min_slow", "-")
+        }
+        val minFastVal = if (chain == TransferChain.Ethereum) {
+            remoteFlags.getConfigValue("turnkey_deposit", "eth_min_fast", "-")
+        } else {
+            remoteFlags.getConfigValue("turnkey_deposit", "default_min_fast", "-")
+        }
+        val maxVal = if (chain == TransferChain.Ethereum) {
+            remoteFlags.getConfigValue("turnkey_deposit", "eth_max", "-")
+        } else {
+            remoteFlags.getConfigValue("turnkey_deposit", "default_max", "-")
+        }
         return DydxTurnkeyQRCodeView.ViewState(
             localizer = localizer,
             backAction = {
@@ -63,9 +80,13 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
             address = address,
             chainIconUrl = chain.chainLogoUrl(abacusStateManager.deploymentUri),
             subtitle = localizer.localizeWithParams(
-                path = "APP.DEPOSIT_MODAL.TURNKEY_DEPOSIT_SUBTITLE",
+                path = "APP.TURNKEY_ONBOARD.DEPOSIT_NETWORK_WARNING",
                 params = mapOf(
+                    "ASSETS" to chain.supportedDepositTokenString,
                     "NETWORK" to chain.name,
+                    "MIN_DEPOSIT" to minSlowVal,
+                    "MIN_INSTANT_DEPOSIT" to minFastVal,
+                    "MAX_DEPOSIT" to maxVal,
                 ),
             ),
             copied = copied,

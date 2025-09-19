@@ -1,5 +1,6 @@
 package exchange.dydx.trading.integration.statsig
 
+import android.R.attr.name
 import com.statsig.androidsdk.EvaluationReason
 import com.statsig.androidsdk.Statsig
 import dagger.Module
@@ -49,6 +50,11 @@ object StatsigFlagsImpl : RemoteFlags {
             firstAccessCache[name] = flagValue
             flagValue
         }
+    }
+
+    override fun getConfigValue(configName: String, key: String, default: String): String {
+        val myConfig = Statsig.getConfig(configName)
+        return myConfig.getString(key, default) ?: default
     }
 }
 
