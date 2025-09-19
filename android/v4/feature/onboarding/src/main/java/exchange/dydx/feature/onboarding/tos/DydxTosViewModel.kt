@@ -69,13 +69,6 @@ class DydxTosViewModel @Inject constructor(
                 }
 
                 router.navigateToRoot(excludeRoot = false)
-
-                if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
-                    router.navigateTo(
-                        route = OnboardingRoutes.deposit_prompt,
-                        presentation = DydxRouter.Presentation.Modal,
-                    )
-                }
             },
             urlAction = { url ->
                 router.navigateTo(url)

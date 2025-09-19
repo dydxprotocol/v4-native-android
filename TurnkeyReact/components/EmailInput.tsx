@@ -54,7 +54,10 @@ export const EmailInput = ({
       <CheckEmailModal
         visible={checkEmailModalVisible}
         onClose={() => setCheckEmailModalVisible(false)}
-        onResend={handleEmailSubmit}
+        onResend={() => {
+          TurnkeyNativeModule.onTrackingEvent("TurnkeyResendEMailClick", { });
+          handleEmailSubmit();
+        }}
         showResendButton={showResendButton}
         configs={configs}
         currentTheme={currentTheme}

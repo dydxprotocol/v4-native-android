@@ -8,5 +8,6 @@ export type TurnkeyConfigs = {
   backendApiUrl: string,
   deploymentUri: string,
   theme: "light" | "dark" | "classicDark" | undefined,
+  enableAppleLoginIn: boolean,
   strings: Record<string, string>,
 };

@@ -43,11 +43,7 @@ class DydxDepositPromptViewModel @Inject constructor(
             ctaAction = {
                 router.navigateBack()
                 router.navigateTo(
-                    route = if (wallet?.walletId == "turnkey") {
-                        TransferRoutes.transfer_turnkey_deposit
-                    } else {
-                        TransferRoutes.transfer_deposit
-                    },
+                    route = TransferRoutes.transfer_turnkey_deposit,
                     presentation = DydxRouter.Presentation.Modal,
                 )
             },

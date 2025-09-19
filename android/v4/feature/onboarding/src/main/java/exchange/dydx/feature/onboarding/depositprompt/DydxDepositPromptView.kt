@@ -6,10 +6,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -204,33 +206,40 @@ object DydxDepositPromptView : DydxComponent {
                 )
             }
 
-            val shape = RoundedCornerShape(percent = 50)
-            Row(
-                modifier = Modifier
-                    .background(color = ThemeColor.SemanticColor.layer_3.color, shape = shape)
-                    .border(1.dp, ThemeColor.SemanticColor.layer_4.color, shape = shape)
-                    .padding(vertical = 8.dp)
-                    .padding(horizontal = 16.dp)
-                    .clip(shape),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Box(
+                modifier = Modifier.height(48.dp)
             ) {
-                if (state.loginMode != null) {
-                    PlatformImage(
-                        icon = state.loginMode.icon,
+                if (!state.user.isNullOrEmpty()) {
+                    val shape = RoundedCornerShape(percent = 50)
+                    Row(
                         modifier = Modifier
-                            .size(16.dp),
-                        colorFilter = state.loginMode.colorFilter,
-                    )
-                }
+                            .background(color = ThemeColor.SemanticColor.layer_3.color, shape = shape)
+                            .border(1.dp, ThemeColor.SemanticColor.layer_4.color, shape = shape)
+                            .padding(vertical = 8.dp)
+                            .padding(horizontal = 16.dp)
+                            .clip(shape),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        if (state.loginMode != null) {
+                            PlatformImage(
+                                icon = state.loginMode.icon,
+                                modifier = Modifier
+                                    .size(16.dp),
+                                colorFilter = state.loginMode.colorFilter,
+                            )
+                        }
 
-                Text(
-                    text = state.user ?: "",
-                    style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.medium)
-                        .themeColor(foreground = ThemeColor.SemanticColor.text_primary),
-                )
+                        Text(
+                            text = state.user ?: "",
+                            style = TextStyle.dydxDefault
+                                .themeFont(fontSize = ThemeFont.FontSize.medium)
+                                .themeColor(foreground = ThemeColor.SemanticColor.text_primary),
+                        )
+                    }
+                }
             }
+
         }
     }
 }
