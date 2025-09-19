@@ -207,7 +207,7 @@ object DydxDepositPromptView : DydxComponent {
             }
 
             Box(
-                modifier = Modifier.height(48.dp)
+                modifier = Modifier.height(48.dp),
             ) {
                 if (!state.user.isNullOrEmpty()) {
                     val shape = RoundedCornerShape(percent = 50)
@@ -239,7 +239,6 @@ object DydxDepositPromptView : DydxComponent {
                     }
                 }
             }
-
         }
     }
 }

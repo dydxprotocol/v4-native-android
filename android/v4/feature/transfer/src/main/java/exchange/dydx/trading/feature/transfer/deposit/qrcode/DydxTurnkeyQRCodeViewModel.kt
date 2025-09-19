@@ -58,19 +58,19 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
             else -> null
         }
         val minSlowVal = if (chain == TransferChain.Ethereum) {
-            remoteFlags.getConfigValue("turnkey_deposit", "eth_min_slow", "-")
+            remoteFlags.getParamStoreValue("eth_min_slow", "-")
         } else {
-            remoteFlags.getConfigValue("turnkey_deposit", "default_min_slow", "-")
+            remoteFlags.getParamStoreValue("default_min_slow", "-")
         }
         val minFastVal = if (chain == TransferChain.Ethereum) {
-            remoteFlags.getConfigValue("turnkey_deposit", "eth_min_fast", "-")
+            remoteFlags.getParamStoreValue("eth_min_fast", "-")
         } else {
-            remoteFlags.getConfigValue("turnkey_deposit", "default_min_fast", "-")
+            remoteFlags.getParamStoreValue("default_min_fast", "-")
         }
         val maxVal = if (chain == TransferChain.Ethereum) {
-            remoteFlags.getConfigValue("turnkey_deposit", "eth_max", "-")
+            remoteFlags.getParamStoreValue("eth_max", "-")
         } else {
-            remoteFlags.getConfigValue("turnkey_deposit", "default_max", "-")
+            remoteFlags.getParamStoreValue("default_max", "-")
         }
         return DydxTurnkeyQRCodeView.ViewState(
             localizer = localizer,
@@ -80,17 +80,13 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
             address = address,
             chainIconUrl = chain.chainLogoUrl(abacusStateManager.deploymentUri),
             subtitle = localizer.localizeWithParams(
-                path = "APP.TURNKEY_ONBOARD.DEPOSIT_NETWORK_WARNING",
+                path = "APP.DEPOSIT_MODAL.TURNKEY_DEPOSIT_SUBTITLE",
                 params = mapOf(
-                    "ASSETS" to chain.supportedDepositTokenString,
                     "NETWORK" to chain.name,
-                    "MIN_DEPOSIT" to minSlowVal,
-                    "MIN_INSTANT_DEPOSIT" to minFastVal,
-                    "MAX_DEPOSIT" to maxVal,
                 ),
             ),
             copied = copied,
-            footer = chain.depositWarningString(localizer = localizer),
+            footer = chain.depositWarningString(localizer = localizer, remoteFlags = remoteFlags),
             onCopyAction = {
                 this.copied.value = true
             },

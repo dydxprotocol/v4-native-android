@@ -52,9 +52,9 @@ object StatsigFlagsImpl : RemoteFlags {
         }
     }
 
-    override fun getConfigValue(configName: String, key: String, default: String): String {
-        val myConfig = Statsig.getConfig(configName)
-        return myConfig.getString(key, default) ?: default
+    override fun getParamStoreValue(key: String, default: String): String {
+        val store = Statsig.getParameterStore("v4_params")
+        return store.getString(key, default) ?: default
     }
 }
 

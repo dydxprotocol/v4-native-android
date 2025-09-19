@@ -2,9 +2,11 @@ package exchange.dydx.trading.feature.shared
 
 import android.R.attr.path
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.abacus.protocols.localizeWithParams
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.localizeWithParams
 import exchange.dydx.trading.common.di.CoroutineScopes
+import exchange.dydx.trading.common.featureflags.RemoteFlags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -124,7 +126,7 @@ enum class TransferChain {
         }
     }
 
-    fun depositWarningString(localizer: LocalizerProtocol): String {
+    fun depositWarningString(localizer: LocalizerProtocol, remoteFlags: RemoteFlags): String {
         val tokens = when (this) {
             Ethereum, Optimism, Arbitrum, Base -> "ETH " + localizer.localize(path = "APP.GENERAL.OR") + " USDC"
             Polygon -> "POL " + localizer.localize(path = "APP.GENERAL.OR") + " USDC"
@@ -132,9 +134,31 @@ enum class TransferChain {
             Avalanche -> " USDC"
         }
 
+        val minSlowVal = if (this == TransferChain.Ethereum) {
+            remoteFlags.getParamStoreValue("eth_min_slow", "-")
+        } else {
+            remoteFlags.getParamStoreValue("default_min_slow", "-")
+        }
+        val minFastVal = if (this == TransferChain.Ethereum) {
+            remoteFlags.getParamStoreValue("eth_min_fast", "-")
+        } else {
+            remoteFlags.getParamStoreValue("default_min_fast", "-")
+        }
+        val maxVal = if (this == TransferChain.Ethereum) {
+            remoteFlags.getParamStoreValue("eth_max", "-")
+        } else {
+            remoteFlags.getParamStoreValue("default_max", "-")
+        }
+
         return localizer.localizeWithParams(
-            path = "APP.DEPOSIT_MODAL.TURNKEY_DEPOSIT_WARNING",
-            params = mapOf("TOKENS" to tokens, "NETWORK" to this.name),
+            path = "APP.TURNKEY_ONBOARD.DEPOSIT_NETWORK_WARNING",
+            params = mapOf(
+                "ASSETS" to tokens,
+                "NETWORK" to name,
+                "MIN_DEPOSIT" to minSlowVal,
+                "MIN_INSTANT_DEPOSIT" to minFastVal,
+                "MAX_DEPOSIT" to maxVal,
+            ),
         )
     }
 
