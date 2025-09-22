@@ -22,6 +22,7 @@ import exchange.dydx.trading.feature.transfer.components.ChainsComboBox
 import exchange.dydx.trading.feature.transfer.components.TokensComboBox
 import exchange.dydx.trading.feature.transfer.components.TransferAmountBox
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchParam
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -29,6 +30,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -79,6 +82,20 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
         }
             .onEach { selectedTokenFlow.value = it }
             .launchIn(viewModelScope)
+
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+            abacusStateManager.startWithdrawal()
+            abacusStateManager.state.currentWallet
+                .take(1)
+                .onStart { delay(100) }
+                .onEach { wallet ->
+                    abacusStateManager.transfer(
+                        input = wallet?.ethereumAddress,
+                        type = TransferInputField.address,
+                    )
+                }
+                .launchIn(viewModelScope)
+        }
     }
 
     private fun createViewState(

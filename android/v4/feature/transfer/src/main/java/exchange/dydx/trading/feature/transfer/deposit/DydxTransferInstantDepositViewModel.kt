@@ -63,6 +63,12 @@ class DydxTransferInstantDepositViewModel @Inject constructor(
         }
             .distinctUntilChanged()
 
+    init {
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+            abacusStateManager.startDeposit()
+        }
+    }
+
     private fun createViewState(
         transferInput: TransferInput?,
         selectedToken: TransferTokenInfo?,

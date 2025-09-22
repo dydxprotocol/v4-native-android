@@ -72,6 +72,11 @@ class DydxTransferOutViewModel @Inject constructor(
                 selectedTokenFlow.value = it
             }
             .launchIn(viewModelScope)
+
+        if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
+            abacusStateManager.transfer(input = null, type = TransferInputField.address)
+            abacusStateManager.startTransferOut()
+        }
     }
 
     private fun createViewState(
