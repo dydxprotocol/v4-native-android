@@ -33,7 +33,7 @@ export const EmailInput = ({
 
   const handleEmailSubmit = () => {
     if (isValidEmail) {
-      TurnkeyNativeModule.onTrackingEvent("TurnkeyLogin", { "signinMethod": "email" });
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signinMethod": "email" });
       initOtpLogin({
         otpType: OtpType.Email,
         contact: email,

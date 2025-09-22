@@ -471,7 +471,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       // TODO(turnkey): handle policy returned in response
 
     } catch (error: any) {
-      TurnkeyNativeModule.onTrackingEvent("UploadAddressnError", { dydxAddress, "error": error.message });
+      TurnkeyNativeModule.onTrackingEvent("UploadAddressError", { dydxAddress, "error": error.message });
       console.error("Error during sign-in: ", error, error.message);
       dispatch({ type: "ERROR", payload: error.message });
       throw error;
