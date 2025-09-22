@@ -89,10 +89,12 @@ class DydxTransferWithdrawalViewModel @Inject constructor(
                 .take(1)
                 .onStart { delay(100) }
                 .onEach { wallet ->
-                    abacusStateManager.transfer(
-                        input = wallet?.ethereumAddress,
-                        type = TransferInputField.address,
-                    )
+                    if (wallet?.walletId != "turnkey") {
+                        abacusStateManager.transfer(
+                            input = wallet?.ethereumAddress,
+                            type = TransferInputField.address,
+                        )
+                    }
                 }
                 .launchIn(viewModelScope)
         }
