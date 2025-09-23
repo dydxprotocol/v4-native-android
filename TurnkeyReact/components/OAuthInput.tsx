@@ -93,7 +93,7 @@ export const AppleAuthButton: React.FC<OAuthProps> = ({
   })
 
   const handleAppleAuth = async () => {
-    TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signInMethod": "apple" });
+    TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signinMethod": "apple" });
     if (!embeddedKeyAndNonce.nonce) {
       console.error("Nonce is not ready");
       return;
