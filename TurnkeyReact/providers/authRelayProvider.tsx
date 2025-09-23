@@ -218,7 +218,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       return Promise.resolve(dydxSession);
 
     } catch (error: any) {
-      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginError", { "signInMethod": "email", "error": error.message });
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginError", { "signinMethod": "email", "error": error.message });
   
       console.error("Error decrypting credential bundle:", error);
       dispatch({ type: "ERROR", payload: error.message });
@@ -311,7 +311,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       } else if (loginMethod === LoginMethod.Email) {
         signInMethod = "email";
       }
-      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginError", { "signInMethod": signInMethod, "error": error.message });
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginError", { "signinMethod": signInMethod, "error": error.message });
       console.error("Error during sign-in: ", error, error.message);
       dispatch({ type: "ERROR", payload: error.message });
     } finally {
@@ -376,7 +376,7 @@ export const AuthRelayProvider: React.FC<AuthRelayProviderProps> = ({
       throw new Error("Unable to export wallet mnemonics");
     }
 
-    TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginCompleted", { "signInMethod": loginMethod });
+    TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginCompleted", { "signinMethod": loginMethod });
 
     TurnkeyNativeModule.onAuthCompleted(
       signed,

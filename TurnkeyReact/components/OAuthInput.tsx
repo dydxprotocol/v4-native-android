@@ -27,7 +27,7 @@ export const GoogleAuthButton: React.FC<OAuthProps> = ({
 
   const handlePress = async () => {
     try {
-      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signInMethod": "google" });
+      TurnkeyNativeModule.onTrackingEvent("TurnkeyLoginInitiated", { "signinMethod": "google" });
       await handleGoogleOAuth({
         clientId: configs.googleClientId,
         nonce: embeddedKeyAndNonce.nonce!,
