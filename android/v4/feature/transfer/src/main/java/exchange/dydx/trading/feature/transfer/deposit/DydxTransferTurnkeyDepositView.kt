@@ -1,7 +1,5 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
-import android.R.attr.action
-import android.R.attr.text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +17,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.icons.PlatformImage
 import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
@@ -65,10 +67,13 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
         val localizer: LocalizerProtocol,
         val items: List<Item> = emptyList(),
         val closeAction: (() -> Unit)? = null,
+        val fiatAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                closeAction = {},
+                fiatAction = {},
                 items = listOf(
                     Item(
                         title = "Deposit USDC",
@@ -131,6 +136,87 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
                         )
                     }
                 }
+            }
+
+            if (state.fiatAction != null) {
+                OrDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    state = state,
+                )
+
+                FiatItem(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp),
+                    state = state,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun OrDivider(
+        modifier: Modifier = Modifier,
+        state: ViewState,
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlatformDivider(
+                modifier = Modifier.weight(1f)
+            )
+
+            Text(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                text = state.localizer.localize("APP.GENERAL.OR"),
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                    .themeColor(ThemeColor.SemanticColor.text_tertiary),
+            )
+
+            PlatformDivider(
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+
+    @Composable
+    private fun FiatItem(modifier: Modifier, state: ViewState) {
+        Row(
+            modifier = modifier
+                .clickable { state.fiatAction?.invoke() }
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .themeColor(background = ThemeColor.SemanticColor.layer_4),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(0.dp),
+            ) {
+                PlatformRoundImage(
+                    icon = R.drawable.icon_cash,
+                    size = 20.dp
+                )
+                Text(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    text = state.localizer.localize("APP.GENERAL.DEPOSIT_WITH_FIAT"),
+                    style = TextStyle.dydxDefault
+                        .themeFont(fontSize = ThemeFont.FontSize.medium)
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+                PlatformImage(
+                    icon = R.drawable.icon_arrow_right,
+                    modifier = Modifier
+                        .size(20.dp),
+                    colorFilter = ColorFilter.tint(color = ThemeColor.SemanticColor.text_primary.color)
+                )
             }
         }
     }

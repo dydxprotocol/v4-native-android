@@ -92,6 +92,26 @@
                         }
                     ]
                 }
+            },
+            {
+                "title":{
+                    "text":"Fiat Deposit"
+                },
+                "field":{
+                    "field":"ff_fiat_deposit",
+                    "optional":true,
+                    "type" : "text",
+                    "options" : [
+                        {
+                            "text": "yes",
+                            "value" : "1"
+                        },
+                        {
+                            "text": "no",
+                            "value" : "0"
+                        }
+                    ]
+                }
             }
         ]
     }

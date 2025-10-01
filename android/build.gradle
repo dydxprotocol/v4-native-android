@@ -9,10 +9,10 @@ buildscript {
     ext.hiltVersion = '2.57.1'
     ext.googleServicesVersion = '4.3.12'
 
-    repositories {
-        google()
-        mavenCentral()
-    }
+//    repositories {
+//        google()
+//        mavenCentral()
+//    }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$androidApplicationVersion"

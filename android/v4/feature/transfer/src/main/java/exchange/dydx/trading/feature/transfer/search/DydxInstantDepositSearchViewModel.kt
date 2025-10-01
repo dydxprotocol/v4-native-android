@@ -5,6 +5,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.DydxRouter.Presentation
@@ -22,6 +24,7 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val transferTokenDetails: TransferTokenDetails,
     private val router: DydxRouter,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxInstantDepositSearchView.ViewState?> =
@@ -66,6 +69,14 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
                     router.navigateTo(TransferRoutes.transfer_deposit_noble, presentation = Presentation.Push)
                 },
             ),
+            fiatItem = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_fiat_deposit)) {
+                DydxTransferFiatItemView.ViewState(
+                    localizer = localizer,
+                    selectAction = {
+
+                    },
+                )
+            } else null,
         )
     }
 
