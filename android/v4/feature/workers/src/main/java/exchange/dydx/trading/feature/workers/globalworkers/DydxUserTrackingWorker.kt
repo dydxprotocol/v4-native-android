@@ -18,8 +18,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 import org.komputing.khash.sha256.extensions.sha256
+import javax.inject.Inject
 
 @ActivityRetainedScoped
 class DydxUserTrackingWorker @Inject constructor(
