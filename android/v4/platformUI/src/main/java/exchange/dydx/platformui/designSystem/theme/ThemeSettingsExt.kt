@@ -107,6 +107,18 @@ fun TextStyle.themeFont(
     return value
 }
 
+fun TextStyle.themeFont(
+    fontType: ThemeFont.FontType? = null,
+    rawSize: Double,
+): TextStyle {
+    var value = this
+    if (fontType != null) {
+        value = value.copy(fontFamily = family(fontType))
+    }
+     value = value.copy(fontSize = rawSize.sp)
+    return value
+}
+
 private fun family(
     fontType: ThemeFont.FontType,
 ): FontFamily {

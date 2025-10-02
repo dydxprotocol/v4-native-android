@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import okhttp3.internal.format
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +37,7 @@ class DydxFiatDepositViewModel @Inject constructor(
         val minDollar = formatter.dollar(minAmount, digits = 2)
         return DydxFiatDepositView.ViewState(
             localizer = localizer,
+            formatter = formatter,
             backButtonAction = {
                 router.navigateBack()
             },

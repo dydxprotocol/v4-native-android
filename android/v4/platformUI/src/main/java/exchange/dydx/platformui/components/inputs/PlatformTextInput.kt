@@ -83,7 +83,7 @@ fun PlatformTextInput(
                 cursorBrush = SolidColor(ThemeColor.SemanticColor.text_primary.color),
                 decorationBox = { innerTextField ->
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier //.fillMaxWidth()
                             .themeColor(background = ThemeColor.SemanticColor.transparent),
                     ) {
                         if (displayValue.isEmpty()) {

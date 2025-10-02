@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.components.dividers.PlatformDivider
 import exchange.dydx.platformui.components.icons.PlatformImage
+import exchange.dydx.platformui.components.inputs.PlatformTextInput
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -36,6 +40,7 @@ import exchange.dydx.platformui.designSystem.theme.themeFont
 import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
+import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.HeaderView
 import kotlinx.serialization.json.Json.Default.configuration
@@ -51,6 +56,7 @@ fun Preview_dydxFiatDepositView() {
 object DydxFiatDepositView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
+        val formatter: DydxFormatter,
         val backButtonAction: (() -> Unit)? = null,
         val ctaAction: (() -> Unit)? = null,
         val providerName: String? = null,
@@ -59,10 +65,14 @@ object DydxFiatDepositView : DydxComponent {
         val amountSubtitle: String?  = null,
         val providerIcon: Any? = null,
         val ctaEnabled: Boolean = false,
+
+        val value: String ? = null,
+        val onEditAction: ((String) -> Unit)? = null,
     ) {
         companion object Companion {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                formatter = DydxFormatter(),
                 providerName = "MoonPay",
                 providerSubtitle = "Fast, secure fiat onramp",
                 fee = "$1.00",
@@ -107,38 +117,47 @@ object DydxFiatDepositView : DydxComponent {
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
             ) {
-//                item {
-//                    Text(
-//                        text = createTitleString(state.localizer),
-//                        style = TextStyle.dydxDefault
-//                            .themeFont(fontSize = ThemeFont.FontSize.medium),
-//                        modifier = Modifier,
-//                        textAlign = TextAlign.Center,
-//                    )
-//                }
-//
-//                if (state.address != null) {
-//                    item {
-//                        QRCodeContent(
-//                            modifier = Modifier,
-//                            state = state,
-//                        )
-//                    }
-//
-//                    item {
-//                        AddressContent(
-//                            modifier = Modifier,
-//                            state = state,
-//                        )
-//                    }
-//                }
-//
-//                item {
-//                    WarningContent(
-//                        modifier = Modifier,
-//                        state = state,
-//                    )
-//                }
+                item {
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Text(
+                            modifier = Modifier,
+                            text = "$",
+                            style = TextStyle.dydxDefault
+                                .themeFont(
+                                    fontType = ThemeFont.FontType.plus,
+                                  rawSize = 48.0,
+                                )
+                                .themeColor(ThemeColor.SemanticColor.text_primary),
+                        )
+
+                        PlatformTextInput(
+                            modifier = Modifier,
+                            value = state.value ?: "",
+                            textStyle = TextStyle.dydxDefault
+                                .themeColor(ThemeColor.SemanticColor.text_primary)
+                                .themeFont(
+                                    fontType = ThemeFont.FontType.plus,
+                                    rawSize = 48.0,
+                                ),
+                            placeHolder = if (state.value == null) {
+                                state.formatter.raw(0.0, 2)
+                            } else {
+                                null
+                            },
+                            onValueChange = { state.onEditAction?.invoke(it) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+
             }
 
             Spacer(modifier = Modifier.weight(1f))
