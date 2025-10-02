@@ -154,7 +154,7 @@ object DydxTransferNobleAddressView : DydxComponent {
             Spacer(modifier = Modifier.weight(1f))
 
             PlatformButton(
-                modifier = modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = ThemeShapes.HorizontalPadding)
                     .padding(bottom = ThemeShapes.VerticalPadding * 2),
                 text = state.localizer.localize("APP.ONBOARDING.COPY_NOBLE"),

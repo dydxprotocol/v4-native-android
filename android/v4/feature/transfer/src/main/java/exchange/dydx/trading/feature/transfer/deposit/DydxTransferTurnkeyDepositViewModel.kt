@@ -9,6 +9,7 @@ import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.DydxRouter.Presentation
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.TransferChain
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
@@ -53,7 +54,7 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
             },
             fiatAction = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_fiat_deposit)) {
                 {
-
+                    router.navigateTo(TransferRoutes.transfer_fiat_deposit, presentation = Presentation.Push)
                 }
             } else null,
             items = chainOrders.mapNotNull { tokenInfo ->

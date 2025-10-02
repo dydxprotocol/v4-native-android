@@ -73,7 +73,7 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
                 DydxTransferFiatItemView.ViewState(
                     localizer = localizer,
                     selectAction = {
-
+                        router.navigateTo(TransferRoutes.transfer_fiat_deposit, presentation = Presentation.Push)
                     },
                 )
             } else null,

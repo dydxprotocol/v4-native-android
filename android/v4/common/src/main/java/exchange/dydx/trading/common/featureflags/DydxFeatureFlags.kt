@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 interface RemoteFlags {
     fun isEnabled(name: String, default: Boolean = false): Boolean
-    fun getParamStoreValue(key: String, default: String): String
+    fun <T> getParamStoreValue(key: String, default: T): T
 }
 
 enum class DydxStringFeatureFlag {
