@@ -76,7 +76,9 @@ class DydxInstantDepositSearchViewModel @Inject constructor(
                         router.navigateTo(TransferRoutes.transfer_fiat_deposit, presentation = Presentation.Push)
                     },
                 )
-            } else null,
+            } else {
+                null
+            },
         )
     }
 

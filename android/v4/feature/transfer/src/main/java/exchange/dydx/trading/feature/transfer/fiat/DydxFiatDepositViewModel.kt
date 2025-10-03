@@ -12,10 +12,7 @@ import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.R
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import okhttp3.internal.format
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,7 +46,7 @@ class DydxFiatDepositViewModel @Inject constructor(
             fee = formatter.percent(feePercent / 100, digits = 2),
             amountSubtitle = localizer.localizeWithParams(
                 path = "APP.DEPOSIT_WITH_FIAT.MINIMUM_MOONPAY_DEPOSIT",
-                params = mapOf("MIN" to (minDollar ?: "-"))
+                params = mapOf("MIN" to (minDollar ?: "-")),
             ),
         )
     }

@@ -166,7 +166,7 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PlatformDivider(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
 
             Text(
@@ -178,7 +178,7 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
             )
 
             PlatformDivider(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -202,7 +202,7 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
             ) {
                 PlatformRoundImage(
                     icon = R.drawable.icon_cash,
-                    size = 20.dp
+                    size = 20.dp,
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -215,7 +215,7 @@ object DydxTransferTurnkeyDepositView : DydxComponent {
                     icon = R.drawable.icon_arrow_right,
                     modifier = Modifier
                         .size(20.dp),
-                    colorFilter = ColorFilter.tint(color = ThemeColor.SemanticColor.text_primary.color)
+                    colorFilter = ColorFilter.tint(color = ThemeColor.SemanticColor.text_primary.color),
                 )
             }
         }

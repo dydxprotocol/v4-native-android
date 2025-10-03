@@ -115,7 +115,7 @@ fun TextStyle.themeFont(
     if (fontType != null) {
         value = value.copy(fontFamily = family(fontType))
     }
-     value = value.copy(fontSize = rawSize.sp)
+    value = value.copy(fontSize = rawSize.sp)
     return value
 }
 

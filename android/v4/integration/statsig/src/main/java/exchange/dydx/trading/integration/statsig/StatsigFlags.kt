@@ -57,7 +57,7 @@ object StatsigFlagsImpl : RemoteFlags {
         if (default is String) {
             return (store.getString(key, default as String) ?: default) as T
         } else if (default is Boolean) {
-            return store.getBoolean(key, default as Boolean ) as T
+            return store.getBoolean(key, default as Boolean) as T
         } else if (default is Double) {
             return store.getDouble(key, default as Double) as T
         } else if (default is Array<*>) {

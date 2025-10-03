@@ -56,7 +56,9 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
                 {
                     router.navigateTo(TransferRoutes.transfer_fiat_deposit, presentation = Presentation.Push)
                 }
-            } else null,
+            } else {
+                null
+            },
             items = chainOrders.mapNotNull { tokenInfo ->
                 val chain = tokenInfos.firstOrNull { it.chain == tokenInfo }
                 chain?.let { createItem(it) }
@@ -77,7 +79,7 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
                     route = TransferRoutes.transfer_turnkey_qrcode + "/${tokenInfo.chain.name}",
                     presentation = DydxRouter.Presentation.Push,
                 )
-            }
+            },
         )
     }
 }

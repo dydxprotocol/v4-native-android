@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -41,9 +41,7 @@ import exchange.dydx.platformui.theme.DydxThemedPreviewSurface
 import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.common.formatter.DydxFormatter
-import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.HeaderView
-import kotlinx.serialization.json.Json.Default.configuration
 
 @Preview
 @Composable
@@ -60,9 +58,9 @@ object DydxFiatDepositView : DydxComponent {
         val backButtonAction: (() -> Unit)? = null,
         val ctaAction: (() -> Unit)? = null,
         val providerName: String? = null,
-        val providerSubtitle: String?  = null,
-        val fee: String?  = null,
-        val amountSubtitle: String?  = null,
+        val providerSubtitle: String? = null,
+        val fee: String? = null,
+        val amountSubtitle: String? = null,
         val providerIcon: Any? = null,
         val ctaEnabled: Boolean = false,
 
@@ -119,31 +117,31 @@ object DydxFiatDepositView : DydxComponent {
             ) {
                 item {
                     Row(
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Spacer(modifier = Modifier.weight(1f))
-
                         Text(
                             modifier = Modifier,
                             text = "$",
                             style = TextStyle.dydxDefault
                                 .themeFont(
                                     fontType = ThemeFont.FontType.plus,
-                                  rawSize = 48.0,
+                                    rawSize = 48.0,
                                 )
                                 .themeColor(ThemeColor.SemanticColor.text_primary),
                         )
 
                         PlatformTextInput(
-                            modifier = Modifier,
+                            modifier = Modifier.wrapContentWidth(),
                             value = state.value ?: "",
                             textStyle = TextStyle.dydxDefault
                                 .themeColor(ThemeColor.SemanticColor.text_primary)
                                 .themeFont(
                                     fontType = ThemeFont.FontType.plus,
                                     rawSize = 48.0,
+                                ).copy(
+                                    textAlign = TextAlign.Center, // centers cursor within text
                                 ),
                             placeHolder = if (state.value == null) {
                                 state.formatter.raw(0.0, 2)
@@ -152,12 +150,10 @@ object DydxFiatDepositView : DydxComponent {
                             },
                             onValueChange = { state.onEditAction?.invoke(it) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            centeredText = true,
                         )
-
-                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
-
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -180,7 +176,7 @@ object DydxFiatDepositView : DydxComponent {
                 },
                 text = state.localizer.localizeWithParams(
                     path = "APP.DEPOSIT_WITH_FIAT.CONTINUE_TO",
-                    params = mapOf("PROVIDER" to (state.providerName ?: "Provider"))
+                    params = mapOf("PROVIDER" to (state.providerName ?: "Provider")),
                 ),
             ) {
                 state.ctaAction?.invoke()
@@ -193,7 +189,7 @@ object DydxFiatDepositView : DydxComponent {
         Row(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             PlatformImage(
                 icon = state.providerIcon, // R.drawable.icon_moonpay,
