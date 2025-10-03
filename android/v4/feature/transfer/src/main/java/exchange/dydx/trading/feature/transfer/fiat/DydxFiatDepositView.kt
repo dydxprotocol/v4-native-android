@@ -108,53 +108,47 @@ object DydxFiatDepositView : DydxComponent {
 
             PlatformDivider()
 
-            LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = ThemeShapes.HorizontalPadding)
-                    .padding(vertical = 24.dp),
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
-            ) {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            modifier = Modifier,
-                            text = "$",
-                            style = TextStyle.dydxDefault
-                                .themeFont(
-                                    fontType = ThemeFont.FontType.plus,
-                                    rawSize = 48.0,
-                                )
-                                .themeColor(ThemeColor.SemanticColor.text_primary),
-                        )
+            Spacer(modifier = Modifier.weight(1f))
 
-                        PlatformTextInput(
-                            modifier = Modifier.wrapContentWidth(),
-                            value = state.value ?: "",
-                            textStyle = TextStyle.dydxDefault
-                                .themeColor(ThemeColor.SemanticColor.text_primary)
-                                .themeFont(
-                                    fontType = ThemeFont.FontType.plus,
-                                    rawSize = 48.0,
-                                ).copy(
-                                    textAlign = TextAlign.Center, // centers cursor within text
-                                ),
-                            placeHolder = if (state.value == null) {
-                                state.formatter.raw(0.0, 2)
-                            } else {
-                                null
-                            },
-                            onValueChange = { state.onEditAction?.invoke(it) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            centeredText = true,
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = ThemeShapes.HorizontalPadding * 2),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = "$",
+                    style = TextStyle.dydxDefault
+                        .themeFont(
+                            fontType = ThemeFont.FontType.plus,
+                            rawSize = 48.0,
                         )
-                    }
-                }
+                        .themeColor(ThemeColor.SemanticColor.text_primary),
+                )
+
+                PlatformTextInput(
+                    modifier = Modifier.wrapContentWidth(),
+                    value = state.value ?: "",
+                    textStyle = TextStyle.dydxDefault
+                        .themeColor(ThemeColor.SemanticColor.text_primary)
+                        .themeFont(
+                            fontType = ThemeFont.FontType.plus,
+                            rawSize = 48.0,
+                        ).copy(
+                            textAlign = TextAlign.Center, // centers cursor within text
+                        ),
+                    placeHolder = if (state.value.isNullOrEmpty()) {
+                        state.formatter.raw(0.0, 2)
+                    } else {
+                        null
+                    },
+                    onValueChange = { state.onEditAction?.invoke(it) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    centeredText = true,
+                )
             }
+
 
             Spacer(modifier = Modifier.weight(1f))
 
