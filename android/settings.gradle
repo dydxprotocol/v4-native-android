@@ -90,3 +90,4 @@ include ':v4:feature:vault'
 
 includeBuild("../node_modules/@react-native/gradle-plugin")
 
+include ':v4:integration:dydxFiatRamp'

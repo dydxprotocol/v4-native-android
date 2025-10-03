@@ -50,6 +50,7 @@ dependencies {
     implementation project(path: ':v4:feature:shared')
     implementation project(path: ':v4:feature:receipt')
     implementation project(path: ':v4:integration:web3')
+    implementation project(path: ':v4:integration:dydxFiatRamp')
 
     /* Local Dependencies */
 

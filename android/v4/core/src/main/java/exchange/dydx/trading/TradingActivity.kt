@@ -29,6 +29,7 @@ import com.facebook.react.ReactInstanceManager
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import dagger.hilt.android.AndroidEntryPoint
 import exchange.dydx.dydxCartera.CarteraConfig
+import exchange.dydx.dydxfiatramp.DydxMoonPayRamp
 import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.container.PlatformInfoContainer
@@ -70,6 +71,8 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
 
     @Inject lateinit var turnkeyReactBridge: TurnkeyReactBridge
 
+    @Inject lateinit var moonPayRamp: DydxMoonPayRamp
+
     private lateinit var reactInstanceManager: ReactInstanceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +81,7 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
 
         setUpReactNativeBridge()
 
+        moonPayRamp.takeActivity(this)
         pushPermissionRequester.takeActivity(this)
         viewModel.logger.d(TAG, "TradingActivity#onCreate")
 

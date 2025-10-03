@@ -171,6 +171,7 @@ dependencies {
     implementation project(':v4:integration:react')
     implementation project(':v4:core')
     implementation project(path: ':v4:integration:dydxStateManager')
+    implementation project(path: ':v4:integration:dydxFiatRamp')
     implementation project(path: ':v4:utilities')
     implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:feature:shared')

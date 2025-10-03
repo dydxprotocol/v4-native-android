@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -94,8 +92,6 @@ object DydxFiatDepositView : DydxComponent {
             return
         }
 
-        val listState = rememberLazyListState()
-
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -148,7 +144,6 @@ object DydxFiatDepositView : DydxComponent {
                     centeredText = true,
                 )
             }
-
 
             Spacer(modifier = Modifier.weight(1f))
 

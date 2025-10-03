@@ -21,6 +21,7 @@ import exchange.dydx.abacus.protocols.WebSocketProtocol
 import exchange.dydx.abacus.utils.CoroutineTimer
 import exchange.dydx.abacus.utils.IOImplementations
 import exchange.dydx.abacus.utils.Parser
+import exchange.dydx.dydxfiatramp.DydxMoonPayRamp
 import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.EnvKey
@@ -107,6 +108,9 @@ interface AppModule {
             logger = logger,
             tracker = tracker
         )
+
+        @Provides @Singleton
+        fun provideDydxMoonPayRamp() = DydxMoonPayRamp()
 
         @Provides
         @Singleton
