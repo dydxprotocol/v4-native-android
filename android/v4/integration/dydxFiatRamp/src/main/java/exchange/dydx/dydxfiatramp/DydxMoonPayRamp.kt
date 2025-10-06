@@ -27,7 +27,6 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.log
 
 private val TAG = "DydxMoonPayRamp"
 private val PROVIDER = "moonpay"
@@ -53,12 +52,12 @@ class DydxMoonPayRamp @Inject constructor(
                 ClientTrackableEventType.FiatDepositRouteToProviderErrorEvent(
                     message = msg,
                     provider = PROVIDER,
-                )
+                ),
             )
         }
 
         tracker.logSharedEvent(
-            ClientTrackableEventType.FiatDepositShowInputEvent()
+            ClientTrackableEventType.FiatDepositShowInputEvent(),
         )
 
         if (moonPaySdk == null) {
@@ -73,7 +72,7 @@ class DydxMoonPayRamp @Inject constructor(
                     ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
                         callbackName = "onSwapsCustomerSetupComplete",
                         data = mapOf(),
-                    )
+                    ),
                 )
             },
             onAuthToken = {
@@ -82,7 +81,7 @@ class DydxMoonPayRamp @Inject constructor(
                     ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
                         callbackName = "onAuthToken",
                         data = mapOf(),
-                    )
+                    ),
                 )
             },
             onLogin = {
@@ -93,7 +92,7 @@ class DydxMoonPayRamp @Inject constructor(
                         data = mapOf(
                             "isRefresh" to it.isRefresh,
                         ),
-                    )
+                    ),
                 )
             },
             onInitiateDeposit = {
@@ -108,8 +107,8 @@ class DydxMoonPayRamp @Inject constructor(
                             "transactionId" to it.transactionId,
                             "cryptoCurrencyAmount" to it.cryptoCurrencyAmount,
                             "cryptoCurrencyAmountSmallestDenomination" to it.cryptoCurrencyAmountSmallestDenomination,
-                        )
-                    )
+                        ),
+                    ),
                 )
                 OnInitiateDepositResponsePayload(depositId = "someDepositId")
             },
@@ -118,7 +117,7 @@ class DydxMoonPayRamp @Inject constructor(
                     ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
                         callbackName = "onKmsWalletCreated",
                         data = mapOf(),
-                    )
+                    ),
                 )
             },
             onUnsupportedRegion = {
@@ -126,7 +125,7 @@ class DydxMoonPayRamp @Inject constructor(
                     ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
                         callbackName = "onUnsupportedRegion",
                         data = mapOf(),
-                    )
+                    ),
                 )
             },
         )
@@ -178,7 +177,7 @@ class DydxMoonPayRamp @Inject constructor(
                     amountUsd = usdAmount,
                     depositAddress = targetAddress,
                     provider = PROVIDER,
-                )
+                ),
             )
 
             completion(true, null)
