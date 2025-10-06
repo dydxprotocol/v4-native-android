@@ -49,19 +49,25 @@ class DydxUserTrackingWorker @Inject constructor(
             abacusStateManager.state.currentWallet
                 .onEach {
                     val address = it?.ethereumAddress ?: it?.cosmoAddress
+                    val wallet = CarteraConfig.shared?.wallets?.firstOrNull { wallet -> wallet.id == it?.walletId }
                     if (it?.walletId == "turnkey") {
                         val userId = it.userEmail?.trim()?.lowercase()?.sha256()?.joinToString("") { "%02x".format(it) }
                         tracker.setUserId(userId ?: address)
+                        tracker.setUserProperties(
+                            mapOf(
+                                UserProperty.walletType.rawValue to it.walletId?.uppercase(),
+                                UserProperty.dydxAddress.rawValue to it.cosmoAddress,
+                            ),
+                        )
                     } else {
                         tracker.setUserId(address)
+                        tracker.setUserProperties(
+                            mapOf(
+                                UserProperty.walletType.rawValue to wallet?.userFields?.get("analyticEvent"),
+                                UserProperty.dydxAddress.rawValue to it?.cosmoAddress,
+                            ),
+                        )
                     }
-                    val wallet = CarteraConfig.shared?.wallets?.firstOrNull { wallet -> wallet.id == it?.walletId }
-                    tracker.setUserProperties(
-                        mapOf(
-                            UserProperty.walletType.rawValue to wallet?.userFields?.get("analyticEvent"),
-                            UserProperty.dydxAddress.rawValue to it?.cosmoAddress,
-                        ),
-                    )
                 }
                 .launchIn(scope)
 
