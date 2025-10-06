@@ -88,19 +88,27 @@ interface AppModule {
                 theme = "classic_dark"
             }
             val themeConfigValue =
-                ThemeConfig.createFromPreference(appContext, theme, logger) ?: ThemeConfig.classicDark(appContext)
+                ThemeConfig.createFromPreference(appContext, theme, logger)
+                    ?: ThemeConfig.classicDark(appContext)
             val themeConfig = MutableStateFlow<ThemeConfig?>(themeConfigValue)
             val styleConfig =
-                MutableStateFlow<StyleConfig?>(JsonUtils.loadFromAssets(appContext, "dydxStyle.json"))
+                MutableStateFlow<StyleConfig?>(
+                    JsonUtils.loadFromAssets(
+                        appContext,
+                        "dydxStyle.json"
+                    )
+                )
             ThemeSettings.shared =
                 ThemeSettings(appContext, preferenceStore, themeConfig, styleConfig)
             return ThemeSettings.shared
         }
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         fun provideParser(): ParserProtocol = Parser()
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         fun provideTurnkeyReactBridge(
             logger: Logging,
             tracker: Tracking,
@@ -109,8 +117,15 @@ interface AppModule {
             tracker = tracker
         )
 
-        @Provides @Singleton
-        fun provideDydxMoonPayRamp() = DydxMoonPayRamp()
+        @Provides
+        @Singleton
+        fun provideDydxMoonPayRamp(
+            logger: Logging,
+            tracker: Tracking,
+        ): DydxMoonPayRamp = DydxMoonPayRamp(
+            logger = logger,
+            tracker = tracker,
+        )
 
         @Provides
         @Singleton
@@ -123,12 +138,23 @@ interface AppModule {
             fileSystem: FileSystemProtocol?,
             logger: CompositeLogging?
         ): IOImplementations =
-            IOImplementations(rest, webSocket, chain, tracking, threading, CoroutineTimer.instance, fileSystem, logger)
+            IOImplementations(
+                rest,
+                webSocket,
+                chain,
+                tracking,
+                threading,
+                CoroutineTimer.instance,
+                fileSystem,
+                logger
+            )
 
-        @EnvKey @Provides
+        @EnvKey
+        @Provides
         fun provideEnvKey(): String = PreferenceKeys.Env
 
-        @LanguageKey @Provides
+        @LanguageKey
+        @Provides
         fun provideLanguageKey(): String = PreferenceKeys.Language
 
         @Provides
@@ -171,31 +197,44 @@ interface AppModule {
         }
     }
 
-    @Binds fun bindCosmosClient(client: CosmosV4WebviewClientProtocol): CosmosV4ClientProtocol
+    @Binds
+    fun bindCosmosClient(client: CosmosV4WebviewClientProtocol): CosmosV4ClientProtocol
 
-    @Binds fun bindRest(abacusRestImp: AbacusRestImp): RestProtocol
+    @Binds
+    fun bindRest(abacusRestImp: AbacusRestImp): RestProtocol
 
-    @Binds fun bindWebsocket(abacusWebSocketImp: AbacusWebSocketImp): WebSocketProtocol
+    @Binds
+    fun bindWebsocket(abacusWebSocketImp: AbacusWebSocketImp): WebSocketProtocol
 
-    @Binds fun bindChainProtocol(abacusChainImp: AbacusChainImp): DYDXChainTransactionsProtocol
+    @Binds
+    fun bindChainProtocol(abacusChainImp: AbacusChainImp): DYDXChainTransactionsProtocol
 
-    @Binds fun bindTrackingProtocol(abacusTrackingImp: AbacusTrackingImp): TrackingProtocol
+    @Binds
+    fun bindTrackingProtocol(abacusTrackingImp: AbacusTrackingImp): TrackingProtocol
 
-    @Binds fun bindPresentationProtocol(abacusPresentationImp: AbacusPresentationImp): PresentationProtocol
+    @Binds
+    fun bindPresentationProtocol(abacusPresentationImp: AbacusPresentationImp): PresentationProtocol
 
-    @Binds fun bindTracking(compositeTracking: CompositeTracking): Tracking
+    @Binds
+    fun bindTracking(compositeTracking: CompositeTracking): Tracking
 
-    @Binds fun bindLogger(compositeLogger: CompositeLogger): Logging
+    @Binds
+    fun bindLogger(compositeLogger: CompositeLogger): Logging
 
-    @Binds fun bindCompositeLogging(compositeLogger: CompositeLogger): CompositeLogging
+    @Binds
+    fun bindCompositeLogging(compositeLogger: CompositeLogger): CompositeLogging
 
-    @Binds fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
+    @Binds
+    fun bindThreading(abacusThreadingImp: AbacusThreadingImp): ThreadingProtocol
 
-    @Binds fun bindFileSystem(abacusFileSystemImp: AbacusFileSystemImp): FileSystemProtocol
+    @Binds
+    fun bindFileSystem(abacusFileSystemImp: AbacusFileSystemImp): FileSystemProtocol
 
-    @Binds fun bindAbacusStateManager(abacusStateManager: AbacusStateManager): AbacusStateManagerProtocol
+    @Binds
+    fun bindAbacusStateManager(abacusStateManager: AbacusStateManager): AbacusStateManagerProtocol
 
-    @Binds fun bindLocalizer(abacusLocalizerProtocol: AbacusLocalizerProtocol): LocalizerProtocol
+    @Binds
+    fun bindLocalizer(abacusLocalizerProtocol: AbacusLocalizerProtocol): LocalizerProtocol
 
     @Binds
     fun bindLocalizerProtocol(abacusLocalizerImp: AbacusLocalizerImp): AbacusLocalizerProtocol
@@ -221,5 +260,6 @@ interface AppModule {
     @Binds
     fun bindCompositeTracking(compositeTracker: CompositeTracker): CompositeTracking
 
-    @Binds fun bindCosmosV4WebviewClientProtocol(cosmosV4ClientWebview: CosmosV4ClientWebview): CosmosV4WebviewClientProtocol
+    @Binds
+    fun bindCosmosV4WebviewClientProtocol(cosmosV4ClientWebview: CosmosV4ClientWebview): CosmosV4WebviewClientProtocol
 }

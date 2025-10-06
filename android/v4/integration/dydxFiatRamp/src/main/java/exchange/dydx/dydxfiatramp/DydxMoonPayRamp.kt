@@ -12,19 +12,31 @@ import com.moonpay.sdk.MoonPayRenderingOptionAndroid
 import com.moonpay.sdk.MoonPaySdkBuyConfig
 import com.moonpay.sdk.MoonPayWidgetEnvironment
 import com.moonpay.sdk.OnInitiateDepositResponsePayload
+import exchange.dydx.abacus.functional.ClientTrackableEventType
+import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
+import exchange.dydx.trading.integration.analytics.tracking.Tracking
+import exchange.dydx.utilities.utils.Logging
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import java.util.Base64
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.log
 
 private val TAG = "DydxMoonPayRamp"
+private val PROVIDER = "moonpay"
 
 @Singleton
-class DydxMoonPayRamp @Inject constructor() {
-
+class DydxMoonPayRamp @Inject constructor(
+    private val logger: Logging,
+    private val tracker: Tracking,
+) {
     private var moonPaySdk: MoonPayAndroidSdk? = null
 
     fun takeActivity(activity: ComponentActivity) {
@@ -36,8 +48,18 @@ class DydxMoonPayRamp @Inject constructor() {
     fun show(targetAddress: String, usdAmount: Double?, config: DydxMoonPayConfig, completion: ((Boolean, String?) -> Unit)) {
         fun handleError(msg: String) {
             completion.invoke(false, msg)
-            Log.e(TAG, msg)
+            logger.e(TAG, msg)
+            tracker.logSharedEvent(
+                ClientTrackableEventType.FiatDepositRouteToProviderErrorEvent(
+                    message = msg,
+                    provider = PROVIDER,
+                )
+            )
         }
+
+        tracker.logSharedEvent(
+            ClientTrackableEventType.FiatDepositShowInputEvent()
+        )
 
         if (moonPaySdk == null) {
             handleError("MoonPay SDK is not initialized. Call takeActivity() first.")
@@ -47,22 +69,65 @@ class DydxMoonPayRamp @Inject constructor() {
         val handlers = MoonPayHandlers(
             onSwapsCustomerSetupComplete = {
                 Log.i("HANDLER CALLED", "onSwapsCustomerSetupComplete called!")
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
+                        callbackName = "onSwapsCustomerSetupComplete",
+                        data = mapOf(),
+                    )
+                )
             },
             onAuthToken = {
                 Log.i("HANDLER CALLED", "onAuthToken called with payload $it")
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
+                        callbackName = "onAuthToken",
+                        data = mapOf(),
+                    )
+                )
             },
             onLogin = {
                 Log.i("HANDLER CALLED", "onLogin called with payload $it")
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
+                        callbackName = "onLogin",
+                        data = mapOf(
+                            "isRefresh" to it.isRefresh,
+                        ),
+                    )
+                )
             },
             onInitiateDeposit = {
-                Log.i("HANDLER CALLED", "onInitiateDeposit called with payload $it")
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
+                        callbackName = "onInitiateDeposit",
+                        data = mapOf(
+                            "fiatCurrency" to it.fiatCurrency,
+                            "fiatCurrencyAmount" to (it.fiatCurrencyAmount ?: "0"),
+                            "cryptoCurrency" to it.cryptoCurrency,
+                            "depositWalletAddress" to it.depositWalletAddress,
+                            "transactionId" to it.transactionId,
+                            "cryptoCurrencyAmount" to it.cryptoCurrencyAmount,
+                            "cryptoCurrencyAmountSmallestDenomination" to it.cryptoCurrencyAmountSmallestDenomination,
+                        )
+                    )
+                )
                 OnInitiateDepositResponsePayload(depositId = "someDepositId")
             },
             onKmsWalletCreated = {
-                Log.i("HANDLER CALLED", "onKmsWalletCreated called!")
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
+                        callbackName = "onKmsWalletCreated",
+                        data = mapOf(),
+                    )
+                )
             },
             onUnsupportedRegion = {
-                Log.i("HANDLER CALLED", "onUnsupportedRegion called!")
+                tracker.logSharedEvent(
+                    ClientTrackableEventType.FiatDepositMoonPayCallbackEvent(
+                        callbackName = "onUnsupportedRegion",
+                        data = mapOf(),
+                    )
+                )
             },
         )
 
@@ -107,6 +172,15 @@ class DydxMoonPayRamp @Inject constructor() {
             }
             moonPaySdk?.updateSignature(signature)
             moonPaySdk?.show(MoonPayRenderingOptionAndroid.WebViewOverlay)
+
+            tracker.logSharedEvent(
+                ClientTrackableEventType.FiatDepositRouteToProviderCompletedEvent(
+                    amountUsd = usdAmount,
+                    depositAddress = targetAddress,
+                    provider = PROVIDER,
+                )
+            )
+
             completion(true, null)
         }
     }
@@ -163,23 +237,23 @@ class DydxMoonPayRamp @Inject constructor() {
             return
         }
 
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
                 mainHandler.post {
                     completion(null, Error("Failed to obtain signature: ${e.message}"))
                 }
             }
 
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!it.isSuccessful) {
                         mainHandler.post {
-                            completion(null, Error("Unexpected response code: ${it.code()}"))
+                            completion(null, Error("Unexpected response code: ${it.code}"))
                         }
                         return
                     }
 
-                    val body = it.body()?.string()
+                    val body = it.body?.string()
                     if (body != null) {
                         try {
                             val signatureResponse = gson.fromJson(body, SignatureResponse::class.java)

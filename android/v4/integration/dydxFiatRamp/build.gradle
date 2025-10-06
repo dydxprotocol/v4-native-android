@@ -39,6 +39,10 @@ android {
 
 dependencies {
     implementation project(path: ':v4:utilities')
+    implementation project(path: ':v4:integration:analytics')
+    implementation project(path: ':v4:feature:shared')
+
+    api "exchange.dydx.abacus:v4-abacus-jvm:$abacusVersion"
 
     implementation("com.moonpay.sdk:MoonPaySdk-android:3.1.1")
 
