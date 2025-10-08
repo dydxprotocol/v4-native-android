@@ -179,8 +179,8 @@ object DydxFiatDepositView : DydxComponent {
                 text = state.localizer.localizeWithParams(
                     path = "APP.DEPOSIT_WITH_FIAT.CONTINUE_TO_DISCLAIMER",
                     params = mapOf(
-                        "PROVIDER" to (state.providerName ?: "Provider")
-                    )
+                        "PROVIDER" to (state.providerName ?: "Provider"),
+                    ),
                 ),
                 textAlign = TextAlign.Center,
                 style = TextStyle.dydxDefault
