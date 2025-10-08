@@ -5,6 +5,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.moonpay.sdk.MoonPayAndroidSdk
 import com.moonpay.sdk.MoonPayBuyQueryParams
 import com.moonpay.sdk.MoonPayHandlers
@@ -16,6 +17,7 @@ import exchange.dydx.abacus.functional.ClientTrackableEventType
 import exchange.dydx.trading.feature.shared.analytics.logSharedEvent
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import exchange.dydx.utilities.utils.Logging
+import kotlinx.serialization.Serializable
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -287,6 +289,7 @@ data class DydxMoonPayConfig(
     val isDarkTheme: Boolean,
 )
 
+@Serializable
 data class SignatureResponse(
-    val signature: String?
+    @SerializedName("signature") val signature: String?
 )
