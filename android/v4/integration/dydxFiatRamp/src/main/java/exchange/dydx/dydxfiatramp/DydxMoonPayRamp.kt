@@ -172,7 +172,7 @@ class DydxMoonPayRamp @Inject constructor(
                 return@getSignature
             }
             moonPaySdk?.updateSignature(signature)
-            moonPaySdk?.show(MoonPayRenderingOptionAndroid.WebViewOverlay)
+            moonPaySdk?.show(MoonPayRenderingOptionAndroid.InAppBrowser)
 
             tracker.logSharedEvent(
                 ClientTrackableEventType.FiatDepositRouteToProviderCompletedEvent(

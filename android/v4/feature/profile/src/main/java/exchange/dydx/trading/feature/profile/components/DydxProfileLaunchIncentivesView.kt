@@ -66,7 +66,9 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
         val points: String?,
         val aboutAction: () -> Unit = {},
         val leaderboardAction: () -> Unit = {},
-        val isSep2025: Boolean = false
+        val isSep2025: Boolean = false,
+        val rewards_dollar_amount: String = "$1M",
+        val rebate_percent: String = "50%",
     ) {
         companion object {
             val preview = ViewState(
@@ -123,8 +125,8 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                         state.localizer.localizeWithParams(
                             path = "APP.REWARDS_SURGE_APRIL_2025.SURGE_HEADLINE_SEP_2025",
                             params = mapOf(
-                                "REWARD_AMOUNT" to "$1M",
-                                "REBATE_PERCENT" to "50%",
+                                "REWARD_AMOUNT" to state.rewards_dollar_amount,
+                                "REBATE_PERCENT" to state.rebate_percent,
                             ),
                         )
                 } else {

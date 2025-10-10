@@ -87,7 +87,7 @@ class DydxFiatDepositViewModel @Inject constructor(
             ctaEnabled = currentValueDouble >= minAmount,
             providerName = "MoonPay",
             providerIcon = R.drawable.icon_moonpay,
-            providerSubtitle = localizer.localize("APP.DEPOSIT_WITH_FIAT.MOONPAY_SUPPORT"),
+            providerSubtitle = localizer.localize("APP.DEPOSIT_WITH_FIAT.MOONPAY_SUPPORT_ANDROID"),
             fee = formatter.percent(feePercent / 100, digits = 2),
             amountSubtitle = localizer.localizeWithParams(
                 path = "APP.DEPOSIT_WITH_FIAT.MINIMUM_MOONPAY_DEPOSIT",

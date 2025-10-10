@@ -9,6 +9,7 @@ import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
+import exchange.dydx.trading.common.featureflags.RemoteFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,7 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     private val featureFlags: DydxFeatureFlags,
+    private val remoteFlags: RemoteFlags,
 ) : ViewModel(), DydxViewModel {
     val state: Flow<DydxProfileLaunchIncentivesView.ViewState?> =
         combine(
@@ -56,6 +58,8 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
                 }
             },
             isSep2025 = featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_rewards_sep_2025),
+            rewards_dollar_amount = remoteFlags.getParamStoreValue("rewards_dollar_amount", "-"),
+            rebate_percent = remoteFlags.getParamStoreValue("rewards_fee_rebate_percent", "-"),
         )
     }
 }
