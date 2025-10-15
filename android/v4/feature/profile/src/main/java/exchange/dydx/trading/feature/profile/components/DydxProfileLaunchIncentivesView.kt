@@ -168,8 +168,8 @@ object DydxProfileLaunchIncentivesView : DydxComponent {
                     state.localizer.localizeWithParams(
                         path = "APP.REWARDS_SURGE_APRIL_2025.SURGE_BODY_SEP_2025",
                         params = mapOf(
-                            "REWARD_AMOUNT" to "$1M",
-                            "REBATE_PERCENT" to "50%",
+                            "REWARD_AMOUNT" to state.rewards_dollar_amount,
+                            "REBATE_PERCENT" to state.rebate_percent,
                         ),
                     )
                 } else {
